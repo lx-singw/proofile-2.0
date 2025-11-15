@@ -17,8 +17,10 @@ api_router.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
 api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
 api_router.include_router(resumes.router, prefix="/resumes", tags=["resumes"])
 
-# Test-only endpoints for e2e / local validation (only enabled in test or when explicitly allowed)
-if settings.ENVIRONMENT == "test" or getattr(settings, "ENABLE_TEST_ROUTES", False):
+# Test-only endpoints for e2e / local validation. Enable in test or development,
+# or when explicitly allowed via ENABLE_TEST_ROUTES. This keeps test helpers out of
+# production while allowing local E2E runs to call test-only endpoints.
+if settings.ENVIRONMENT in ("test", "development") or getattr(settings, "ENABLE_TEST_ROUTES", False):
 	if test_events is not None:
 		api_router.include_router(test_events.router, prefix="/test", tags=["test"])
 
