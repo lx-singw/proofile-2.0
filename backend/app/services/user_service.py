@@ -38,14 +38,35 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
     - Refreshes the instance to get the ID and other defaults from the DB.
     """
     hashed_password = get_password_hash(user_in.password)
+    # Ensure role is stored as a plain string to avoid DB enum type mismatches
+    role_value = None
+    try:
+        import enum as _enum
+        if isinstance(user_in.role, _enum.Enum):
+            role_value = user_in.role.value
+        else:
+            role_value = str(user_in.role) if user_in.role is not None else None
+    except Exception:
+        role_value = str(user_in.role) if user_in.role is not None else None
+
     db_user = User(
         email=user_in.email,
         hashed_password=hashed_password,
         full_name=user_in.full_name,
-        role=user_in.role,
+        role=role_value,
     )
     try:
+        # Debug logging
+        import logging
+        logger = logging.getLogger(__name__)
+        search_path = await db.execute(text("SHOW search_path"))
+        print("DEBUG: search_path:", search_path.scalar(), flush=True)
+        current_db = await db.execute(text("SELECT current_database()"))
+        print("DEBUG: current_db:", current_db.scalar(), flush=True)
+        tables = await db.execute(text("SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename = 'users'"))
+        print("DEBUG: users table exists:", tables.scalar() is not None, flush=True)
         db.add(db_user)
+        await db.execute(text("SET search_path TO public"))
         await db.commit()
         await db.refresh(db_user)
         return db_user
@@ -62,10 +83,11 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
             logging.getLogger(__name__).error("Current search_path: %s", search_path.scalar())
         except Exception:
             logging.getLogger(__name__).exception("Failed to inspect search_path after user create error")
-        logging.getLogger(__name__).error("User creation failed with %s", repr(e))
-        logging.getLogger(__name__).debug("User creation traceback:\n%s", traceback.format_exc())
+        # Log the full exception and traceback at ERROR so it appears in container logs
+        logging.getLogger(__name__).exception("User creation failed: %s", repr(e))
+        # Also print to stdout for immediate visibility in non-logged environments
         print("USER_CREATE_ERR:", repr(e), flush=True)
-        print("USER_CREATE_TRACE:", traceback.format_exc(), flush=True)
+        print("USER_CREATE_TRACE:\n", traceback.format_exc(), flush=True)
         raise RuntimeError(f"Failed to create user: {e}") from e
  
 async def update_user(db: AsyncSession, user: User, user_in: UserUpdate) -> User:

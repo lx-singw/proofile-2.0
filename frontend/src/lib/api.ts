@@ -1,18 +1,28 @@
 import axios, { AxiosHeaders, type AxiosRequestConfig } from "axios";
 
-// Turbopack currently struggles with proxying API requests in development.
-// Default to the direct backend URL exposed via NEXT_PUBLIC_API_URL and only
-// fall back to relative paths if that variable is absent.
-const envApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+// Prefer relative '/api' which is proxied to the backend via next.config rewrites in dev/E2E.
+// This ensures cookies/CSRF tokens stay on the frontend origin and work through the proxy.
+// Only use NEXT_PUBLIC_API_URL in production when it's a different domain.
+const rawEnvUrl = process.env.NEXT_PUBLIC_API_URL;
 
-function resolveBaseUrl(): string {
-  if (envApiUrl) {
-    return envApiUrl;
+let API_URL = "";  // Default to relative '/api' proxy
+
+if (typeof window !== "undefined" && rawEnvUrl && process.env.NODE_ENV === "production") {
+  try {
+    // In production, if the provided NEXT_PUBLIC_API_URL points to a different hostname,
+    // use it directly (e.g., https://api.proofile.dev instead of /api proxy)
+    const envHost = new URL(rawEnvUrl).hostname;
+    if (envHost !== window.location.hostname) {
+      API_URL = rawEnvUrl;
+    }
+  } catch {
+    // ignore URL parse errors; keep relative path default
   }
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  return "";
+}
+
+if (process.env.NODE_ENV !== "production") {
+  // Debug log for dev/test environments
+  console.log("[api] baseURL resolved to", API_URL || "(relative)", "rawEnvUrl=", rawEnvUrl);
 }
 
 const ACCESS_TOKEN_STORAGE_KEY = "auth:accessToken";
@@ -42,7 +52,7 @@ const persistToken = (token: string | null) => {
 // Create axios instances - baseURL will be set dynamically on first client request
 // Don't set baseURL here to avoid SSR issues
 export const api = axios.create({
-  baseURL: resolveBaseUrl(),
+  baseURL: API_URL || "",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -97,11 +107,11 @@ export function clearAccessToken() {
 // --------------------
 // Request interceptor to set baseURL dynamically and attach Authorization header
 // --------------------
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: AxiosRequestConfig) => {
   try {
     // Ensure baseURL is set; fall back to direct backend URL when missing.
     if (!config.baseURL) {
-      const resolved = api.defaults.baseURL || resolveBaseUrl();
+      const resolved = api.defaults.baseURL || (API_URL || "");
       if (resolved) {
         config.baseURL = resolved;
       }
@@ -230,7 +240,7 @@ api.interceptors.response.use(
         "/api/v1/auth/refresh",
         {}, // No data in body
         {
-          baseURL: api.defaults.baseURL || resolveBaseUrl(),
+          baseURL: api.defaults.baseURL || (API_URL || ""),
           withCredentials: true,
           headers: {
             ...(xsrfToken ? { "X-XSRF-TOKEN": xsrfToken } : {}),

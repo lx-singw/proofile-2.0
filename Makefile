@@ -7,24 +7,24 @@ setup-dev:
 
 start-dev:
 	@echo "Starting development services..."
-	docker-compose up -d --build
+	docker compose up -d --build
 
 stop-dev:
 	@echo "Stopping development services..."
-	docker-compose down
+	docker compose down
 
 migrate:
 	@echo "Running database migrations..."
-	docker-compose exec backend alembic upgrade head
+	docker compose exec backend alembic upgrade head
 
 # Testing commands
 test-backend:
 	@echo "Running backend tests..."
-	docker-compose exec backend bash -c "cd /app && poetry run pytest"
+	docker compose exec backend bash -c "cd /app && poetry run pytest"
 
 test-frontend:
 	@echo "Running frontend tests..."
-	docker-compose exec frontend npm test
+	docker compose exec frontend npm test
 
 lint:
 	@echo "Linting all code..."
@@ -36,8 +36,8 @@ security-scan:
 	@echo "Checking for secrets..."
 	docker run --rm -v "$(PWD):/repo" zricethezav/gitleaks:latest detect --source /repo --verbose || true
 	@echo "Scanning dependencies..."
-	docker-compose exec frontend npm audit --audit-level=moderate || true
-	docker-compose exec backend poetry run safety check || true
+	docker compose exec frontend npm audit --audit-level=moderate || true
+	docker compose exec backend poetry run safety check || true
 
 security-full:
 	@echo "🔒 Running comprehensive security scan..."
@@ -56,11 +56,11 @@ security-secrets:
 security-deps:
 	@echo "📦 Scanning dependencies for vulnerabilities..."
 	@echo "Frontend dependencies..."
-	docker-compose exec frontend npm audit --audit-level=moderate || true
+	docker compose exec frontend npm audit --audit-level=moderate || true
 	docker run --rm -v "$(PWD)/frontend:/app" -w /app node:20-alpine sh -c "npm ci && npx snyk test --severity-threshold=medium" || true
 	@echo "Backend dependencies..."
-	docker-compose exec backend poetry run safety check || true
-	docker-compose exec backend poetry run bandit -r app/ -f json || true
+	docker compose exec backend poetry run safety check || true
+	docker compose exec backend poetry run bandit -r app/ -f json || true
 
 security-containers:
 	@echo "🐳 Scanning container images..."
@@ -114,31 +114,31 @@ security-report:
 # Docker-based security commands
 security-docker-secrets:
 	@echo "🔍 Docker-based secret scanning..."
-	docker-compose -f docker-compose.security.yml run --rm gitleaks
-	docker-compose -f docker-compose.security.yml run --rm trufflehog
+	docker compose -f docker-compose.security.yml run --rm gitleaks
+	docker compose -f docker-compose.security.yml run --rm trufflehog
 
 security-docker-deps:
 	@echo "📦 Docker-based dependency scanning..."
-	docker-compose -f docker-compose.security.yml run --rm snyk-frontend || true
-	docker-compose -f docker-compose.security.yml run --rm snyk-backend || true
-	docker-compose -f docker-compose.security.yml run --rm osv-scanner || true
+	docker compose -f docker-compose.security.yml run --rm snyk-frontend || true
+	docker compose -f docker-compose.security.yml run --rm snyk-backend || true
+	docker compose -f docker-compose.security.yml run --rm osv-scanner || true
 
 security-docker-containers:
 	@echo "🐳 Docker-based container scanning..."
 	@echo "Building images first..."
-	docker-compose build
-	docker-compose -f docker-compose.security.yml run --rm trivy-frontend || true
-	docker-compose -f docker-compose.security.yml run --rm trivy-backend || true
-	docker-compose -f docker-compose.security.yml run --rm hadolint-frontend
-	docker-compose -f docker-compose.security.yml run --rm hadolint-backend
+	docker compose build
+	docker compose -f docker-compose.security.yml run --rm trivy-frontend || true
+	docker compose -f docker-compose.security.yml run --rm trivy-backend || true
+	docker compose -f docker-compose.security.yml run --rm hadolint-frontend
+	docker compose -f docker-compose.security.yml run --rm hadolint-backend
 
 security-docker-infra:
 	@echo "🏗️ Docker-based infrastructure scanning..."
-	docker-compose -f docker-compose.security.yml run --rm checkov
+	docker compose -f docker-compose.security.yml run --rm checkov
 
 security-docker-sast:
 	@echo "🔍 Docker-based SAST scanning..."
-	docker-compose -f docker-compose.security.yml run --rm semgrep
+	docker compose -f docker-compose.security.yml run --rm semgrep
 
 security-docker-all:
 	@echo "🔒 Running all Docker-based security scans..."

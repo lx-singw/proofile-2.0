@@ -29,6 +29,7 @@ try:
         pool_size=pool_size,
         max_overflow=max_overflow,
         pool_timeout=pool_timeout,
+        connect_args={"server_settings": {"search_path": "public"}},
     )
 except Exception as e:
     raise RuntimeError(f"Failed to create database engine: {e}") from e
@@ -44,13 +45,10 @@ AsyncSessionLocal: sessionmaker[AsyncSession] = sessionmaker(
 
 # Standard FastAPI dependency to get an async session
 async def get_db() -> AsyncIterator[AsyncSession]:
+    """Provide an AsyncSession for the request, with search_path set to public."""
     async with AsyncSessionLocal() as session:
-        try:
-            await session.execute(text("SET search_path TO public"))
-            yield session
-        finally:
-            # Session context handles close; explicit block kept for clarity/extension
-            pass
+        await session.execute(text("SET search_path TO public"))
+        yield session
 
 # Graceful shutdown helper to dispose engine
 async def dispose_engine() -> None:

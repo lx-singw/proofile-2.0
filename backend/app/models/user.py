@@ -1,20 +1,13 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, Enum as SQLAlchemyEnum, event
+from sqlalchemy import Column, Integer, String, Boolean, event
 from sqlalchemy.orm import relationship, Mapped
 from typing import Dict, Tuple
 from .base import Base, TimestampMixin
 import enum
 
+
 class UserRole(str, enum.Enum):
-    STUDENT = "student"
-    GRADUATE = "graduate"
     APPRENTICE = "apprentice"
-    PROFESSIONAL = "professional"
-    JOB_SEEKER = "job_seeker"
-    CAREER_CHANGER = "career_changer"
-    REMOTE_WORKER = "remote_worker"
-    FREELANCER = "freelancer"
-    RECRUITER = "recruiter"
     EMPLOYER = "employer"
     ADMIN = "admin"
 
@@ -25,16 +18,10 @@ class User(Base, TimestampMixin):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     full_name = Column(String, index=True)
-    role = Column(
-        SQLAlchemyEnum(
-            UserRole,
-            name="userrole",
-            values_callable=lambda enum_cls: [member.value for member in enum_cls],
-            validate_strings=True,
-        ),
-        nullable=False,
-        default=UserRole.APPRENTICE,
-    )
+    # Role stored as plain string in the DB. Application-level enum `UserRole`
+    # is kept for validation/logic, but the DB column is a `String` so Alembic
+    # and runtime SQLAlchemy won't attempt to create/alter Postgres enum types.
+    role = Column(String, nullable=False, default=UserRole.APPRENTICE.value)
     is_active = Column(Boolean, default=True)
 
     # Relationship to Profile

@@ -47,7 +47,7 @@ services:
       target: development
     container_name: proofile-backend
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "${BACKEND_PORT:-8001}:8000"
     volumes:
       - ./backend:/app
       - backend_cache:/app/.cache
@@ -70,7 +70,7 @@ services:
       retries: 3
       start_period: 40s
     restart: unless-stopped
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: /bin/sh /app/scripts/entrypoint.sh
 
   frontend:
     build:
