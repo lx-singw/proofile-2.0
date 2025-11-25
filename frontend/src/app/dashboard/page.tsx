@@ -12,6 +12,22 @@ import DashboardHeader from "@/components/layout/DashboardHeader";
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading, updateUser } = useAuth();
+
+  // Welcome message state - must be at top level before any conditional returns
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const flag = sessionStorage.getItem('justCompletedOnboarding');
+      console.log('[Dashboard] Checking welcome flag:', flag);
+      if (flag === 'true') {
+        console.log('[Dashboard] Setting showWelcome to true');
+        setShowWelcome(true);
+        sessionStorage.removeItem('justCompletedOnboarding');
+      }
+    }
+  }, [user?.persona, user?.experience_level]); // Re-check when user data changes
+
   // Derived state - no need for useEffect to control visibility
   const hasPersona = Boolean(user?.persona);
   // Fix: Recruiter persona doesn't require industry
@@ -46,6 +62,10 @@ export default function DashboardPage() {
     console.log("[Dashboard] handleOnboardingComplete called with:", data);
     try {
       await updateUser(data);
+      // Set flag to show "Welcome" instead of "Welcome back"
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('justCompletedOnboarding', 'true');
+      }
       // The re-render will catch isOnboarded and show the dashboard
     } catch (error) {
       console.error("Failed to complete onboarding:", error);
@@ -84,11 +104,9 @@ export default function DashboardPage() {
   }
 
   // 3. Returning User: Fully onboarded -> Dashboard
-  // Determine welcome message
-  const isNewUser = user?.created_at && (Date.now() - new Date(user.created_at).getTime() < 5 * 60 * 1000);
   const welcomeMessage = user?.full_name
-    ? (isNewUser ? `Welcome, ${user.full_name.split(' ')[0]}!` : `Welcome back, ${user.full_name.split(' ')[0]}!`)
-    : (isNewUser ? 'Welcome!' : 'Welcome back!');
+    ? (showWelcome ? `Welcome, ${user.full_name.split(' ')[0]}!` : `Welcome back, ${user.full_name.split(' ')[0]}!`)
+    : (showWelcome ? 'Welcome!' : 'Welcome back!');
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
