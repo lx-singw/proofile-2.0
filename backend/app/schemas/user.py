@@ -7,7 +7,7 @@ providing validation and serialization.
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
 from typing import Optional
 from datetime import datetime
-from app.models.user import UserRole
+from app.models.user import UserRole, UserPersona
 from app.core.security import validate_password_strength
 
 # --- Base Schema ---
@@ -16,6 +16,10 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     role: UserRole = UserRole.APPRENTICE
+    persona: Optional[UserPersona] = None
+    experience_level: Optional[str] = None
+    primary_goal: Optional[str] = None
+    industry: Optional[str] = None
 
 # --- Create Schema ---
 # Properties to receive via API on creation.
@@ -48,6 +52,10 @@ class UserUpdate(BaseModel):
     password: Optional[str] = Field(None, min_length=8, max_length=72) # Add validation
     is_active: Optional[bool] = None
     role: Optional[UserRole] = None
+    persona: Optional[UserPersona] = None
+    experience_level: Optional[str] = None
+    primary_goal: Optional[str] = None
+    industry: Optional[str] = None
 
 # --- Settings Update Schema ---
 # For user to update their own account settings (requires current password verification)

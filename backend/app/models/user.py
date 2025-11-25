@@ -11,6 +11,18 @@ class UserRole(str, enum.Enum):
     EMPLOYER = "employer"
     ADMIN = "admin"
 
+
+class UserPersona(str, enum.Enum):
+    STUDENT = "student"
+    GRADUATE = "graduate"
+    APPRENTICE = "apprentice"
+    PROFESSIONAL = "professional"
+    JOB_SEEKER = "job_seeker"
+    CAREER_CHANGER = "career_changer"
+    REMOTE_WORKER = "remote_worker"
+    FREELANCER = "freelancer"
+    RECRUITER = "recruiter"
+
 class User(Base, TimestampMixin):
     __tablename__ = "users"
     
@@ -22,6 +34,12 @@ class User(Base, TimestampMixin):
     # is kept for validation/logic, but the DB column is a `String` so Alembic
     # and runtime SQLAlchemy won't attempt to create/alter Postgres enum types.
     role = Column(String, nullable=False, default=UserRole.APPRENTICE.value)
+    # Persona stored as string, nullable initially to allow existing users
+    persona = Column(String, nullable=True)
+    # Onboarding fields for personalization
+    experience_level = Column(String, nullable=True)
+    primary_goal = Column(String, nullable=True)
+    industry = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
 
     # Relationship to Profile

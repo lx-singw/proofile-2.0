@@ -1,16 +1,19 @@
 """
 API Endpoints for Users.
 """
-from sqlalchemy.exc import IntegrityError
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
+import logging
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app import schemas
+from sqlalchemy import select
 from app.api.v1 import deps
+from app.models.user import User
+from app import schemas
 from app.services import user_service, profile_service
 from app.models.user import UserRole
 from sqlalchemy import text
-import logging
+from sqlalchemy.exc import IntegrityError
+
 
 router = APIRouter()
 
@@ -123,9 +126,52 @@ async def read_current_user(current_user = Depends(deps.get_current_active_user)
         "email": current_user.email,
         "full_name": current_user.full_name,
         "role": current_user.role,
+        "persona": current_user.persona,
+        "experience_level": current_user.experience_level,
+        "primary_goal": current_user.primary_goal,
+        "industry": current_user.industry,
         "is_active": current_user.is_active,
-        "created_at": None,
+        "created_at": current_user.created_at,
     }
+
+@router.patch("/me", response_model=schemas.UserRead)
+async def update_current_user(
+    user_in: schemas.UserUpdate,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Update the current user's own information.
+    Users can update their own persona, full_name, etc.
+    """
+    try:
+        # Fetch the actual User object from the database
+        # (current_user from deps is a CachedUser, not a mapped SQLAlchemy object)
+        result = await db.execute(select(User).where(User.id == current_user.id))
+        db_user = result.scalar_one_or_none()
+        
+        if not db_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        print(f"[DEBUG] Updating user {db_user.id} with data: {user_in.model_dump(exclude_unset=True)}")
+        updated_user = await user_service.update_user(db, user=db_user, user_in=user_in)
+        print(f"[DEBUG] User updated successfully: {updated_user.id}")
+        return updated_user
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        error_detail = f"User self-update failed: {str(e)}\n{traceback.format_exc()}"
+        print(error_detail)
+        logging.getLogger(__name__).exception("User self-update failed: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update user: {str(e)}"
+        ) from e
+
 
 @router.patch("/{user_id}", response_model=schemas.UserRead)
 async def update_user(

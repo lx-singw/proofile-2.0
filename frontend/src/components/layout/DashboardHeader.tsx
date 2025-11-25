@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
-import DashboardDropdown from "./DashboardDropdown";
-import SearchBar from "./SearchBar";
+import ProofileLogo from "@/components/branding/ProofileLogo";
 import NotificationBell from "./NotificationBell";
-import CreateButton from "./CreateButton";
-import MobileMenu from "./MobileMenu";
-import MobileDrawer from "./MobileDrawer";
-import { Settings, LogOut, LayoutDashboard, FileText } from "lucide-react";
+import DashboardDropdown from "./DashboardDropdown";
+import { Settings, LogOut, LayoutDashboard, FileText, User } from "lucide-react";
 
 interface DashboardHeaderProps {
   unreadNotifications?: number;
@@ -18,67 +15,76 @@ interface DashboardHeaderProps {
 /**
  * DashboardHeader
  * 
- * Main header component for dashboard pages.
+ * Redesigned header component matching home page aesthetic.
  * Features:
- * - Left section: Logo & dropdown menu
- * - Center: Search bar (hidden on mobile)
- * - Right section: Notifications, create button, user menu
- * - Mobile drawer for navigation
- * - Sticky positioning
+ * - ProofileLogo with tagline
+ * - Simplified navigation menu
+ * - Notifications and user menu
+ * - Clean, modern design
  */
 export default function DashboardHeader({
   unreadNotifications = 0,
 }: DashboardHeaderProps) {
   const { user, logout } = useAuth();
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   if (!user) return null;
 
   const handleLogout = async () => {
-    setMobileDrawerOpen(false);
     await logout();
   };
 
   return (
-    <>
-      {/* Main Header */}
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-40 dark:border-gray-700 dark:bg-gray-900">
-        <nav className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 max-w-7xl mx-auto w-full" role="navigation" aria-label="Main navigation">
-          {/* Left Section: Logo & Mobile Menu */}
-          <div className="flex items-center gap-4">
-            <MobileMenu
-              onClick={() => setMobileDrawerOpen(true)}
-              isOpen={mobileDrawerOpen}
-            />
+    <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Left Section: Logo */}
+          <div className="flex flex-col">
+            <Link href="/dashboard">
+              <ProofileLogo size={32} showWordmark={true} />
+            </Link>
+            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-10">
+              Beyond resumes. Proven digital professional identities.
+            </span>
+          </div>
+
+          {/* Center Section: Navigation */}
+          <nav className="hidden md:flex items-center gap-1" role="navigation" aria-label="Main navigation">
             <Link
               href="/dashboard"
-              className="text-xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              Proofile
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
             </Link>
-          </div>
+            <Link
+              href="/resume"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <FileText className="w-4 h-4" />
+              Resume Builder
+            </Link>
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <User className="w-4 h-4" />
+              Profile
+            </Link>
+          </nav>
 
-          {/* Center Section: Search Bar (hidden on mobile) */}
-          <div className="hidden md:block flex-1 mx-4 lg:mx-8">
-            <SearchBar placeholder="Search your profile..." />
-          </div>
-
-          {/* Right Section: Notifications, Create Button, User Menu */}
+          {/* Right Section: Notifications & User Menu */}
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Notifications */}
             <NotificationBell unreadCount={unreadNotifications} />
 
-            {/* Create Button */}
-            <CreateButton ariaLabel="Create new item" />
-
             {/* User Menu Dropdown */}
             <DashboardDropdown
               trigger={
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 cursor-pointer">
                   <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
                     {user.full_name || user.email.split("@")[0]}
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-sm font-bold shadow-md">
                     {(user.full_name || user.email).charAt(0).toUpperCase()}
                   </div>
                 </div>
@@ -115,16 +121,8 @@ export default function DashboardHeader({
               }}
             />
           </div>
-        </nav>
-      </header>
-
-      {/* Mobile Drawer */}
-      <MobileDrawer
-        isOpen={mobileDrawerOpen}
-        onClose={() => setMobileDrawerOpen(false)}
-        user={user}
-        onLogout={handleLogout}
-      />
-    </>
+        </div>
+      </div>
+    </header>
   );
 }

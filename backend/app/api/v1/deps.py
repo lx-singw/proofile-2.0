@@ -6,6 +6,7 @@ getting the current authenticated user.
 """
 import asyncio
 from dataclasses import dataclass, replace
+from datetime import datetime
 import time
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -17,13 +18,13 @@ from jose import JWTError
 from app.core.database import get_db
 from app.core import security
 from app.core.config import settings # Import settings to get JWT_AUDIENCE
-from app.models.user import User, UserRole
+from app.models.user import User, UserRole, UserPersona
 from app.schemas.token import TokenData
 import logging
 
 logger = logging.getLogger(__name__)
 
-_CACHE_TTL_SECONDS = 5.0
+_CACHE_TTL_SECONDS = 0.0
 
 @dataclass(frozen=True)
 class CachedUser:
@@ -31,7 +32,12 @@ class CachedUser:
     email: str
     full_name: str | None
     role: UserRole
+    persona: UserPersona | None
+    experience_level: str | None
+    primary_goal: str | None
+    industry: str | None
     is_active: bool
+    created_at: datetime | None
 
 _token_cache: dict[str, tuple[CachedUser, float]] = {}
 _token_locks: dict[str, asyncio.Lock] = {}
@@ -111,15 +117,48 @@ async def get_current_user(
             raise credentials_exception
         
         logger.debug("User authenticated successfully: %s", username)
-        cached_user = CachedUser(
-            id=user.id,
-            email=user.email,
-            full_name=user.full_name,
-            role=user.role if isinstance(user.role, UserRole) else UserRole(user.role),
-            is_active=user.is_active,
-        )
-        _token_cache[token] = (cached_user, now + _CACHE_TTL_SECONDS)
-        return replace(cached_user)
+        
+        # Helper to safely convert role/persona to Enum
+        try:
+            role_val = user.role
+            if not isinstance(role_val, UserRole):
+                try:
+                    role_val = UserRole(role_val)
+                except ValueError:
+                    logger.error(f"Invalid role in DB: {role_val}")
+                    # Fallback to APPRENTICE to prevent 500 error
+                    role_val = UserRole.APPRENTICE
+            
+            persona_val = user.persona
+            # Handle empty string or None
+            if not persona_val:
+                persona_val = None
+            elif not isinstance(persona_val, UserPersona):
+                try:
+                    persona_val = UserPersona(persona_val)
+                except ValueError:
+                    # Fallback if DB has invalid enum value
+                    logger.warning(f"Invalid persona value in DB: {persona_val}")
+                    persona_val = None
+
+            cached_user = CachedUser(
+                id=user.id,
+                email=user.email,
+                full_name=user.full_name,
+                role=role_val,
+                persona=persona_val,
+                experience_level=user.experience_level,
+                primary_goal=user.primary_goal,
+                industry=user.industry,
+                is_active=user.is_active,
+                created_at=user.created_at,
+            )
+            _token_cache[token] = (cached_user, now + _CACHE_TTL_SECONDS)
+            return replace(cached_user)
+        except Exception as e:
+            import traceback
+            logger.error(f"Error in get_current_user: {e}\n{traceback.format_exc()}")
+            raise
 
 async def get_current_active_user(
     current_user: CachedUser = Depends(get_current_user)

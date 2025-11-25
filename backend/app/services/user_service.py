@@ -101,6 +101,22 @@ async def update_user(db: AsyncSession, user: User, user_in: UserUpdate) -> User
         del update_data["password"]
         user.hashed_password = hashed_password
 
+    # Handle persona separately to ensure proper conversion
+    if "persona" in update_data:
+        persona_value = update_data.pop("persona")
+        if persona_value is not None:
+            import enum as _enum
+            if isinstance(persona_value, _enum.Enum):
+                persona_str = persona_value.value
+            else:
+                persona_str = str(persona_value)
+        else:
+            persona_str = None
+        
+        # Set attribute directly so SQLAlchemy tracks the change
+        user.persona = persona_str
+
+    # Update remaining fields
     for field, value in update_data.items():
         setattr(user, field, value)
 

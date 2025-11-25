@@ -1,286 +1,56 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
+import { Upload, PenTool, Download, Share2, ChevronRight, Sparkles } from "lucide-react";
+import PersonaSelector from "@/components/dashboard/PersonaSelector";
+import OnboardingWizard, { type OnboardingData } from "@/components/dashboard/OnboardingWizard";
+import type { PersonaType } from "@/components/dashboard/PersonaSelector";
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import WelcomeBanner from "@/components/dashboard/WelcomeBanner";
-import StatsCards from "@/components/dashboard/StatsCards";
-import ActivityGraph from "@/components/dashboard/ActivityGraph";
-import ProfileCompletion from "@/components/dashboard/ProfileCompletion";
-import SuggestedActions from "@/components/dashboard/SuggestedActions";
-import ActivityFeed from "@/components/dashboard/ActivityFeed";
-
-type ActivityPoint = {
-  date: Date;
-  count: number;
-  level: 0 | 1 | 2 | 3 | 4;
-};
-
-type CompletionStep = {
-  id: string;
-  label: string;
-  description: string;
-  completed: boolean;
-  href: string;
-};
-
-type SuggestedActionItem = {
-  id: string;
-  title: string;
-  description: string;
-  icon: ReactNode;
-  cta: string;
-  href: string;
-  priority: "high" | "medium" | "low";
-};
-
-type ActivityFeedItem = {
-  id: string;
-  type:
-    | "endorsement"
-    | "profile-view"
-    | "skill-added"
-    | "message"
-    | "profile-complete"
-    | "connection";
-  actor: string;
-  actorAvatar?: string;
-  title: string;
-  description?: string;
-  timestamp: Date;
-  href: string;
-  read: boolean;
-};
-
-function createSeed(userId?: number, email?: string | null, username?: string | null) {
-  let seed = typeof userId === "number" ? userId * 97 : 42;
-  const source = `${email ?? ""}${username ?? ""}`;
-  for (let i = 0; i < source.length; i += 1) {
-    seed = (seed + source.charCodeAt(i)) % 2147483647;
-  }
-  return seed || 12345;
-}
-
-function createSeededRandom(seedValue: number) {
-  let seed = seedValue % 2147483647;
-  if (seed <= 0) seed += 2147483646;
-  return () => {
-    seed = (seed * 16807) % 2147483647;
-    return (seed - 1) / 2147483646;
-  };
-}
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
-  const { data: profile, isLoading: profileLoading } = useProfile({ enabled: Boolean(user) });
+  const { user, loading, updateUser } = useAuth();
+  // Derived state - no need for useEffect to control visibility
+  const hasPersona = Boolean(user?.persona);
+  // Fix: Recruiter persona doesn't require industry
+  const isOnboarded = Boolean(
+    user?.experience_level &&
+    user?.primary_goal &&
+    (user?.industry || user?.persona === 'recruiter')
+  );
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
+  console.log("[Dashboard] Render state:", {
+    hasPersona,
+    isOnboarded,
+    persona: user?.persona,
+    experience: user?.experience_level,
+    goal: user?.primary_goal,
+    industry: user?.industry
+  });
+
+  // Handle persona selection
+  const handlePersonaSelect = async (persona: PersonaType) => {
+    console.log("[Dashboard] handlePersonaSelect called with:", persona);
+    try {
+      // Optimistically update local state if needed, or just wait for updateUser
+      await updateUser({ persona });
+      // The re-render will catch !isOnboarded && hasPersona and show the wizard
+    } catch (error) {
+      console.error("Failed to update persona:", error);
     }
-  }, [loading, user, router]);
+  };
 
-  const displayName = user?.full_name || user?.username || user?.email || "there";
-  const createdAt = typeof user?.created_at === "string" ? new Date(user.created_at) : null;
-  const isNewUser = !profile?.id || (createdAt ? Date.now() - createdAt.getTime() < 5 * 24 * 60 * 60 * 1000 : false);
-
-  const seed = useMemo(() => createSeed(user?.id as number | undefined, user?.email, user?.username), [user?.email, user?.id, user?.username]);
-  const random = useMemo(() => createSeededRandom(seed), [seed]);
-
-  const stats = useMemo(() => {
-    const baseViews = Math.floor(120 + random() * 180);
-    const baseEndorsements = Math.floor(4 + random() * 8);
-    const baseVerifications = Math.floor(1 + random() * 4);
-    return {
-      profileViews: baseViews,
-      endorsements: baseEndorsements,
-      verifications: baseVerifications,
-    };
-  }, [random]);
-
-  const activityData = useMemo<ActivityPoint[]>(() => {
-    const rng = createSeededRandom(seed + 17);
-    const today = new Date();
-    today.setHours(12, 0, 0, 0);
-    const days = 7 * 12; // last 12 weeks
-    const points: ActivityPoint[] = [];
-
-    for (let i = days - 1; i >= 0; i -= 1) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      const activityScore = Math.round(rng() * 6);
-      const level = (activityScore === 0
-        ? 0
-        : activityScore <= 1
-        ? 1
-        : activityScore <= 3
-        ? 2
-        : activityScore <= 5
-        ? 3
-        : 4) as ActivityPoint["level"];
-
-      points.push({
-        date,
-        count: activityScore,
-        level,
-      });
+  const handleOnboardingComplete = async (data: OnboardingData) => {
+    console.log("[Dashboard] handleOnboardingComplete called with:", data);
+    try {
+      await updateUser(data);
+      // The re-render will catch isOnboarded and show the dashboard
+    } catch (error) {
+      console.error("Failed to complete onboarding:", error);
     }
-
-    return points;
-  }, [seed]);
-
-  const completionSteps = useMemo<CompletionStep[]>(() => {
-    const steps: CompletionStep[] = [
-      {
-        id: "headline",
-        label: "Add Professional Title",
-        description: "Tell employers about your role and expertise",
-        completed: Boolean(profile?.headline),
-        href: "/profile/edit",
-      },
-      {
-        id: "summary",
-        label: "Write Summary",
-        description: "Share your professional story",
-        completed: Boolean(profile?.summary),
-        href: "/profile/edit",
-      },
-      {
-        id: "avatar",
-        label: "Upload Photo",
-        description: "Resumes with photos get more views",
-        completed: Boolean(profile?.avatar_url),
-        href: "/profile/photo",
-      },
-      {
-        id: "experience",
-        label: "Add Experience",
-        description: "Showcase your work history and achievements",
-        completed: false,
-        href: "/profile/experience/add",
-      },
-      {
-        id: "skills",
-        label: "Add Key Skills",
-        description: "Highlight the skills you want to be known for",
-        completed: false,
-        href: "/profile/skills/add",
-      },
-    ];
-
-    return steps;
-  }, [profile?.avatar_url, profile?.headline, profile?.summary]);
-
-  const completionPercentage = useMemo(() => {
-    const total = completionSteps.length;
-    const completed = completionSteps.filter((step) => step.completed).length;
-    return total === 0 ? 0 : Math.round((completed / total) * 100);
-  }, [completionSteps]);
-
-  const suggestedActions = useMemo<SuggestedActionItem[]>(() => {
-    const actions: SuggestedActionItem[] = [];
-
-    if (!profile?.avatar_url) {
-      actions.push({
-        id: "add-photo",
-        title: "Add a Professional Photo",
-        description: "Resumes with photos are more likely to be viewed",
-        icon: <span role="img" aria-label="camera" className="text-lg">📸</span>,
-        cta: "Upload Photo",
-        href: "/profile/photo",
-        priority: "high",
-      });
-    }
-
-    if (!profile?.summary) {
-      actions.push({
-        id: "write-summary",
-        title: "Write Your Summary",
-        description: "Share your experience and goals to attract employers",
-        icon: <span role="img" aria-label="summary" className="text-lg">📝</span>,
-        cta: "Write Summary",
-        href: "/profile/edit",
-        priority: "high",
-      });
-    }
-
-    actions.push(
-      {
-        id: "share-profile",
-        title: "Share Your Resume",
-        description: "Increase visibility by sharing with your network",
-        icon: <span role="img" aria-label="share" className="text-lg">🔗</span>,
-        cta: "Share Resume",
-        href: "/profile/share",
-        priority: "medium",
-      },
-      {
-        id: "manage-settings",
-        title: "Review Account Settings",
-        description: "Ensure your contact details and preferences are up to date",
-        icon: <span role="img" aria-label="settings" className="text-lg">⚙️</span>,
-        cta: "Open Settings",
-        href: "/settings",
-        priority: "low",
-      }
-    );
-
-    return actions;
-  }, [profile?.avatar_url, profile?.summary]);
-
-  const activityFeedItems = useMemo<ActivityFeedItem[]>(() => {
-    const base = Date.UTC(2025, 0, 10, 12, 0, 0);
-    const makeTimestamp = (hoursAgo: number) => new Date(base - hoursAgo * 60 * 60 * 1000);
-
-    return [
-      {
-        id: "act-1",
-        type: "profile-view",
-        actor: "Tech Recruiter",
-        title: "Viewed your profile",
-        description: "Senior recruiter from Innovate Labs explored your profile",
-        timestamp: makeTimestamp(6),
-        href: "/profile/views",
-        read: false,
-      },
-      {
-        id: "act-2",
-        type: "endorsement",
-        actor: "Sarah Johnson",
-        title: "Endorsed you for React",
-        description: "Senior Frontend Engineer at BrightApps",
-        timestamp: makeTimestamp(18),
-        href: "/profile/endorsements",
-        read: false,
-      },
-      {
-        id: "act-3",
-        type: "skill-added",
-        actor: "You",
-        title: "Added TypeScript to your skills",
-        description: "Your resume completeness improved",
-        timestamp: makeTimestamp(56),
-        href: "/profile/skills",
-        read: true,
-      },
-      {
-        id: "act-4",
-        type: "connection",
-        actor: "Emma Wilson",
-        title: "Connected with you",
-        description: "Product Designer at Creative Studio",
-        timestamp: makeTimestamp(80),
-        href: "/connections",
-        read: true,
-      },
-    ];
-  }, []);
-
-  const handleNavigate = (path: string) => () => router.push(path);
+  };
 
   if (loading) {
     return (
@@ -302,47 +72,121 @@ export default function DashboardPage() {
     );
   }
 
+  // 1. New User Flow: No Persona -> Persona Selector
+  if (!hasPersona) {
+    return <PersonaSelector onSelect={handlePersonaSelect} />;
+  }
+
+  // 2. Incomplete Onboarding: Has Persona but not fully onboarded -> Wizard
+  if (!isOnboarded) {
+    // We know user.persona exists here because of the check above
+    return <OnboardingWizard persona={user.persona!} onComplete={handleOnboardingComplete} />;
+  }
+
+  // 3. Returning User: Fully onboarded -> Dashboard
+  // Determine welcome message
+  const isNewUser = user?.created_at && (Date.now() - new Date(user.created_at).getTime() < 5 * 60 * 1000);
+  const welcomeMessage = user?.full_name
+    ? (isNewUser ? `Welcome, ${user.full_name.split(' ')[0]}!` : `Welcome back, ${user.full_name.split(' ')[0]}!`)
+    : (isNewUser ? 'Welcome!' : 'Welcome back!');
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-gray-50 flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
       <DashboardHeader />
       <main className="flex-1" role="main">
-        <div className="mx-auto w-full max-w-6xl px-6 py-8 space-y-6">
+        <div className="mx-auto w-full max-w-6xl px-6 py-12 space-y-8">
           <h1 className="sr-only">Dashboard</h1>
-          <div data-testid="profile-status-card">
-            <WelcomeBanner
-              userName={displayName}
-              isNewUser={isNewUser}
-              onCreateProfile={handleNavigate("/profile/create")}
-              onViewProfile={handleNavigate("/profile")}
-            />
-            <p className="sr-only">Signed in as {user.email}</p>
+
+          {/* Welcome Header */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 via-purple-500/10 to-blue-500/10 rounded-3xl p-8 sm:p-12 mb-12 border border-green-200 dark:border-green-800 shadow-xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-green-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-400/20 to-green-400/20 rounded-full blur-3xl"></div>
+            <div className="relative text-center">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                {welcomeMessage}
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Let's build your verified resume and showcase your skills to the world.
+              </p>
+            </div>
           </div>
 
-          <StatsCards
-            profileViews={stats.profileViews}
-            endorsements={stats.endorsements}
-            verifications={stats.verifications}
-            onViewStats={handleNavigate("/analytics")}
-          />
+          {/* Main Action Cards */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {/* Upload Resume Card */}
+            <button
+              onClick={() => router.push("/resume/upload")}
+              className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border-2 border-transparent hover:border-green-600 dark:hover:border-green-500 transition-all hover:shadow-2xl hover:scale-105"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-transparent rounded-full blur-2xl"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Upload className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Upload Resume
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Upload your existing resume for AI-powered refinement
+                </p>
+                <div className="inline-flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold">
+                  <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-xs rounded-full">
+                    AI Refined
+                  </span>
+                  <ChevronRight className="w-5 h-5" />
+                </div>
+              </div>
+            </button>
 
-          <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
-            <ActivityGraph
-              title="Resume engagement (last 12 weeks)"
-              data={activityData}
-            />
-            <ProfileCompletion
-              steps={completionSteps}
-              completionPercentage={completionPercentage}
-              onStepClick={(stepId) => {
-                const target = completionSteps.find((step) => step.id === stepId);
-                if (target) router.push(target.href);
-              }}
-            />
+            {/* Build from Scratch Card */}
+            <button
+              onClick={() => router.push("/resume/build")}
+              className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl border-2 border-transparent hover:border-purple-600 dark:hover:border-purple-500 transition-all hover:shadow-2xl hover:scale-105"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-2xl"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <PenTool className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Build from Scratch
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Create a professional resume with our guided builder
+                </p>
+                <div className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 font-semibold">
+                  <span>Start building</span>
+                  <ChevronRight className="w-5 h-5" />
+                </div>
+              </div>
+            </button>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[1.5fr,1fr]">
-            <ActivityFeed activities={activityFeedItems} isLoading={profileLoading} />
-            <SuggestedActions actions={suggestedActions} />
+          {/* Quick Actions */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              Quick Actions
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <button
+                onClick={() => router.push("/resume/download")}
+                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+              >
+                <Download className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <span className="font-medium text-gray-900 dark:text-white">
+                  Download as PDF
+                </span>
+              </button>
+              <button
+                onClick={() => router.push("/profile")}
+                className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all"
+              >
+                <Share2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <span className="font-medium text-gray-900 dark:text-white">
+                  Share Your Profile
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </main>

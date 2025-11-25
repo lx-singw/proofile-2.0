@@ -15,6 +15,7 @@ type AuthContextValue = {
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  updateUser: (updates: Partial<CurrentUser>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -111,10 +112,22 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
   };
 
+  const updateUser = async (updates: Partial<CurrentUser>) => {
+    try {
+      // Call the API to update user
+      const response = await authService.updateCurrentUser(updates);
+      // Update the cache with the new user data
+      queryClient.setQueryData(ME_QUERY_KEY, response);
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      throw error;
+    }
+  };
+
   const isLoading = bootstrapping || (loading && user !== null);
 
   return (
-    <AuthContext.Provider value={{ user: user ?? null, loading: isLoading, login, register, logout, refresh }}>
+    <AuthContext.Provider value={{ user: user ?? null, loading: isLoading, login, register, logout, refresh, updateUser }}>
       {isLoading ? (
         <div className="min-h-screen flex items-center justify-center">
           <p>Loading...</p>

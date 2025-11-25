@@ -11,4 +11,4 @@ until pg_isready -h postgres -U proofile_user -d proofile_dev; do
 alembic upgrade head
 
 # Start the backend app
-exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
