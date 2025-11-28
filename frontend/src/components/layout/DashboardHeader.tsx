@@ -7,6 +7,7 @@ import ProofileLogo from "@/components/branding/ProofileLogo";
 import NotificationBell from "./NotificationBell";
 import DashboardDropdown from "./DashboardDropdown";
 import { Settings, LogOut, LayoutDashboard, FileText, User } from "lucide-react";
+import { Upload } from "lucide-react";
 
 interface DashboardHeaderProps {
   unreadNotifications?: number;
@@ -26,91 +27,103 @@ export default function DashboardHeader({
   unreadNotifications = 0,
 }: DashboardHeaderProps) {
   const { user, logout } = useAuth();
-
-  if (!user) return null;
+  const [logoutLoading, setLogoutLoading] = React.useState(false);
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      setLogoutLoading(true);
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setLogoutLoading(false);
+    }
   };
+
+  if (!user) {
+    return (
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 bg-gray-100 dark:bg-gray-800 animate-pulse">
+                <div className="w-6 h-6" />
+              </span>
+              <span className="ml-2 text-gray-400 animate-pulse">Loading...</span>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <span className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left Section: Logo */}
-          <div className="flex flex-col">
-            <Link href="/dashboard">
+          {/* Left Section: Logo & Mobile Menu */}
+          <div className="flex items-center gap-4">
+            {/* Mobile Menu (visible on small screens, or always if that's the design) */}
+            <DashboardDropdown
+              trigger={
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              }
+              triggerClassName="inline-flex items-center justify-center rounded-md p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
+              items={[
+                { label: "Home", href: "/dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
+                { label: "Resume Builder", href: "/resume/build", icon: <FileText className="w-4 h-4" /> },
+                { label: "Upload Resume", href: "/resume/upload", icon: <Upload className="w-4 h-4" /> },
+                { label: "Profile", href: "/profile", icon: <User className="w-4 h-4" /> },
+                { label: "Settings", href: "/settings", icon: <Settings className="w-4 h-4" /> },
+              ]}
+              align="left"
+            />
+
+            <Link href="/dashboard" className="flex items-center gap-2">
               <ProofileLogo size={32} showWordmark={true} />
             </Link>
-            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 ml-10">
-              Beyond resumes. Proven digital professional identities.
-            </span>
           </div>
-
-          {/* Center Section: Navigation */}
-          <nav className="hidden md:flex items-center gap-1" role="navigation" aria-label="Main navigation">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Dashboard
-            </Link>
-            <Link
-              href="/resume"
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <FileText className="w-4 h-4" />
-              Resume Builder
-            </Link>
-            <Link
-              href="/profile"
-              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              <User className="w-4 h-4" />
-              Profile
-            </Link>
-          </nav>
 
           {/* Right Section: Notifications & User Menu */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Notifications */}
             <NotificationBell unreadCount={unreadNotifications} />
 
-            {/* User Menu Dropdown */}
             <DashboardDropdown
               trigger={
-                <div className="flex items-center gap-2 cursor-pointer">
+                <>
                   <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
                     {user.full_name || user.email.split("@")[0]}
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-sm font-bold shadow-md">
-                    {(user.full_name || user.email).charAt(0).toUpperCase()}
-                  </div>
-                </div>
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt="Profile picture"
+                      className="w-8 h-8 rounded-full object-cover shadow-sm border border-gray-200 dark:border-gray-700"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                      {(user.full_name || user.email).charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  {logoutLoading && (
+                    <span className="ml-2 animate-spin text-green-600">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" strokeOpacity="0.2" /><path d="M12 2a10 10 0 0 1 10 10" /></svg>
+                    </span>
+                  )}
+                </>
               }
+              triggerClassName="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
               items={[
-                {
-                  label: "Dashboard",
-                  href: "/dashboard",
-                  icon: <LayoutDashboard className="w-4 h-4" />,
-                },
-                {
-                  label: "Professional Profile",
-                  href: "/profile",
-                  icon: <FileText className="w-4 h-4" />,
-                },
-                {
-                  label: "Account Settings",
-                  href: "/settings",
-                  icon: <Settings className="w-4 h-4" />,
-                },
-                {
-                  label: "Sign Out",
-                  href: "/logout",
-                  icon: <LogOut className="w-4 h-4" />,
-                  divider: true,
-                },
+                { label: "Professional Profile", href: "/profile", icon: <FileText className="w-4 h-4" /> },
+                { label: "Account Settings", href: "/settings", icon: <Settings className="w-4 h-4" /> },
+                { label: "Sign Out", href: "/logout", icon: <LogOut className="w-4 h-4" />, divider: true },
               ]}
               align="right"
               onItemClick={async (item, event) => {

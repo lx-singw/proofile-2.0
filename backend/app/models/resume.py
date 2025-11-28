@@ -11,6 +11,7 @@ class Resume(Base, TimestampMixin):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String(255), nullable=False)
+    template_id = Column(String(50), nullable=False, server_default='modern')
     data = Column(JSONB, nullable=False, server_default='{}')
 
     # relationships

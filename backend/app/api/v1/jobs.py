@@ -4,7 +4,7 @@ API Endpoints for Jobs.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1 import deps
+from app.api import deps
 from app.models.user import User, UserRole
 from app.schemas.job import JobCreate, JobRead
 from app.services import job_service

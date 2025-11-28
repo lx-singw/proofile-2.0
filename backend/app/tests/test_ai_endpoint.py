@@ -15,7 +15,7 @@ async def test_optimize_bullet_streaming(monkeypatch):
     async def dummy_user():
         return {"id": "test-user"}
 
-    from app.api.v1.deps import get_db, get_current_active_user  # noqa: E401
+    from app.api.deps import get_db, get_current_active_user  # noqa: E401
     app.dependency_overrides[get_db] = dummy_get_db
     app.dependency_overrides[get_current_active_user] = dummy_user
 

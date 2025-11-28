@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List
-from app.api.v1.deps import get_db, get_current_active_user
+from app.api.deps import get_db, get_current_active_user
 from app.schemas.resume import ResumeCreate, ResumeRead, ResumeListItem, ResumeUpdate
 from app.models.resume import Resume
 from uuid import UUID
@@ -12,7 +12,12 @@ router = APIRouter()
 
 @router.post("", response_model=ResumeRead, status_code=status.HTTP_201_CREATED)
 async def create_resume(resume_in: ResumeCreate, db: AsyncSession = Depends(get_db), current_user = Depends(get_current_active_user)):
-    resume = Resume(user_id=current_user.id, name=resume_in.name, data={})
+    resume = Resume(
+        user_id=current_user.id,
+        name=resume_in.name,
+        template_id=resume_in.template_id,
+        data=resume_in.data or {}
+    )
     db.add(resume)
     await db.commit()
     await db.refresh(resume)
@@ -40,6 +45,8 @@ async def put_resume(resume_id: UUID, resume_in: ResumeUpdate, db: AsyncSession 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
     if resume_in.name is not None:
         resume.name = resume_in.name
+    if resume_in.template_id is not None:
+        resume.template_id = resume_in.template_id
     if resume_in.data is not None:
         resume.data = resume_in.data
     await db.commit()
@@ -56,7 +63,43 @@ async def upload_resume(file: UploadFile = File(...), background_tasks: Backgrou
     # In production, upload to S3 and enqueue Celery task. Here we return accepted and a resume id.
     return {"resume_id": str(resume.id), "status": "Your resume is being parsed. We'll notify you when it's ready."}
 
-@router.post("/{resume_id}/generate_pdf", status_code=status.HTTP_202_ACCEPTED)
-async def generate_pdf(resume_id: UUID, payload: dict, background_tasks: BackgroundTasks = None, db: AsyncSession = Depends(get_db), current_user = Depends(get_current_active_user)):
-    # In production: enqueue generate_pdf_task.delay(resume_id, payload.get('template_id'))
-    return {"task_id": "stub", "status": "Your PDF is being generated. It will download automatically."}
+@router.post("/{resume_id}/export")
+async def export_resume_pdf(
+    resume_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user)
+):
+    """Export resume as PDF"""
+    from app.services.pdf_service import generate_resume_pdf
+    from fastapi.responses import Response
+    import re
+    
+    try:
+        # Get the resume
+        result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
+        resume = result.scalar_one_or_none()
+        if not resume:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+        
+        # Generate PDF
+        pdf_bytes = generate_resume_pdf(resume.template_id, resume.data)
+        
+        # Sanitize filename for Content-Disposition header
+        safe_filename = re.sub(r'[^\w\s-]', '', resume.name).strip().replace(' ', '_')
+        if not safe_filename:
+            safe_filename = f"resume_{resume_id}"
+        
+        # Return PDF as download
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{safe_filename}.pdf"'
+            }
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        import logging
+        logging.error(f"Error generating PDF for resume {resume_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to generate PDF: {str(e)}")

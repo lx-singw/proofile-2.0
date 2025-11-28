@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.responses import StreamingResponse
-from app.api.v1.deps import get_db, get_current_active_user
+from app.api.deps import get_db, get_current_active_user
 from app.schemas.resume import ResumeRead
 from app.core.config import settings
 import asyncio

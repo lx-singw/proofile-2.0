@@ -31,8 +31,11 @@ yarn-error.log*
 
 # Build artifacts
 dist/
-build/
+/build/
+backend/build/
 *.DS_Store
+# But DO track source code in app routes
+!frontend/src/app/**/build/
 # IDE / Editor specific
 .vscode/
 .idea/

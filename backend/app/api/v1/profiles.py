@@ -12,7 +12,7 @@ from app.core.file_upload import (
     save_upload_file
 )
 
-from app.api.v1 import deps
+from app.api import deps
 from app.models.user import User
 from app.models.profile import Profile
 from app.services import profile_service, profile_cache

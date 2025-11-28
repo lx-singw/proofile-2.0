@@ -33,22 +33,34 @@ export default function MobileDrawer({
   user,
   onLogout,
 }: MobileDrawerProps) {
-  if (!isOpen) return null;
+  // Animation state
+  const [visible, setVisible] = React.useState(isOpen);
+  React.useEffect(() => {
+    if (isOpen) setVisible(true);
+  }, [isOpen]);
+
+  const handleAnimationEnd = () => {
+    if (!isOpen) setVisible(false);
+  };
+
+  if (!visible) return null;
 
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
         role="button"
         aria-label="Close navigation drawer"
+        style={{ pointerEvents: isOpen ? "auto" : "none" }}
       />
 
       {/* Drawer */}
       <div
-        className="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gray-900 shadow-lg z-50 md:hidden flex flex-col"
+        className={`fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gray-900 shadow-lg z-50 md:hidden flex flex-col transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
         role="navigation"
+        onTransitionEnd={handleAnimationEnd}
       >
         {/* Close Button */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">

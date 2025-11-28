@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 3cm;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #1f2937;
+            line-height: 1.8;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .header .contact {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section h2 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .experience-item,
+        .education-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .experience-item h3,
+        .education-item h3 {
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .experience-item .company,
+        .education-item .institution {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .experience-item .date,
+        .education-item .date {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>{{ data.personal.name or 'Your Name' }}</h1>
+        <div class="contact">
+            {% if data.personal.email %}<span>{{ data.personal.email }}</span>{% endif %}
+            {% if data.personal.phone %}<span> {{ data.personal.phone }}</span>{% endif %}
+            {% if data.personal.location %}<span> {{ data.personal.location }}</span>{% endif %}
+        </div>
+    </div>
+
+    {% if data.personal.summary %}
+    <div class="section">
+        <p>{{ data.personal.summary }}</p>
+    </div>
+    {% endif %}
+
+    {% if data.experience %}
+    <div class="section">
+        <h2>Experience</h2>
+        {% for exp in data.experience %}
+        <div class="experience-item">
+            <h3>{{ exp.position }}</h3>
+            <div class="company">{{ exp.company }}</div>
+            <div class="date">{{ exp.startDate }} — {{ exp.endDate or 'Present' }}</div>
+            <p style="font-size: 0.875rem;">{{ exp.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if data.education %}
+    <div class="section">
+        <h2>Education</h2>
+        {% for edu in data.education %}
+        <div class="education-item">
+            <h3>{{ edu.degree }} in {{ edu.field }}</h3>
+            <div class="institution">{{ edu.institution }}</div>
+            <div class="date">{{ edu.graduationDate }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if data.skills %}
+    <div class="section">
+        <h2>Skills</h2>
+        <p style="font-size: 0.875rem;">{{ data.skills | join(', ') }}</p>
+    </div>
+    {% endif %}
+</body>
+
+</html>

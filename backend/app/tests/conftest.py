@@ -25,7 +25,7 @@ from sqlalchemy.sql import text
 
 from app.main import app
 from app.core import config
-from app.api.v1.deps import get_db, get_current_user
+from app.api.deps import get_db, get_current_user
 from app.models.base import Base
 from app.models.user import User, UserRole
 from app.core.config import settings

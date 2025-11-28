@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.api.v1 import deps
+from app.api import deps
 from app.models.user import User
 from app import schemas
 from app.services import user_service, profile_service

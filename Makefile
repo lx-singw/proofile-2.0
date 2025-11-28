@@ -3,7 +3,7 @@
 # Development commands
 setup-dev:
 	@echo "Setting up development environment..."
-	./scripts/dev/setup-dev.sh
+	./scripts/deployment/setup-dev.sh
 
 start-dev:
 	@echo "Starting development services..."
