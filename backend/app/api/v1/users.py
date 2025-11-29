@@ -204,3 +204,115 @@ async def update_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update user"
         ) from e
+
+
+@router.get("/me/stats")
+async def get_user_stats(
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get dashboard statistics for the current user.
+    Returns counts for resumes, verifications, ratings, etc.
+    """
+    from app.models.resume import Resume
+    from sqlalchemy import func
+    
+    try:
+        # Count resumes
+        resume_count_result = await db.execute(
+            select(func.count(Resume.id)).where(Resume.user_id == current_user.id)
+        )
+        resume_count = resume_count_result.scalar() or 0
+        
+        # TODO: Add counts for verifications and ratings when those models exist
+        # For now, return 0 for those
+        verification_count = 0
+        rating_count = 0
+        saved_jobs_count = 0
+        
+        return {
+            "resumes_count": resume_count,
+            "verifications_count": verification_count,
+            "ratings_count": rating_count,
+            "saved_jobs_count": saved_jobs_count,
+        }
+    except Exception as e:
+        logging.getLogger(__name__).exception("Failed to get user stats: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve statistics"
+        ) from e
+
+
+@router.put("/me/preferences")
+async def update_preferences(
+    preferences: dict,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Update dashboard preferences for the current user.
+    """
+    import json
+    try:
+        # Fetch the actual User object from the database
+        # (current_user from deps is a CachedUser, not a mapped SQLAlchemy object)
+        result = await db.execute(select(User).where(User.id == current_user.id))
+        db_user = result.scalar_one_or_none()
+        
+        if not db_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Update user preferences
+        db_user.dashboard_preferences = json.dumps(preferences)
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        
+        return {"status": "success", "preferences": preferences}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.getLogger(__name__).exception("Failed to update preferences: %s", e)
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update preferences"
+        ) from e
+
+@router.get("/me/preferences")
+async def get_preferences(
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get dashboard preferences for the current user.
+    """
+    import json
+    try:
+        # Fetch the actual User object from the database
+        # (current_user from deps is a CachedUser, not a mapped SQLAlchemy object)
+        result = await db.execute(select(User).where(User.id == current_user.id))
+        db_user = result.scalar_one_or_none()
+        
+        if not db_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        if not db_user.dashboard_preferences:
+            return {}
+        return json.loads(db_user.dashboard_preferences)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.getLogger(__name__).exception("Failed to get preferences: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get preferences"
+        ) from e

@@ -40,7 +40,7 @@ export default function ProfilePage() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <DashboardHeader />
       <main className="flex-1 flex items-center justify-center p-8" data-testid="profile-page">
-        <div className="w-full max-w-3xl">
+        <div className="w-full">
           <ProfileView profile={profile} />
         </div>
       </main>

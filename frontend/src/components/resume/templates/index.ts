@@ -1,13 +1,16 @@
 import ModernTemplate from './ModernTemplate';
-import ClassicTemplate from './ClassicTemplate';
+import CreativeTemplate from './CreativeTemplate';
 import MinimalTemplate from './MinimalTemplate';
 
 export interface ResumeData {
     personal?: {
         name?: string;
+        title?: string;
         email?: string;
         phone?: string;
         location?: string;
+        linkedin?: string;
+        website?: string;
         summary?: string;
     };
     experience?: Array<{
@@ -30,29 +33,29 @@ export interface Template {
     id: string;
     name: string;
     description: string;
-    component: React.ComponentType<{ data: ResumeData }>;
+    component: React.ComponentType<{ data: ResumeData; theme?: any }>;
     thumbnail: string;
 }
 
 export const templates: Template[] = [
     {
         id: 'modern',
-        name: 'Modern',
-        description: 'Clean and contemporary design with accent colors',
+        name: 'Executive',
+        description: 'Professional two-column layout for corporate roles',
         component: ModernTemplate,
         thumbnail: '/templates/modern-thumb.png',
     },
     {
-        id: 'classic',
-        name: 'Classic',
-        description: 'Traditional serif layout for formal applications',
-        component: ClassicTemplate,
-        thumbnail: '/templates/classic-thumb.png',
+        id: 'creative',
+        name: 'Creative',
+        description: 'Bold typography and unique layout for designers',
+        component: CreativeTemplate,
+        thumbnail: '/templates/creative-thumb.png',
     },
     {
         id: 'minimal',
-        name: 'Minimal',
-        description: 'Spacious and elegant with focus on content',
+        name: 'Tech Minimalist',
+        description: 'Clean, code-inspired layout for developers',
         component: MinimalTemplate,
         thumbnail: '/templates/minimal-thumb.png',
     },

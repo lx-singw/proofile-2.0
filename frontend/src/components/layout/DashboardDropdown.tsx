@@ -174,15 +174,21 @@ export default function DashboardDropdown({
       </button>
 
       {/* Dropdown Menu */}
-      {isOpen && (
-        <div
-          className={`absolute top-full z-50 mt-2 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 ${align === "right" ? "right-0" : "left-0"
-            }`}
-          role="menu"
-          aria-activedescendant={highlightedIndex >= 0 ? `dropdown-item-${highlightedIndex}` : undefined}
-        >
-          <div className="py-1">
-            {items.map((item, index) => (
+      <div
+        className={`absolute top-full z-50 mt-2 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 ${align === "right" ? "right-0" : "left-0"
+          } transform transition-all duration-200 origin-top ${isOpen
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+          }`}
+        role="menu"
+        aria-activedescendant={highlightedIndex >= 0 ? `dropdown-item-${highlightedIndex}` : undefined}
+      >
+        <div className="py-1">
+          {items.map((item, index) => {
+            // Check for active state (exact match or nested route)
+            const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+
+            return (
               <React.Fragment key={`${item.label}-${index}`}>
                 {item.divider && (
                   <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
@@ -191,14 +197,14 @@ export default function DashboardDropdown({
                   id={`dropdown-item-${index}`}
                   ref={el => (itemRefs.current[index] = el)}
                   href={item.href}
-                  className={`block px-4 py-2 text-sm ${highlightedIndex === index || pathname === item.href
-                      ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                      : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
+                  className={`block px-4 py-2 text-sm ${highlightedIndex === index || isActive
+                    ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                    : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                     } transition-colors flex items-center gap-2`}
                   role="menuitem"
                   tabIndex={0}
                   aria-label={item.label}
-                  aria-current={pathname === item.href ? "page" : undefined}
+                  aria-current={isActive ? "page" : undefined}
                   onMouseEnter={() => setHighlightedIndex(index)}
                   onFocus={() => setHighlightedIndex(index)}
                   onClick={(e) => {
@@ -220,10 +226,10 @@ export default function DashboardDropdown({
                   <span>{item.label}</span>
                 </a>
               </React.Fragment>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -107,7 +107,7 @@ export function clearAccessToken() {
 // --------------------
 // Request interceptor to set baseURL dynamically and attach Authorization header
 // --------------------
-api.interceptors.request.use((config: AxiosRequestConfig) => {
+api.interceptors.request.use((config) => {
   try {
     // Ensure baseURL is set; fall back to direct backend URL when missing.
     if (!config.baseURL) {
@@ -123,10 +123,12 @@ api.interceptors.request.use((config: AxiosRequestConfig) => {
 
     // Only attach Authorization for non-auth paths and when we have a token
     if (!isAuthPath && accessToken) {
-      const headers =
-        config.headers instanceof AxiosHeaders
-          ? config.headers
-          : new AxiosHeaders(config.headers ?? {});
+      if (!config.headers) {
+        config.headers = new AxiosHeaders();
+      }
+      const headers = config.headers instanceof AxiosHeaders
+        ? config.headers
+        : new AxiosHeaders(config.headers);
       if (typeof headers.get("Authorization") !== "string") {
         headers.set("Authorization", `Bearer ${accessToken}`);
       }
@@ -144,13 +146,20 @@ export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promi
     if (process.env.NODE_ENV !== "production") {
       console.log("[apiRequest]", config.method?.toUpperCase(), config.url, { baseURL: api.defaults.baseURL });
     }
-  const resp = await api.request<T>(config);
+    const resp = await api.request<T>(config);
     return resp.data;
   } catch (error) {
     // In dev, log the error unless it's a 401 or 404, which are expected
     if (process.env.NODE_ENV !== "production") {
       if (axios.isAxiosError(error) && error.response?.status !== 401 && error.response?.status !== 404) {
-        console.error("[apiRequest] error:", config.url, error);
+        console.error("[apiRequest] error:", {
+          url: config.url,
+          method: config.method,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          message: error.message
+        });
       } else if (!axios.isAxiosError(error)) {
         console.error("[apiRequest] non-axios error:", config.url, error);
       }

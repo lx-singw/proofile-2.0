@@ -2,12 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import NotificationBell from "./NotificationBell";
 import DashboardDropdown from "./DashboardDropdown";
-import { Settings, LogOut, LayoutDashboard, FileText, User } from "lucide-react";
-import { Upload } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { LEFT_MENU_ITEMS, RIGHT_MENU_ITEMS } from "@/config/navigation";
 
 interface DashboardHeaderProps {
   unreadNotifications?: number;
@@ -20,6 +22,7 @@ interface DashboardHeaderProps {
  * Features:
  * - ProofileLogo with tagline
  * - Simplified navigation menu
+ * - Theme toggle
  * - Notifications and user menu
  * - Clean, modern design
  */
@@ -28,6 +31,19 @@ export default function DashboardHeader({
 }: DashboardHeaderProps) {
   const { user, logout } = useAuth();
   const [logoutLoading, setLogoutLoading] = React.useState(false);
+  const [unreadCount, setUnreadCount] = React.useState(unreadNotifications);
+  const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      // Import dynamically to avoid circular dependencies if any
+      import('@/services/notificationService').then(({ notificationService }) => {
+        notificationService.getUnreadCount()
+          .then(setUnreadCount)
+          .catch(console.error);
+      });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -62,7 +78,7 @@ export default function DashboardHeader({
 
   return (
     <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left Section: Logo & Mobile Menu */}
           <div className="flex items-center gap-4">
@@ -76,13 +92,7 @@ export default function DashboardHeader({
                 </svg>
               }
               triggerClassName="inline-flex items-center justify-center rounded-md p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
-              items={[
-                { label: "Home", href: "/dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
-                { label: "Resume Builder", href: "/resume/build", icon: <FileText className="w-4 h-4" /> },
-                { label: "Upload Resume", href: "/resume/upload", icon: <Upload className="w-4 h-4" /> },
-                { label: "Profile", href: "/profile", icon: <User className="w-4 h-4" /> },
-                { label: "Settings", href: "/settings", icon: <Settings className="w-4 h-4" /> },
-              ]}
+              items={LEFT_MENU_ITEMS}
               align="left"
             />
 
@@ -91,9 +101,10 @@ export default function DashboardHeader({
             </Link>
           </div>
 
-          {/* Right Section: Notifications & User Menu */}
+          {/* Right Section: Theme Toggle, Notifications & User Menu */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <NotificationBell unreadCount={unreadNotifications} />
+            <ThemeToggle />
+            <NotificationBell unreadCount={unreadCount} />
 
             <DashboardDropdown
               trigger={
@@ -102,11 +113,15 @@ export default function DashboardHeader({
                     {user.full_name || user.email.split("@")[0]}
                   </span>
                   {user.avatarUrl ? (
-                    <img
-                      src={user.avatarUrl}
-                      alt="Profile picture"
-                      className="w-8 h-8 rounded-full object-cover shadow-sm border border-gray-200 dark:border-gray-700"
-                    />
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
+                      <Image
+                        src={user.avatarUrl}
+                        alt="Profile picture"
+                        fill
+                        className="object-cover"
+                        sizes="32px"
+                      />
+                    </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">
                       {(user.full_name || user.email).charAt(0).toUpperCase()}
@@ -120,22 +135,30 @@ export default function DashboardHeader({
                 </>
               }
               triggerClassName="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-              items={[
-                { label: "Professional Profile", href: "/profile", icon: <FileText className="w-4 h-4" /> },
-                { label: "Account Settings", href: "/settings", icon: <Settings className="w-4 h-4" /> },
-                { label: "Sign Out", href: "/logout", icon: <LogOut className="w-4 h-4" />, divider: true },
-              ]}
+              items={RIGHT_MENU_ITEMS}
               align="right"
               onItemClick={async (item, event) => {
                 if (item.label === "Sign Out") {
                   event?.preventDefault();
-                  await handleLogout();
+                  setShowLogoutConfirm(true);
                 }
               }}
             />
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+        title="Sign Out?"
+        message="Are you sure you want to sign out? You'll need to log in again to access your dashboard."
+        confirmText="Sign Out"
+        cancelText="Stay Logged In"
+        variant="danger"
+      />
     </header>
   );
 }

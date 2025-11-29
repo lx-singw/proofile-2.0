@@ -46,3 +46,18 @@ async def list_jobs(
     """
     jobs = await job_service.get_jobs(db, skip=skip, limit=limit)
     return jobs
+
+@router.get("/recommendations", response_model=list[JobRead])
+async def get_job_recommendations(
+    limit: int = 5,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get job recommendations for the current user.
+    Currently returns recent jobs as a placeholder for AI matching.
+    """
+    # TODO: Implement actual AI matching based on user profile/skills
+    # For now, just return the most recent jobs
+    jobs = await job_service.get_jobs(db, skip=0, limit=limit)
+    return jobs

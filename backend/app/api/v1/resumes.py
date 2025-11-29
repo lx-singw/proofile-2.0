@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.post("", response_model=ResumeRead, status_code=status.HTTP_201_CREATED)
 async def create_resume(resume_in: ResumeCreate, db: AsyncSession = Depends(get_db), current_user = Depends(get_current_active_user)):
+    from app.models.activity import Activity
     resume = Resume(
         user_id=current_user.id,
         name=resume_in.name,
@@ -19,6 +20,15 @@ async def create_resume(resume_in: ResumeCreate, db: AsyncSession = Depends(get_
         data=resume_in.data or {}
     )
     db.add(resume)
+    
+    # Log activity
+    activity = Activity(
+        user_id=current_user.id,
+        action_type="resume_created",
+        description=f"Created resume: {resume.name}",
+    )
+    db.add(activity)
+    
     await db.commit()
     await db.refresh(resume)
     return resume
@@ -39,6 +49,7 @@ async def get_resume(resume_id: UUID, db: AsyncSession = Depends(get_db), curren
 
 @router.put("/{resume_id}", response_model=ResumeRead)
 async def put_resume(resume_id: UUID, resume_in: ResumeUpdate, db: AsyncSession = Depends(get_db), current_user = Depends(get_current_active_user)):
+    from app.models.activity import Activity
     result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
     resume = result.scalar_one_or_none()
     if not resume:
@@ -49,6 +60,15 @@ async def put_resume(resume_id: UUID, resume_in: ResumeUpdate, db: AsyncSession 
         resume.template_id = resume_in.template_id
     if resume_in.data is not None:
         resume.data = resume_in.data
+        
+    # Log activity
+    activity = Activity(
+        user_id=current_user.id,
+        action_type="resume_updated",
+        description=f"Updated resume: {resume.name}",
+    )
+    db.add(activity)
+    
     await db.commit()
     await db.refresh(resume)
     return resume

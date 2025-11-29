@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, event
+from sqlalchemy import Column, Integer, String, Boolean, event, Text
 from sqlalchemy.orm import relationship, Mapped
 from typing import Dict, Tuple
 from .base import Base, TimestampMixin
@@ -40,6 +40,7 @@ class User(Base, TimestampMixin):
     experience_level = Column(String, nullable=True)
     primary_goal = Column(String, nullable=True)
     industry = Column(String, nullable=True)
+    dashboard_preferences = Column(Text, nullable=True, default="{}")  # JSON string for dashboard settings
     is_active = Column(Boolean, default=True)
 
     # Relationship to Profile
@@ -50,6 +51,13 @@ class User(Base, TimestampMixin):
     # Relationship to Resumes
     # Use fully-qualified target to avoid import/mapper ordering issues
     resumes: Mapped[list["app.models.resume.Resume"]] = relationship("app.models.resume.Resume", back_populates="user", cascade="all, delete-orphan")
+    
+    # Relationship to Activities
+    activities: Mapped[list["Activity"]] = relationship("Activity", back_populates="user", cascade="all, delete-orphan", order_by="desc(Activity.created_at)")
+    
+    # Relationship to Notifications
+    notifications: Mapped[list["Notification"]] = relationship("Notification", back_populates="user", cascade="all, delete-orphan", order_by="desc(Notification.created_at)")
+
 
 
 # Track latest status changes (id, updated_at, is_active) keyed by email

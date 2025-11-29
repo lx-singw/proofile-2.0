@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CheckCircle, Shield, Star, Zap, ArrowRight, Users, Award, TrendingUp, ChevronDown, Flame, MapPin, DollarSign, Clock, Briefcase, Trophy, Building2 } from "lucide-react";
 import { useState } from "react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function HomePage() {
   const [productOpen, setProductOpen] = useState(false);
@@ -15,7 +16,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-8">
               <Link href="/home" className="flex flex-col">
@@ -169,6 +170,7 @@ export default function HomePage() {
               </nav>
             </div>
             <div className="flex items-center gap-3">
+              <ThemeToggle />
               <Link href="/login" className="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 transition-colors">
                 Sign in
               </Link>
@@ -182,7 +184,7 @@ export default function HomePage() {
 
       {/* Inclusive Banner */}
       <section className="bg-green-600 dark:bg-green-700 py-3 border-b border-green-700 dark:border-green-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm sm:text-base text-white font-medium">
             For <span className="font-bold">students</span>, <span className="font-bold">graduates</span>, <span className="font-bold">apprentices</span>, <span className="font-bold">professionals</span>, <span className="font-bold">job seekers</span>, <span className="font-bold">career changers</span>, <span className="font-bold">remote workers</span>, <span className="font-bold">freelancers</span>, <span className="font-bold">recruiters</span>, and <span className="font-bold">everyone</span> building their future — Proofile is your platform.
           </p>
@@ -191,7 +193,7 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 py-20 sm:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300 mb-6">
@@ -269,7 +271,7 @@ export default function HomePage() {
         <div className="absolute top-40 right-1/3 w-3 h-3 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
         <div className="absolute bottom-32 left-1/3 w-2 h-2 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute bottom-20 right-1/4 w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-bold mb-4">
               Built for everyone
@@ -344,7 +346,7 @@ export default function HomePage() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-300 rounded-full blur-3xl"></div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               The old way is broken
@@ -382,7 +384,7 @@ export default function HomePage() {
           <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-400 rounded-full blur-3xl"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-blue-300 rounded-full blur-3xl"></div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Proofile is the solution
@@ -425,7 +427,7 @@ export default function HomePage() {
 
       {/* Trending Jobs Section */}
       <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <Flame className="w-8 h-8 text-orange-500" />
@@ -631,7 +633,7 @@ export default function HomePage() {
 
       {/* Live Activity Feed */}
       <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-8">
             <div className="relative">
               <TrendingUp className="w-8 h-8 text-green-500" />
@@ -701,7 +703,7 @@ export default function HomePage() {
 
       {/* Skills Leaderboard + Companies + Salary Insights */}
       <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Skills Leaderboard */}
             <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-xl p-6 shadow-lg border border-yellow-200 dark:border-gray-700">
@@ -911,7 +913,7 @@ export default function HomePage() {
       </section>
 
       {/* Removed duplicate section - now appears after hero */}
-      <section className="relative py-20 sm:py-32 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-900 dark:from-black dark:to-gray-900 text-white overflow-hidden" style={{display: 'none'}}>
+      <section className="relative py-20 sm:py-32 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-900 dark:from-black dark:to-gray-900 text-white overflow-hidden" style={{ display: 'none' }}>
         {/* Decorative Background Elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"></div>

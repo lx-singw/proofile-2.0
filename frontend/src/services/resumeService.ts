@@ -69,16 +69,34 @@ export const resumeService = {
     },
 
     async exportPDF(id: string): Promise<Blob> {
-        // apiRequest expects JSON by default, so we need to override for blob
-        // We can't use apiRequest easily for blobs if it assumes JSON response in its wrapper
-        // But looking at apiRequest implementation:
-        // const resp = await api.request<T>(config); return resp.data;
-        // It should work if T is Blob and we pass responseType: 'blob' in config.
-        return apiRequest<Blob>({
-            method: 'post',
-            url: `/api/v1/resumes/${id}/export`,
-            data: {},
-            responseType: 'blob',
-        });
+        try {
+            const blob = await apiRequest<Blob>({
+                method: 'post',
+                url: `/api/v1/resumes/${id}/export`,
+                data: {},
+                responseType: 'blob',
+            });
+            console.log('PDF Blob received:', blob);
+            console.log('PDF Blob size:', blob.size);
+            console.log('PDF Blob type:', blob.type);
+
+            // Check if we got an error response disguised as a blob
+            if (blob.type === 'application/json' || blob.size === 0) {
+                // Try to parse the blob as JSON to get the error message
+                const text = await blob.text();
+                console.error('Received JSON/empty response instead of PDF:', text);
+                try {
+                    const error = JSON.parse(text);
+                    throw new Error(error.detail || 'Failed to export PDF');
+                } catch {
+                    throw new Error('Failed to export PDF: received empty or invalid response');
+                }
+            }
+
+            return blob;
+        } catch (error) {
+            console.error('Export PDF error:', error);
+            throw error;
+        }
     },
 };
