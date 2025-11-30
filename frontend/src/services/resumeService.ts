@@ -1,4 +1,7 @@
 import { apiRequest } from '../lib/api';
+import axios from "axios";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export interface ResumeData {
     personal?: {
@@ -98,5 +101,18 @@ export const resumeService = {
             console.error('Export PDF error:', error);
             throw error;
         }
+    },
+
+    async uploadResume(file?: File, text?: string): Promise<Resume> {
+        const formData = new FormData();
+        if (file) formData.append("file", file);
+        if (text) formData.append("text", text);
+        const res = await axios.post(`${API_BASE}/resume/upload`, formData);
+        return res.data;
+    },
+
+    async getResumeAnalysis(resumeId: string | number): Promise<Resume> {
+        const res = await axios.get(`${API_BASE}/resume/${resumeId}`);
+        return res.data;
     },
 };

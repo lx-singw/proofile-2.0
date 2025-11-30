@@ -1,38 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import { useRouter } from "next/navigation";
+import { getResumeAnalysis } from "@/services/resumeService";
 
 export default function ResumeAnalysisPage() {
-  // TODO: Fetch analysis data by resume id
-  // For now, use mock data
-  const analysis = {
-    name: "John_Smith_Resume.pdf",
-    score: 78,
-    stats: {
-      pages: 1,
-      experience: "3 Years",
-      role: "Product Manager",
-      location: "New York, NY",
-      words: 847,
-    },
-    insights: [
-      "Strong action verbs and quantified achievements",
-      "Missing relevant keywords for your target role",
-      "Summary could be more impactful",
-      "Clear career progression shown",
-      "Skills section needs expansion",
-    ],
-    scores: {
-      ats: 82,
-      content: 75,
-      formatting: 92,
-      keywords: 58,
-      impact: 81,
-      completeness: 72,
-    },
-  };
+  const { id } = useParams();
+  const [analysis, setAnalysis] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchAnalysis() {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await getResumeAnalysis(id as string);
+        setAnalysis(result);
+      } catch (err) {
+        setError("Failed to fetch analysis.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (id) fetchAnalysis();
+  }, [id]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Loading analysis...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">{error}</div>;
+  if (!analysis) return null;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

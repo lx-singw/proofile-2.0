@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import { useRouter } from "next/navigation";
+import { uploadResume } from "@/services/resumeService";
 
 export default function ResumeUploadPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -27,12 +28,13 @@ export default function ResumeUploadPage() {
     setUploading(true);
     setError(null);
     try {
-      // TODO: Call backend API to upload and parse resume
-      // Simulate upload
-      setTimeout(() => {
-        setUploading(false);
-        router.push("/resume/analysis/1"); // Example: redirect to analysis page
-      }, 1500);
+      const result = await uploadResume(file || undefined, text || undefined);
+      setUploading(false);
+      if (result && result.resume_id) {
+        router.push(`/resume/analysis/${result.resume_id}`);
+      } else {
+        setError("Failed to upload. Please try again.");
+      }
     } catch (err) {
       setError("Failed to upload. Please try again.");
       setUploading(false);
