@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Mail, Globe, MapPin, Linkedin, Award, GraduationCap, Palette } from 'lucide-react';
+import { Mail, Globe, MapPin, Linkedin, Award, GraduationCap, Palette, Phone } from 'lucide-react';
 import { ResumeData } from '.';
 import { ColorScheme } from '@/app/resume/build/components/ThemeSwitcher';
 
@@ -45,16 +45,28 @@ export default function CreativeTemplate({ data, theme = 'slate' }: TemplateProp
                             {data.personal.email}
                         </div>
                     )}
+                    {data.personal?.phone && (
+                        <div className="flex items-center gap-2">
+                            <Phone size={14} style={{ color: colors.accent }} />
+                            {data.personal.phone}
+                        </div>
+                    )}
                     {data.personal?.website && (
                         <div className="flex items-center gap-2">
                             <Globe size={14} style={{ color: colors.accent }} />
                             {data.personal.website}
                         </div>
                     )}
-                    {data.personal?.location && (
+                    {data.personal?.address && (
                         <div className="flex items-center gap-2">
                             <MapPin size={14} style={{ color: colors.accent }} />
-                            {data.personal.location}
+                            {[
+                                data.personal?.address,
+                                data.personal?.city,
+                                data.personal?.state,
+                                data.personal?.postalCode,
+                                data.personal?.country
+                            ].filter(Boolean).join(', ')}
                         </div>
                     )}
                 </div>

@@ -271,7 +271,7 @@ proofile-vocational/
 
 # Mobile Application
 ├── mobile/
-│   ├── ProofileVocationalApp/
+│   ├── ProofileApp/
 │   │   ├── android/                    # Android-specific files
 │   │   ├── ios/                        # iOS-specific files
 │   │   │

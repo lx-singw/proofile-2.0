@@ -23,6 +23,8 @@ const STEPS = [
     { id: 'summary', title: 'Summary' },
 ];
 
+import { EXAMPLE_RESUME_DATA } from '@/components/resume/templates/exampleData';
+
 export default function ResumeBuilderPage() {
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedTemplate, setSelectedTemplate] = useState('modern');
@@ -30,49 +32,29 @@ export default function ResumeBuilderPage() {
     const [currentResumeId, setCurrentResumeId] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
+
+    // Initialize with empty data so progress starts at 0%
     const [resumeData, setResumeData] = useState<ResumeData>({
-        personal: {
-            name: 'John Davidson',
-            title: 'Senior Product Manager',
-            email: 'john@example.com',
-            phone: '(555) 123-4567',
-            location: 'New York, NY',
-            linkedin: 'linkedin.com/in/johndoe',
-            website: 'johndoe.com',
-            summary: 'Accomplished product leader with 8+ years of experience driving product strategy and execution. Proven track record of launching successful products and leading cross-functional teams.'
-        },
-        experience: [
-            {
-                company: 'TechCorp Inc.',
-                position: 'Senior Product Manager',
-                startDate: 'Jan 2020',
-                endDate: 'Present',
-                description: '• Led a cross-functional team of 15 engineers and designers to launch the company\'s flagship product.\n• Increased user engagement by 45% through data-driven feature optimization.\n• Managed a $2M annual product budget and roadmap.'
-            },
-            {
-                company: 'StartupXYZ',
-                position: 'Product Manager',
-                startDate: 'Mar 2018',
-                endDate: 'Dec 2019',
-                description: '• Launched 3 major features that contributed to a 30% increase in ARR.\n• Conducted user research and usability testing to inform product decisions.'
-            }
-        ],
-        education: [
-            {
-                institution: 'Harvard University',
-                degree: 'MBA',
-                field: 'Business Administration',
-                graduationDate: '2018'
-            },
-            {
-                institution: 'MIT',
-                degree: 'BS',
-                field: 'Computer Science',
-                graduationDate: '2015'
-            }
-        ],
-        skills: ['Product Management', 'Agile/Scrum', 'Data Analysis', 'Python', 'SQL', 'User Research', 'Strategic Planning'],
+        personal: {},
+        experience: [],
+        education: [],
+        skills: [],
     });
+
+    // Calculate preview data: use example data if user hasn't started a section
+    const previewData = React.useMemo(() => {
+        const hasPersonal = Object.keys(resumeData.personal || {}).length > 0;
+        const hasExperience = (resumeData.experience?.length ?? 0) > 0;
+        const hasEducation = (resumeData.education?.length ?? 0) > 0;
+        const hasSkills = (resumeData.skills?.length ?? 0) > 0;
+
+        return {
+            personal: hasPersonal ? resumeData.personal : EXAMPLE_RESUME_DATA.personal,
+            experience: hasExperience ? resumeData.experience : EXAMPLE_RESUME_DATA.experience,
+            education: hasEducation ? resumeData.education : EXAMPLE_RESUME_DATA.education,
+            skills: hasSkills ? resumeData.skills : EXAMPLE_RESUME_DATA.skills,
+        };
+    }, [resumeData]);
 
     // Auto-save simulation
     useEffect(() => {
@@ -103,9 +85,16 @@ export default function ResumeBuilderPage() {
         }
     };
 
-    const handleExport = async () => {
-        // Implement export logic
-        alert('Exporting PDF...');
+    const handleExport = async (format: 'pdf' | 'docx' | 'json') => {
+        // Implement export logic based on format
+        const formatNames = {
+            pdf: 'PDF',
+            docx: 'Word Document',
+            json: 'JSON Data'
+        };
+        alert(`Exporting as ${formatNames[format]}...`);
+        // In production, call the actual export service:
+        // await resumeService.exportResume(resumeData, format);
     };
 
     const renderStepContent = () => {
@@ -157,6 +146,38 @@ export default function ResumeBuilderPage() {
         }
     };
 
+    // Track completed steps dynamically
+    const completedSteps = React.useMemo(() => {
+        const completed: number[] = [];
+
+        // Step 0: Personal Info - check if name and email are filled
+        if (resumeData.personal?.name && resumeData.personal?.email) {
+            completed.push(0);
+        }
+
+        // Step 1: Experience - check if at least one experience entry exists
+        if (resumeData.experience && resumeData.experience.length > 0) {
+            completed.push(1);
+        }
+
+        // Step 2: Education - check if at least one education entry exists
+        if (resumeData.education && resumeData.education.length > 0) {
+            completed.push(2);
+        }
+
+        // Step 3: Skills - check if at least one skill exists
+        if (resumeData.skills && resumeData.skills.length > 0) {
+            completed.push(3);
+        }
+
+        // Step 4: Summary - check if summary is filled
+        if (resumeData.personal?.summary && resumeData.personal.summary.length > 20) {
+            completed.push(4);
+        }
+
+        return completed;
+    }, [resumeData]);
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <BuilderHeader
@@ -168,14 +189,17 @@ export default function ResumeBuilderPage() {
                 onThemeChange={setCurrentTheme}
                 currentTemplate={selectedTemplate}
                 onTemplateChange={setSelectedTemplate}
+                resumeName={resumeData.personal?.name || 'My Resume'}
             />
 
-            <main className="flex-1 flex overflow-hidden relative">
-                {/* Left Sidebar: Navigation */}
+            <main className="flex-1 flex overflow-hidden relative ml-64">
+                {/* Left Sidebar: Navigation - now fixed */}
                 <ProgressStepper
                     currentStep={currentStep}
                     onStepClick={setCurrentStep}
-                    completedSteps={[0, 1]} // Example completed steps
+                    completedSteps={completedSteps}
+                    onTemplateClick={() => alert('Browse templates modal coming soon...')}
+                    onAIClick={() => alert('AI Assistant feature coming soon...')}
                 />
 
                 {/* Middle: Editor Form */}
@@ -213,7 +237,7 @@ export default function ResumeBuilderPage() {
 
                 {/* Right: Live Preview */}
                 <PreviewPanel
-                    data={resumeData}
+                    data={previewData}
                     templateId={selectedTemplate}
                     theme={currentTheme}
                 />

@@ -48,10 +48,16 @@ export default function MinimalTemplate({ data, theme = 'charcoal' }: TemplatePr
                             {data.personal.phone}
                         </div>
                     )}
-                    {data.personal?.location && (
+                    {data.personal?.address && (
                         <div className="flex items-center gap-2">
                             <span style={{ color: colors.accent }}>➜</span>
-                            {data.personal.location}
+                            {[
+                                data.personal?.address,
+                                data.personal?.city,
+                                data.personal?.state,
+                                data.personal?.postalCode,
+                                data.personal?.country
+                            ].filter(Boolean).join(', ')}
                         </div>
                     )}
                     {data.personal?.website && (

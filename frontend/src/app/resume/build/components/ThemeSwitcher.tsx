@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Palette, Check } from 'lucide-react';
+import { Palette, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type ColorScheme = 'slate' | 'navy' | 'charcoal' | 'burgundy' | 'forest';
@@ -37,10 +37,11 @@ export default function ThemeSwitcher({ currentTheme, onThemeChange }: ThemeSwit
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
                 <Palette size={18} />
                 <span className="hidden sm:inline">Theme</span>
+                <ChevronDown size={14} className="text-gray-500" />
             </button>
 
             {isOpen && (

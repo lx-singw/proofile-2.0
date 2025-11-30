@@ -24,7 +24,18 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                     value={data.name || ''}
                     onChange={(e) => handleChange('name', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="John Doe"
+                    placeholder="John Davidson"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Professional Title</label>
+                <input
+                    type="text"
+                    value={data.title || ''}
+                    onChange={(e) => handleChange('title', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Senior Product Manager"
                 />
             </div>
 
@@ -51,25 +62,83 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                 <input
                     type="text"
-                    value={data.location || ''}
-                    onChange={(e) => handleChange('location', e.target.value)}
+                    value={data.address || ''}
+                    onChange={(e) => handleChange('address', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="New York, NY"
+                    placeholder="123 Main St"
                 />
             </div>
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Professional Summary</label>
-                <textarea
-                    value={data.summary || ''}
-                    onChange={(e) => handleChange('summary', e.target.value)}
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="A brief summary of your professional background and goals..."
-                />
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                    <input
+                        type="text"
+                        value={data.city || ''}
+                        onChange={(e) => handleChange('city', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="New York"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">State / Province</label>
+                    <input
+                        type="text"
+                        value={data.state || ''}
+                        onChange={(e) => handleChange('state', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="NY"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                    <input
+                        type="text"
+                        value={data.postalCode || ''}
+                        onChange={(e) => handleChange('postalCode', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="10001"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                    <input
+                        type="text"
+                        value={data.country || ''}
+                        onChange={(e) => handleChange('country', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="USA"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
+                    <input
+                        type="text"
+                        value={data.linkedin || ''}
+                        onChange={(e) => handleChange('linkedin', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="linkedin.com/in/johndoe"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Website / Portfolio</label>
+                    <input
+                        type="text"
+                        value={data.website || ''}
+                        onChange={(e) => handleChange('website', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="johndoe.com"
+                    />
+                </div>
             </div>
         </div>
     );

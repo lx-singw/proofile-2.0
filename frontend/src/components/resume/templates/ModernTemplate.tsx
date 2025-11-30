@@ -40,7 +40,16 @@ export default function ModernTemplate({ data, theme = 'slate' }: TemplateProps)
                     {[
                         { icon: Mail, value: data.personal?.email },
                         { icon: Phone, value: data.personal?.phone },
-                        { icon: MapPin, value: data.personal?.location },
+                        {
+                            icon: MapPin,
+                            value: [
+                                data.personal?.address,
+                                data.personal?.city,
+                                data.personal?.state,
+                                data.personal?.postalCode,
+                                data.personal?.country
+                            ].filter(Boolean).join(', ') || data.personal?.location
+                        },
                         { icon: Linkedin, value: data.personal?.linkedin },
                         { icon: Globe, value: data.personal?.website },
                     ].map((item, idx) => item.value && (

@@ -8,7 +8,12 @@ export interface ResumeData {
         title?: string;
         email?: string;
         phone?: string;
-        location?: string;
+        address?: string;
+        city?: string;
+        state?: string;
+        postalCode?: string;
+        country?: string;
+        location?: string; // Deprecated, kept for backward compatibility
         linkedin?: string;
         website?: string;
         summary?: string;
