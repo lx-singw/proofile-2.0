@@ -18,6 +18,7 @@ api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
 api_router.include_router(resumes.router, prefix="/resumes", tags=["resumes"])
 api_router.include_router(resume.upload_router, prefix="/resume", tags=["resume-upload"])
 api_router.include_router(resume.analysis_router, prefix="/resume", tags=["resume-analysis"])
+api_router.include_router(resume.refine_router, prefix="/resume", tags=["resume-refine"])
 api_router.include_router(activities.router, prefix="/activities", tags=["activities"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 
