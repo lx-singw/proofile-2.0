@@ -86,15 +86,43 @@ export default function ResumeBuilderPage() {
     };
 
     const handleExport = async (format: 'pdf' | 'docx' | 'json') => {
-        // Implement export logic based on format
-        const formatNames = {
-            pdf: 'PDF',
-            docx: 'Word Document',
-            json: 'JSON Data'
-        };
-        alert(`Exporting as ${formatNames[format]}...`);
-        // In production, call the actual export service:
-        // await resumeService.exportResume(resumeData, format);
+        try {
+            if (format === 'json') {
+                // Client-side JSON export
+                const dataStr = JSON.stringify(resumeData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${resumeData.personal?.name || 'resume'}_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            } else if (format === 'pdf') {
+                // PDF export via backend
+                if (!currentResumeId) {
+                    // Save first if not saved
+                    alert('Please save your resume before exporting to PDF.');
+                    return;
+                }
+
+                const blob = await resumeService.exportPDF(currentResumeId);
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${resumeData.personal?.name || 'resume'}_${new Date().toISOString().split('T')[0]}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            } else if (format === 'docx') {
+                alert('DOCX export is coming soon! For now, please use PDF or JSON export.');
+            }
+        } catch (error) {
+            console.error('Export error:', error);
+            alert(`Failed to export: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
     };
 
     const renderStepContent = () => {
