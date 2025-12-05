@@ -174,7 +174,7 @@ export default function HomePage() {
               <Link href="/login" className="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 transition-colors">
                 Sign in
               </Link>
-              <Link href="/register" className="px-5 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
+              <Link href="/start" className="px-5 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
                 Get started
               </Link>
             </div>
@@ -208,26 +208,30 @@ export default function HomePage() {
                 Build from scratch or upload your existing resume for AI-powered refinement. Get verified credentials, then download as PDF or share your live link.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link href="/register" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-lg">
+                <Link href="/start" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-lg">
                   Start for free
                   <ArrowRight className="w-5 h-5" />
                 </Link>
-                <Link href="/login" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition-colors border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700">
-                  View demo
+                <Link href="/start" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition-colors border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700">
+                  Get started
                 </Link>
               </div>
               <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>Build or upload</span>
+                  <span>Try tools for free</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>Download as PDF</span>
+                  <span>No commitment</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>Free forever</span>
+                  <span>Explore value</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <span>Build trust</span>
                 </div>
               </div>
             </div>

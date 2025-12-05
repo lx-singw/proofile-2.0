@@ -1,75 +1,125 @@
+"use client";
+
 import RegistrationForm from "../../components/auth/RegistrationForm";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import Link from "next/link";
-import { Shield, Star, Zap, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Shield, Star, Zap, CheckCircle, FileText, Sparkles, ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [context, setContext] = useState<'default' | 'analysis' | 'builder'>('default');
+
+  useEffect(() => {
+    // Check if user is coming from a tool with data to save
+    if (localStorage.getItem('publicAnalysis')) {
+      setContext('analysis');
+    } else if (localStorage.getItem('resumeData')) { // Assuming builder saves here or similar
+      setContext('builder');
+    }
+  }, []);
+
+  const getHeading = () => {
+    switch (context) {
+      case 'analysis': return "Save Your Analysis & Profile";
+      case 'builder': return "Save Your Resume & Profile";
+      default: return "Claim Your Professional Identity";
+    }
+  };
+
+  const getSubheading = () => {
+    switch (context) {
+      case 'analysis': return "Create an account to save your resume insights and unlock full features.";
+      case 'builder': return "Create an account to save your progress and download your resume.";
+      default: return "Join the professional ecosystem where your reputation speaks for itself.";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <div className="p-6">
-        <Link href="/home" className="inline-flex items-center">
+      {/* Header */}
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
+          <div className="h-6 w-px bg-gray-300 dark:bg-gray-700"></div>
           <ProofileLogo size={32} showWordmark={true} />
-        </Link>
-      </div>
+        </div>
+      </header>
 
       {/* Main Content */}
       <div className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Branding */}
           <div className="hidden lg:block">
-            <div className="mb-6">
-              <Shield className="w-16 h-16 text-green-500 mb-4" />
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Join Proofile Today
+            <div className="mb-8">
+              {context !== 'default' && (
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-semibold mb-6 animate-fade-in">
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Progress Saved</span>
+                </div>
+              )}
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                {getHeading()}
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-                Build your verified professional profile in minutes
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg">
+                {getSubheading()}
               </p>
             </div>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-6 h-6 text-green-600 dark:text-green-500" />
+
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:border-green-200 dark:hover:border-green-800 transition-colors">
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center flex-shrink-0 text-green-600 dark:text-green-500">
+                  <Shield className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Get Verified</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Multi-layer verification for credentials and experience</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-lg">Verified Trust</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Stand out with verified credentials and experience that employers trust implicitly.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Star className="w-6 h-6 text-blue-600 dark:text-blue-500" />
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 transition-colors">
+                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center flex-shrink-0 text-blue-600 dark:text-blue-500">
+                  <Star className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Build Reputation</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Collect peer ratings from colleagues</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-lg">Reputation System</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Build a portable reputation score based on peer reviews and verified achievements.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-6 h-6 text-purple-600 dark:text-purple-500" />
+
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-800 transition-colors">
+                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center flex-shrink-0 text-purple-600 dark:text-purple-500">
+                  <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Get Matched</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">AI finds opportunities perfect for your skills</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-lg">AI Career Agent</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Let your personal AI agent find opportunities and optimize your profile 24/7.</p>
                 </div>
               </div>
             </div>
-            <div className="mt-8 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="flex items-center gap-2 text-sm text-green-800 dark:text-green-300">
-                <CheckCircle className="w-5 h-5" />
-                <span className="font-semibold">Free forever</span>
-                <span className="text-green-600 dark:text-green-400">•</span>
-                <span>No credit card required</span>
+
+            <div className="mt-10 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-900"></div>
+                ))}
               </div>
+              <p>Join 10,000+ professionals building their future</p>
             </div>
           </div>
 
           {/* Right Side - Registration Form */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Create your account</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-10 border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 via-blue-500 to-purple-600"></div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Account</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8">Start building your professional identity today.</p>
             <RegistrationForm />
+
           </div>
         </div>
       </div>

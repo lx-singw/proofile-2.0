@@ -5,3 +5,5 @@ from .job import Job
 from .activity import Activity
 from .notification import Notification
 from .resume import Resume
+from .resume_version import ResumeVersion
+from .resume_template import ResumeTemplate

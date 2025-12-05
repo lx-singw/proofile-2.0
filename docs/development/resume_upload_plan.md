@@ -145,59 +145,24 @@ Upload → Parse → Analyze → Review → Refine → Export/Edit
 ## 📄 Page 2: Processing & Parsing
 
 ### Loading Experience
-
-```
-┌────────────────────────────────────────────────────────────────┐
-│                                                                  │
-│                    ⚡ Analyzing Your Resume                      │
-│                                                                  │
-│                  ████████████████░░░░  75%                       │
-│                                                                  │
-│                                                                  │
-│              ┌─────────────────────────────┐                    │
-│              │                             │                    │
-│              │   [Animated Processing]     │                    │
-│              │                             │                    │
-│              │   ✓ Extracting text...      │                    │
-│              │   ✓ Parsing structure...    │                    │
-│              │   ✓ Analyzing content...    │                    │
-│              │   ⟳ Generating insights...  │                    │
-│              │   ○ Optimizing format...    │                    │
-│              │                             │                    │
-│              └─────────────────────────────┘                    │
-│                                                                  │
-│              This usually takes 10-15 seconds                    │
-│                                                                  │
-└────────────────────────────────────────────────────────────────┘
-```
-
-### Parsing Engine Capabilities
-
-#### **Text Extraction**
-- **PDF Parsing**:
-  - Extract text with preserved formatting
-  - Handle multi-column layouts
-  - Detect tables and structured data
-  - OCR for scanned documents (if image-based)
-  - Extract embedded fonts and styling
-
-- **DOCX Parsing**:
-  - Parse XML structure
-  - Extract styles and formatting
-  - Preserve bullet points and numbering
-  - Handle headers, footers, and sections
-  - Extract embedded objects
-
-- **Plain Text**:
+ [x] Upload PDF, DOCX, TXT
+ [x] Parse file contents
+ [x] Extract sections (Contact, Experience, Education, Skills)
+ [x] Analyze formatting (fonts, layout, tables)
+ [x] Score ATS compatibility
+ [x] Detect missing sections
+ [x] Flag employment gaps
+ [x] Suggest improvements
+ [x] AI-powered bullet point enhancement
+ [x] Keyword optimization
+ [x] Professional summary generation
+ [x] Export optimized resume (PDF, DOCX, TXT)
+ [x] Save upload history
+ [x] Multi-version management
+ [x] Job description matching
+ [x] Template recommendation
+ [x] Export optimization
   - Intelligent structure detection
-  - Pattern recognition for sections
-  - Date and contact info extraction
-
-#### **Structure Recognition**
-AI-powered section detection:
-- Contact Information (name, email, phone, address, LinkedIn, portfolio)
-- Professional Summary / Objective
-- Work Experience (company, title, dates, responsibilities, achievements)
 - Education (institution, degree, dates, GPA, honors)
 - Skills (technical, soft skills, languages, tools)
 - Certifications & Licenses
@@ -1019,6 +984,15 @@ Overall Score = (
 8. **Multi-Language Support**: Analyze resumes in different languages
 9. **Industry-Specific Templates**: Specialized designs per field
 10. **Collaborative Feedback**: Share with mentors for comments
+
+
+Future Enhancements
+ LLM integration for better parsing
+ Advanced keyword matching
+ Industry-specific scoring
+ AI-powered bullet point enhancement
+ Professional summary generation
+ Export refined resume
 
 ---
 

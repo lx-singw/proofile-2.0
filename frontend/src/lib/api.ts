@@ -7,16 +7,20 @@ const rawEnvUrl = process.env.NEXT_PUBLIC_API_URL;
 
 let API_URL = "";  // Default to relative '/api' proxy
 
-if (typeof window !== "undefined" && rawEnvUrl && process.env.NODE_ENV === "production") {
-  try {
-    // In production, if the provided NEXT_PUBLIC_API_URL points to a different hostname,
-    // use it directly (e.g., https://api.proofile.dev instead of /api proxy)
-    const envHost = new URL(rawEnvUrl).hostname;
-    if (envHost !== window.location.hostname) {
-      API_URL = rawEnvUrl;
+if (typeof window !== "undefined" && rawEnvUrl) {
+  // In development, use the direct backend URL if provided
+  if (process.env.NODE_ENV !== "production") {
+    API_URL = rawEnvUrl;
+  } else {
+    // In production, only use it if it's a different hostname
+    try {
+      const envHost = new URL(rawEnvUrl).hostname;
+      if (envHost !== window.location.hostname) {
+        API_URL = rawEnvUrl;
+      }
+    } catch {
+      // ignore URL parse errors; keep relative path default
     }
-  } catch {
-    // ignore URL parse errors; keep relative path default
   }
 }
 
@@ -140,6 +144,36 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add retry logic for network errors
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const config = error.config;
+
+    // Only retry on network errors (not on other errors like 4xx, 5xx)
+    if (error.message === 'Network Error' && !config._retry) {
+      config._retry = true;
+      config._retryCount = config._retryCount || 0;
+
+      // Retry up to 2 times with exponential backoff
+      if (config._retryCount < 2) {
+        config._retryCount += 1;
+        const delay = Math.min(1000 * Math.pow(2, config._retryCount - 1), 3000);
+
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`[apiRequest] Retrying ${config.url} (attempt ${config._retryCount + 1}) after ${delay}ms`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return api(config);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+
 // Basic wrapper to return response data and normalize errors
 export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promise<T> {
   try {
@@ -149,18 +183,25 @@ export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promi
     const resp = await api.request<T>(config);
     return resp.data;
   } catch (error) {
-    // In dev, log the error unless it's a 401 or 404, which are expected
+    // In dev, log the error unless it's a 401, 404, or expected network error
     if (process.env.NODE_ENV !== "production") {
-      if (axios.isAxiosError(error) && error.response?.status !== 401 && error.response?.status !== 404) {
-        console.error("[apiRequest] error:", {
-          url: config.url,
-          method: config.method,
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          message: error.message
-        });
-      } else if (!axios.isAxiosError(error)) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const isExpectedError = status === 401 || status === 404;
+        const isNetworkError = error.message === "Network Error";
+
+        // Only log unexpected errors with meaningful data
+        if (!isExpectedError && !isNetworkError && error.response) {
+          console.error("[apiRequest] error:", {
+            url: config.url,
+            method: config.method,
+            status: error.response.status,
+            statusText: error.response.statusText,
+            data: error.response.data,
+          });
+        }
+      } else {
+        // Non-Axios errors (shouldn't happen often)
         console.error("[apiRequest] non-axios error:", config.url, error);
       }
     }

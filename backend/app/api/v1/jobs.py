@@ -55,9 +55,7 @@ async def get_job_recommendations(
 ):
     """
     Get job recommendations for the current user.
-    Currently returns recent jobs as a placeholder for AI matching.
+    Uses smart matching based on profile headline and primary goal.
     """
-    # TODO: Implement actual AI matching based on user profile/skills
-    # For now, just return the most recent jobs
-    jobs = await job_service.get_jobs(db, skip=0, limit=limit)
+    jobs = await job_service.get_recommended_jobs(db, user=current_user, limit=limit)
     return jobs

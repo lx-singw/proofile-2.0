@@ -1,14 +1,19 @@
 import { apiRequest } from '../lib/api';
-import axios from "axios";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export interface ResumeData {
     personal?: {
         name?: string;
+        title?: string;
         email?: string;
         phone?: string;
-        location?: string;
+        address?: string;
+        city?: string;
+        state?: string;
+        postalCode?: string;
+        country?: string;
+        location?: string; // Deprecated
+        linkedin?: string;
+        website?: string;
         summary?: string;
     };
     experience?: Array<{
@@ -103,16 +108,69 @@ export const resumeService = {
         }
     },
 
-    async uploadResume(file?: File, text?: string): Promise<Resume> {
-        const formData = new FormData();
-        if (file) formData.append("file", file);
-        if (text) formData.append("text", text);
-        const res = await axios.post(`${API_BASE}/resume/upload`, formData);
-        return res.data;
-    },
-
-    async getResumeAnalysis(resumeId: string | number): Promise<Resume> {
-        const res = await axios.get(`${API_BASE}/resume/${resumeId}`);
-        return res.data;
+    async delete(id: string): Promise<void> {
+        return apiRequest<void>({
+            method: 'delete',
+            url: `/api/v1/resumes/${id}`,
+        });
     },
 };
+
+// API for AI Build
+export async function startAIBuild(data: {
+    target_role?: string;
+    job_description?: string;
+    style?: string;
+    tone?: string;
+    length?: string;
+    advanced_options?: any;
+}): Promise<{ job_id: string; status: string; message: string; estimated_time: number }> {
+    return apiRequest({
+        method: 'post',
+        url: '/api/v1/resume/build',
+        data,
+    });
+}
+
+export async function processAIBuild(job_id: string, data: any): Promise<{ status: string; resume_id: string }> {
+    return apiRequest({
+        method: 'post',
+        url: `/api/v1/resume/build/${job_id}/process`,
+        data,
+    });
+}
+
+// API for resume analysis
+export async function getResumeAnalysis(id: string): Promise<any> {
+    return apiRequest<any>({
+        method: 'get',
+        url: `/api/v1/resume/analysis/${id}`,
+    });
+}
+
+// API for resume upload
+export async function uploadResume(file: File | null, text: string | null): Promise<any> {
+    const formData = new FormData();
+    if (file) formData.append('file', file);
+    if (text) formData.append('text', text);
+    return apiRequest<any>({
+        method: 'post',
+        url: '/api/v1/resume/upload',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+}
+
+export async function analyzePublicResume(file: File | null, text: string | null): Promise<any> {
+    const formData = new FormData();
+    if (file) formData.append('file', file);
+    if (text) formData.append('text', text);
+    return apiRequest<any>({
+        method: 'post',
+        url: '/api/v1/resume/public/analyze',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
+}
+
+export default resumeService;

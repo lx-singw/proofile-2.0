@@ -11,8 +11,8 @@ type User = CurrentUser | null;
 type AuthContextValue = {
   user: User;
   loading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
-  register: (payload: RegisterPayload) => Promise<void>;
+  login: (payload: LoginPayload, redirectPath?: string) => Promise<void>;
+  register: (payload: RegisterPayload, redirectPath?: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   updateUser: (updates: Partial<CurrentUser>) => Promise<void>;
@@ -64,31 +64,38 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     enabled: !bootstrapping,
   });
 
-  const login = async (payload: LoginPayload) => {
+  const login = async (payload: LoginPayload, redirectPath?: string) => {
     await authService.login(payload);
-    await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
-    await queryClient.refetchQueries({ queryKey: ME_QUERY_KEY });
+    queryClient.setQueryData(ME_QUERY_KEY, null);
+    const currentUser = await queryClient.fetchQuery({
+      queryKey: ME_QUERY_KEY,
+      queryFn: async () => authService.getCurrentUser(),
+    });
+
+    // Check if user needs onboarding (no username = new user)
+    const needsOnboarding = currentUser && !currentUser.username;
+    const finalPath = redirectPath || (needsOnboarding ? "/onboarding" : "/dashboard");
 
     if (process.env.NODE_ENV !== "production") {
-      console.log("[auth] login successful, navigating to dashboard");
+      console.log(`[auth] login successful, navigating to ${finalPath}`, { needsOnboarding, hasUsername: !!currentUser?.username });
     }
 
     setTimeout(() => {
-      router.replace("/dashboard");
+      router.replace(finalPath);
     }, 100);
   };
 
-  const register = async (payload: RegisterPayload) => {
+  const register = async (payload: RegisterPayload, redirectPath: string = "/login") => {
     await authService.register(payload);
     queryClient.setQueryData(ME_QUERY_KEY, null);
     await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
 
     if (process.env.NODE_ENV !== "production") {
-      console.log("[auth] registration successful, navigating to login");
+      console.log(`[auth] registration successful, navigating to ${redirectPath}`);
     }
 
     setTimeout(() => {
-      router.replace("/login");
+      router.replace(redirectPath);
     }, 100);
   };
 

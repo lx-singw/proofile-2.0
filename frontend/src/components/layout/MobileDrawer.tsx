@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 
+import { LEFT_MENU_ITEMS } from "@/config/navigation";
+
 interface User {
   email: string;
   full_name?: string | null;
@@ -14,6 +16,7 @@ interface MobileDrawerProps {
   onClose: () => void;
   user?: User;
   onLogout?: () => void;
+  items?: typeof LEFT_MENU_ITEMS;
 }
 
 /**
@@ -32,6 +35,7 @@ export default function MobileDrawer({
   onClose,
   user,
   onLogout,
+  items = LEFT_MENU_ITEMS,
 }: MobileDrawerProps) {
   // Animation state
   const [visible, setVisible] = React.useState(isOpen);
@@ -89,28 +93,28 @@ export default function MobileDrawer({
         )}
 
         {/* Navigation Links */}
+        {/* Navigation Links */}
         <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-1">
-          <Link
-            href="/dashboard"
-            onClick={onClose}
-            className="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/profile"
-            onClick={onClose}
-            className="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          >
-            Professional Profile
-          </Link>
-          <Link
-            href="/settings"
-            onClick={onClose}
-            className="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          >
-            Account Settings
-          </Link>
+          {items.map((item, index) => {
+            const hasDivider = (item as any).divider;
+            return (
+              <React.Fragment key={item.href}>
+                {hasDivider && index > 0 && (
+                  <div className="my-2 border-t border-gray-100 dark:border-gray-800" />
+                )}
+                <Link
+                  href={item.href}
+                  onClick={onClose}
+                  className="flex items-center gap-3 px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <div className="text-gray-500 dark:text-gray-400">
+                    {item.icon}
+                  </div>
+                  <span>{item.label}</span>
+                </Link>
+              </React.Fragment>
+            );
+          })}
         </nav>
 
         {/* Sign Out Button */}

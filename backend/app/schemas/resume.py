@@ -23,7 +23,11 @@ class ResumeRead(ResumeBase):
     template_id: str
     data: Any = Field(default_factory=dict)
     created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    status: str = 'draft'
+    ats_score: Optional[int] = None
+    analysis_results: Optional[dict] = None
 
     model_config = ConfigDict(from_attributes=True)
 

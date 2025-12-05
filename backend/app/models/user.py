@@ -41,6 +41,13 @@ class User(Base, TimestampMixin):
     primary_goal = Column(String, nullable=True)
     industry = Column(String, nullable=True)
     dashboard_preferences = Column(Text, nullable=True, default="{}")  # JSON string for dashboard settings
+    
+    # Public profile fields
+    username = Column(String, unique=True, index=True, nullable=True)  # Unique username for public profile URL
+    bio = Column(Text, nullable=True)  # User bio/about section
+    profile_photo_url = Column(String, nullable=True)  # URL to profile photo
+    profile_visibility = Column(String, nullable=False, default="public")  # public or private
+    
     is_active = Column(Boolean, default=True)
 
     # Relationship to Profile

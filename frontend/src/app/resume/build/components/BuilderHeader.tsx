@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, Download, Save, Clock, LayoutTemplate, Check, FileText, FileJson, ChevronDown } from 'lucide-react';
+import { ChevronLeft, Download, Save, Clock, LayoutTemplate, Check, FileText, FileJson, ChevronDown, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ThemeSwitcher, { ColorScheme } from './ThemeSwitcher';
 import { cn } from '@/lib/utils';
+import ProofileLogo from '@/components/branding/ProofileLogo';
 
 interface BuilderHeaderProps {
     lastSaved?: Date;
@@ -51,6 +53,7 @@ export default function BuilderHeader({
     const [isTemplateOpen, setIsTemplateOpen] = useState(false);
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+    const router = useRouter();
 
     const templateRef = useRef<HTMLDivElement>(null);
     const exportRef = useRef<HTMLDivElement>(null);
@@ -87,12 +90,15 @@ export default function BuilderHeader({
     return (
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-50 shadow-sm">
             <div className="flex items-center gap-4">
-                <Link
-                    href="/dashboard"
-                    className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-900 transition-colors"
+                <button
+                    onClick={() => router.push('/start')}
+                    className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors"
                 >
-                    <ChevronLeft size={20} />
-                </Link>
+                    <ArrowLeft size={20} />
+                    <span className="text-sm font-medium hidden sm:inline">Back</span>
+                </button>
+                <div className="h-6 w-px bg-gray-300"></div>
+                <ProofileLogo size={28} showWordmark={true} />
 
                 {/* Resume Name & History Dropdown */}
                 <div className="relative" ref={historyRef}>

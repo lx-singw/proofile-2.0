@@ -311,3 +311,129 @@ async def delete_profile(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to delete profile"
         ) from e
+
+
+# === Public Profile Endpoints ===
+
+from app.models.resume import Resume
+from pydantic import BaseModel
+from typing import List, Optional
+
+
+class PublicProfileResume(BaseModel):
+    id: str
+    name: str
+    template_id: str
+    created_at: str
+    
+    class Config:
+        from_attributes = True
+
+
+class PublicProfileResponse(BaseModel):
+    username: str
+    full_name: Optional[str]
+    bio: Optional[str]
+    profile_photo_url: Optional[str]
+    persona: Optional[str]
+    industry: Optional[str]
+    resumes: List[PublicProfileResume]
+    
+    class Config:
+        from_attributes = True
+
+
+class UsernameCheckResponse(BaseModel):
+    available: bool
+    suggestion: Optional[str] = None
+
+
+@router.get("/public/{username}", response_model=PublicProfileResponse)
+async def get_public_profile(
+    username: str,
+    db: AsyncSession = Depends(deps.get_db)
+):
+    """
+    Get a user's public profile by username.
+    Returns 404 if user doesn't exist or profile is private.
+    """
+    # Find user by username
+    result = await db.execute(
+        select(User).where(User.username == username)
+    )
+    user = result.scalar_one_or_none()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Profile not found"
+        )
+    
+    # Check if profile is public
+    if user.profile_visibility != "public":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Profile not found"
+        )
+    
+    # Get user's published resumes
+    resumes_result = await db.execute(
+        select(Resume).where(Resume.user_id == user.id)
+    )
+    resumes = resumes_result.scalars().all()
+    
+    return PublicProfileResponse(
+        username=user.username,
+        full_name=user.full_name,
+        bio=user.bio,
+        profile_photo_url=user.profile_photo_url,
+        persona=user.persona,
+        industry=user.industry,
+        resumes=[
+            PublicProfileResume(
+                id=str(r.id),
+                name=r.name,
+                template_id=r.template_id,
+                created_at=r.created_at.isoformat() if r.created_at else ""
+            )
+            for r in resumes
+        ]
+    )
+
+
+@router.get("/check-username/{username}", response_model=UsernameCheckResponse)
+async def check_username_availability(
+    username: str,
+    db: AsyncSession = Depends(deps.get_db)
+):
+    """
+    Check if a username is available.
+    Optionally returns a suggestion if taken.
+    """
+    # Validate username format (lowercase alphanumeric and hyphens only)
+    import re
+    if not re.match(r'^[a-z0-9-]+$', username):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username can only contain lowercase letters, numbers, and hyphens"
+        )
+    
+    if len(username) < 3 or len(username) > 30:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be between 3 and 30 characters"
+        )
+    
+    # Check if username exists
+    result = await db.execute(
+        select(User).where(User.username == username)
+    )
+    existing_user = result.scalar_one_or_none()
+    
+    if existing_user:
+        # Generate suggestion by appending a random number
+        import random
+        suggestion = f"{username}{random.randint(10, 99)}"
+        return UsernameCheckResponse(available=False, suggestion=suggestion)
+    
+    return UsernameCheckResponse(available=True)

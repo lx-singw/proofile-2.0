@@ -70,6 +70,7 @@ export default function RegistrationForm() {
       }
     }
     try {
+      // Redirect to login after registration (user needs to authenticate first)
       await registerUser({ email: data.email, password: data.password, full_name: data.full_name });
       // lightweight analytics hook if present
       try {
@@ -77,10 +78,17 @@ export default function RegistrationForm() {
           const analyticsWindow = window as AnalyticsWindow;
           analyticsWindow.dataLayer?.push?.({ event: "sign_up", method: "credentials" });
         }
-      } catch {}
+      } catch { }
       toast.success("Account created. Please log in.");
       // The registerUser function should handle navigation, but let's ensure it happens
     } catch (err: unknown) {
+      // CRITICAL: Log the full error for debugging
+      if (process.env.NODE_ENV !== "production") {
+        console.error("[registration] ERROR:", err);
+        console.error("[registration] ERROR type:", typeof err);
+        console.error("[registration] ERROR keys:", err && typeof err === "object" ? Object.keys(err) : "N/A");
+      }
+
       // Normalize backend error shapes (detail or field errors)
       const detail = isRecord(err)
         ? (typeof err["detail"] === "string" ? err["detail"] : undefined) ?? (typeof err["message"] === "string" ? err["message"] : undefined)
@@ -119,7 +127,12 @@ export default function RegistrationForm() {
       } else if (detail) {
         toast.error(detail);
       } else {
-        toast.error("Registration failed");
+        // Fallback: show generic error
+        toast.error("Registration failed. Please try again.");
+        setError("email", {
+          type: "server",
+          message: "Registration failed. Please check your information.",
+        });
       }
     }
   };

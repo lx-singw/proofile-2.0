@@ -123,3 +123,148 @@ async def export_resume_pdf(
         import logging
         logging.error(f"Error generating PDF for resume {resume_id}: {e}", exc_info=True)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to generate PDF: {str(e)}")
+
+@router.post("/{resume_id}/rewrite")
+async def rewrite_resume_content(
+    resume_id: UUID,
+    payload: dict,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user)
+):
+    """
+    Rewrite specific content using AI.
+    Payload: { "text": str, "enhancement_type": str, "context": str (optional) }
+    """
+    from app.services.ai_service import rewrite_content
+    
+    # Verify ownership
+    result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
+    resume = result.scalar_one_or_none()
+    if not resume:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+        
+    text = payload.get("text")
+    enhancement_type = payload.get("enhancement_type", "professional")
+    context = payload.get("context")
+    
+    if not text:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Text is required")
+        
+    try:
+        result = await rewrite_content(text, enhancement_type, context)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+@router.get("/templates/list")
+async def list_templates(
+    current_user = Depends(get_current_active_user)
+):
+    """List available resume templates"""
+    from app.services.template_service import get_all_templates
+    return get_all_templates()
+
+@router.post("/{resume_id}/template")
+async def apply_template(
+    resume_id: UUID,
+    payload: dict,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user)
+):
+    """Apply a template to a resume"""
+    template_id = payload.get("template_id")
+    if not template_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Template ID required")
+        
+    # Verify ownership
+    result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
+    resume = result.scalar_one_or_none()
+    if not resume:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+        
+    resume.template_id = template_id
+    await db.commit()
+    await db.refresh(resume)
+    
+    return resume
+
+@router.post("/{resume_id}/versions")
+async def create_version(
+    resume_id: UUID,
+    payload: dict,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user)
+):
+    """Create a new version snapshot"""
+    from app.models.resume_version import ResumeVersion
+    from sqlalchemy import func
+    
+    # Verify ownership
+    result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
+    resume = result.scalar_one_or_none()
+    if not resume:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+        
+    # Get next version number
+    count_result = await db.execute(select(func.count()).select_from(ResumeVersion).where(ResumeVersion.resume_id == resume_id))
+    version_number = count_result.scalar() + 1
+    
+    version = ResumeVersion(
+        resume_id=resume_id,
+        version_number=version_number,
+        data=resume.data,
+        description=payload.get("description", f"Version {version_number}"),
+        created_by=current_user.id
+    )
+    db.add(version)
+    await db.commit()
+    return version
+
+@router.get("/{resume_id}/versions")
+async def list_versions(
+    resume_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user)
+):
+    """List all versions for a resume"""
+    from app.models.resume_version import ResumeVersion
+    
+    # Verify ownership
+    result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
+    if not result.scalar_one_or_none():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+        
+    result = await db.execute(select(ResumeVersion).where(ResumeVersion.resume_id == resume_id).order_by(ResumeVersion.version_number.desc()))
+    return result.scalars().all()
+
+@router.post("/{resume_id}/versions/{version_id}/restore")
+async def restore_version(
+    resume_id: UUID,
+    version_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user)
+):
+    """Restore a specific version"""
+    from app.models.resume_version import ResumeVersion
+    
+    # Verify ownership
+    result = await db.execute(select(Resume).where(Resume.id == resume_id, Resume.user_id == current_user.id))
+    resume = result.scalar_one_or_none()
+    if not resume:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+        
+    # Get version
+    v_result = await db.execute(select(ResumeVersion).where(ResumeVersion.id == version_id, ResumeVersion.resume_id == resume_id))
+    version = v_result.scalar_one_or_none()
+    if not version:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Version not found")
+        
+    # Create backup of current state before restoring
+    # (Optional, but good practice)
+    
+    # Restore data
+    resume.data = version.data
+    await db.commit()
+    await db.refresh(resume)
+    
+    return resume

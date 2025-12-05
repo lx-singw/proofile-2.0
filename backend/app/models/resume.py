@@ -13,8 +13,15 @@ class Resume(Base, TimestampMixin):
     name = Column(String(255), nullable=False)
     template_id = Column(String(50), nullable=False, server_default='modern')
     data = Column(JSONB, nullable=False, server_default='{}')
+    
+    # Upload & Analysis fields
+    file_path = Column(String(512), nullable=True)
+    status = Column(String(50), nullable=False, server_default='draft')  # draft, uploaded, processing, analyzed, error
+    analysis_results = Column(JSONB, nullable=True)
+    ats_score = Column(Integer, nullable=True)
 
     # relationships
     # Use fully-qualified target to avoid import/mapper ordering issues
     user = relationship("app.models.user.User", back_populates="resumes")
+    versions = relationship("app.models.resume_version.ResumeVersion", back_populates="resume", cascade="all, delete-orphan")
 

@@ -56,6 +56,10 @@ class UserUpdate(BaseModel):
     experience_level: Optional[str] = None
     primary_goal: Optional[str] = None
     industry: Optional[str] = None
+    username: Optional[str] = None
+    profile_visibility: Optional[str] = None
+    bio: Optional[str] = None
+    profile_photo_url: Optional[str] = None
 
 # --- Settings Update Schema ---
 # For user to update their own account settings (requires current password verification)

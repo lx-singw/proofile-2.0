@@ -20,6 +20,8 @@ import JobRecommendations from "@/components/dashboard/JobRecommendations";
 import CustomizationModal from "@/components/dashboard/CustomizationModal";
 import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
 import { Settings2 } from "lucide-react";
+import ResumeCard from "@/components/dashboard/ResumeCard";
+import { resumeService, type Resume } from "@/services/resumeService";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -31,6 +33,8 @@ export default function DashboardPage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [resumesLoading, setResumesLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -102,6 +106,53 @@ export default function DashboardPage() {
       console.error("Failed to complete onboarding:", error);
     }
   };
+
+  // Fetch resumes
+  useEffect(() => {
+    if (user && isOnboarded) {
+      resumeService.list()
+        .then(setResumes)
+        .catch(err => console.error('Failed to fetch resumes:', err))
+        .finally(() => setResumesLoading(false));
+    }
+  }, [user, isOnboarded]);
+
+  // Handle resume export
+  const handleResumeExport = async (id: string) => {
+    try {
+      const blob = await resumeService.exportPDF(id);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `resume_${id}_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert(`Failed to export: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  // Handle resume delete
+  const handleResumeDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this resume?')) return;
+
+    try {
+      await resumeService.delete(id);
+      setResumes(resumes.filter(r => r.id !== id));
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert(`Failed to delete: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [loading, user, router]);
 
   if (loading) {
     return (
@@ -247,6 +298,28 @@ export default function DashboardPage() {
                       <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-xs rounded-full">
                         ✨ AI Powered
                       </span>
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </button>
+                {/* My Resumes Card */}
+                <button
+                  onClick={() => router.push("/resume")}
+                  className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-blue-600 dark:hover:border-blue-500 transition-all hover:shadow-2xl hover:scale-105"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl"></div>
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <FileText className="w-7 h-7 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      My Resumes
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      View and manage your {resumes.length > 0 ? `${resumes.length} existing` : 'existing'} resumes
+                    </p>
+                    <div className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                      <span>View all</span>
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   </div>

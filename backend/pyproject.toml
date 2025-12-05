@@ -30,6 +30,8 @@ aiofiles = "^23.2.1"
 weasyprint = "61.2"
 pydyf = "0.10.0"
 jinja2 = "^3.1.3"
+pdfminer-six = "20231228"
+mammoth = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.2"

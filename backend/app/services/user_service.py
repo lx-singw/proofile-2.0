@@ -56,17 +56,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
         role=role_value,
     )
     try:
-        # Debug logging
-        import logging
-        logger = logging.getLogger(__name__)
-        search_path = await db.execute(text("SHOW search_path"))
-        print("DEBUG: search_path:", search_path.scalar(), flush=True)
-        current_db = await db.execute(text("SELECT current_database()"))
-        print("DEBUG: current_db:", current_db.scalar(), flush=True)
-        tables = await db.execute(text("SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename = 'users'"))
-        print("DEBUG: users table exists:", tables.scalar() is not None, flush=True)
         db.add(db_user)
-        await db.execute(text("SET search_path TO public"))
         await db.commit()
         await db.refresh(db_user)
         return db_user
@@ -78,16 +68,8 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
         raise
     except Exception as e:
         await db.rollback()
-        try:
-            search_path = await db.execute(text("SHOW search_path"))
-            logging.getLogger(__name__).error("Current search_path: %s", search_path.scalar())
-        except Exception:
-            logging.getLogger(__name__).exception("Failed to inspect search_path after user create error")
-        # Log the full exception and traceback at ERROR so it appears in container logs
-        logging.getLogger(__name__).exception("User creation failed: %s", repr(e))
-        # Also print to stdout for immediate visibility in non-logged environments
-        print("USER_CREATE_ERR:", repr(e), flush=True)
-        print("USER_CREATE_TRACE:\n", traceback.format_exc(), flush=True)
+        import traceback
+        logging.getLogger(__name__).error(f"User creation failed: {e}\n{traceback.format_exc()}")
         raise RuntimeError(f"Failed to create user: {e}") from e
  
 async def update_user(db: AsyncSession, user: User, user_in: UserUpdate) -> User:

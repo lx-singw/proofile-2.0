@@ -7,6 +7,7 @@ import BuilderHeader from './components/BuilderHeader';
 import ProgressStepper from './components/ProgressStepper';
 import PreviewPanel from './components/PreviewPanel';
 import AISuggestions from './components/AISuggestions';
+import TemplateSelectionStep from './components/TemplateSelectionStep';
 import { ColorScheme } from './components/ThemeSwitcher';
 import PersonalInfoForm from '@/components/resume/steps/PersonalInfoForm';
 import ExperienceForm from '@/components/resume/steps/ExperienceForm';
@@ -14,6 +15,8 @@ import EducationForm from '@/components/resume/steps/EducationForm';
 import SkillsForm from '@/components/resume/steps/SkillsForm';
 import SummaryForm from '@/components/resume/steps/SummaryForm';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import useAuth from '@/hooks/useAuth';
+import SignUpModal from '@/components/auth/SignUpModal';
 
 const STEPS = [
     { id: 'personal', title: 'Personal Info' },
@@ -27,11 +30,16 @@ import { EXAMPLE_RESUME_DATA } from '@/components/resume/templates/exampleData';
 
 export default function ResumeBuilderPage() {
     const [currentStep, setCurrentStep] = useState(0);
+    const [hasSelectedTemplate, setHasSelectedTemplate] = useState(false);
     const [selectedTemplate, setSelectedTemplate] = useState('modern');
     const [currentTheme, setCurrentTheme] = useState<ColorScheme>('slate');
     const [currentResumeId, setCurrentResumeId] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
+
+    const { user } = useAuth();
+    const [showPaywall, setShowPaywall] = useState(false);
+    const [paywallTrigger, setPaywallTrigger] = useState<'save' | 'download' | 'ai'>('save');
 
     // Initialize with empty data so progress starts at 0%
     const [resumeData, setResumeData] = useState<ResumeData>({
@@ -59,14 +67,22 @@ export default function ResumeBuilderPage() {
     // Auto-save simulation
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (currentResumeId) {
+            if (currentResumeId && user) {
                 handleSave(true);
             }
         }, 30000);
         return () => clearTimeout(timer);
-    }, [resumeData]);
+    }, [resumeData, user, currentResumeId]);
 
     const handleSave = async (silent = false) => {
+        if (!user) {
+            if (!silent) {
+                setPaywallTrigger('save');
+                setShowPaywall(true);
+            }
+            return;
+        }
+
         setIsSaving(true);
         try {
             const resumeName = resumeData.personal?.name || 'My Resume';
@@ -86,6 +102,12 @@ export default function ResumeBuilderPage() {
     };
 
     const handleExport = async (format: 'pdf' | 'docx' | 'json') => {
+        if (!user) {
+            setPaywallTrigger('download');
+            setShowPaywall(true);
+            return;
+        }
+
         try {
             if (format === 'json') {
                 // Client-side JSON export
@@ -220,59 +242,84 @@ export default function ResumeBuilderPage() {
                 resumeName={resumeData.personal?.name || 'My Resume'}
             />
 
-            <main className="flex-1 flex overflow-hidden relative ml-64">
-                {/* Left Sidebar: Navigation - now fixed */}
-                <ProgressStepper
-                    currentStep={currentStep}
-                    onStepClick={setCurrentStep}
-                    completedSteps={completedSteps}
-                    onTemplateClick={() => alert('Browse templates modal coming soon...')}
-                    onAIClick={() => alert('AI Assistant feature coming soon...')}
-                />
+            {!hasSelectedTemplate ? (
+                <main className="flex-1 overflow-y-auto bg-gray-50">
+                    <TemplateSelectionStep
+                        selectedTemplate={selectedTemplate}
+                        onTemplateSelect={setSelectedTemplate}
+                        selectedTheme={currentTheme}
+                        onThemeSelect={setCurrentTheme}
+                        onContinue={() => setHasSelectedTemplate(true)}
+                    />
+                </main>
+            ) : (
+                <main className="flex-1 flex overflow-hidden relative ml-64">
+                    {/* Left Sidebar: Navigation - now fixed */}
+                    <ProgressStepper
+                        currentStep={currentStep}
+                        onStepClick={setCurrentStep}
+                        completedSteps={completedSteps}
+                        onTemplateClick={() => alert('Browse templates modal coming soon...')}
+                        onAIClick={() => {
+                            if (!user) {
+                                setPaywallTrigger('save');
+                                setShowPaywall(true);
+                                return;
+                            }
+                            alert('AI Assistant feature coming soon...');
+                        }}
+                    />
 
-                {/* Middle: Editor Form */}
-                <div className="flex-1 overflow-y-auto bg-white border-r border-gray-200 max-w-2xl shadow-sm z-10">
-                    <div className="p-8 pb-32">
-                        <div className="mb-8">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">{STEPS[currentStep].title}</h2>
-                            <p className="text-gray-500">
-                                Fill in the details below. They will automatically update in the preview.
-                            </p>
-                        </div>
+                    {/* Middle: Editor Form */}
+                    <div className="flex-1 overflow-y-auto bg-white border-r border-gray-200 max-w-2xl shadow-sm z-10">
+                        <div className="p-8 pb-32">
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-gray-900 mb-2">{STEPS[currentStep].title}</h2>
+                                <p className="text-gray-500">
+                                    Fill in the details below. They will automatically update in the preview.
+                                </p>
+                            </div>
 
-                        {renderStepContent()}
+                            {renderStepContent()}
 
-                        <div className="flex justify-between mt-12 pt-8 border-t border-gray-100">
-                            <button
-                                onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-                                disabled={currentStep === 0}
-                                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                            >
-                                <ChevronLeft size={18} />
-                                Back
-                            </button>
-                            <button
-                                onClick={() => setCurrentStep(Math.min(STEPS.length - 1, currentStep + 1))}
-                                disabled={currentStep === STEPS.length - 1}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm transition-all hover:shadow"
-                            >
-                                Next Step
-                                <ChevronRight size={18} />
-                            </button>
+                            <div className="flex justify-between mt-12 pt-8 border-t border-gray-100">
+                                <button
+                                    onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+                                    disabled={currentStep === 0}
+                                    className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                                >
+                                    <ChevronLeft size={18} />
+                                    Back
+                                </button>
+                                <button
+                                    onClick={() => setCurrentStep(Math.min(STEPS.length - 1, currentStep + 1))}
+                                    disabled={currentStep === STEPS.length - 1}
+                                    className="flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm transition-all hover:shadow"
+                                >
+                                    Next Step
+                                    <ChevronRight size={18} />
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Right: Live Preview */}
-                <PreviewPanel
-                    data={previewData}
-                    templateId={selectedTemplate}
-                    theme={currentTheme}
-                />
+                    {/* Right: Live Preview */}
+                    <PreviewPanel
+                        data={previewData}
+                        templateId={selectedTemplate}
+                        theme={currentTheme}
+                    />
 
-                {/* AI Suggestions Overlay */}
-                <AISuggestions />
-            </main>
+                    {/* AI Suggestions Overlay */}
+                    <AISuggestions />
+                </main>
+            )}
+
+            <SignUpModal
+                isOpen={showPaywall}
+                onClose={() => setShowPaywall(false)}
+                triggerAction={paywallTrigger}
+            />
         </div>
     );
 }

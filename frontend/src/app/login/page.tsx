@@ -1,17 +1,26 @@
+"use client";
 import LoginForm from "../../components/auth/LoginForm";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import Link from "next/link";
-import { Shield, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Shield, CheckCircle, ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <div className="p-6">
-        <Link href="/home" className="inline-flex items-center">
+      {/* Header */}
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
+          <div className="h-6 w-px bg-gray-300 dark:bg-gray-700"></div>
           <ProofileLogo size={32} showWordmark={true} />
-        </Link>
-      </div>
+        </div>
+      </header>
 
       {/* Main Content */}
       <div className="flex items-center justify-center px-4 py-12">

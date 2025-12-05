@@ -11,7 +11,7 @@ interface ThemeSwitcherProps {
     onThemeChange: (theme: ColorScheme) => void;
 }
 
-const THEMES: { id: ColorScheme; name: string; color: string }[] = [
+export const THEMES: { id: ColorScheme; name: string; color: string }[] = [
     { id: 'slate', name: 'Executive Slate', color: '#0f172a' },
     { id: 'navy', name: 'Classic Navy', color: '#1e3a8a' },
     { id: 'charcoal', name: 'Tech Charcoal', color: '#1f2937' },
