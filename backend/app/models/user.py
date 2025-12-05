@@ -41,6 +41,7 @@ class User(Base, TimestampMixin):
     primary_goal = Column(String, nullable=True)
     industry = Column(String, nullable=True)
     dashboard_preferences = Column(Text, nullable=True, default="{}")  # JSON string for dashboard settings
+    skills = Column(Text, nullable=True)  # JSON array of skills as text
     
     # Public profile fields
     username = Column(String, unique=True, index=True, nullable=True)  # Unique username for public profile URL

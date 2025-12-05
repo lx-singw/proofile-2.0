@@ -2,6 +2,7 @@ from .base import Base
 from .user import User
 from .profile import Profile
 from .job import Job
+from .saved_job import SavedJob
 from .activity import Activity
 from .notification import Notification
 from .resume import Resume
