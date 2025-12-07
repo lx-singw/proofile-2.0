@@ -143,6 +143,7 @@ export interface PublicProfileResume {
 }
 
 export interface PublicProfile {
+  user_id: number;
   username: string;
   full_name?: string;
   bio?: string;

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import { useRouter } from "next/navigation";
-import { uploadResume, resumeService } from "@/services/resumeService";
+import { uploadResume, resumeService, analyzePublicResume } from "@/services/resumeService";
 import { CheckCircle, FileText, TrendingUp, Target, Award, Zap, Search, SortDesc, ArrowLeft } from "lucide-react";
 import { toast } from "@/lib/toast";
 import FilePreview from "@/components/resume/FilePreview";
@@ -41,6 +41,7 @@ export default function ResumeUploadPage() {
   };
 
   const handleUpload = async () => {
+    console.log('handleUpload called. User:', user ? 'Logged In' : 'Anonymous');
     if (!file && !text) {
       toast.error("No file selected", "Please select a file or paste text");
       return;
@@ -53,14 +54,17 @@ export default function ResumeUploadPage() {
       const safeText: string | null = text || null;
 
       if (!user) {
+        console.log('Starting public analysis flow...');
         // Public flow
-        const result = await resumeService.analyzePublicResume(safeFile, safeText);
+        const result = await analyzePublicResume(safeFile, safeText);
+        console.log('Public analysis result:', result);
         localStorage.setItem('publicAnalysis', JSON.stringify(result));
         router.push('/resume/analysis/preview');
         return;
       }
 
       // Authenticated flow
+      console.log('Starting authenticated upload flow...');
       const uploadPromise = uploadResume(safeFile, safeText);
 
       toast.promise(uploadPromise, {

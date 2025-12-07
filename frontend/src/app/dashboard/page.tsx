@@ -22,6 +22,7 @@ import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
 import { Settings2 } from "lucide-react";
 import ResumeCard from "@/components/dashboard/ResumeCard";
 import { resumeService, type Resume } from "@/services/resumeService";
+import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -547,6 +548,38 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
+
+          {/* AI Insights Section */}
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <AIInsightsCard 
+                userName={user?.full_name?.split(' ')[0] || user?.username || 'there'}
+                profileCompleteness={72}
+              />
+            </div>
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800 p-6">
+                <h4 className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-indigo-600" />
+                  Job Match Stats
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Strong Matches</span>
+                    <span className="font-bold text-green-600">12 jobs</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Profile Views</span>
+                    <span className="font-bold text-gray-900 dark:text-white">48 this week</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Recruiter Interest</span>
+                    <span className="font-bold text-purple-600">8 active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Recent Activity */}
           {preferences.visibleSections.recentActivity && (

@@ -1,30 +1,58 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 import { jobService, type JobRecommendation } from '@/services/jobService';
 import { Bookmark, Building2, MapPin, Clock, DollarSign, Briefcase, Filter, Search, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import DashboardHeader from '@/components/layout/DashboardHeader';
+import axios from 'axios';
 
 export default function JobsPage() {
+    const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
     const [recommendations, setRecommendations] = useState<JobRecommendation[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+    const [error, setError] = useState<string | null>(null);
+
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login?redirect=/jobs');
+        }
+    }, [user, authLoading, router]);
 
     useEffect(() => {
         const fetchJobs = async () => {
+            if (!user) return; // Don't fetch if not authenticated
+            
             try {
+                setError(null);
                 const data = await jobService.getAdvancedRecommendations();
                 setRecommendations(data);
-            } catch (error) {
-                console.error('Failed to fetch job recommendations:', error);
+            } catch (err) {
+                // Extract meaningful error message
+                let errorMessage = 'Failed to load job recommendations';
+                if (axios.isAxiosError(err)) {
+                    if (err.response?.status === 401) {
+                        errorMessage = 'Please log in to see job recommendations';
+                    } else if (err.response?.data?.detail) {
+                        errorMessage = err.response.data.detail;
+                    }
+                }
+                setError(errorMessage);
+                console.error('Failed to fetch job recommendations:', err instanceof Error ? err.message : err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchJobs();
-    }, []);
+        if (user) {
+            fetchJobs();
+        }
+    }, [user]);
 
     const getMatchColor = (score: number) => {
         if (score >= 80) return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
@@ -38,11 +66,31 @@ export default function JobsPage() {
         return 'bg-gray-400';
     };
 
+    // Show loading spinner while checking auth
+    if (authLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            </div>
+        );
+    }
+
+    // Don't render if not authenticated (will redirect)
+    if (!user) return null;
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             <DashboardHeader />
             
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Error Banner */}
+                {error && (
+                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                        <p className="text-red-700 dark:text-red-300">{error}</p>
+                    </div>
+                )}
+
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">

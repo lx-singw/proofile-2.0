@@ -112,7 +112,7 @@ export default function DashboardHeader({
                   <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
                     {user.full_name || user.email.split("@")[0]}
                   </span>
-                  {user.avatarUrl ? (
+                  {typeof user.avatarUrl === 'string' && user.avatarUrl ? (
                     <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
                       <Image
                         src={user.avatarUrl}

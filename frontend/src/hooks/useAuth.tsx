@@ -72,12 +72,13 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       queryFn: async () => authService.getCurrentUser(),
     });
 
-    // Check if user needs onboarding (no username = new user)
-    const needsOnboarding = currentUser && !currentUser.username;
+    // Check if user needs onboarding (no username or empty username = new user)
+    const hasUsername = currentUser?.username && currentUser.username.trim() !== '';
+    const needsOnboarding = currentUser && !hasUsername;
     const finalPath = redirectPath || (needsOnboarding ? "/onboarding" : "/dashboard");
 
     if (process.env.NODE_ENV !== "production") {
-      console.log(`[auth] login successful, navigating to ${finalPath}`, { needsOnboarding, hasUsername: !!currentUser?.username });
+      console.log(`[auth] login successful, navigating to ${finalPath}`, { needsOnboarding, hasUsername, username: currentUser?.username });
     }
 
     setTimeout(() => {

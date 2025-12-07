@@ -11,6 +11,7 @@ export type CurrentUser = {
   primary_goal?: string | null;
   industry?: string | null;
   created_at?: string | null;
+  avatarUrl?: string | null;
   [key: string]: unknown;
 };
 

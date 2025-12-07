@@ -16,7 +16,7 @@ interface WebVitalMetric {
   value: number;
   rating: 'good' | 'needs-improvement' | 'poor';
   delta?: number;
-  id: string;
+  id?: string;
   navigationType?: string;
 }
 
@@ -124,11 +124,14 @@ export function trackWebVitals() {
       const lcpObserver = new PerformanceObserver((list) => {
         const lastEntry = list.getEntries().pop();
         if (lastEntry) {
+          // LCP entries have renderTime, loadTime, and id properties
+          const lcpEntry = lastEntry as PerformanceEntry & { renderTime?: number; loadTime?: number; id?: string };
+          const lcpValue = lcpEntry.renderTime || lcpEntry.loadTime || 0;
           const metric: WebVitalMetric = {
             name: 'LCP',
-            value: lastEntry.renderTime || lastEntry.loadTime,
-            rating: getRating('LCP', lastEntry.renderTime || lastEntry.loadTime),
-            id: lastEntry.id,
+            value: lcpValue,
+            rating: getRating('LCP', lcpValue),
+            id: lcpEntry.id,
           };
           metrics.push(metric);
           logMetric(metric);

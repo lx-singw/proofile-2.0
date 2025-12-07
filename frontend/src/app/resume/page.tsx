@@ -22,8 +22,9 @@ export default function ResumeListPage() {
                 .finally(() => setResumesLoading(false));
         } else if (!loading) {
             setResumesLoading(false);
+            router.push('/login?redirect=/resume');
         }
-    }, [user, loading]);
+    }, [user, loading, router]);
 
     const handleResumeExport = async (id: string) => {
         try {

@@ -8,3 +8,6 @@ from .notification import Notification
 from .resume import Resume
 from .resume_version import ResumeVersion
 from .resume_template import ResumeTemplate
+from .social import Follow, Connection, ProfileStar, Endorsement, Rating, ProfileWatch
+from .ai_chat import ChatSession, ChatMessage
+from .verification import Verification

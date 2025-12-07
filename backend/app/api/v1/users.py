@@ -132,6 +132,20 @@ async def update_current_user(
         return updated_user
     except HTTPException:
         raise
+    except IntegrityError as e:
+        # Handle duplicate username or other unique constraint violations
+        await db.rollback()
+        error_str = str(e).lower()
+        if "username" in error_str or "ix_users_username" in error_str:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username is already taken. Please choose a different username."
+            ) from e
+        # Generic integrity error
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This value is already in use. Please try a different one."
+        ) from e
     except Exception as e:
         import traceback
         error_detail = f"User self-update failed: {str(e)}\n{traceback.format_exc()}"

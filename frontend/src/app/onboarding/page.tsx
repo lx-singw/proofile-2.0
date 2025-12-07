@@ -19,10 +19,20 @@ export default function OnboardingPage() {
     const [visibility, setVisibility] = useState<'public' | 'private'>('public');
     const [loading, setLoading] = useState(false);
 
-    // Redirect to login if not authenticated
+    // Redirect logic: Protect route for unauthenticated or already-onboarded users
     useEffect(() => {
-        if (!authLoading && !user) {
+        if (authLoading) return; // Wait for auth to load
+        
+        if (!user) {
             router.replace('/login');
+            return;
+        }
+        
+        // If user already has a username, they've completed onboarding - redirect to dashboard
+        // Use truthy check to handle both null and empty string
+        if (user.username && user.username.trim() !== '') {
+            console.log('[onboarding] User already has username, redirecting to dashboard');
+            router.replace('/dashboard');
         }
     }, [authLoading, user, router]);
 
@@ -41,18 +51,17 @@ export default function OnboardingPage() {
                         const analysis = JSON.parse(publicAnalysis);
                         // Create resume from analysis
                         // We need to map analysis sections to resume data structure
-                        // For now, we'll just store the raw text or sections
                         await resumeService.create(
                             analysis.name || "Imported Resume",
                             "modern",
                             {
-                                basics: {
+                                personal: {
                                     name: user?.full_name || "User",
                                     email: user?.email || "",
                                     summary: analysis.sections?.summary || "",
                                 },
-                                // We would map other sections here
-                                raw_text: analysis.raw_text
+                                // Additional fields from analysis
+                                skills: analysis.sections?.skills || [],
                             }
                         );
                         localStorage.removeItem('publicAnalysis');
@@ -88,8 +97,11 @@ export default function OnboardingPage() {
         try {
             await updateCurrentUser({ username });
             setStep('visibility');
-        } catch (error) {
-            toast.error("Username might already be taken");
+        } catch (error: unknown) {
+            // Extract error message from API response
+            const errorMessage = (error as { detail?: string })?.detail 
+                || "Username might already be taken. Please try a different one.";
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }

@@ -301,3 +301,28 @@ async def use_test_user(test_user: User):
     finally:
         # Clean up override after the test so other tests are unaffected
         app.dependency_overrides.pop(get_current_user, None)
+
+
+# Phase 2: Resume Tools Testing Fixtures
+
+@pytest_asyncio.fixture
+async def anonymous_draft(client: AsyncClient) -> dict:
+    """Create anonymous resume draft for testing"""
+    payload = {
+        "template_id": "modern",
+        "personal_info": {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "phone": "555-0100"
+        }
+    }
+    response = await client.post("/api/v1/resumes/builder/draft", json=payload)
+    return response.json()
+
+
+@pytest_asyncio.fixture
+async def uploaded_resume(client: AsyncClient) -> dict:
+    """Upload test resume for analysis"""
+    files = {"file": ("test.pdf", b"fake pdf content", "application/pdf")}
+    response = await client.post("/api/v1/resumes/upload", files=files)
+    return response.json()

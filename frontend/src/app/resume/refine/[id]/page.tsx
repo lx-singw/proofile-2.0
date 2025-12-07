@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import axios from "axios";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 
@@ -41,7 +42,7 @@ export default function ResumeRefinePage() {
       <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">
         <ProofileLogo size={32} showWordmark={true} />
         <div className="flex items-center gap-4">
-          <a href="/resume/analysis/1" className="text-sm text-gray-500 hover:text-green-600">Back to Analysis</a>
+          <Link href="/resume/analysis/1" className="text-sm text-gray-500 hover:text-green-600">Back to Analysis</Link>
         </div>
       </header>
       <main className="max-w-2xl mx-auto py-12 px-4">

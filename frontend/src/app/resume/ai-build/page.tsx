@@ -33,7 +33,7 @@ const LENGTHS = [
 
 export default function AIBuildLandingPage() {
     const router = useRouter();
-    const { user } = useAuth(); // Integrated useAuth hook
+    const { user, loading } = useAuth(); // Integrated useAuth hook
     const [targetRole, setTargetRole] = useState("");
     const [jobDescription, setJobDescription] = useState(""); // New state
     const [selectedStyle, setSelectedStyle] = useState("modern"); // Renamed from 'style'
@@ -42,6 +42,37 @@ export default function AIBuildLandingPage() {
     const [advancedOptions, setAdvancedOptions] = useState({}); // New state, for future use
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false); // New state
+
+    if (!loading && !user) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-gray-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-purple-900/20">
+                <div className="text-center max-w-md">
+                    <div className="mb-6 flex justify-center">
+                        <div className="p-4 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                            <Sparkles className="w-12 h-12 text-purple-600 dark:text-purple-400" />
+                        </div>
+                    </div>
+                    <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Create Free Proofile to Use AI Builder</h1>
+                    <p className="mb-8 text-gray-600 dark:text-gray-400">
+                        Our AI Resume Builder analyzes your professional profile to generate tailored resumes. 
+                        Please sign up or log in to continue.
+                    </p>
+                    <div className="flex flex-col gap-4">
+                        <button 
+                            onClick={() => setIsSignUpModalOpen(true)}
+                            className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+                        >
+                            Create Free Account
+                        </button>
+                        <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:underline">
+                            Already have an account? Log in
+                        </Link>
+                    </div>
+                </div>
+                <SignUpModal isOpen={isSignUpModalOpen} onClose={() => setIsSignUpModalOpen(false)} triggerAction="ai" />
+            </div>
+        );
+    }
 
     const handleGenerate = async () => { // Renamed from handleStart
         if (!user) {

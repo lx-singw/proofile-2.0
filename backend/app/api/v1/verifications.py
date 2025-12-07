@@ -1,0 +1,359 @@
+"""
+Verification API: Email, phone, identity, education, employment verification
+"""
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from typing import List
+from datetime import datetime
+import secrets
+import json
+
+from app.api.deps import get_db, get_current_active_user
+from app.models.user import User
+from app.models.verification import Verification
+from app.schemas.verification import (
+    VerificationCreate, VerificationUpdate, VerificationResponse,
+    VerificationSummary, InitiateEmailVerification, ConfirmEmailVerification,
+    InitiatePhoneVerification, ConfirmPhoneVerification
+)
+
+router = APIRouter()
+
+# In-memory store for verification tokens (in production, use Redis)
+VERIFICATION_TOKENS: dict = {}
+
+
+@router.get("/", response_model=List[VerificationResponse])
+async def get_verifications(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Get all verifications for the current user."""
+    result = await db.execute(
+        select(Verification).where(Verification.user_id == current_user.id)
+    )
+    return result.scalars().all()
+
+
+@router.get("/summary", response_model=VerificationSummary)
+async def get_verification_summary(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Get verification summary for the current user."""
+    result = await db.execute(
+        select(Verification).where(Verification.user_id == current_user.id)
+    )
+    verifications = result.scalars().all()
+    
+    # Build verification status map
+    status_map = {v.verification_type: v.status for v in verifications}
+    
+    # Calculate verification score
+    score = 0
+    weights = {
+        "email": 20,
+        "phone": 15,
+        "identity": 25,
+        "education": 15,
+        "employment": 15,
+        "skills": 10
+    }
+    
+    for v_type, weight in weights.items():
+        if status_map.get(v_type) == "verified":
+            score += weight
+    
+    return VerificationSummary(
+        email_verified=status_map.get("email") == "verified",
+        phone_verified=status_map.get("phone") == "verified",
+        identity_verified=status_map.get("identity") == "verified",
+        education_verified=status_map.get("education") == "verified",
+        employment_verified=status_map.get("employment") == "verified",
+        skills_verified=status_map.get("skills") == "verified",
+        verification_score=score,
+        verifications=[VerificationResponse.model_validate(v) for v in verifications]
+    )
+
+
+@router.post("/email/initiate", response_model=dict)
+async def initiate_email_verification(
+    data: InitiateEmailVerification,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Initiate email verification process."""
+    # Check if already verified
+    result = await db.execute(
+        select(Verification).where(
+            Verification.user_id == current_user.id,
+            Verification.verification_type == "email"
+        )
+    )
+    existing = result.scalar_one_or_none()
+    
+    if existing and existing.status == "verified":
+        raise HTTPException(status_code=400, detail="Email already verified")
+    
+    # Generate verification token
+    token = secrets.token_urlsafe(32)
+    VERIFICATION_TOKENS[token] = {
+        "user_id": current_user.id,
+        "email": data.email,
+        "type": "email",
+        "expires": datetime.utcnow().timestamp() + 3600  # 1 hour
+    }
+    
+    # Create or update verification record
+    if existing:
+        existing.status = "pending"
+        existing.verified_value = data.email
+    else:
+        verification = Verification(
+            user_id=current_user.id,
+            verification_type="email",
+            status="pending",
+            verified_value=data.email
+        )
+        db.add(verification)
+    
+    await db.commit()
+    
+    # In production, send email here
+    # For development, return the token
+    return {
+        "message": "Verification email sent",
+        "debug_token": token  # Remove in production
+    }
+
+
+@router.post("/email/confirm", response_model=VerificationResponse)
+async def confirm_email_verification(
+    data: ConfirmEmailVerification,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Confirm email verification with token."""
+    token_data = VERIFICATION_TOKENS.get(data.token)
+    
+    if not token_data:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    
+    if token_data["user_id"] != current_user.id:
+        raise HTTPException(status_code=403, detail="Token does not belong to this user")
+    
+    if token_data["expires"] < datetime.utcnow().timestamp():
+        del VERIFICATION_TOKENS[data.token]
+        raise HTTPException(status_code=400, detail="Token expired")
+    
+    # Update verification record
+    result = await db.execute(
+        select(Verification).where(
+            Verification.user_id == current_user.id,
+            Verification.verification_type == "email"
+        )
+    )
+    verification = result.scalar_one_or_none()
+    
+    if not verification:
+        raise HTTPException(status_code=404, detail="Verification not found")
+    
+    verification.status = "verified"
+    verification.verified_at = datetime.utcnow()
+    verification.verification_provider = "internal"
+    
+    await db.commit()
+    await db.refresh(verification)
+    
+    # Clean up token
+    del VERIFICATION_TOKENS[data.token]
+    
+    return verification
+
+
+@router.post("/phone/initiate", response_model=dict)
+async def initiate_phone_verification(
+    data: InitiatePhoneVerification,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Initiate phone verification process."""
+    # Check if already verified
+    result = await db.execute(
+        select(Verification).where(
+            Verification.user_id == current_user.id,
+            Verification.verification_type == "phone"
+        )
+    )
+    existing = result.scalar_one_or_none()
+    
+    if existing and existing.status == "verified":
+        raise HTTPException(status_code=400, detail="Phone already verified")
+    
+    # Generate verification code
+    code = f"{secrets.randbelow(10000):04d}"
+    VERIFICATION_TOKENS[f"phone_{current_user.id}"] = {
+        "user_id": current_user.id,
+        "phone": data.phone,
+        "code": code,
+        "type": "phone",
+        "expires": datetime.utcnow().timestamp() + 600  # 10 minutes
+    }
+    
+    # Create or update verification record
+    if existing:
+        existing.status = "pending"
+        existing.verified_value = data.phone
+    else:
+        verification = Verification(
+            user_id=current_user.id,
+            verification_type="phone",
+            status="pending",
+            verified_value=data.phone
+        )
+        db.add(verification)
+    
+    await db.commit()
+    
+    # In production, send SMS here
+    return {
+        "message": "Verification code sent",
+        "debug_code": code  # Remove in production
+    }
+
+
+@router.post("/phone/confirm", response_model=VerificationResponse)
+async def confirm_phone_verification(
+    data: ConfirmPhoneVerification,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Confirm phone verification with code."""
+    token_key = f"phone_{current_user.id}"
+    token_data = VERIFICATION_TOKENS.get(token_key)
+    
+    if not token_data:
+        raise HTTPException(status_code=400, detail="No pending verification")
+    
+    if token_data["expires"] < datetime.utcnow().timestamp():
+        del VERIFICATION_TOKENS[token_key]
+        raise HTTPException(status_code=400, detail="Code expired")
+    
+    if token_data["code"] != data.code:
+        raise HTTPException(status_code=400, detail="Invalid code")
+    
+    # Update verification record
+    result = await db.execute(
+        select(Verification).where(
+            Verification.user_id == current_user.id,
+            Verification.verification_type == "phone"
+        )
+    )
+    verification = result.scalar_one_or_none()
+    
+    if not verification:
+        raise HTTPException(status_code=404, detail="Verification not found")
+    
+    verification.status = "verified"
+    verification.verified_at = datetime.utcnow()
+    verification.verification_provider = "internal"
+    
+    await db.commit()
+    await db.refresh(verification)
+    
+    # Clean up
+    del VERIFICATION_TOKENS[token_key]
+    
+    return verification
+
+
+@router.post("/", response_model=VerificationResponse, status_code=status.HTTP_201_CREATED)
+async def create_verification(
+    data: VerificationCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Create a new verification request (for education, employment, skills)."""
+    valid_types = ["education", "employment", "skills", "identity"]
+    if data.verification_type not in valid_types:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid verification type. Use: {valid_types}"
+        )
+    
+    # Check for existing
+    result = await db.execute(
+        select(Verification).where(
+            Verification.user_id == current_user.id,
+            Verification.verification_type == data.verification_type
+        )
+    )
+    existing = result.scalar_one_or_none()
+    
+    if existing:
+        # Update existing
+        existing.status = "pending"
+        existing.verification_data = data.verification_data
+        await db.commit()
+        await db.refresh(existing)
+        return existing
+    
+    # Create new
+    verification = Verification(
+        user_id=current_user.id,
+        verification_type=data.verification_type,
+        status="pending",
+        verification_data=data.verification_data
+    )
+    db.add(verification)
+    await db.commit()
+    await db.refresh(verification)
+    
+    return verification
+
+
+@router.patch("/{verification_id}", response_model=VerificationResponse)
+async def update_verification(
+    verification_id: int,
+    data: VerificationUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Update a verification request (e.g., add document URL)."""
+    verification = await db.get(Verification, verification_id)
+    
+    if not verification:
+        raise HTTPException(status_code=404, detail="Verification not found")
+    
+    if verification.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    if data.verification_data is not None:
+        verification.verification_data = data.verification_data
+    if data.document_url is not None:
+        verification.document_url = data.document_url
+    
+    await db.commit()
+    await db.refresh(verification)
+    
+    return verification
+
+
+@router.delete("/{verification_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_verification(
+    verification_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Delete a verification request."""
+    verification = await db.get(Verification, verification_id)
+    
+    if not verification:
+        raise HTTPException(status_code=404, detail="Verification not found")
+    
+    if verification.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    await db.delete(verification)
+    await db.commit()

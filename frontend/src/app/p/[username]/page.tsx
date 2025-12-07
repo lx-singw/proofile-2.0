@@ -14,11 +14,25 @@ import {
     Share2,
     CheckCircle,
     Globe,
-    Calendar
+    Calendar,
+    Eye,
+    ThumbsUp,
+    TrendingUp,
+    Award
 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
+import {
+    StarProfileButton,
+    WatchProfileButton,
+    FollowButton,
+    ConnectButton,
+    CoffeeChatButton,
+    SendMessageButton,
+    EndorseSkillButton,
+    ProfileStatsCompact
+} from "@/components/social/SocialActions";
 
 export default function PublicProfilePage() {
     const params = useParams();
@@ -91,6 +105,23 @@ export default function PublicProfilePage() {
     }
 
     const isOwnProfile = user?.username === username;
+
+    // Mock profile stats - in production these would come from API
+    const profileStats = {
+        profileViews: 234,
+        followerCount: 45,
+        starCount: 12,
+        rating: 4.8,
+        ratingCount: 12
+    };
+
+    // Mock skills for endorsement demo
+    const skills = [
+        { name: "Product Management", endorsements: 8, isEndorsed: false },
+        { name: "Agile/Scrum", endorsements: 6, isEndorsed: false },
+        { name: "Data Analysis", endorsements: 5, isEndorsed: false },
+        { name: "Strategic Planning", endorsements: 4, isEndorsed: false },
+    ];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -182,7 +213,68 @@ export default function PublicProfilePage() {
                                     proofile.co/p/{profile.username}
                                 </div>
                             </div>
+
+                            {/* Rating display */}
+                            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center gap-1">
+                                    <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                                    <span className="font-bold text-gray-900 dark:text-white">{profileStats.rating}/5.0</span>
+                                    <span className="text-sm text-gray-500">({profileStats.ratingCount} ratings)</span>
+                                </div>
+                                <ProfileStatsCompact
+                                    profileViews={profileStats.profileViews}
+                                    followerCount={profileStats.followerCount}
+                                    starCount={profileStats.starCount}
+                                />
+                            </div>
                         </div>
+                    </div>
+
+                    {/* Social Actions Bar */}
+                    {!isOwnProfile && user && profile && (
+                        <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <FollowButton userId={profile.user_id} followerCount={profileStats.followerCount} />
+                            <StarProfileButton userId={profile.user_id} starCount={profileStats.starCount} />
+                            <WatchProfileButton userId={profile.user_id} />
+                            <ConnectButton userId={profile.user_id} />
+                            <CoffeeChatButton />
+                            <SendMessageButton />
+                        </div>
+                    )}
+                </div>
+
+                {/* Skills Section with Endorsements */}
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                        <Award className="w-6 h-6" />
+                        Skills & Endorsements
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {skills.map((skill) => (
+                            <div
+                                key={skill.name}
+                                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                        <CheckCircle className="w-5 h-5 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-900 dark:text-white">{skill.name}</h4>
+                                        <p className="text-xs text-gray-500">{skill.endorsements} endorsements</p>
+                                    </div>
+                                </div>
+                                {!isOwnProfile && user && profile && (
+                                    <EndorseSkillButton
+                                        userId={profile.user_id}
+                                        skillName={skill.name}
+                                        isEndorsed={skill.isEndorsed}
+                                        endorsementCount={skill.endorsements}
+                                    />
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
 

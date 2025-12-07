@@ -1,32 +1,33 @@
 import axios, { AxiosHeaders, type AxiosRequestConfig } from "axios";
 
-// Prefer relative '/api' which is proxied to the backend via next.config rewrites in dev/E2E.
+// Prefer relative '/api' which is proxied to the backend via next.config rewrites.
 // This ensures cookies/CSRF tokens stay on the frontend origin and work through the proxy.
-// Only use NEXT_PUBLIC_API_URL in production when it's a different domain.
+// The proxy handles routing to the backend internally (via BACKEND_INTERNAL_URL).
+// 
+// IMPORTANT: In development with Docker/WSL, using direct backend URLs like
+// http://localhost:8001 can fail because the browser (Windows) cannot always
+// reach WSL's localhost. Using the proxy (/api) is more reliable.
 const rawEnvUrl = process.env.NEXT_PUBLIC_API_URL;
 
-let API_URL = "";  // Default to relative '/api' proxy
+// Default: use empty string which means requests like /api/v1/... 
+// will be relative to the current origin and handled by Next.js rewrites
+let API_URL = "";
 
-if (typeof window !== "undefined" && rawEnvUrl) {
-  // In development, use the direct backend URL if provided
-  if (process.env.NODE_ENV !== "production") {
-    API_URL = rawEnvUrl;
-  } else {
-    // In production, only use it if it's a different hostname
-    try {
-      const envHost = new URL(rawEnvUrl).hostname;
-      if (envHost !== window.location.hostname) {
-        API_URL = rawEnvUrl;
-      }
-    } catch {
-      // ignore URL parse errors; keep relative path default
+// Only use direct backend URL in production when explicitly set to a different domain
+if (typeof window !== "undefined" && rawEnvUrl && process.env.NODE_ENV === "production") {
+  try {
+    const envHost = new URL(rawEnvUrl).hostname;
+    if (envHost !== window.location.hostname) {
+      API_URL = rawEnvUrl;
     }
+  } catch {
+    // ignore URL parse errors; keep relative path default
   }
 }
 
 if (process.env.NODE_ENV !== "production") {
   // Debug log for dev/test environments
-  console.log("[api] baseURL resolved to", API_URL || "(relative)", "rawEnvUrl=", rawEnvUrl);
+  console.log("[api] baseURL resolved to", API_URL || "(relative proxy)", "rawEnvUrl=", rawEnvUrl);
 }
 
 const ACCESS_TOKEN_STORAGE_KEY = "auth:accessToken";
@@ -183,26 +184,27 @@ export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promi
     const resp = await api.request<T>(config);
     return resp.data;
   } catch (error) {
-    // In dev, log the error unless it's a 401, 404, or expected network error
+    // In dev, log the error unless it's expected (401, 404, 409, network errors)
     if (process.env.NODE_ENV !== "production") {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
-        const isExpectedError = status === 401 || status === 404;
+        // 401/404/409 are expected for auth checks, missing resources, and conflicts
+        // Also skip logging if status is undefined (network/abort errors)
+        const isExpectedError = !status || status === 401 || status === 404 || status === 409;
         const isNetworkError = error.message === "Network Error";
 
-        // Only log unexpected errors with meaningful data
-        if (!isExpectedError && !isNetworkError && error.response) {
-          console.error("[apiRequest] error:", {
-            url: config.url,
-            method: config.method,
-            status: error.response.status,
-            statusText: error.response.statusText,
-            data: error.response.data,
+        // Only log truly unexpected server errors (5xx, 400, 422, etc.)
+        if (!isExpectedError && !isNetworkError && status) {
+          console.error("[apiRequest] error:", config.url, {
+            status,
+            statusText: error.response?.statusText,
+            message: error.message,
+            data: error.response?.data,
           });
         }
-      } else {
-        // Non-Axios errors (shouldn't happen often)
-        console.error("[apiRequest] non-axios error:", config.url, error);
+      } else if (error instanceof Error) {
+        // Non-Axios errors
+        console.error("[apiRequest] non-axios error:", config.url, error.message);
       }
     }
     // Normalize Axios errors to throw helpful objects

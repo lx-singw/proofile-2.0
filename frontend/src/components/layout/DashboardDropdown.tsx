@@ -123,7 +123,7 @@ export default function DashboardDropdown({
       if (!isOpen) return;
       const menuItems = itemRefs.current.filter(Boolean);
       if (menuItems.length === 0) return;
-      if (!menuItems.includes(event.target as HTMLElement)) {
+      if (!menuItems.includes(event.target as HTMLAnchorElement)) {
         menuItems[highlightedIndex || 0]?.focus();
       }
     }
@@ -195,7 +195,7 @@ export default function DashboardDropdown({
                 )}
                 <a
                   id={`dropdown-item-${index}`}
-                  ref={el => (itemRefs.current[index] = el)}
+                  ref={el => { itemRefs.current[index] = el; }}
                   href={item.href}
                   className={`block px-4 py-2 text-sm ${highlightedIndex === index || isActive
                     ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
