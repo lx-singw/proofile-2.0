@@ -31,6 +31,7 @@ class CachedUser:
     id: int
     email: str
     full_name: str | None
+    username: str | None
     role: UserRole
     persona: UserPersona | None
     experience_level: str | None
@@ -145,6 +146,7 @@ async def get_current_user(
                 id=user.id,
                 email=user.email,
                 full_name=user.full_name,
+                username=user.username,
                 role=role_val,
                 persona=persona_val,
                 experience_level=user.experience_level,

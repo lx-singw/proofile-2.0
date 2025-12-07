@@ -7,7 +7,6 @@ import ProofileLogo from "@/components/branding/ProofileLogo";
 import { CheckCircle, Shield, Globe, Lock, ArrowRight, Loader2, Sparkles, User, LayoutDashboard, Briefcase, ShieldCheck, Star, BarChart } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { resumeService } from "@/services/resumeService";
-import { updateCurrentUser } from "@/services/authService";
 
 export default function OnboardingPage() {
     const router = useRouter();
@@ -95,7 +94,8 @@ export default function OnboardingPage() {
         if (!username) return;
         setLoading(true);
         try {
-            await updateCurrentUser({ username });
+            // Use updateUser from auth hook to update both API and local cache
+            await updateUser({ username });
             setStep('visibility');
         } catch (error: unknown) {
             // Extract error message from API response

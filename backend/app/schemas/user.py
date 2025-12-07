@@ -15,6 +15,7 @@ from app.core.security import validate_password_strength
 class UserBase(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
+    username: Optional[str] = None
     role: UserRole = UserRole.APPRENTICE
     persona: Optional[UserPersona] = None
     experience_level: Optional[str] = None
