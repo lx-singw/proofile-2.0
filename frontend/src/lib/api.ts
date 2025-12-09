@@ -207,9 +207,28 @@ export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promi
         console.error("[apiRequest] non-axios error:", config.url, error.message);
       }
     }
-    // Normalize Axios errors to throw helpful objects
-    if (axios.isAxiosError(error) && error.response?.data !== undefined) {
-      throw error.response.data;
+    // Normalize Axios errors to throw helpful objects with a detail message
+    if (axios.isAxiosError(error)) {
+      const responseData = error.response?.data;
+      const status = error.response?.status;
+      
+      // If response has data with detail, throw it
+      if (responseData && typeof responseData === 'object' && 'detail' in responseData) {
+        throw responseData;
+      }
+      
+      // Build a meaningful error object if data is empty or missing
+      const detail = 
+        (typeof responseData === 'string' && responseData) ||
+        error.response?.statusText ||
+        error.message ||
+        'Request failed';
+      
+      throw { 
+        detail, 
+        status,
+        originalError: error 
+      };
     }
     throw error;
   }

@@ -126,9 +126,13 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       const response = await authService.updateCurrentUser(updates);
       // Update the cache with the new user data
       queryClient.setQueryData(ME_QUERY_KEY, response);
-    } catch (error) {
-      console.error("Failed to update user:", error);
-      throw error;
+    } catch (error: unknown) {
+      // Normalize the error to include a detail message
+      const errorObj = error as { detail?: string; message?: string } | null;
+      const detail = errorObj?.detail || errorObj?.message || "Failed to update user";
+      console.error("Failed to update user:", detail, error);
+      // Rethrow with normalized structure
+      throw { detail, originalError: error };
     }
   };
 

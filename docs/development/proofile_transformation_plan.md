@@ -387,7 +387,7 @@ Immediate on page load:
 │  │  ⏳ Product Management Skills (Pending)                   │   │
 │  └────────────────────────────────────────────────────────────┘   │
 │                                                                    │
-│  Professional Summary                                              │
+│  Professional Summary(Resume Info)                                              │
 │  ────────────────────────────────────────────                     │
 │  Results-driven Product Manager with 5+ years...                  │
 │                                                                    │
