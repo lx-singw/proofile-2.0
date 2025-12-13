@@ -594,25 +594,25 @@ Sign Up to Save → Done, Now Get Verified
 
 ## 🎯 Implementation Priority
 
-### Week 1-2: Remove Complexity
+### Sprint 1: Remove Complexity
 - [ ] Simplify navigation to 3 main items
 - [ ] Remove all "tours" and "wizards"
 - [ ] One CTA per screen
 - [ ] Hide advanced features
 
-### Week 3-4: One Clear Path
+### Sprint 2: One Clear Path
 - [ ] Landing → Profile → Verified (3 steps max)
 - [ ] Remove all parallel paths
 - [ ] Progressive disclosure
 - [ ] Contextual help only
 
-### Week 5-6: Visual Hierarchy
+### Sprint 3: Visual Hierarchy
 - [ ] One primary button per screen
 - [ ] Clear secondary/tertiary actions
 - [ ] Remove visual clutter
 - [ ] Increase white space
 
-### Week 7-8: Test & Iterate
+### Sprint 4: Test & Iterate
 - [ ] 5-second test (what is this?)
 - [ ] First-click test (where would you click?)
 - [ ] Task completion (can they do it?)

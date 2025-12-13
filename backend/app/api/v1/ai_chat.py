@@ -362,62 +362,133 @@ async def get_profile_analysis(
     current_user: User = Depends(get_current_active_user)
 ):
     """Get AI analysis of the current user's profile."""
-    # Get profile
-    profile_result = await db.execute(
-        select(Profile).where(Profile.user_id == current_user.id)
-    )
-    profile = profile_result.scalar_one_or_none()
+    import logging
+    logger = logging.getLogger(__name__)
     
-    # Calculate completeness
-    completeness = calculate_profile_completeness(current_user, profile)
-    
-    # Generate insights
-    improvements = generate_profile_insights(current_user, profile, completeness)
-    
-    # Generate strengths based on what's filled in
-    strengths = []
-    if current_user.full_name:
-        strengths.append("Professional name displayed")
-    if current_user.profile_photo_url:
-        strengths.append("Profile photo added")
-    if profile and profile.headline:
-        strengths.append("Compelling headline set")
-    if profile and profile.summary:
-        strengths.append("Professional summary written")
-    if current_user.skills:
-        try:
-            skills = json.loads(current_user.skills)
-            if len(skills) >= 5:
-                strengths.append(f"Strong skills section with {len(skills)} skills")
-        except (json.JSONDecodeError, TypeError):
-            pass
-    if current_user.industry:
-        strengths.append(f"Industry focus: {current_user.industry}")
-    
-    if not strengths:
-        strengths = ["Getting started on your professional journey"]
-    
-    # Generate career opportunities (based on industry/experience)
-    opportunities = []
-    if current_user.industry:
-        opportunities.append(f"Explore trending roles in {current_user.industry}")
-    opportunities.append("Connect with professionals in your network")
-    opportunities.append("Apply to recommended jobs matching your profile")
-    if current_user.experience_level:
-        opportunities.append(f"Find {current_user.experience_level}-level opportunities")
-    
-    # Identify skill gaps (placeholder logic)
-    skill_gaps = []
-    if not current_user.skills:
-        skill_gaps.append("Add skills to identify gaps")
-    else:
-        skill_gaps.append("Consider adding emerging skills in your industry")
-        skill_gaps.append("Look at job postings to identify in-demand skills")
-    
-    return ProfileAnalysis(
-        completeness_score=completeness,
-        strengths=strengths,
-        improvements=improvements,
-        career_opportunities=opportunities,
-        skill_gaps=skill_gaps
-    )
+    try:
+        # Get profile
+        profile_result = await db.execute(
+            select(Profile).where(Profile.user_id == current_user.id)
+        )
+        profile = profile_result.scalar_one_or_none()
+        
+        # Safe attribute access for CachedUser
+        user_full_name = getattr(current_user, 'full_name', None)
+        user_bio = getattr(current_user, 'bio', None)
+        user_profile_photo_url = getattr(current_user, 'profile_photo_url', None)
+        user_skills = getattr(current_user, 'skills', None)
+        user_industry = getattr(current_user, 'industry', None)
+        user_experience_level = getattr(current_user, 'experience_level', None)
+        
+        # Calculate completeness inline with safe access
+        completeness = 0
+        if user_full_name:
+            completeness += 10
+        if user_bio:
+            completeness += 10
+        if user_profile_photo_url:
+            completeness += 10
+        if profile:
+            if profile.headline:
+                completeness += 15
+            if profile.summary:
+                completeness += 15
+        if user_skills:
+            try:
+                skills = json.loads(user_skills) if isinstance(user_skills, str) else user_skills
+                if skills and len(skills) >= 3:
+                    completeness += 20
+                elif skills and len(skills) >= 1:
+                    completeness += 10
+            except:
+                pass
+        if user_industry:
+            completeness += 10
+        if user_experience_level:
+            completeness += 10
+        completeness = min(completeness, 100)
+        
+        # Generate strengths
+        strengths = []
+        if user_full_name:
+            strengths.append("Professional name displayed")
+        if user_profile_photo_url:
+            strengths.append("Profile photo added")
+        if profile and profile.headline:
+            strengths.append("Compelling headline set")
+        if profile and profile.summary:
+            strengths.append("Professional summary written")
+        if user_skills:
+            try:
+                skills = json.loads(user_skills) if isinstance(user_skills, str) else user_skills
+                if skills and len(skills) >= 5:
+                    strengths.append(f"Strong skills section with {len(skills)} skills")
+            except:
+                pass
+        if user_industry:
+            strengths.append(f"Industry focus: {user_industry}")
+        
+        if not strengths:
+            strengths = ["Getting started on your professional journey"]
+        
+        # Generate improvements
+        improvements = []
+        if not user_profile_photo_url:
+            improvements.append(ProfileInsight(
+                category="profile",
+                title="Add a professional photo",
+                description="Profiles with photos get 21x more views.",
+                priority="high",
+                action_url="/profile"
+            ))
+        if not profile or not profile.headline:
+            improvements.append(ProfileInsight(
+                category="profile",
+                title="Create a compelling headline",
+                description="Your headline is the first thing people see.",
+                priority="high",
+                action_url="/profile"
+            ))
+        if not user_skills:
+            improvements.append(ProfileInsight(
+                category="skills",
+                title="Add your skills",
+                description="Skills help recruiters find you.",
+                priority="high",
+                action_url="/profile"
+            ))
+        
+        # Generate opportunities
+        opportunities = []
+        if user_industry:
+            opportunities.append(f"Explore trending roles in {user_industry}")
+        opportunities.append("Connect with professionals in your network")
+        opportunities.append("Apply to recommended jobs matching your profile")
+        if user_experience_level:
+            opportunities.append(f"Find {user_experience_level}-level opportunities")
+        
+        # Skill gaps
+        skill_gaps = []
+        if not user_skills:
+            skill_gaps.append("Add skills to identify gaps")
+        else:
+            skill_gaps.append("Consider adding emerging skills in your industry")
+        
+        return ProfileAnalysis(
+            completeness_score=completeness,
+            strengths=strengths,
+            improvements=improvements,
+            career_opportunities=opportunities,
+            skill_gaps=skill_gaps
+        )
+        
+    except Exception as e:
+        logger.exception("Error in get_profile_analysis: %s", e)
+        # Return a minimal valid response on error
+        return ProfileAnalysis(
+            completeness_score=0,
+            strengths=["Getting started on your professional journey"],
+            improvements=[],
+            career_opportunities=["Connect with professionals"],
+            skill_gaps=["Add skills to your profile"]
+        )

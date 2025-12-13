@@ -151,3 +151,93 @@ async def rewrite_content(text: str, enhancement_type: str, context: str = None)
             content = content.split("```")[1].split("```")[0].strip()
             
         return json.loads(content)
+
+async def parse_resume_to_json(text: str) -> dict:
+    """
+    Parse resume text into a structured JSON compatible with the profile data model.
+    """
+    if not OPENAI_API_KEY:
+        # Mock response for development
+        return {
+            "headline": "Experienced Professional",
+            "summary": "Detected from resume text (Mock)",
+            "experience": [
+                {
+                    "company": "Uploaded Company",
+                    "title": "Uploaded Job",
+                    "start_date": "2020-01-01",
+                    "end_date": "Present",
+                    "description": "Extracted from resume."
+                }
+            ],
+            "education": [
+                {
+                    "school": "Uploaded University",
+                    "degree": "BSc Computer Science",
+                    "start_date": "2016-01-01",
+                    "end_date": "2020-01-01"
+                }
+            ],
+            "skills": ["Extracted Skill 1", "Extracted Skill 2"]
+        }
+
+    prompt = f"""
+    You are a data extraction expert. Extract profile data from the following resume text into a JSON object.
+    
+    Resume Text:
+    {text[:4000]}  # Limit context window
+    
+    Output JSON format:
+    {{
+        "headline": "Current Role or Professional Headline",
+        "summary": "Brief professional summary",
+        "experience": [
+            {{
+                "company": "Company Name",
+                "title": "Job Title",
+                "location": "City, Country",
+                "start_date": "YYYY-MM",
+                "end_date": "YYYY-MM or Present",
+                "description": "Key responsibilities and achievements"
+            }}
+        ],
+        "education": [
+            {{
+                "school": "Institution Name",
+                "degree": "Degree (e.g. BSc Computer Science)",
+                "field_of_study": "Field",
+                "start_date": "YYYY-MM",
+                "end_date": "YYYY-MM"
+            }}
+        ],
+        "skills": ["Skill 1", "Skill 2"]
+    }}
+    """
+    
+    headers = {
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "gpt-4",
+        "messages": [
+            {"role": "system", "content": "You are a data extraction assistant. Output only valid JSON."},
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 1500,
+        "temperature": 0.3
+    }
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(OPENAI_API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        content = result['choices'][0]['message']['content']
+        
+        import json
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0].strip()
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0].strip()
+            
+        return json.loads(content)

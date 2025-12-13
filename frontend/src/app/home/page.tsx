@@ -208,12 +208,14 @@ export default function HomePage() {
                 Build from scratch or upload your existing resume for AI-powered refinement. Get verified credentials, then download as PDF or share your live link.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Link href="/start" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-lg">
-                  Start for free
+                {/* PRIMARY CTA - One obvious action */}
+                <Link href="/start" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white text-lg font-bold rounded-lg hover:bg-green-700 transition-all shadow-lg hover:shadow-xl hover:scale-105">
+                  Create Free Profile
                   <ArrowRight className="w-5 h-5" />
                 </Link>
-                <Link href="/start" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-50 transition-colors border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700">
-                  Get started
+                {/* SECONDARY - Text link style for returning users */}
+                <Link href="/login" className="inline-flex items-center justify-center gap-2 px-6 py-4 text-green-600 dark:text-green-400 font-medium hover:underline">
+                  Already have an account? Sign in
                 </Link>
               </div>
               <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">

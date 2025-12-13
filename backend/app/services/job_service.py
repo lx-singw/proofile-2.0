@@ -53,8 +53,10 @@ async def get_recommended_jobs(db: AsyncSession, user: "User", limit: int = 5) -
     user_industry = (user.industry or "").lower()
     user_goal = (user.primary_goal or "").lower()
     user_headline = ""
-    if user.profile and user.profile.headline:
-        user_headline = user.profile.headline.lower()
+    # Safe access for CachedUser objects that may not have profile loaded
+    user_profile = getattr(user, 'profile', None)
+    if user_profile and getattr(user_profile, 'headline', None):
+        user_headline = user_profile.headline.lower()
     
     scored_jobs = []
     

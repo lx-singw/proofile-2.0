@@ -1,304 +1,333 @@
-/**
- * Social interactions service: Follow, Connect, Star, Endorse, Rate, Watch
- */
-import { apiRequest } from "@/lib/api";
+import { api, apiRequest } from "@/lib/api";
 
-// ============ Types ============
-export interface FollowResponse {
-  id: number;
-  follower_id: number;
-  following_id: number;
-  created_at: string;
+// Types
+export interface Endorsement {
+  id: string;
+  skillName: string;
+  endorserId: number;
+  endorserName: string;
+  endorserAvatar?: string;
+  createdAt: string;
 }
 
-export interface ConnectionResponse {
-  id: number;
-  requester_id: number;
-  addressee_id: number;
-  status: "pending" | "accepted" | "rejected";
-  message: string | null;
-  created_at: string;
-  updated_at: string;
+export interface SkillWithEndorsements {
+  name: string;
+  endorsements: number;
+  isEndorsedByMe: boolean;
+  topEndorsers?: { name: string; avatar?: string }[];
 }
 
-export interface ProfileStarResponse {
-  id: number;
-  user_id: number;
-  starred_user_id: number;
-  created_at: string;
-}
-
-export interface ProfileWatchResponse {
-  id: number;
-  user_id: number;
-  watched_user_id: number;
-  created_at: string;
-}
-
-export interface EndorsementResponse {
-  id: number;
-  endorser_id: number;
-  endorsed_user_id: number;
-  skill: string;
-  comment: string | null;
-  created_at: string;
-}
-
-export interface RatingResponse {
-  id: number;
-  rater_id: number | null;
-  rated_user_id: number;
-  score: number;
-  category: string;
-  review: string | null;
-  is_anonymous: boolean;
-  created_at: string;
+export interface Rating {
+  id: string;
+  rating: number;
+  comment?: string;
+  reviewerId: number;
+  reviewerName: string;
+  reviewerAvatar?: string;
+  createdAt: string;
 }
 
 export interface RatingSummary {
-  average_score: number;
-  total_ratings: number;
-  category_scores: Record<string, number>;
+  average: number;
+  total: number;
+  distribution: { stars: number; count: number }[];
 }
 
-export interface ProfileSocialStats {
-  followers_count: number;
-  following_count: number;
-  connections_count: number;
-  stars_count: number;
-  endorsements_count: number;
-  ratings_count: number;
-  average_rating: number | null;
-  is_following: boolean;
-  is_connected: boolean;
-  is_starred: boolean;
-  is_watching: boolean;
-  connection_status: string | null;
+export interface ConnectionRequest {
+  id: string;
+  userId: number;
+  name: string;
+  headline?: string;
+  avatarUrl?: string;
+  message?: string;
+  createdAt: string;
 }
 
-// ============ Follow Functions ============
-export async function followUser(userId: number): Promise<FollowResponse> {
-  return apiRequest<FollowResponse>({
-    url: "/api/v1/social/follow",
-    method: "POST",
-    data: { following_id: userId },
-  });
+export type ConnectionStatus = "none" | "pending" | "connected" | "received";
+
+const SOCIAL_BASE_PATH = "/api/v1/social";
+
+// Follows
+export async function followUser(userId: number): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/follow`,
+      data: { following_id: userId },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to follow user:", error);
+    return false;
+  }
 }
 
-export async function unfollowUser(userId: number): Promise<void> {
-  return apiRequest<void>({
-    url: `/api/v1/social/follow/${userId}`,
-    method: "DELETE",
-  });
+export async function unfollowUser(userId: number): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "delete",
+      url: `${SOCIAL_BASE_PATH}/follow/${userId}`,
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to unfollow user:", error);
+    return false;
+  }
 }
 
-export async function getFollowers(): Promise<FollowResponse[]> {
-  return apiRequest<FollowResponse[]>({
-    url: "/api/v1/social/followers",
-    method: "GET",
-  });
+export async function getFollowers(): Promise<any[]> {
+  try {
+    return await apiRequest<any[]>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/followers`,
+    });
+  } catch (error) {
+    console.error("Failed to fetch followers:", error);
+    return [];
+  }
 }
 
-export async function getFollowing(): Promise<FollowResponse[]> {
-  return apiRequest<FollowResponse[]>({
-    url: "/api/v1/social/following",
-    method: "GET",
-  });
+export async function getFollowing(): Promise<any[]> {
+  try {
+    return await apiRequest<any[]>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/following`,
+    });
+  } catch (error) {
+    console.error("Failed to fetch following:", error);
+    return [];
+  }
 }
 
-// ============ Connection Functions ============
-export async function requestConnection(
-  userId: number,
-  message?: string
-): Promise<ConnectionResponse> {
-  return apiRequest<ConnectionResponse>({
-    url: "/api/v1/social/connections",
-    method: "POST",
-    data: { addressee_id: userId, message },
-  });
+// Endorsements
+export async function getSkillEndorsements(profileId: number): Promise<SkillWithEndorsements[]> {
+  try {
+    return await apiRequest<SkillWithEndorsements[]>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/endorsements/${profileId}`,
+    });
+  } catch (error) {
+    console.error("Failed to fetch endorsements:", error);
+    return [];
+  }
 }
 
-export async function respondToConnection(
-  connectionId: number,
-  status: "accepted" | "rejected"
-): Promise<ConnectionResponse> {
-  return apiRequest<ConnectionResponse>({
-    url: `/api/v1/social/connections/${connectionId}`,
-    method: "PATCH",
-    data: { status },
-  });
+export async function endorseSkill(profileId: number, skillName: string): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/endorsements`,
+      data: { profileId, skillName },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to endorse skill:", error);
+    return false;
+  }
 }
 
-export async function removeConnection(connectionId: number): Promise<void> {
-  return apiRequest<void>({
-    url: `/api/v1/social/connections/${connectionId}`,
-    method: "DELETE",
-  });
+export async function removeEndorsement(profileId: number, skillName: string): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "delete",
+      url: `${SOCIAL_BASE_PATH}/endorsements`,
+      data: { profileId, skillName },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to remove endorsement:", error);
+    return false;
+  }
 }
 
-export async function getConnections(
-  status?: string
-): Promise<ConnectionResponse[]> {
-  const params = status ? `?status_filter=${status}` : "";
-  return apiRequest<ConnectionResponse[]>({
-    url: `/api/v1/social/connections${params}`,
-    method: "GET",
-  });
+// Star Profile
+export async function starProfile(userId: number): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/star`,
+      data: { starred_user_id: userId },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to star profile:", error);
+    return false;
+  }
 }
 
-export async function getPendingConnections(): Promise<ConnectionResponse[]> {
-  return apiRequest<ConnectionResponse[]>({
-    url: "/api/v1/social/connections/pending",
-    method: "GET",
-  });
+export async function unstarProfile(userId: number): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "delete",
+      url: `${SOCIAL_BASE_PATH}/star/${userId}`,
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to unstar profile:", error);
+    return false;
+  }
 }
 
-// ============ Star Functions ============
-export async function starProfile(userId: number): Promise<ProfileStarResponse> {
-  return apiRequest<ProfileStarResponse>({
-    url: "/api/v1/social/stars",
-    method: "POST",
-    data: { starred_user_id: userId },
-  });
+export async function getStarredProfiles(): Promise<any[]> {
+  try {
+    return await apiRequest<any[]>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/starred`,
+    });
+  } catch (error) {
+    console.error("Failed to fetch starred profiles:", error);
+    return [];
+  }
 }
 
-export async function unstarProfile(userId: number): Promise<void> {
-  return apiRequest<void>({
-    url: `/api/v1/social/stars/${userId}`,
-    method: "DELETE",
-  });
+// Watch Profile
+export async function watchProfile(userId: number): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/watch`,
+      data: { watched_user_id: userId },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to watch profile:", error);
+    return false;
+  }
 }
 
-export async function getStarredProfiles(): Promise<ProfileStarResponse[]> {
-  return apiRequest<ProfileStarResponse[]>({
-    url: "/api/v1/social/stars",
-    method: "GET",
-  });
+export async function unwatchProfile(userId: number): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "delete",
+      url: `${SOCIAL_BASE_PATH}/watch/${userId}`,
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to unwatch profile:", error);
+    return false;
+  }
 }
 
-// ============ Watch Functions ============
-export async function watchProfile(
-  userId: number
-): Promise<ProfileWatchResponse> {
-  return apiRequest<ProfileWatchResponse>({
-    url: "/api/v1/social/watches",
-    method: "POST",
-    data: { watched_user_id: userId },
-  });
+// Ratings & Reviews
+export async function getRatingSummary(profileId: number): Promise<RatingSummary | null> {
+  try {
+    return await apiRequest<RatingSummary>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/ratings/${profileId}/summary`,
+    });
+  } catch (error) {
+    console.error("Failed to fetch rating summary:", error);
+    return null;
+  }
 }
 
-export async function unwatchProfile(userId: number): Promise<void> {
-  return apiRequest<void>({
-    url: `/api/v1/social/watches/${userId}`,
-    method: "DELETE",
-  });
+export async function getReviews(profileId: number, limit: number = 10): Promise<Rating[]> {
+  try {
+    return await apiRequest<Rating[]>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/ratings/${profileId}`,
+      params: { limit },
+    });
+  } catch (error) {
+    console.error("Failed to fetch reviews:", error);
+    return [];
+  }
 }
 
-// ============ Endorsement Functions ============
-export async function endorseSkill(
-  userId: number,
-  skill: string,
-  comment?: string
-): Promise<EndorsementResponse> {
-  return apiRequest<EndorsementResponse>({
-    url: "/api/v1/social/endorsements",
-    method: "POST",
-    data: { endorsed_user_id: userId, skill, comment },
-  });
+export async function submitReview(profileId: number, rating: number, comment?: string): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/ratings`,
+      data: { profileId, rating, comment },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to submit review:", error);
+    return false;
+  }
 }
 
-export async function removeEndorsement(endorsementId: number): Promise<void> {
-  return apiRequest<void>({
-    url: `/api/v1/social/endorsements/${endorsementId}`,
-    method: "DELETE",
-  });
+// Connections
+export async function getConnectionStatus(userId: number): Promise<ConnectionStatus> {
+  try {
+    const result = await apiRequest<{ status: ConnectionStatus }>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/connections/${userId}/status`,
+    });
+    return result.status;
+  } catch (error) {
+    console.error("Failed to get connection status:", error);
+    return "none";
+  }
 }
 
-export async function getReceivedEndorsements(): Promise<EndorsementResponse[]> {
-  return apiRequest<EndorsementResponse[]>({
-    url: "/api/v1/social/endorsements/received",
-    method: "GET",
-  });
+export async function requestConnection(userId: number, message?: string): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/connections/request`,
+      data: { addressee_id: userId, message },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send connection request:", error);
+    return false;
+  }
 }
 
-export async function getUserEndorsements(
-  userId: number
-): Promise<EndorsementResponse[]> {
-  return apiRequest<EndorsementResponse[]>({
-    url: `/api/v1/social/endorsements/user/${userId}`,
-    method: "GET",
-  });
+export async function respondToConnectionRequest(requestId: string, accept: boolean): Promise<boolean> {
+  try {
+    await apiRequest({
+      method: "post",
+      url: `${SOCIAL_BASE_PATH}/connections/respond`,
+      data: { requestId, accept },
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to respond to connection request:", error);
+    return false;
+  }
 }
 
-// ============ Rating Functions ============
-export async function rateUser(
-  userId: number,
-  score: number,
-  category: string,
-  review?: string,
-  isAnonymous?: boolean
-): Promise<RatingResponse> {
-  return apiRequest<RatingResponse>({
-    url: "/api/v1/social/ratings",
-    method: "POST",
-    data: {
-      rated_user_id: userId,
-      score,
-      category,
-      review,
-      is_anonymous: isAnonymous ?? false,
-    },
-  });
+export async function getPendingRequests(): Promise<ConnectionRequest[]> {
+  try {
+    return await apiRequest<ConnectionRequest[]>({
+      method: "get",
+      url: `${SOCIAL_BASE_PATH}/connections/pending`,
+    });
+  } catch (error) {
+    console.error("Failed to fetch pending requests:", error);
+    return [];
+  }
 }
 
-export async function getReceivedRatings(): Promise<RatingResponse[]> {
-  return apiRequest<RatingResponse[]>({
-    url: "/api/v1/social/ratings/received",
-    method: "GET",
-  });
-}
-
-export async function getUserRatingSummary(
-  userId: number
-): Promise<RatingSummary> {
-  return apiRequest<RatingSummary>({
-    url: `/api/v1/social/ratings/user/${userId}/summary`,
-    method: "GET",
-  });
-}
-
-// ============ Stats Functions ============
-export async function getProfileSocialStats(
-  userId: number
-): Promise<ProfileSocialStats> {
-  return apiRequest<ProfileSocialStats>({
-    url: `/api/v1/social/stats/${userId}`,
-    method: "GET",
-  });
-}
-
-// Export as default object for convenience
-export const socialService = {
+const socialService = {
+  // Follows
   followUser,
   unfollowUser,
   getFollowers,
   getFollowing,
-  requestConnection,
-  respondToConnection,
-  removeConnection,
-  getConnections,
-  getPendingConnections,
+  // Stars
   starProfile,
   unstarProfile,
   getStarredProfiles,
+  // Watch
   watchProfile,
   unwatchProfile,
+  // Endorsements
+  getSkillEndorsements,
   endorseSkill,
   removeEndorsement,
-  getReceivedEndorsements,
-  getUserEndorsements,
-  rateUser,
-  getReceivedRatings,
-  getUserRatingSummary,
-  getProfileSocialStats,
+  // Ratings
+  getRatingSummary,
+  getReviews,
+  submitReview,
+  // Connections
+  getConnectionStatus,
+  requestConnection,
+  respondToConnectionRequest,
+  getPendingRequests,
 };
+
+export default socialService;

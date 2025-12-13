@@ -57,8 +57,15 @@ async def get_job_recommendations(
     Get job recommendations for the current user.
     Uses smart matching based on profile headline and primary goal.
     """
-    jobs = await job_service.get_recommended_jobs(db, user=current_user, limit=limit)
-    return jobs
+    try:
+        jobs = await job_service.get_recommended_jobs(db, user=current_user, limit=limit)
+        return jobs
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).exception("Error in get_job_recommendations: %s", e)
+        # Fallback to recent jobs if personalization fails
+        jobs = await job_service.get_jobs(db, skip=0, limit=limit)
+        return jobs
 
 @router.get("/recommendations/advanced", response_model=list[JobRecommendationRead])
 async def get_advanced_job_recommendations(
@@ -70,19 +77,25 @@ async def get_advanced_job_recommendations(
     Get advanced job recommendations with scoring breakdown.
     Matches based on skills, experience level, industry, and title.
     """
-    results = await job_service.get_recommended_jobs_advanced(
-        db, user=current_user, limit=limit
-    )
-    
-    # Convert to response format
-    return [
-        {
-            "job": job,
-            "match_score": score,
-            "score_breakdown": breakdown
-        }
-        for job, score, breakdown in results
-    ]
+    try:
+        results = await job_service.get_recommended_jobs_advanced(
+            db, user=current_user, limit=limit
+        )
+        
+        # Convert to response format
+        return [
+            {
+                "job": job,
+                "match_score": score,
+                "score_breakdown": breakdown
+            }
+            for job, score, breakdown in results
+        ]
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).exception("Error in get_advanced_job_recommendations: %s", e)
+        # Return empty list on error rather than 500
+        return []
 
 @router.get("/saved", response_model=list[JobRead])
 async def get_saved_jobs(

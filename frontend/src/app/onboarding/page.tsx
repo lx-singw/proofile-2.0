@@ -19,24 +19,36 @@ export default function OnboardingPage() {
     const [loading, setLoading] = useState(false);
 
     // Redirect logic: Protect route for unauthenticated or already-onboarded users
+    const hasCheckedStatus = React.useRef(false);
+
+    // Redirect logic: Protect route for unauthenticated or already-onboarded users
     useEffect(() => {
         if (authLoading) return; // Wait for auth to load
-        
+
+        // Only check status once to prevent redirecting when user updates their username during onboarding
+        if (hasCheckedStatus.current) return;
+
         if (!user) {
             router.replace('/login');
             return;
         }
-        
+
         // If user already has a username, they've completed onboarding - redirect to dashboard
         // Use truthy check to handle both null and empty string
         if (user.username && user.username.trim() !== '') {
             console.log('[onboarding] User already has username, redirecting to dashboard');
             router.replace('/dashboard');
         }
+
+        hasCheckedStatus.current = true;
     }, [authLoading, user, router]);
+
+    const hasStartedImport = React.useRef(false);
 
     useEffect(() => {
         if (!user) return; // Don't run import if not authenticated
+        if (hasStartedImport.current) return; // Only run once
+        hasStartedImport.current = true;
 
         // Auto-import data if available
         const importData = async () => {
@@ -99,7 +111,7 @@ export default function OnboardingPage() {
             setStep('visibility');
         } catch (error: unknown) {
             // Extract error message from API response
-            const errorMessage = (error as { detail?: string })?.detail 
+            const errorMessage = (error as { detail?: string })?.detail
                 || "Username might already be taken. Please try a different one.";
             toast.error(errorMessage);
         } finally {
@@ -110,7 +122,7 @@ export default function OnboardingPage() {
     const handleComplete = async () => {
         setLoading(true);
         try {
-            await updateUser({ profile_visibility: visibility }); 
+            await updateUser({ profile_visibility: visibility });
             setStep('tour');
         } catch (error) {
             toast.error("Something went wrong");

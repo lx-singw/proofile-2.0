@@ -18,11 +18,42 @@ from app.models.profile import Profile
 from app.services import profile_service, profile_cache
 from app.models.user import UserRole
 from app.schemas.profile import ProfileRead, ProfileCreate, ProfileUpdate
+from app.services.profile_builder import UniversalProfileBuilder, DataSourceType
 
 router = APIRouter(redirect_slashes=False)
 
 # Standard error messages
 PROFILE_NOT_FOUND = "Profile not found"
+
+@router.post("/ingest", response_model=ProfileRead)
+async def ingest_profile_data(
+    data: dict,
+    source: str = "manual",
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user)
+):
+    """
+    Ingest data into the user's profile from an external source.
+    """
+    builder = UniversalProfileBuilder(db)
+    # Convert string source to enum if possible
+    try:
+        source_enum = DataSourceType(source)
+    except ValueError:
+        source_enum = DataSourceType.MANUAL_ENTRY
+
+    profile = await builder.ingest_data(
+        user_id=current_user.id,
+        source=source_enum,
+        data=data,
+        confidence=1.0 # Manual/API ingestion is high confidence
+    )
+    
+    # Update cache
+    profile_read = ProfileRead.model_validate(profile)
+    await profile_cache.set_profile(profile_read)
+    
+    return profile_read
 
 @router.get("/", response_model=list[ProfileRead])
 @router.get("", response_model=list[ProfileRead], include_in_schema=False)
@@ -62,20 +93,103 @@ async def get_my_profile(
 ):
     """
     Get the profile of the current authenticated user.
+    If no profile exists, automatically create one using onboarding data.
     """
+    import logging
+    import json
+    logger = logging.getLogger(__name__)
+    
     try:
         profile = await profile_service.get_profile_by_user_id(db, user_id=current_user.id)
+        
+        # Auto-create profile if not found
         if profile is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Profile not found for the current user."
+            logger.info(f"Auto-creating profile for user {current_user.id}")
+            
+            # Safe attribute access for CachedUser objects
+            user_persona = getattr(current_user, 'persona', None)
+            user_industry = getattr(current_user, 'industry', None)
+            user_skills = getattr(current_user, 'skills', None)
+            user_primary_goal = getattr(current_user, 'primary_goal', None)
+            
+            # Build headline from persona and experience
+            headline_parts = []
+            if user_persona:
+                persona_labels = {
+                    "job_seeker": "Professional",
+                    "freelancer": "Freelance Professional",
+                    "recruiter": "Talent Acquisition Specialist",
+                    "employer": "Hiring Manager",
+                    "career_changer": "Career Transition Professional",
+                    "student": "Aspiring Professional"
+                }
+                headline_parts.append(persona_labels.get(user_persona, "Professional"))
+            if user_industry:
+                headline_parts.append(f"in {user_industry}")
+            
+            headline = " ".join(headline_parts) if headline_parts else "Building my professional profile"
+            
+            # Parse skills if available
+            skills_list = []
+            if user_skills:
+                try:
+                    skills_list = json.loads(user_skills) if isinstance(user_skills, str) else user_skills
+                except:
+                    skills_list = []
+            
+            # Build summary from primary goal
+            summary = ""
+            if user_primary_goal:
+                goal_texts = {
+                    "find_job": "Actively seeking new opportunities to grow my career.",
+                    "find_clients": "Looking to connect with clients and expand my freelance network.",
+                    "hire_talent": "Focused on finding and recruiting top talent.",
+                    "build_network": "Building professional connections in my industry.",
+                    "learn_skills": "Continuously learning and developing new skills."
+                }
+                summary = goal_texts.get(user_primary_goal, "")
+            
+            # Create the profile with onboarding data
+            try:
+                profile_data = ProfileCreate(
+                    headline=headline,
+                    summary=summary,
+                    skills_data=skills_list,
+                    experience_data=[],
+                    education_data=[],
+                    completeness_data={"overall": 30, "trust": 10},
+                    state="embryo"
+                )
+            
+                profile = await profile_service.create_profile(
+                    db=db, profile_in=profile_data, user_id=current_user.id
+                )
+                logger.info(f"Auto-created profile {profile.id} for user {current_user.id}")
+                
+            except Exception as creation_err:
+                # Log detailed error if creation fails
+                logger.exception("Failed to auto-create profile: %s", creation_err)
+                # If it was a validation error, it will be logged clearly now.
+                # Fallback: check if profile exists one last time (race condition?)
+                profile = await profile_service.get_profile_by_user_id(db, user_id=current_user.id)
+                if profile is None:
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail=f"Failed to create profile: {str(creation_err)}"
+                    )
+
+        if profile is None:
+             raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Profile creation failed silently"
             )
+        
         return profile
+        
     except HTTPException:
         raise
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).exception("Error in get_my_profile: %s", e)
+        logger.exception("Error in get_my_profile: %s", e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -338,6 +452,8 @@ class PublicProfileResponse(BaseModel):
     persona: Optional[str]
     industry: Optional[str]
     resumes: List[PublicProfileResume]
+    user_id: int
+    is_private: bool = False  # True if profile is private (only visible to owner)
     
     class Config:
         from_attributes = True
@@ -351,11 +467,13 @@ class UsernameCheckResponse(BaseModel):
 @router.get("/public/{username}", response_model=PublicProfileResponse)
 async def get_public_profile(
     username: str,
-    db: AsyncSession = Depends(deps.get_db)
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_user_optional)
 ):
     """
     Get a user's public profile by username.
-    Returns 404 if user doesn't exist or profile is private.
+    Returns 404 if user doesn't exist.
+    If profile is private, only the owner can view it (with is_private=True flag).
     """
     # Find user by username
     result = await db.execute(
@@ -369,12 +487,17 @@ async def get_public_profile(
             detail="Profile not found"
         )
     
-    # Check if profile is public
-    if user.profile_visibility != "public":
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Profile not found"
-        )
+    # Check if profile is private
+    is_private = user.profile_visibility != "public"
+    
+    # If private, only owner can view
+    if is_private:
+        current_user_id = getattr(current_user, 'id', None) if current_user else None
+        if current_user_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Profile not found"
+            )
     
     # Get user's published resumes
     resumes_result = await db.execute(
@@ -389,6 +512,8 @@ async def get_public_profile(
         profile_photo_url=user.profile_photo_url,
         persona=user.persona,
         industry=user.industry,
+        user_id=user.id,
+        is_private=is_private,
         resumes=[
             PublicProfileResume(
                 id=str(r.id),

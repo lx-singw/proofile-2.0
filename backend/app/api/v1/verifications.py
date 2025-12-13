@@ -6,12 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List
 from datetime import datetime
+from datetime import timedelta # Added
 import secrets
 import json
 
 from app.api.deps import get_db, get_current_active_user
 from app.models.user import User
 from app.models.verification import Verification
+from app.services.profile_builder import UniversalProfileBuilder, DataSourceType # added
 from app.schemas.verification import (
     VerificationCreate, VerificationUpdate, VerificationResponse,
     VerificationSummary, InitiateEmailVerification, ConfirmEmailVerification,
@@ -20,8 +22,8 @@ from app.schemas.verification import (
 
 router = APIRouter()
 
-# In-memory store for verification tokens (in production, use Redis)
-VERIFICATION_TOKENS: dict = {}
+# VERIFICATION_TOKENS removed
+
 
 
 @router.get("/", response_model=List[VerificationResponse])
@@ -84,6 +86,8 @@ async def initiate_email_verification(
     current_user: User = Depends(get_current_active_user)
 ):
     """Initiate email verification process."""
+    from datetime import timedelta
+    
     # Check if already verified
     result = await db.execute(
         select(Verification).where(
@@ -98,23 +102,22 @@ async def initiate_email_verification(
     
     # Generate verification token
     token = secrets.token_urlsafe(32)
-    VERIFICATION_TOKENS[token] = {
-        "user_id": current_user.id,
-        "email": data.email,
-        "type": "email",
-        "expires": datetime.utcnow().timestamp() + 3600  # 1 hour
-    }
+    expires = datetime.utcnow() + timedelta(hours=1)
     
     # Create or update verification record
     if existing:
         existing.status = "pending"
         existing.verified_value = data.email
+        existing.token = token
+        existing.token_expires_at = expires
     else:
         verification = Verification(
             user_id=current_user.id,
             verification_type="email",
             status="pending",
-            verified_value=data.email
+            verified_value=data.email,
+            token=token,
+            token_expires_at=expires
         )
         db.add(verification)
     
@@ -135,39 +138,42 @@ async def confirm_email_verification(
     current_user: User = Depends(get_current_active_user)
 ):
     """Confirm email verification with token."""
-    token_data = VERIFICATION_TOKENS.get(data.token)
+    from app.services.profile_builder import UniversalProfileBuilder, DataSourceType
     
-    if not token_data:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-    
-    if token_data["user_id"] != current_user.id:
-        raise HTTPException(status_code=403, detail="Token does not belong to this user")
-    
-    if token_data["expires"] < datetime.utcnow().timestamp():
-        del VERIFICATION_TOKENS[data.token]
-        raise HTTPException(status_code=400, detail="Token expired")
-    
-    # Update verification record
+    # Check token in DB
     result = await db.execute(
         select(Verification).where(
             Verification.user_id == current_user.id,
+            Verification.token == data.token,
             Verification.verification_type == "email"
         )
     )
     verification = result.scalar_one_or_none()
     
     if not verification:
-        raise HTTPException(status_code=404, detail="Verification not found")
+        raise HTTPException(status_code=400, detail="Invalid token")
     
+    if not verification.token_expires_at or verification.token_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Token expired")
+    
+    # Verify!
     verification.status = "verified"
     verification.verified_at = datetime.utcnow()
     verification.verification_provider = "internal"
+    verification.token = None # Clear token
+    verification.token_expires_at = None
     
     await db.commit()
     await db.refresh(verification)
     
-    # Clean up token
-    del VERIFICATION_TOKENS[data.token]
+    # Update Profile Score (Trust Points)
+    builder = UniversalProfileBuilder(db)
+    await builder.ingest_data(
+        user_id=current_user.id,
+        source=DataSourceType.VERIFICATION,
+        data={"verified_type": "email", "verified_value": verification.verified_value},
+        confidence=1.0
+    )
     
     return verification
 
@@ -179,6 +185,8 @@ async def initiate_phone_verification(
     current_user: User = Depends(get_current_active_user)
 ):
     """Initiate phone verification process."""
+    from datetime import timedelta
+    
     # Check if already verified
     result = await db.execute(
         select(Verification).where(
@@ -193,24 +201,22 @@ async def initiate_phone_verification(
     
     # Generate verification code
     code = f"{secrets.randbelow(10000):04d}"
-    VERIFICATION_TOKENS[f"phone_{current_user.id}"] = {
-        "user_id": current_user.id,
-        "phone": data.phone,
-        "code": code,
-        "type": "phone",
-        "expires": datetime.utcnow().timestamp() + 600  # 10 minutes
-    }
+    expires = datetime.utcnow() + timedelta(minutes=10)
     
     # Create or update verification record
     if existing:
         existing.status = "pending"
         existing.verified_value = data.phone
+        existing.token = code
+        existing.token_expires_at = expires
     else:
         verification = Verification(
             user_id=current_user.id,
             verification_type="phone",
             status="pending",
-            verified_value=data.phone
+            verified_value=data.phone,
+            token=code,
+            token_expires_at=expires
         )
         db.add(verification)
     
@@ -230,40 +236,42 @@ async def confirm_phone_verification(
     current_user: User = Depends(get_current_active_user)
 ):
     """Confirm phone verification with code."""
-    token_key = f"phone_{current_user.id}"
-    token_data = VERIFICATION_TOKENS.get(token_key)
+    from app.services.profile_builder import UniversalProfileBuilder, DataSourceType
     
-    if not token_data:
-        raise HTTPException(status_code=400, detail="No pending verification")
-    
-    if token_data["expires"] < datetime.utcnow().timestamp():
-        del VERIFICATION_TOKENS[token_key]
-        raise HTTPException(status_code=400, detail="Code expired")
-    
-    if token_data["code"] != data.code:
-        raise HTTPException(status_code=400, detail="Invalid code")
-    
-    # Update verification record
+    # Check code in DB
     result = await db.execute(
         select(Verification).where(
             Verification.user_id == current_user.id,
+            Verification.token == data.code,
             Verification.verification_type == "phone"
         )
     )
     verification = result.scalar_one_or_none()
     
     if not verification:
-        raise HTTPException(status_code=404, detail="Verification not found")
+        raise HTTPException(status_code=400, detail="Invalid code")
     
+    if not verification.token_expires_at or verification.token_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Code expired")
+    
+    # Verify
     verification.status = "verified"
     verification.verified_at = datetime.utcnow()
     verification.verification_provider = "internal"
+    verification.token = None
+    verification.token_expires_at = None
     
     await db.commit()
     await db.refresh(verification)
     
-    # Clean up
-    del VERIFICATION_TOKENS[token_key]
+    # Update Profile
+    builder = UniversalProfileBuilder(db)
+    await builder.ingest_data(
+        user_id=current_user.id,
+        source=DataSourceType.VERIFICATION,
+        data={"verified_type": "phone", "verified_value": verification.verified_value},
+        confidence=1.0
+    )
     
     return verification
 

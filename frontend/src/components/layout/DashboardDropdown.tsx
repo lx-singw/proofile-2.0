@@ -5,9 +5,11 @@ import { usePathname } from "next/navigation";
 
 interface DashboardDropdownItem {
   label: string;
-  href: string;
+  href?: string;
   icon?: React.ReactNode;
   divider?: boolean;
+  isDropdown?: boolean;
+  items?: DashboardDropdownItem[];
 }
 
 interface DashboardDropdownProps {
@@ -104,7 +106,9 @@ export default function DashboardDropdown({
           if (highlightedIndex >= 0 && items[highlightedIndex]) {
             const item = items[highlightedIndex];
             onItemClick?.(item);
-            window.location.href = item.href;
+            if (item.href) {
+              window.location.href = item.href;
+            }
             setIsOpen(false);
           }
           break;
@@ -186,7 +190,58 @@ export default function DashboardDropdown({
         <div className="py-1">
           {items.map((item, index) => {
             // Check for active state (exact match or nested route)
-            const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+            const isActive = item.href && (pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href)));
+
+            // Handle nested dropdown items (like "More" menu)
+            if (item.isDropdown && item.items) {
+              return (
+                <React.Fragment key={`${item.label}-${index}`}>
+                  {item.divider && (
+                    <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
+                  )}
+                  <div className="relative group">
+                    <button
+                      className={`w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors flex items-center justify-between gap-2`}
+                      aria-haspopup="true"
+                    >
+                      <span className="flex items-center gap-2">
+                        {item.icon && <span className="w-4 h-4">{item.icon}</span>}
+                        <span>{item.label}</span>
+                      </span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {/* Nested submenu */}
+                    <div className="absolute left-full top-0 ml-1 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <div className="py-1">
+                        {item.items.map((subItem, subIndex) => {
+                          const isSubActive = subItem.href && (pathname === subItem.href || pathname?.startsWith(subItem.href));
+                          return (
+                            <React.Fragment key={`${subItem.label}-${subIndex}`}>
+                              {subItem.divider && (
+                                <div className="my-1 border-t border-gray-200 dark:border-gray-700" />
+                              )}
+                              <a
+                                href={subItem.href}
+                                className={`block px-4 py-2 text-sm ${isSubActive
+                                  ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                  : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
+                                  } transition-colors flex items-center gap-2`}
+                                role="menuitem"
+                              >
+                                {subItem.icon && <span className="w-4 h-4">{subItem.icon}</span>}
+                                <span>{subItem.label}</span>
+                              </a>
+                            </React.Fragment>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+            }
 
             return (
               <React.Fragment key={`${item.label}-${index}`}>
@@ -218,7 +273,9 @@ export default function DashboardDropdown({
                       e.preventDefault();
                       onItemClick?.(item);
                       setIsOpen(false);
-                      window.location.href = item.href;
+                      if (item.href) {
+                        window.location.href = item.href;
+                      }
                     }
                   }}
                 >

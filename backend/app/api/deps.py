@@ -168,3 +168,73 @@ async def get_current_active_user(
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+from fastapi import Request, Cookie
+from typing import Optional
+
+async def get_current_user_optional(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    access_token: Optional[str] = Cookie(None)
+) -> Optional[CachedUser]:
+    """
+    Get current user if authenticated, otherwise return None.
+    Does not raise 401 for unauthenticated requests.
+    """
+    # Try to get token from cookie or Authorization header
+    token = access_token
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header[7:]
+    
+    if not token:
+        return None
+    
+    try:
+        # Re-use the existing get_current_user logic but catch exceptions
+        payload = security.decode_access_token(token)
+        username = payload.get("sub")
+        if not username:
+            return None
+        
+        result = await db.execute(select(User).where(User.email == username))
+        user = result.scalar_one_or_none()
+        
+        if user is None or not user.is_active:
+            return None
+        
+        # Helper to safely convert role/persona to Enum
+        role_val = user.role
+        if not isinstance(role_val, UserRole):
+            try:
+                role_val = UserRole(role_val)
+            except ValueError:
+                role_val = UserRole.APPRENTICE
+        
+        persona_val = user.persona
+        if not persona_val:
+            persona_val = None
+        elif not isinstance(persona_val, UserPersona):
+            try:
+                persona_val = UserPersona(persona_val)
+            except ValueError:
+                persona_val = None
+        
+        return CachedUser(
+            id=user.id,
+            email=user.email,
+            full_name=user.full_name,
+            username=user.username,
+            role=role_val,
+            persona=persona_val,
+            experience_level=user.experience_level,
+            primary_goal=user.primary_goal,
+            industry=user.industry,
+            is_active=user.is_active,
+            created_at=user.created_at,
+        )
+    except Exception:
+        # Any error means not authenticated
+        return None

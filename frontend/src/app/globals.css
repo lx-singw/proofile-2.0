@@ -120,3 +120,62 @@
     @apply bg-background text-foreground;
   }
 }
+
+/**
+ * Button Hierarchy System - "Don't Make Me Think"
+ * 
+ * One primary action per screen, clear visual distinction between action types.
+ */
+@layer components {
+  /* PRIMARY CTA - One per screen, bright and obvious */
+  .cta-primary {
+    @apply px-6 py-3 bg-green-600 text-white text-lg font-bold 
+           rounded-xl hover:bg-green-700 shadow-lg hover:shadow-xl
+           transition-all inline-flex items-center justify-center gap-2;
+  }
+  
+  .cta-primary:disabled {
+    @apply bg-gray-300 cursor-not-allowed shadow-none hover:bg-gray-300;
+  }
+
+  /* SECONDARY CTA - Below primary, neutral color */
+  .cta-secondary {
+    @apply px-5 py-2.5 bg-white text-gray-700 font-medium 
+           rounded-lg border border-gray-200 hover:bg-gray-50 
+           transition-all inline-flex items-center justify-center gap-2
+           dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700;
+  }
+
+  /* TERTIARY CTA - Text link style, subtle */
+  .cta-tertiary {
+    @apply text-sm text-gray-600 hover:text-gray-900 
+           underline underline-offset-2 transition-colors
+           dark:text-gray-400 dark:hover:text-gray-200;
+  }
+
+  /* SKIP LINK - Gray, dismissable, low priority */
+  .skip-link {
+    @apply text-sm text-gray-400 hover:text-gray-500 
+           cursor-pointer transition-colors
+           dark:text-gray-500 dark:hover:text-gray-400;
+  }
+
+  /* Action Card - Clickable card with hover effect */
+  .action-card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl p-6 
+           shadow-lg border-2 border-transparent
+           hover:shadow-2xl hover:scale-[1.02] 
+           transition-all cursor-pointer;
+  }
+
+  .action-card:hover {
+    @apply border-green-500 dark:border-green-400;
+  }
+
+  /* Focus states for accessibility */
+  .cta-primary:focus-visible,
+  .cta-secondary:focus-visible,
+  .cta-tertiary:focus-visible {
+    @apply outline-none ring-2 ring-green-500 ring-offset-2;
+  }
+}

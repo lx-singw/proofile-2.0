@@ -65,6 +65,9 @@ class User(Base, TimestampMixin):
     
     # Relationship to Notifications
     notifications: Mapped[list["Notification"]] = relationship("Notification", back_populates="user", cascade="all, delete-orphan", order_by="desc(Notification.created_at)")
+    
+    # Relationship to Profile Data Sources
+    data_sources: Mapped[list["app.models.profile_data_source.ProfileDataSource"]] = relationship("app.models.profile_data_source.ProfileDataSource", back_populates="user", cascade="all, delete-orphan", order_by="desc(ProfileDataSource.created_at)")
 
 
 
@@ -106,5 +109,6 @@ def _user_after_update(mapper, connection, target: User) -> None:
 # configuring mappers in different import orders (prevents mapper lookup errors).
 try:
     import app.models.resume  # noqa: F401
+    import app.models.profile_data_source  # noqa: F401
 except Exception:
     pass

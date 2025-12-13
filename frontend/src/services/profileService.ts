@@ -8,6 +8,17 @@ export type Profile = {
   avatar_url?: string | null;
   created_at?: string;
   updated_at?: string;
+  state?: string;
+  completeness_score?: number;
+  completeness_data?: {
+    basics: number;
+    experience: number;
+    education: number;
+    skills: number;
+  };
+  skills_data?: string[];
+  experience_data?: any[];
+  education_data?: any[];
 };
 
 export type CreateProfilePayload = {
@@ -151,6 +162,7 @@ export interface PublicProfile {
   persona?: string;
   industry?: string;
   resumes: PublicProfileResume[];
+  is_private?: boolean;
 }
 
 export interface UsernameCheckResponse {

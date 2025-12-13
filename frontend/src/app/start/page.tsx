@@ -1,13 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Upload, FileText, Sparkles, ArrowRight, ArrowLeft, LogIn } from "lucide-react";
+import { Upload, FileText, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 
+/**
+ * StartPage - "Don't Make Me Think" Redesign
+ * 
+ * Following Steve Krug's principles:
+ * - One question per screen
+ * - Two clear paths: "I have a resume" vs "I'll build one"
+ * - Show progress
+ * - Allow going back
+ */
 export default function StartPage() {
     const router = useRouter();
+    const [hasResume, setHasResume] = useState<boolean | null>(null);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -22,91 +32,115 @@ export default function StartPage() {
                 </div>
             </header>
 
-            <main className="max-w-6xl mx-auto py-16 px-4">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-                        Choose Your Path
+            <main className="max-w-2xl mx-auto py-16 px-4">
+                {/* Progress indicator */}
+                <div className="flex items-center justify-center gap-2 mb-12">
+                    <div className="w-3 h-3 rounded-full bg-green-600"></div>
+                    <div className={`w-3 h-3 rounded-full ${hasResume !== null ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-700'}`}></div>
+                    <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                </div>
+
+                {/* Single Question */}
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                        Do you have a resume?
                     </h1>
-                    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                        Select the best way to create your professional resume and start building your verified Proofile.
+                    <p className="text-lg text-gray-600 dark:text-gray-400">
+                        We&apos;ll customize your experience based on your answer.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {/* Option 1: Upload Resume */}
-                    <Link href="/resume/upload" className="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-xl transform hover:-translate-y-1">
-                        <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">
-                            AI Refined
+                {/* Two Clear Choices */}
+                <div className="space-y-4 mb-12">
+                    {/* Option 1: Yes, I have a resume */}
+                    <button
+                        onClick={() => setHasResume(true)}
+                        className={`w-full p-6 rounded-2xl border-2 transition-all text-left flex items-start gap-4 ${hasResume === true
+                                ? 'border-green-600 bg-green-50 dark:bg-green-900/20'
+                                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-400'
+                            }`}
+                    >
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${hasResume === true
+                                ? 'border-green-600 bg-green-600'
+                                : 'border-gray-300 dark:border-gray-600'
+                            }`}>
+                            {hasResume === true && <CheckCircle className="w-4 h-4 text-white" />}
                         </div>
-                        <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <Upload className="w-6 h-6 text-green-600" />
+                                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                                    Yes, I have one
+                                </span>
+                            </div>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Upload your existing resume and we&apos;ll enhance it with AI
+                            </p>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                            Upload Resume
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            Upload your existing resume for AI-powered refinement
-                        </p>
-                        <div className="flex items-center text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-2 transition-all">
-                            Start Upload
-                            <ArrowRight className="w-5 h-5 ml-1" />
-                        </div>
-                    </Link>
+                    </button>
 
-                    {/* Option 2: Build from Scratch */}
-                    <Link href="/resume/build" className="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 transition-all hover:shadow-xl transform hover:-translate-y-1">
-                        <div className="w-16 h-16 bg-green-50 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <FileText className="w-8 h-8 text-green-600 dark:text-green-400" />
+                    {/* Option 2: No, I'll build one */}
+                    <button
+                        onClick={() => setHasResume(false)}
+                        className={`w-full p-6 rounded-2xl border-2 transition-all text-left flex items-start gap-4 ${hasResume === false
+                                ? 'border-green-600 bg-green-50 dark:bg-green-900/20'
+                                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-400'
+                            }`}
+                    >
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${hasResume === false
+                                ? 'border-green-600 bg-green-600'
+                                : 'border-gray-300 dark:border-gray-600'
+                            }`}>
+                            {hasResume === false && <CheckCircle className="w-4 h-4 text-white" />}
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                            Build from Scratch
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            Create a professional resume with our guided builder
-                        </p>
-                        <div className="flex items-center text-green-600 dark:text-green-400 font-semibold group-hover:gap-2 transition-all">
-                            Start Building
-                            <ArrowRight className="w-5 h-5 ml-1" />
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <FileText className="w-6 h-6 text-purple-600" />
+                                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                                    No, I&apos;ll build one
+                                </span>
+                            </div>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Answer a few quick questions and we&apos;ll create your resume
+                            </p>
                         </div>
-                    </Link>
+                    </button>
+                </div>
 
-                    {/* Option 3: AI Build from Profile */}
-                    <Link href="/resume/ai-build" className="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-all hover:shadow-xl transform hover:-translate-y-1">
-                        <div className="absolute top-4 right-4 bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                            <Sparkles className="w-3 h-3" />
-                            AI Powered
-                        </div>
-                        <div className="w-16 h-16 bg-purple-50 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <Sparkles className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                            AI Build from Profile
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            Let AI create a polished resume using your profile data
-                        </p>
-                        <div className="flex items-center text-purple-600 dark:text-purple-400 font-semibold group-hover:gap-2 transition-all">
-                            Generate with AI
-                            <ArrowRight className="w-5 h-5 ml-1" />
-                        </div>
-                    </Link>
+                {/* Primary CTA - Only enabled when choice is made */}
+                <div className="space-y-4">
+                    <button
+                        onClick={() => {
+                            if (hasResume === true) {
+                                router.push('/resume/upload');
+                            } else if (hasResume === false) {
+                                router.push('/resume/build');
+                            }
+                        }}
+                        disabled={hasResume === null}
+                        className={`w-full py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${hasResume !== null
+                                ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                            }`}
+                    >
+                        Continue
+                        <ArrowRight className="w-5 h-5" />
+                    </button>
 
-                    {/* Option 4: Sign Up / Sign In */}
-                    <Link href="/login" className="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:border-gray-500 dark:hover:border-gray-500 transition-all hover:shadow-xl transform hover:-translate-y-1">
-                        <div className="w-16 h-16 bg-gray-50 dark:bg-gray-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                            <LogIn className="w-8 h-8 text-gray-600 dark:text-gray-400" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                            Sign Up / Sign In
-                        </h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            Access your existing account or create a new one
-                        </p>
-                        <div className="flex items-center text-gray-600 dark:text-gray-400 font-semibold group-hover:gap-2 transition-all">
-                            Login / Register
-                            <ArrowRight className="w-5 h-5 ml-1" />
-                        </div>
-                    </Link>
+                    {/* Secondary: Login for existing users */}
+                    <div className="text-center">
+                        <Link
+                            href="/login"
+                            className="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        >
+                            Already have an account? Sign in
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Reassurance */}
+                <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <p>Takes about 2 minutes • No credit card required</p>
                 </div>
             </main>
         </div>

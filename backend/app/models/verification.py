@@ -16,16 +16,20 @@ class Verification(Base, TimestampMixin):
     status = Column(String(20), nullable=False, default="not_started")  # not_started, pending, verified, failed, expired
     
     # Verification details
-    verification_data = Column(Text, nullable=True)  # JSON string for type-specific data (institution name, company, etc.)
+    verification_data = Column(Text, nullable=True)  # JSON string for type-specific data
     document_url = Column(String(500), nullable=True)  # URL to uploaded verification document
-    verified_value = Column(String(255), nullable=True)  # The verified value (email address, phone number, etc.)
+    verified_value = Column(String(255), nullable=True)  # The verified value
     
     # Verification metadata
-    verification_provider = Column(String(100), nullable=True)  # Which provider verified this (manual, trulioo, etc.)
+    verification_provider = Column(String(100), nullable=True)  # manual, trulioo, etc.
     verification_reference = Column(String(255), nullable=True)  # External reference ID
     verified_at = Column(DateTime, nullable=True)  # When verification was completed
-    expires_at = Column(DateTime, nullable=True)  # When verification expires (if applicable)
+    expires_at = Column(DateTime, nullable=True)  # When verification expires
     failure_reason = Column(Text, nullable=True)  # Reason for failed verification
+    
+    # Request/Token fields (for email/peer verification flows)
+    token = Column(String, index=True, nullable=True)
+    token_expires_at = Column(DateTime, nullable=True)
     
     # Relationships
     user = relationship("User", backref="verifications")

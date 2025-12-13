@@ -16,9 +16,11 @@ import {
     Globe,
     Calendar,
     Eye,
+    EyeOff,
     ThumbsUp,
     TrendingUp,
-    Award
+    Award,
+    AlertTriangle
 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import useAuth from "@/hooks/useAuth";
@@ -33,6 +35,7 @@ import {
     EndorseSkillButton,
     ProfileStatsCompact
 } from "@/components/social/SocialActions";
+import { ProfileModeToggle } from "@/components/profile/ProfileModeToggle";
 
 export default function PublicProfilePage() {
     const params = useParams();
@@ -45,6 +48,19 @@ export default function PublicProfilePage() {
     const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
+        // Handle special case: /p/me redirects to current user's public profile
+        if (username === "me" && user?.username) {
+            router.replace(`/p/${user.username}`);
+            return;
+        }
+
+        // If /p/me but user not logged in, show not found
+        if (username === "me" && !user) {
+            setNotFound(true);
+            setLoading(false);
+            return;
+        }
+
         async function loadProfile() {
             try {
                 const data = await getPublicProfile(username);
@@ -57,10 +73,10 @@ export default function PublicProfilePage() {
             }
         }
 
-        if (username) {
+        if (username && username !== "me") {
             loadProfile();
         }
-    }, [username]);
+    }, [username, user, router]);
 
     const handleShare = () => {
         const url = `${window.location.origin}/p/${username}`;
@@ -125,6 +141,15 @@ export default function PublicProfilePage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+            {/* Mode Toggle for Owner */}
+            {isOwnProfile && (
+                <ProfileModeToggle
+                    currentMode="preview"
+                    username={username}
+                    isPrivate={profile.is_private}
+                />
+            )}
+
             {/* Header */}
             <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
                 <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -161,6 +186,25 @@ export default function PublicProfilePage() {
                     </div>
                 </div>
             </header>
+
+            {/* Private Profile Warning Banner */}
+            {profile.is_private && isOwnProfile && (
+                <div className="max-w-5xl mx-auto px-4 pt-6">
+                    <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
+                        <EyeOff className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
+                        <div className="flex-1">
+                            <p className="text-yellow-800 dark:text-yellow-300 font-medium">Your profile is set to private</p>
+                            <p className="text-yellow-700 dark:text-yellow-400 text-sm">Only you can see this preview. Other people won't be able to view your profile unless you make it public.</p>
+                        </div>
+                        <Link
+                            href="/settings?tab=profile"
+                            className="px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 transition-colors flex-shrink-0"
+                        >
+                            Make Public
+                        </Link>
+                    </div>
+                </div>
+            )}
 
             <main className="max-w-5xl mx-auto px-4 py-12">
                 {/* Profile Header */}

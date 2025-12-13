@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.v1 import users, auth, profiles, jobs, ws, ai, resumes, activities, notifications, resume
-from app.api.v1 import social, ai_chat, verifications, discovery
+from app.api.v1 import social, ai_chat, verifications, discovery, analytics
 from app.core.config import settings
 try:
 	# import test_events lazily
@@ -35,6 +35,9 @@ api_router.include_router(verifications.router, prefix="/verifications", tags=["
 
 # Discovery: find and explore profiles
 api_router.include_router(discovery.router, prefix="/discovery", tags=["discovery"])
+
+# Analytics: profile views, career insights, event tracking
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
 
 # Test-only endpoints for e2e / local validation. Enable in test or development,
 # or when explicitly allowed via ENABLE_TEST_ROUTES. This keeps test helpers out of

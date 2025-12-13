@@ -1,163 +1,407 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import Link from "next/link";
+import {
+    Shield,
+    CheckCircle,
+    Smartphone,
+    Mail,
+    Briefcase,
+    Award,
+    Lock,
+    ArrowLeft,
+    Clock,
+    Circle,
+    GraduationCap,
+    FileCheck,
+    ChevronRight,
+    Sparkles,
+    TrendingUp,
+    Users,
+    Eye
+} from "lucide-react";
+import { VerificationModal } from "@/components/verification/VerificationModal";
 import DashboardHeader from "@/components/layout/DashboardHeader";
-import { Shield, CheckCircle, Clock, Circle, Mail, Phone, GraduationCap, Building2, Award, Lock, ArrowRight } from "lucide-react";
+import verificationService, { VerificationSummary } from "@/services/verificationService";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
+
+interface VerificationItem {
+    id: string;
+    icon: React.ReactNode;
+    title: string;
+    subtitle?: string;
+    status: "verified" | "pending" | "not_started";
+    points: number;
+    onVerify?: () => void;
+    comingSoon?: boolean;
+}
 
 export default function VerificationPage() {
     const router = useRouter();
-    const { user, loading } = useAuth();
+    const { user, loading: authLoading } = useAuth();
+    const [summary, setSummary] = useState<VerificationSummary | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [modalState, setModalState] = useState<{
+        isOpen: boolean;
+        type: "email" | "phone";
+    }>({ isOpen: false, type: "email" });
 
-    // Redirect to login if not authenticated
-    React.useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login?redirect=/verification');
+    const { refetch: refetchProfile } = useProfile();
+
+    const fetchSummary = async () => {
+        try {
+            const data = await verificationService.getVerificationSummary();
+            setSummary(data);
+        } catch (error) {
+            console.error("Failed to fetch verification summary", error);
+        } finally {
+            setLoading(false);
         }
-    }, [user, loading, router]);
+    };
 
-    if (loading) {
+    useEffect(() => {
+        if (user) {
+            fetchSummary();
+        }
+    }, [user]);
+
+    const handleSuccess = () => {
+        fetchSummary();
+        refetchProfile();
+    };
+
+    // Calculate verification percentage
+    const calculatePercentage = () => {
+        if (!summary) return 0;
+        let score = 0;
+        if (summary.email_verified) score += 20;
+        if (summary.phone_verified) score += 20;
+        if (summary.identity_verified) score += 30;
+        // Add more verification types here
+        return Math.min(score, 100);
+    };
+
+    const verificationPercentage = calculatePercentage();
+
+    // Build verification items list
+    const verificationItems: VerificationItem[] = [
+        {
+            id: "email",
+            icon: <Mail className="w-5 h-5" />,
+            title: "Email Verified",
+            status: summary?.email_verified ? "verified" : "not_started",
+            points: 20,
+            onVerify: () => setModalState({ isOpen: true, type: "email" }),
+        },
+        {
+            id: "phone",
+            icon: <Smartphone className="w-5 h-5" />,
+            title: "Phone Verified",
+            status: summary?.phone_verified ? "verified" : "not_started",
+            points: 20,
+            onVerify: () => setModalState({ isOpen: true, type: "phone" }),
+        },
+        {
+            id: "education",
+            icon: <GraduationCap className="w-5 h-5" />,
+            title: "Education Verified",
+            subtitle: "Stanford University", // This would come from user data
+            status: "not_started",
+            points: 15,
+            comingSoon: true,
+        },
+        {
+            id: "employment",
+            icon: <Briefcase className="w-5 h-5" />,
+            title: "Employment",
+            subtitle: "TechCorp", // This would come from user data
+            status: "pending",
+            points: 15,
+            comingSoon: true,
+        },
+        {
+            id: "skills",
+            icon: <Award className="w-5 h-5" />,
+            title: "Skills Assessment",
+            status: "not_started",
+            points: 15,
+            comingSoon: true,
+        },
+        {
+            id: "background",
+            icon: <FileCheck className="w-5 h-5" />,
+            title: "Background Check",
+            status: "not_started",
+            points: 15,
+            comingSoon: true,
+        },
+    ];
+
+    // Get next steps (pending/not started items)
+    const nextSteps = verificationItems.filter(
+        item => item.status !== "verified" && !item.comingSoon
+    );
+
+    if (authLoading || (loading && !summary)) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
         );
     }
 
-    if (!user) return null;
-
-    const verificationItems = [
-        { label: "Email Verified", icon: Mail, status: "verified", description: "Your email has been verified" },
-        { label: "Phone Verified", icon: Phone, status: "verified", description: "Your phone number is verified" },
-        { label: "Education", icon: GraduationCap, status: "pending", description: "Verify your educational background" },
-        { label: "Employment", icon: Building2, status: "not_started", description: "Verify your work history" },
-        { label: "Skills Assessment", icon: Award, status: "not_started", description: "Take skill assessments" },
-        { label: "Background Check", icon: Lock, status: "not_started", description: "Optional enhanced verification" },
-    ];
-
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case "verified":
-                return <CheckCircle className="w-5 h-5 text-green-500" />;
-            case "pending":
-                return <Clock className="w-5 h-5 text-yellow-500" />;
-            default:
-                return <Circle className="w-5 h-5 text-gray-300" />;
-        }
-    };
-
-    const getStatusLabel = (status: string) => {
-        switch (status) {
-            case "verified":
-                return <span className="text-green-600 text-sm font-medium">Verified</span>;
-            case "pending":
-                return <span className="text-yellow-600 text-sm font-medium">Pending</span>;
-            default:
-                return <span className="text-gray-400 text-sm font-medium">Not Started</span>;
-        }
-    };
-
-    const verifiedCount = verificationItems.filter(item => item.status === "verified").length;
-    const percentage = Math.round((verifiedCount / verificationItems.length) * 100);
-
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
             <DashboardHeader />
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="container mx-auto px-4 py-8 max-w-5xl">
+                {/* Back Button */}
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-6 transition-colors"
+                >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Dashboard
+                </button>
+
                 {/* Header */}
-                <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                            <Shield className="w-8 h-8 text-green-600" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                                Verification Center
-                            </h1>
-                            <p className="text-gray-600 dark:text-gray-400">
-                                Build trust with verified credentials
-                            </p>
-                        </div>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                                <Shield className="w-8 h-8 text-green-600" />
+                            </div>
+                            Verification Center
+                        </h1>
+                        <p className="text-gray-600 dark:text-gray-400 mt-2">
+                            Verify your identity and credentials to build trust and unlock more opportunities.
+                        </p>
                     </div>
                 </div>
 
-                {/* Progress */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 border border-gray-200 dark:border-gray-700">
+                {/* Progress Card */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                            Verification Progress
-                        </h2>
-                        <span className="text-2xl font-bold text-green-600">{percentage}%</span>
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Your Verification Status</h2>
+                        <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                            {verificationPercentage}% <span className="text-lg font-normal text-gray-500">Complete</span>
+                        </div>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
                         <div
-                            className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500"
-                            style={{ width: `${percentage}%` }}
+                            className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-700 ease-out"
+                            style={{ width: `${verificationPercentage}%` }}
                         />
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {verifiedCount} of {verificationItems.length} verifications complete
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                        {verificationPercentage < 50
+                            ? "Complete more verifications to build trust with employers"
+                            : verificationPercentage < 100
+                                ? "You're making great progress! Complete remaining verifications."
+                                : "🎉 Fully verified! You stand out to employers."
+                        }
                     </p>
                 </div>
 
-                {/* Verification Items */}
-                <div className="space-y-4 mb-8">
-                    {verificationItems.map((item, idx) => (
-                        <div
-                            key={idx}
-                            className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 flex items-center justify-between hover:border-green-500 transition-colors cursor-pointer"
-                        >
-                            <div className="flex items-center gap-4">
-                                {getStatusIcon(item.status)}
-                                <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                                    <item.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                {/* Verification Checklist */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8 shadow-sm">
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Verification Checklist</h2>
+                    <div className="space-y-3">
+                        {verificationItems.map(item => (
+                            <div
+                                key={item.id}
+                                className={`flex items-center justify-between p-4 rounded-xl border transition-all ${item.status === "verified"
+                                        ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900/50"
+                                        : item.status === "pending"
+                                            ? "bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-900/50"
+                                            : "bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-700"
+                                    }`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    {/* Status Icon */}
+                                    <div className={`flex-shrink-0 ${item.status === "verified"
+                                            ? "text-green-600"
+                                            : item.status === "pending"
+                                                ? "text-yellow-600"
+                                                : "text-gray-400"
+                                        }`}>
+                                        {item.status === "verified" ? (
+                                            <CheckCircle className="w-6 h-6" />
+                                        ) : item.status === "pending" ? (
+                                            <Clock className="w-6 h-6" />
+                                        ) : (
+                                            <Circle className="w-6 h-6" />
+                                        )}
+                                    </div>
+
+                                    {/* Icon */}
+                                    <div className={`p-2 rounded-lg ${item.status === "verified"
+                                            ? "bg-green-100 dark:bg-green-900/30 text-green-600"
+                                            : item.status === "pending"
+                                                ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600"
+                                                : "bg-gray-200 dark:bg-gray-600 text-gray-500"
+                                        }`}>
+                                        {item.icon}
+                                    </div>
+
+                                    {/* Title */}
+                                    <div>
+                                        <h3 className={`font-medium ${item.status === "verified"
+                                                ? "text-green-800 dark:text-green-300"
+                                                : item.status === "pending"
+                                                    ? "text-yellow-800 dark:text-yellow-300"
+                                                    : "text-gray-600 dark:text-gray-400"
+                                            }`}>
+                                            {item.status === "verified" ? "✓ " : item.status === "pending" ? "⏳ " : "○ "}
+                                            {item.title}
+                                            {item.subtitle && (
+                                                <span className="font-normal text-gray-500"> ({item.subtitle})</span>
+                                            )}
+                                        </h3>
+                                        {item.status === "not_started" && (
+                                            <p className="text-xs text-gray-500">Not Started</p>
+                                        )}
+                                        {item.status === "pending" && (
+                                            <p className="text-xs text-yellow-600">Pending Verification</p>
+                                        )}
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white">
-                                        {item.label}
-                                    </h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        {item.description}
-                                    </p>
+
+                                {/* Points/Action */}
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                                        +{item.points} pts
+                                    </span>
+                                    {item.status !== "verified" && !item.comingSoon && item.onVerify && (
+                                        <button
+                                            onClick={item.onVerify}
+                                            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                        >
+                                            Verify
+                                        </button>
+                                    )}
+                                    {item.comingSoon && (
+                                        <span className="text-xs text-gray-400">Coming Soon</span>
+                                    )}
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                {getStatusLabel(item.status)}
-                                {item.status !== "verified" && (
-                                    <ArrowRight className="w-5 h-5 text-gray-400" />
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
-                {/* Benefits */}
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                        Why verify?
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
-                            <span className="text-gray-700 dark:text-gray-300">3x more profile views</span>
+                {/* Next Steps */}
+                {nextSteps.length > 0 && (
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8 shadow-sm">
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Next Steps</h2>
+                        <div className="space-y-4">
+                            {nextSteps.map((item, index) => (
+                                <div key={item.id} className="flex items-center gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                        {index + 1}
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="font-medium text-gray-900 dark:text-white">
+                                            Complete {item.title.toLowerCase().replace("verified", "verification")}
+                                        </h4>
+                                    </div>
+                                    <button
+                                        onClick={item.onVerify}
+                                        className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium text-sm"
+                                    >
+                                        Verify {item.title.split(" ")[0]} <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {/* Skills Assessment CTA */}
+                            <div className="flex items-center gap-4 opacity-50">
+                                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm">
+                                    {nextSteps.length + 1}
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="font-medium text-gray-600 dark:text-gray-400">
+                                        Verify your top skills
+                                    </h4>
+                                </div>
+                                <span className="text-xs text-gray-400">Coming Soon</span>
+                            </div>
                         </div>
-                        <div className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
-                            <span className="text-gray-700 dark:text-gray-300">Employers trust verified profiles</span>
+                    </div>
+                )}
+
+                {/* Why Verify Section */}
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/50 p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                            <Sparkles className="w-6 h-6 text-blue-600" />
                         </div>
-                        <div className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
-                            <span className="text-gray-700 dark:text-gray-300">Higher job match quality</span>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Why verify?</h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="flex items-start gap-4">
+                            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg flex-shrink-0">
+                                <TrendingUp className="w-5 h-5 text-green-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-gray-900 dark:text-white">3x more profile views</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Verified profiles get significantly more attention from recruiters</p>
+                            </div>
                         </div>
-                        <div className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
-                            <span className="text-gray-700 dark:text-gray-300">Stand out from competition</span>
+
+                        <div className="flex items-start gap-4">
+                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex-shrink-0">
+                                <Users className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Employers trust verified profiles</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Build credibility with potential employers</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex-shrink-0">
+                                <Award className="w-5 h-5 text-orange-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Higher job match quality</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Get matched with better opportunities</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
+                                <Eye className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-gray-900 dark:text-white">Stand out from competition</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Differentiate yourself in a crowded job market</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Quick Link to Settings */}
+                <div className="mt-8 text-center">
+                    <Link
+                        href="/settings?tab=verification"
+                        className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center gap-1"
+                    >
+                        Manage all verifications in Settings <ChevronRight className="w-4 h-4" />
+                    </Link>
+                </div>
             </main>
+
+            <VerificationModal
+                isOpen={modalState.isOpen}
+                onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+                type={modalState.type}
+                onSuccess={handleSuccess}
+                initialValue={modalState.type === 'email' ? user?.email : ''}
+            />
         </div>
     );
 }
