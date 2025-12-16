@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from typing import TYPE_CHECKING
-from app.models.job import Job
+from app.models.opportunity import Job  # Job is alias for Opportunity
 from app.schemas.job import JobCreate
 
 if TYPE_CHECKING:

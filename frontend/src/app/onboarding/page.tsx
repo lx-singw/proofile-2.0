@@ -4,18 +4,22 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import ProofileLogo from "@/components/branding/ProofileLogo";
-import { CheckCircle, Shield, Globe, Lock, ArrowRight, Loader2, Sparkles, User, LayoutDashboard, Briefcase, ShieldCheck, Star, BarChart } from "lucide-react";
+import { CheckCircle, Shield, Globe, Lock, ArrowRight, Loader2, Sparkles, User, LayoutDashboard, Briefcase, ShieldCheck, Star, BarChart, GraduationCap, BookOpen, Wrench, Zap, FileText, Heart, Users } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { resumeService } from "@/services/resumeService";
+
+// Opportunity preference type
+type OpportunityPreferenceType = 'jobs' | 'training_skills_programs' | 'both';
 
 export default function OnboardingPage() {
     const router = useRouter();
     const { user, loading: authLoading, updateUser } = useAuth();
-    const [step, setStep] = useState<'welcome' | 'username' | 'visibility' | 'tour' | 'complete'>('welcome');
+    const [step, setStep] = useState<'welcome' | 'category' | 'username' | 'visibility' | 'tour' | 'complete'>('welcome');
     const [importStatus, setImportStatus] = useState<'idle' | 'importing' | 'success' | 'error'>('idle');
     const [username, setUsername] = useState("");
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
     const [visibility, setVisibility] = useState<'public' | 'private'>('public');
+    const [opportunityPreference, setOpportunityPreference] = useState<OpportunityPreferenceType | null>(null);
     const [loading, setLoading] = useState(false);
 
     // Redirect logic: Protect route for unauthenticated or already-onboarded users
@@ -86,21 +90,34 @@ export default function OnboardingPage() {
                         localStorage.removeItem('resumeData');
                     }
                     setImportStatus('success');
-                    setTimeout(() => setStep('username'), 1500);
+                    setTimeout(() => setStep('category'), 1500);
                 } catch (error) {
                     console.error("Import failed", error);
                     setImportStatus('error');
                     toast.error("Failed to import your data", "You can try again later.");
-                    setTimeout(() => setStep('username'), 1500);
+                    setTimeout(() => setStep('category'), 1500);
                 }
             } else {
-                // No data to import, move to next step after a brief welcome
-                setTimeout(() => setStep('username'), 2000);
+                // No data to import, move to category selection
+                setTimeout(() => setStep('category'), 2000);
             }
         };
 
         importData();
     }, [user]);
+
+    const handleCategorySelect = async () => {
+        if (!opportunityPreference) return;
+        setLoading(true);
+        try {
+            await updateUser({ opportunity_preference: opportunityPreference });
+            setStep('username');
+        } catch (error) {
+            toast.error("Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleUsernameSubmit = async () => {
         if (!username) return;
@@ -137,15 +154,6 @@ export default function OnboardingPage() {
         setTimeout(() => router.push('/dashboard'), 1500);
     };
 
-    // Show loading while checking auth
-    // if (authLoading || !user) {
-    //     return (
-    //         <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center p-4">
-    //             <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-    //         </div>
-    //     );
-    // }
-
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md">
@@ -175,6 +183,96 @@ export default function OnboardingPage() {
                                 <span className="text-sm font-medium">Data imported successfully!</span>
                             </div>
                         )}
+                    </div>
+                )}
+
+                {step === 'category' && (
+                    <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 animate-fade-in">
+                        <div className="text-center mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">What are you looking for?</h2>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                This helps us personalize your experience
+                            </p>
+                        </div>
+
+                        <div className="space-y-4 mb-6">
+                            {/* Jobs Card */}
+                            <button
+                                onClick={() => setOpportunityPreference('jobs')}
+                                className={`w-full p-5 rounded-xl border-2 text-left transition-all ${opportunityPreference === 'jobs'
+                                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                                    }`}
+                            >
+                                <div className="flex items-start gap-4">
+                                    <div className={`p-3 rounded-xl ${opportunityPreference === 'jobs' ? 'bg-blue-600 text-white' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'}`}>
+                                        <Briefcase className="w-6 h-6" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className={`font-bold text-lg ${opportunityPreference === 'jobs' ? 'text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-white'}`}>
+                                            💼 Jobs
+                                        </h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            Employment, contracts, freelance, consulting
+                                        </p>
+                                        <div className="flex flex-wrap gap-2 mt-3">
+                                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">Full-time</span>
+                                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">Part-time</span>
+                                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">Contract</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            {/* Training & Skills Programs Card */}
+                            <button
+                                onClick={() => setOpportunityPreference('training_skills_programs')}
+                                className={`w-full p-5 rounded-xl border-2 text-left transition-all ${opportunityPreference === 'training_skills_programs'
+                                    ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-emerald-300'
+                                    }`}
+                            >
+                                <div className="flex items-start gap-4">
+                                    <div className={`p-3 rounded-xl ${opportunityPreference === 'training_skills_programs' ? 'bg-emerald-600 text-white' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600'}`}>
+                                        <GraduationCap className="w-6 h-6" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className={`font-bold text-lg ${opportunityPreference === 'training_skills_programs' ? 'text-emerald-900 dark:text-emerald-100' : 'text-gray-900 dark:text-white'}`}>
+                                            📚 Training & Skills Programs
+                                        </h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                            Internships, learnerships, apprenticeships
+                                        </p>
+                                        <div className="flex flex-wrap gap-2 mt-3">
+                                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">Internship</span>
+                                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">Learnership</span>
+                                            <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">Apprenticeship</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            {/* Both Option */}
+                            <button
+                                onClick={() => setOpportunityPreference('both')}
+                                className={`w-full p-4 rounded-xl border-2 text-center transition-all ${opportunityPreference === 'both'
+                                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
+                                    }`}
+                            >
+                                <span className={`font-medium ${opportunityPreference === 'both' ? 'text-purple-900 dark:text-purple-100' : 'text-gray-600 dark:text-gray-400'}`}>
+                                    ✨ I'm interested in both
+                                </span>
+                            </button>
+                        </div>
+
+                        <button
+                            onClick={handleCategorySelect}
+                            disabled={!opportunityPreference || loading}
+                            className="w-full py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-xl font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                            {loading ? <Loader2 className="animate-spin" /> : <>Continue <ArrowRight className="w-4 h-4" /></>}
+                        </button>
                     </div>
                 )}
 

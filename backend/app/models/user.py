@@ -23,6 +23,14 @@ class UserPersona(str, enum.Enum):
     FREELANCER = "freelancer"
     RECRUITER = "recruiter"
 
+
+class OpportunityPreference(str, enum.Enum):
+    """User's primary opportunity category preference."""
+    JOBS = "jobs"  # Employment, contracts, freelance, consulting
+    TRAINING_SKILLS_PROGRAMS = "training_skills_programs"  # Internships, learnerships, apprenticeships
+    BOTH = "both"  # Interested in all opportunities
+
+
 class User(Base, TimestampMixin):
     __tablename__ = "users"
     
@@ -43,6 +51,10 @@ class User(Base, TimestampMixin):
     dashboard_preferences = Column(Text, nullable=True, default="{}")  # JSON string for dashboard settings
     skills = Column(Text, nullable=True)  # JSON array of skills as text
     
+    # Opportunity Category Preference (set during onboarding)
+    # Values: 'jobs', 'training_skills_programs', 'both'
+    opportunity_preference = Column(String, nullable=True, default=None)
+    
     # Trust Score
     trust_score = Column(Integer, default=0) # Global trust score (0-100)
     
@@ -57,8 +69,9 @@ class User(Base, TimestampMixin):
     # Relationship to Profile
     profile: Mapped["Profile"] = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
-    # Relationship to Jobs
-    jobs: Mapped[list["Job"]] = relationship("Job", back_populates="employer", cascade="all, delete-orphan")
+    # Relationship to Opportunities (renamed from Jobs)
+    opportunities: Mapped[list["Opportunity"]] = relationship("Opportunity", back_populates="employer", cascade="all, delete-orphan")
+    # Note: 'jobs' alias removed due to SQLAlchemy conflict - use 'opportunities' directly
     # Relationship to Resumes
     # Use fully-qualified target to avoid import/mapper ordering issues
     resumes: Mapped[list["app.models.resume.Resume"]] = relationship("app.models.resume.Resume", back_populates="user", cascade="all, delete-orphan")

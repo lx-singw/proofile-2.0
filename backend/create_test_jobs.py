@@ -8,7 +8,7 @@ sys.path.insert(0, '/app')
 import asyncio
 import json
 from app.core.database import async_session_maker
-from app.models.job import Job
+from app.models.opportunity import Job  # Job is alias for Opportunity
 from app.models.user import User
 
 async def create_test_jobs():
