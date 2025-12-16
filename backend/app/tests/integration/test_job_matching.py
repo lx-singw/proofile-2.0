@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from app.models.user import User, UserRole
-from app.models.job import Job
+from app.models.opportunity import Job  # Job is alias for Opportunity
 from app.models.profile import Profile
 from app.services import job_service
 from app.schemas.job import JobCreate

@@ -71,7 +71,7 @@ class User(Base, TimestampMixin):
 
     # Relationship to Opportunities (renamed from Jobs)
     opportunities: Mapped[list["Opportunity"]] = relationship("Opportunity", back_populates="employer", cascade="all, delete-orphan")
-    jobs = opportunities  # Backward compatibility alias
+    # Note: 'jobs' alias removed due to SQLAlchemy conflict - use 'opportunities' directly
     # Relationship to Resumes
     # Use fully-qualified target to avoid import/mapper ordering issues
     resumes: Mapped[list["app.models.resume.Resume"]] = relationship("app.models.resume.Resume", back_populates="user", cascade="all, delete-orphan")
