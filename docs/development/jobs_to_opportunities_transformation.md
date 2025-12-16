@@ -370,104 +370,104 @@ const opportunityRedirects = {
 
 ## Files to Modify - Complete List
 
-### Frontend (~60 files)
+### Frontend (~60 files) ✅ COMPLETE
 
 **Routes:**
-- [ ] `app/jobs/page.tsx` → `app/opportunities/page.tsx`
-- [ ] `app/jobs/layout.tsx` → `app/opportunities/layout.tsx`
-- [ ] `app/jobs/loading.tsx` → `app/opportunities/loading.tsx`
-- [ ] `app/jobs/error.tsx` → `app/opportunities/error.tsx`
-- [ ] `app/jobs/[id]/page.tsx` → `app/opportunities/[id]/page.tsx`
-- [ ] `app/jobs/[id]/apply/page.tsx` → `app/opportunities/[id]/apply/page.tsx`
-- [ ] `app/jobs/[id]/gap-analysis/page.tsx` → `app/opportunities/[id]/gap-analysis/page.tsx`
-- [ ] `app/jobs/saved/page.tsx` → `app/opportunities/saved/page.tsx`
-- [ ] `app/jobs/agents/page.tsx` → `app/opportunities/agents/page.tsx`
-- [ ] `app/jobs/agents/hunter/page.tsx` → `app/opportunities/agents/hunter/page.tsx`
-- [ ] `app/jobs/agents/logs/page.tsx` → `app/opportunities/agents/logs/page.tsx`
-- [ ] `app/jobs/market/page.tsx` → `app/opportunities/market/page.tsx`
+- [x] `app/jobs/page.tsx` → `app/opportunities/page.tsx`
+- [x] `app/jobs/layout.tsx` → `app/opportunities/layout.tsx`
+- [x] `app/jobs/loading.tsx` → `app/opportunities/loading.tsx`
+- [x] `app/jobs/error.tsx` → `app/opportunities/error.tsx`
+- [x] `app/jobs/[id]/page.tsx` → `app/opportunities/[id]/page.tsx`
+- [x] `app/jobs/[id]/apply/page.tsx` → `app/opportunities/[id]/apply/page.tsx`
+- [x] `app/jobs/[id]/gap-analysis/page.tsx` → `app/opportunities/[id]/gap-analysis/page.tsx`
+- [x] `app/jobs/saved/page.tsx` → `app/opportunities/saved/page.tsx`
+- [x] `app/jobs/agents/page.tsx` → `app/opportunities/agents/page.tsx`
+- [x] `app/jobs/agents/hunter/page.tsx` → `app/opportunities/agents/hunter/page.tsx`
+- [x] `app/jobs/agents/logs/page.tsx` → `app/opportunities/agents/logs/page.tsx`
+- [x] `app/jobs/market/page.tsx` → `app/opportunities/market/page.tsx`
 
 **Components:**
-- [ ] `components/jobs/` → `components/opportunities/` (entire directory)
-- [ ] `components/dashboard/JobRecommendations.tsx`
-- [ ] `components/portal/JobSearchSection.tsx`
-- [ ] `components/portal/PortalJobCard.tsx`
-- [ ] `components/ai/AIJobMatches.tsx`
-- [ ] `components/resume/JobMatching.tsx`
-- [ ] `components/feed/FeedRightSidebar.tsx`
-- [ ] `components/feed/FeedLeftSidebar.tsx`
-- [ ] `components/home/HomeRightSidebar.tsx`
+- [x] `components/jobs/` → `components/opportunities/` (entire directory)
+- [x] `components/dashboard/JobRecommendations.tsx`
+- [x] `components/portal/JobSearchSection.tsx`
+- [x] `components/portal/PortalJobCard.tsx`
+- [x] `components/ai/AIJobMatches.tsx`
+- [x] `components/resume/JobMatching.tsx`
+- [x] `components/feed/FeedRightSidebar.tsx`
+- [x] `components/feed/FeedLeftSidebar.tsx`
+- [x] `components/home/HomeRightSidebar.tsx`
 
 **Services/Stores:**
-- [ ] `services/jobService.ts` → `services/opportunityService.ts`
-- [ ] `services/portalService.ts` (update references)
-- [ ] `store/useJobStore.ts` → `store/useOpportunityStore.ts`
-- [ ] `store/useAgentStore.ts` (update references)
+- [x] `services/jobService.ts` → `services/opportunityService.ts`
+- [x] `services/portalService.ts` (update references)
+- [x] `store/useJobStore.ts` → `store/useOpportunityStore.ts`
+- [x] `store/useAgentStore.ts` (update references)
 
 **Configuration:**
-- [ ] `config/navigation.tsx`
-- [ ] `middleware.ts`
+- [x] `config/navigation.tsx`
+- [x] `middleware.ts`
 
 **Other Pages:**
-- [ ] `app/home/page.tsx`
-- [ ] `app/feed/page.tsx`
-- [ ] `app/dashboard/page.tsx`
-- [ ] `app/portal/page.tsx`
-- [ ] `app/portal/[id]/page.tsx`
-- [ ] `app/tools/page.tsx`
-- [ ] `app/discover/page.tsx`
-- [ ] `app/explore/page.tsx`
-- [ ] `app/analytics/page.tsx`
-- [ ] `app/ai-assistant/page.tsx`
-- [ ] `app/onboarding/page.tsx`
-- [ ] `app/profile/page.tsx`
-- [ ] `app/settings/page.tsx`
+- [x] `app/home/page.tsx`
+- [x] `app/feed/page.tsx`
+- [x] `app/dashboard/page.tsx`
+- [x] `app/portal/page.tsx`
+- [x] `app/portal/[id]/page.tsx`
+- [x] `app/tools/page.tsx`
+- [x] `app/discover/page.tsx`
+- [x] `app/explore/page.tsx`
+- [x] `app/analytics/page.tsx`
+- [x] `app/ai-assistant/page.tsx`
+- [x] `app/onboarding/page.tsx`
+- [x] `app/profile/page.tsx`
+- [x] `app/settings/page.tsx`
 
-### Backend (~40 files)
+### Backend (~40 files) ✅ COMPLETE
 
 **Models:**
-- [ ] `models/job.py` → `models/opportunity.py`
-- [ ] `models/saved_job.py` → `models/saved_opportunity.py`
-- [ ] `models/portal_job.py` → `models/portal_opportunity.py`
-- [ ] `models/application.py` (update references)
-- [ ] `models/user.py` (update references)
+- [x] `models/job.py` → `models/opportunity.py`
+- [x] `models/saved_job.py` → `models/saved_opportunity.py`
+- [x] `models/portal_job.py` → `models/portal_opportunity.py`
+- [x] `models/application.py` (update references)
+- [x] `models/user.py` (update references)
 
 **Schemas:**
-- [ ] `schemas/job.py` → `schemas/opportunity.py`
-- [ ] `schemas/portal.py` (update references)
+- [x] `schemas/job.py` → `schemas/opportunity.py`
+- [x] `schemas/portal.py` (update references)
 
 **Services:**
-- [ ] `services/job_service.py` → `services/opportunity_service.py`
-- [ ] `services/portal_service.py` (update references)
-- [ ] `services/feed_service.py` (update references)
-- [ ] `services/agents/hunter.py` (update references)
-- [ ] `services/trust_score_engine.py` (update references)
+- [x] `services/job_service.py` → `services/opportunity_service.py`
+- [x] `services/portal_service.py` (update references)
+- [x] `services/feed_service.py` (update references)
+- [x] `services/agents/hunter.py` (update references)
+- [x] `services/trust_score_engine.py` (update references)
 
 **API:**
-- [ ] `api/v1/jobs.py` → `api/v1/opportunities.py`
-- [ ] `api/v1/portal.py` (update references)
-- [ ] `api/v1/agents.py` (update references)
-- [ ] `api/v1/ai.py` (update references)
-- [ ] `api/v1/ai_chat.py` (update references)
-- [ ] `api/v1/analytics.py` (update references)
-- [ ] `api/v1/api.py` (update router references)
+- [x] `api/v1/jobs.py` → `api/v1/opportunities.py`
+- [x] `api/v1/portal.py` (update references)
+- [x] `api/v1/agents.py` (update references)
+- [x] `api/v1/ai.py` (update references)
+- [x] `api/v1/ai_chat.py` (update references)
+- [x] `api/v1/analytics.py` (update references)
+- [x] `api/v1/api.py` (update router references)
 
 **Tasks/Scripts:**
-- [ ] `scripts/seed_portal_jobs.py`
-- [ ] `scripts/run_scrapers.py`
-- [ ] `scripts/test_scrapers.py`
-- [ ] `create_test_jobs.py`
-- [ ] `tasks/portal_scraper.py`
+- [x] `scripts/seed_portal_jobs.py`
+- [x] `scripts/run_scrapers.py`
+- [x] `scripts/test_scrapers.py`
+- [x] `create_test_jobs.py`
+- [x] `tasks/portal_scraper.py`
 
 **Scrapers:**
-- [ ] `scrapers/indeed.py`
-- [ ] `scrapers/pnet.py`
-- [ ] `scrapers/careers24.py`
-- [ ] `scrapers/utils.py`
-- [ ] `scrapers/__init__.py`
+- [x] `scrapers/indeed.py`
+- [x] `scrapers/pnet.py`
+- [x] `scrapers/careers24.py`
+- [x] `scrapers/utils.py`
+- [x] `scrapers/__init__.py`
 
 **Database:**
-- [ ] New migration: `rename_jobs_to_opportunities.py`
-- [ ] Existing migrations (reference only, don't modify)
+- [x] New migration: `rename_jobs_to_opportunities.py`
+- [x] Existing migrations (reference only, don't modify)
 
 ---
 
@@ -495,9 +495,9 @@ const opportunityRedirects = {
 
 ## Success Criteria
 
-- [ ] All `/jobs` routes redirect to `/opportunities`
-- [ ] All UI text uses "opportunities" terminology
-- [ ] All API endpoints use `/opportunities` paths
+- [x] All `/jobs` routes redirect to `/opportunities`
+- [x] All UI text uses "opportunities" terminology
+- [x] All API endpoints use `/opportunities` paths
 - [ ] Database tables renamed successfully
 - [ ] All tests pass
 - [ ] No broken links or 404s
@@ -800,7 +800,7 @@ Training Users rated by:
 - [x] Create dual-feed component with tabs ✅ `opportunities/page.tsx`
 - [x] Build category-specific dashboard layouts ✅ `CategoryWidgets.tsx`
 - [x] Design distinct onboarding wizards ✅ Category step added
-- [ ] Implement category-aware notification system ⏳ Future
+- [x] Implement category-aware notification system ✅ `notification_service.py`
 
 #### AI/ML Changes
 - [x] Train Jobs matching model ✅ Weighted scoring
@@ -870,6 +870,7 @@ See the linked document for full database schemas, UI implementations, and imple
 | **Phase 6** | Dashboard Customization - CategoryWidgets | ✅ Done |
 | **Phase 7** | AI Coaching Prompts - Personalized coaching | ✅ Done |
 | **Phase 8** | Ratings Categories - Dimension schemas | ✅ Done |
+| **Phase 9** | Category Notifications - Personalized templates | ✅ Done |
 
 ### Key Files Modified
 
@@ -879,6 +880,7 @@ See the linked document for full database schemas, UI implementations, and imple
 - `backend/app/services/opportunity_service.py` - Category-specific matching
 - `backend/app/services/suggestion_engine.py` - Verification priorities
 - `backend/app/services/scoring/scoring_engine.py` - Rating dimensions
+- `backend/app/services/notification_service.py` - Category notification templates
 - `backend/app/api/v1/ai_chat.py` - Category coaching prompts
 
 **Frontend:**
@@ -900,6 +902,5 @@ See the linked document for full database schemas, UI implementations, and imple
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
-| Category Notifications | Medium | Different notification templates |
 | URL Redirects | Low | /jobs/* → /opportunities/* |
 | Settings Toggle | Low | UI to switch category preference |
