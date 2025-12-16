@@ -789,24 +789,24 @@ Training Users rated by:
 ### 9. Implementation Checklist
 
 #### Backend Changes
-- [ ] Add `opportunity_preference` to User model
-- [ ] Create Category-based feed algorithm
-- [ ] Build separate AI matching models
-- [ ] Implement category-specific verification workflows
-- [ ] Create rating schemas per category
+- [x] Add `opportunity_preference` to User model ✅ `user.py`
+- [x] Create Category-based feed algorithm ✅ `opportunity_service.py`
+- [x] Build separate AI matching models ✅ Category-specific weights
+- [x] Implement category-specific verification workflows ✅ `suggestion_engine.py`
+- [x] Create rating schemas per category ✅ `scoring_engine.py`
 
 #### Frontend Changes
-- [ ] Add category selection to signup flow
-- [ ] Create dual-feed component with tabs
-- [ ] Build category-specific dashboard layouts
-- [ ] Design distinct onboarding wizards
-- [ ] Implement category-aware notification system
+- [x] Add category selection to signup flow ✅ `onboarding/page.tsx`
+- [x] Create dual-feed component with tabs ✅ `opportunities/page.tsx`
+- [x] Build category-specific dashboard layouts ✅ `CategoryWidgets.tsx`
+- [x] Design distinct onboarding wizards ✅ Category step added
+- [ ] Implement category-aware notification system ⏳ Future
 
 #### AI/ML Changes
-- [ ] Train Jobs matching model
-- [ ] Train Training & Skills matching model
-- [ ] Create category-specific coaching prompts
-- [ ] Build personalized recommendation engine
+- [x] Train Jobs matching model ✅ Weighted scoring
+- [x] Train Training & Skills matching model ✅ Category weights
+- [x] Create category-specific coaching prompts ✅ `ai_chat.py`
+- [x] Build personalized recommendation engine ✅ `opportunity_service.py`
 
 ---
 
@@ -854,3 +854,52 @@ This framework covers 11 dimensions:
 
 See the linked document for full database schemas, UI implementations, and implementation roadmap.
 
+---
+
+## Implementation Status
+
+### ✅ Completed (December 2025)
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| **Phase 1** | Backend Foundation - Models, schemas, APIs | ✅ Done |
+| **Phase 2** | Frontend Routes - /jobs → /opportunities | ✅ Done |
+| **Phase 3** | Category Personalization - Onboarding, tabs | ✅ Done |
+| **Phase 4** | AI Matching - Category-specific weights | ✅ Done |
+| **Phase 5** | Verification Priorities - SuggestionEngine | ✅ Done |
+| **Phase 6** | Dashboard Customization - CategoryWidgets | ✅ Done |
+| **Phase 7** | AI Coaching Prompts - Personalized coaching | ✅ Done |
+| **Phase 8** | Ratings Categories - Dimension schemas | ✅ Done |
+
+### Key Files Modified
+
+**Backend:**
+- `backend/app/models/opportunity.py` - Opportunity model with category
+- `backend/app/models/user.py` - Added `opportunity_preference`
+- `backend/app/services/opportunity_service.py` - Category-specific matching
+- `backend/app/services/suggestion_engine.py` - Verification priorities
+- `backend/app/services/scoring/scoring_engine.py` - Rating dimensions
+- `backend/app/api/v1/ai_chat.py` - Category coaching prompts
+
+**Frontend:**
+- `frontend/src/app/opportunities/` - Renamed from /jobs
+- `frontend/src/app/onboarding/page.tsx` - Category selection
+- `frontend/src/components/dashboard/CategoryWidgets.tsx` - New
+- `frontend/src/services/opportunityService.ts` - Renamed
+
+### Pull Requests
+
+| PR | Branch | Status |
+|----|--------|--------|
+| Jobs → Opportunities | `feat/jobs-to-opportunities` | ✅ Merged |
+| Category Enhancements | `feat/category-enhancements` | 🔄 Ready |
+
+---
+
+## Future Enhancements
+
+| Feature | Priority | Description |
+|---------|----------|-------------|
+| Category Notifications | Medium | Different notification templates |
+| URL Redirects | Low | /jobs/* → /opportunities/* |
+| Settings Toggle | Low | UI to switch category preference |
