@@ -21,6 +21,7 @@ from urllib.parse import urlparse
 from contextlib import asynccontextmanager
 from app.core import config, database
 from app.api.v1.api import api_router
+from app.core.http_client import close_client
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:     %(message)s')
@@ -44,6 +45,7 @@ async def lifespan(app: FastAPI):
     After yielding, it closes any established connections when the application
     is shut down.
     """
+
     logger.info("--- Application Startup ---")
     # Log environment and a redacted DB URL to verify config
     logger.info(f"Environment: {config.settings.ENVIRONMENT}")
@@ -51,8 +53,23 @@ async def lifespan(app: FastAPI):
         parsed_url = urlparse(config.settings.DATABASE_URL)
         safe_url = parsed_url._replace(netloc=f"****:****@{parsed_url.hostname}:{parsed_url.port}").geturl()
         logger.info(f"Database URL: {safe_url}")
+        print(f"DEBUG: Full DATABASE_URL: {config.settings.DATABASE_URL}", flush=True)
     else:
         logger.error("DATABASE_URL is not set!")
+
+    # --- Run Alembic migrations at startup using Alembic API ---
+    try:
+        from alembic.config import Config
+        from alembic import command
+        logger.info("Running Alembic migrations at startup using Alembic API...")
+        alembic_cfg = Config(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../alembic.ini'))
+        import asyncio
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, lambda: command.upgrade(alembic_cfg, "head"))
+        logger.info("Alembic migrations applied successfully.")
+    except Exception as e:
+        logger.error(f"Error running Alembic migrations: {e}")
+
     RedisError = Exception  # Fallback when redis client is unavailable
     try:
         import redis.asyncio as redis
@@ -88,6 +105,12 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"Unexpected error closing Redis connection: {e}")
     await database.dispose_engine()
+    # Close module-level HTTP client (if initialized) to ensure clean shutdown
+    try:
+        await close_client()
+        logger.info("HTTP client closed.")
+    except Exception as e:
+        logger.warning(f"Error closing HTTP client: {e}")
 
 # Security headers middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -237,6 +260,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
         errors.append(error_dict)
     return JSONResponse(status_code=status_code, content={"detail": errors})
+
+
+# Temporary global exception handler for debugging (remove before production)
+@app.exception_handler(Exception)
+async def all_exception_handler(request: Request, exc: Exception):
+    import traceback
+    tb = traceback.format_exc()
+    logger.exception("Unhandled exception: %s", exc)
+    return JSONResponse(status_code=500, content={"detail": f"TRACE:\n{tb}"})
 
 @app.get("/health", tags=["health"])  # Lightweight readiness/liveness probe
 def health_check():

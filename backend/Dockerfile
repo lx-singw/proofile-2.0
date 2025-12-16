@@ -11,6 +11,13 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     curl \
     libmagic1 \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libcairo2 \
+    libffi-dev \
+    libjpeg-dev \
+    libopenjp2-7 \
+    libgdk-pixbuf-2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
@@ -44,6 +51,13 @@ RUN apt-get update && apt-get install -y \
     curl \
     libmagic1 \
     postgresql-client \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libcairo2 \
+    libffi-dev \
+    libjpeg-dev \
+    libopenjp2-7 \
+    libgdk-pixbuf-2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry

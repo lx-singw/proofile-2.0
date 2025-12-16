@@ -40,6 +40,13 @@ class ProfileCreate(ProfileBase):
     """
     headline: str
     summary: str
+    
+    # Optional fields for auto-creation/advanced creation
+    completeness_data: Optional[dict] = Field(default_factory=dict)
+    skills_data: Optional[list] = Field(default_factory=list)
+    experience_data: Optional[list] = Field(default_factory=list)
+    education_data: Optional[list] = Field(default_factory=list)
+    state: Optional[str] = "embryo"
 
     @field_validator("headline", mode="before")
     def validate_headline(cls, v):
@@ -109,6 +116,12 @@ class ProfileRead(ProfileBase):
     id: int
     user_id: int
     avatar_url: Optional[str] = None
+    state: Optional[str] = None
+    completeness_score: float = 0.0
+    completeness_data: dict = {}
+    skills_data: list = []
+    experience_data: list = []
+    education_data: list = []
 
 
 class ProfileResponse(ProfileRead):

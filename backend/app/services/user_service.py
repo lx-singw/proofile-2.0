@@ -38,11 +38,22 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
     - Refreshes the instance to get the ID and other defaults from the DB.
     """
     hashed_password = get_password_hash(user_in.password)
+    # Ensure role is stored as a plain string to avoid DB enum type mismatches
+    role_value = None
+    try:
+        import enum as _enum
+        if isinstance(user_in.role, _enum.Enum):
+            role_value = user_in.role.value
+        else:
+            role_value = str(user_in.role) if user_in.role is not None else None
+    except Exception:
+        role_value = str(user_in.role) if user_in.role is not None else None
+
     db_user = User(
         email=user_in.email,
         hashed_password=hashed_password,
         full_name=user_in.full_name,
-        role=user_in.role,
+        role=role_value,
     )
     try:
         db.add(db_user)
@@ -57,15 +68,8 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
         raise
     except Exception as e:
         await db.rollback()
-        try:
-            search_path = await db.execute(text("SHOW search_path"))
-            logging.getLogger(__name__).error("Current search_path: %s", search_path.scalar())
-        except Exception:
-            logging.getLogger(__name__).exception("Failed to inspect search_path after user create error")
-        logging.getLogger(__name__).error("User creation failed with %s", repr(e))
-        logging.getLogger(__name__).debug("User creation traceback:\n%s", traceback.format_exc())
-        print("USER_CREATE_ERR:", repr(e), flush=True)
-        print("USER_CREATE_TRACE:", traceback.format_exc(), flush=True)
+        import traceback
+        logging.getLogger(__name__).error(f"User creation failed: {e}\n{traceback.format_exc()}")
         raise RuntimeError(f"Failed to create user: {e}") from e
  
 async def update_user(db: AsyncSession, user: User, user_in: UserUpdate) -> User:
@@ -79,6 +83,22 @@ async def update_user(db: AsyncSession, user: User, user_in: UserUpdate) -> User
         del update_data["password"]
         user.hashed_password = hashed_password
 
+    # Handle persona separately to ensure proper conversion
+    if "persona" in update_data:
+        persona_value = update_data.pop("persona")
+        if persona_value is not None:
+            import enum as _enum
+            if isinstance(persona_value, _enum.Enum):
+                persona_str = persona_value.value
+            else:
+                persona_str = str(persona_value)
+        else:
+            persona_str = None
+        
+        # Set attribute directly so SQLAlchemy tracks the change
+        user.persona = persona_str
+
+    # Update remaining fields
     for field, value in update_data.items():
         setattr(user, field, value)
 

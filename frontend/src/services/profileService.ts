@@ -8,6 +8,17 @@ export type Profile = {
   avatar_url?: string | null;
   created_at?: string;
   updated_at?: string;
+  state?: string;
+  completeness_score?: number;
+  completeness_data?: {
+    basics: number;
+    experience: number;
+    education: number;
+    skills: number;
+  };
+  skills_data?: string[];
+  experience_data?: any[];
+  education_data?: any[];
 };
 
 export type CreateProfilePayload = {
@@ -126,13 +137,60 @@ export async function updateProfile(profileId: string | number, payload: UpdateP
 export async function uploadAvatar(file: File): Promise<Profile> {
   const fd = new FormData();
   fd.append("file", file);
-  
+
   const response = await api.post<Profile>(`${PROFILE_BASE_PATH}/avatar`, fd, {
     headers: { "Content-Type": "multipart/form-data" }
   });
   return response.data;
 }
 
-const profileService = { getProfile, createProfile, updateProfile, uploadAvatar };
+// === Public Profile Methods ===
+
+export interface PublicProfileResume {
+  id: string;
+  name: string;
+  template_id: string;
+  created_at: string;
+}
+
+export interface PublicProfile {
+  user_id: number;
+  username: string;
+  full_name?: string;
+  bio?: string;
+  profile_photo_url?: string;
+  persona?: string;
+  industry?: string;
+  resumes: PublicProfileResume[];
+  is_private?: boolean;
+}
+
+export interface UsernameCheckResponse {
+  available: boolean;
+  suggestion?: string;
+}
+
+export async function getPublicProfile(username: string): Promise<PublicProfile> {
+  return apiRequest<PublicProfile>({
+    method: 'get',
+    url: `/api/v1/profiles/public/${username}`,
+  });
+}
+
+export async function checkUsernameAvailability(username: string): Promise<UsernameCheckResponse> {
+  return apiRequest<UsernameCheckResponse>({
+    method: 'get',
+    url: `/api/v1/profiles/check-username/${username}`,
+  });
+}
+
+const profileService = {
+  getProfile,
+  createProfile,
+  updateProfile,
+  uploadAvatar,
+  getPublicProfile,
+  checkUsernameAvailability
+};
 
 export default profileService;

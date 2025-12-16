@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import DashboardHeader from "@/components/layout/DashboardHeader";
+
 import { CreateProfileForm } from "@/components/profile/CreateProfileForm";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -38,7 +38,7 @@ export default function CreateProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <DashboardHeader />
+      
       <main className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-2xl space-y-6" data-testid="create-profile-page">
           <div className="space-y-2">

@@ -34,20 +34,30 @@ export default function LoginForm() {
     try {
       await login({ username: data.username, password: data.password });
     } catch (err: unknown) {
-      // Check if account doesn't exist → redirect to signup
+      // Log the error for debugging
+      if (process.env.NODE_ENV !== "production") {
+        console.error("[LoginForm] error:", err);
+      }
+
+      // Extract error details safely
       const detail = isRecord(err) && typeof err["detail"] === "string" ? err["detail"] : "";
-      
-      if (detail === "Incorrect email or password") {
-        // Could be either wrong password OR account doesn't exist
-        // For better UX, show a friendly message with signup link
+      const message = isRecord(err) && typeof err["message"] === "string" ? err["message"] : "";
+      const errorText = detail || message;
+
+      // Check if account doesn't exist → show helpful message
+      if (errorText.toLowerCase().includes("incorrect") || errorText.toLowerCase().includes("invalid")) {
         setError("username", {
           type: "server",
-          message: "Account not found. Create one to get started.",
+          message: "Invalid email or password",
+        });
+        setError("password", {
+          type: "server",
+          message: "Invalid email or password",
         });
         return;
       }
 
-      // Show a generic auth error to avoid enumeration
+      // Handle structured field errors from backend
       const generic = "Invalid email or password";
       const rawFieldErrors = isRecord(err)
         ? (err["errors"] ?? err["field_errors"])
@@ -60,6 +70,7 @@ export default function LoginForm() {
           setError(name as keyof FormValues, { type: "server", message: resolved || generic });
         });
       } else {
+        // Fallback: always show error to user
         setError("username", { type: "server", message: generic });
         setError("password", { type: "server", message: generic });
       }

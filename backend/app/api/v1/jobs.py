@@ -4,9 +4,9 @@ API Endpoints for Jobs.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1 import deps
+from app.api import deps
 from app.models.user import User, UserRole
-from app.schemas.job import JobCreate, JobRead
+from app.schemas.job import JobCreate, JobRead, JobRecommendationRead, JobDetailRead
 from app.services import job_service
 
 router = APIRouter()
@@ -40,9 +40,140 @@ async def list_jobs(
     db: AsyncSession = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 10,
+    verified_only: bool = False,
 ):
     """
     List all available job postings.
+    
+    Args:
+        verified_only: If True, only return jobs that require verified candidates
     """
-    jobs = await job_service.get_jobs(db, skip=skip, limit=limit)
+    jobs = await job_service.get_jobs(db, skip=skip, limit=limit, verified_only=verified_only)
     return jobs
+
+@router.get("/recommendations", response_model=list[JobRead])
+async def get_job_recommendations(
+    limit: int = 5,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get job recommendations for the current user.
+    Uses smart matching based on profile headline and primary goal.
+    """
+    try:
+        jobs = await job_service.get_recommended_jobs(db, user=current_user, limit=limit)
+        return jobs
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).exception("Error in get_job_recommendations: %s", e)
+        # Fallback to recent jobs if personalization fails
+        jobs = await job_service.get_jobs(db, skip=0, limit=limit)
+        return jobs
+
+@router.get("/recommendations/advanced", response_model=list[JobRecommendationRead])
+async def get_advanced_job_recommendations(
+    limit: int = 10,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get advanced job recommendations with scoring breakdown.
+    Matches based on skills, experience level, industry, and title.
+    """
+    try:
+        results = await job_service.get_recommended_jobs_advanced(
+            db, user=current_user, limit=limit
+        )
+        
+        # Convert to response format
+        return [
+            {
+                "job": job,
+                "match_score": score,
+                "score_breakdown": breakdown
+            }
+            for job, score, breakdown in results
+        ]
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).exception("Error in get_advanced_job_recommendations: %s", e)
+        # Return empty list on error rather than 500
+        return []
+
+@router.get("/saved", response_model=list[JobRead])
+async def get_saved_jobs(
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get all jobs saved by the current user.
+    """
+    jobs = await job_service.get_saved_jobs(db, user_id=current_user.id)
+    return jobs
+
+@router.get("/{job_id}", response_model=JobDetailRead)
+async def get_job_details(
+    job_id: int,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Get detailed job information including save status and related jobs.
+    """
+    job = await job_service.get_job_by_id(db, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    # Check if user has saved this job
+    is_saved = await job_service.is_job_saved(db, user_id=current_user.id, job_id=job_id)
+    
+    # Get related jobs
+    related_jobs = await job_service.get_related_jobs(db, job, limit=5)
+    
+    return {
+        "job": job,
+        "is_saved": is_saved,
+        "related_jobs": related_jobs
+    }
+
+@router.post("/{job_id}/save", status_code=status.HTTP_201_CREATED)
+async def save_job(
+    job_id: int,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Save a job for later review.
+    """
+    # Check if job exists
+    job = await job_service.get_job_by_id(db, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    # Check if already saved
+    if await job_service.is_job_saved(db, user_id=current_user.id, job_id=job_id):
+        raise HTTPException(status_code=400, detail="Job already saved")
+    
+    try:
+        await job_service.save_job(db, user_id=current_user.id, job_id=job_id)
+        return {"message": "Job saved successfully"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to save job"
+        ) from e
+
+@router.delete("/{job_id}/save", status_code=status.HTTP_204_NO_CONTENT)
+async def unsave_job(
+    job_id: int,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user = Depends(deps.get_current_active_user),
+):
+    """
+    Remove a saved job.
+    """
+    success = await job_service.unsave_job(db, user_id=current_user.id, job_id=job_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Saved job not found")
+    return None

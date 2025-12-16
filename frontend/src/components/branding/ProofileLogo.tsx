@@ -6,10 +6,10 @@ interface ProofileLogoProps {
   className?: string;
 }
 
-export default function ProofileLogo({ 
-  size = 32, 
+export default function ProofileLogo({
+  size = 32,
   showWordmark = true,
-  className = "" 
+  className = ""
 }: ProofileLogoProps) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
@@ -29,16 +29,20 @@ export default function ProofileLogo({
           strokeWidth="2"
           className="drop-shadow-lg"
         />
-        
-        {/* Person silhouette - head */}
-        <circle cx="50" cy="35" r="9" fill="white" opacity="0.95"/>
-        
-        {/* Person silhouette - body */}
-        <path
-          d="M50 46 Q37 46 33 58 L33 66 L67 66 L67 58 Q63 46 50 46 Z"
+
+        {/* Stylized P letter */}
+        <text
+          x="50"
+          y="62"
+          fontSize="48"
+          fontWeight="800"
           fill="white"
+          textAnchor="middle"
+          fontFamily="system-ui, -apple-system, sans-serif"
           opacity="0.95"
-        />
+        >
+          P
+        </text>
       </svg>
 
       {/* Wordmark */}
@@ -57,10 +61,10 @@ export function ProofileIcon({ size = 32 }: { size?: number }) {
 }
 
 // Monochrome variant for print/special uses
-export function ProofileLogoMono({ 
-  size = 32, 
+export function ProofileLogoMono({
+  size = 32,
   showWordmark = true,
-  color = "currentColor" 
+  color = "currentColor"
 }: ProofileLogoProps & { color?: string }) {
   return (
     <div className="flex items-center gap-2">
@@ -76,14 +80,19 @@ export function ProofileLogoMono({
           d="M50 10 L80 20 L80 50 Q80 70 50 90 Q20 70 20 50 L20 20 Z"
           fill={color}
         />
-        {/* Person - head */}
-        <circle cx="50" cy="35" r="9" fill="white" opacity="0.95"/>
-        {/* Person - body */}
-        <path
-          d="M50 46 Q37 46 33 58 L33 66 L67 66 L67 58 Q63 46 50 46 Z"
+        {/* Stylized P letter */}
+        <text
+          x="50"
+          y="62"
+          fontSize="48"
+          fontWeight="800"
           fill="white"
+          textAnchor="middle"
+          fontFamily="system-ui, -apple-system, sans-serif"
           opacity="0.95"
-        />
+        >
+          P
+        </text>
       </svg>
       {showWordmark && (
         <span className="text-2xl font-bold" style={{ color }}>

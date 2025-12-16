@@ -1,7 +1,9 @@
 """
 Pydantic schemas for Job objects.
 """
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
+from datetime import datetime
+import json
 
 # --- Base Schema ---
 class JobBase(BaseModel):
@@ -10,6 +12,23 @@ class JobBase(BaseModel):
     description: str
     company_name: str
     location: str | None = None
+    job_type: str | None = None
+    required_skills: list[str] | None = None
+    experience_level: str | None = None
+    industry: str | None = None
+    salary_range: str | None = None
+    requires_verification_level: int = 0  # 0=none, 1=L1 (skill), 2=L2 (employment), 3=L3 (identity)
+    verified_candidates_only: bool = False
+    
+    @field_validator('required_skills', mode='before')
+    @classmethod
+    def parse_skills(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except:
+                return []
+        return v
 
 # --- Schemas for API Operations ---
 class JobCreate(JobBase):
@@ -27,3 +46,19 @@ class JobRead(JobBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
     employer_id: int
+    created_at: datetime
+    updated_at: datetime
+
+class JobRecommendationRead(BaseModel):
+    """Job with match score and breakdown."""
+    job: JobRead
+    match_score: int
+    score_breakdown: dict[str, int]
+    model_config = ConfigDict(from_attributes=True)
+
+class JobDetailRead(BaseModel):
+    """Detailed job information with save status and related jobs."""
+    job: JobRead
+    is_saved: bool
+    related_jobs: list[JobRead]
+    model_config = ConfigDict(from_attributes=True)

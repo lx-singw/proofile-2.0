@@ -6,6 +6,12 @@ export type CurrentUser = {
   full_name?: string | null;
   username?: string | null;
   role?: string | null;
+  persona?: string | null;
+  experience_level?: string | null;
+  primary_goal?: string | null;
+  industry?: string | null;
+  created_at?: string | null;
+  avatarUrl?: string | null;
   [key: string]: unknown;
 };
 
@@ -92,6 +98,14 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   return null;
 }
 
-const authService = { register, login, logout, getCurrentUser, refresh };
+export async function updateCurrentUser(updates: Partial<CurrentUser>): Promise<CurrentUser> {
+  return apiRequest<CurrentUser>({
+    method: "patch",
+    url: "/api/v1/users/me",
+    data: updates,
+  });
+}
+
+const authService = { register, login, logout, getCurrentUser, refresh, updateCurrentUser };
 
 export default authService;

@@ -11,10 +11,11 @@ type User = CurrentUser | null;
 type AuthContextValue = {
   user: User;
   loading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
-  register: (payload: RegisterPayload) => Promise<void>;
+  login: (payload: LoginPayload, redirectPath?: string) => Promise<void>;
+  register: (payload: RegisterPayload, redirectPath?: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  updateUser: (updates: Partial<CurrentUser>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -63,31 +64,39 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     enabled: !bootstrapping,
   });
 
-  const login = async (payload: LoginPayload) => {
+  const login = async (payload: LoginPayload, redirectPath?: string) => {
     await authService.login(payload);
-    await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
-    await queryClient.refetchQueries({ queryKey: ME_QUERY_KEY });
+    queryClient.setQueryData(ME_QUERY_KEY, null);
+    const currentUser = await queryClient.fetchQuery({
+      queryKey: ME_QUERY_KEY,
+      queryFn: async () => authService.getCurrentUser(),
+    });
+
+    // Check if user needs onboarding (no username or empty username = new user)
+    const hasUsername = currentUser?.username && currentUser.username.trim() !== '';
+    const needsOnboarding = currentUser && !hasUsername;
+    const finalPath = redirectPath || (needsOnboarding ? "/onboarding" : "/dashboard");
 
     if (process.env.NODE_ENV !== "production") {
-      console.log("[auth] login successful, navigating to dashboard");
+      console.log(`[auth] login successful, navigating to ${finalPath}`, { needsOnboarding, hasUsername, username: currentUser?.username });
     }
 
     setTimeout(() => {
-      router.replace("/dashboard");
+      router.replace(finalPath);
     }, 100);
   };
 
-  const register = async (payload: RegisterPayload) => {
+  const register = async (payload: RegisterPayload, redirectPath: string = "/login") => {
     await authService.register(payload);
     queryClient.setQueryData(ME_QUERY_KEY, null);
     await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
 
     if (process.env.NODE_ENV !== "production") {
-      console.log("[auth] registration successful, navigating to login");
+      console.log(`[auth] registration successful, navigating to ${redirectPath}`);
     }
 
     setTimeout(() => {
-      router.replace("/login");
+      router.replace(redirectPath);
     }, 100);
   };
 
@@ -111,10 +120,26 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
   };
 
+  const updateUser = async (updates: Partial<CurrentUser>) => {
+    try {
+      // Call the API to update user
+      const response = await authService.updateCurrentUser(updates);
+      // Update the cache with the new user data
+      queryClient.setQueryData(ME_QUERY_KEY, response);
+    } catch (error: unknown) {
+      // Normalize the error to include a detail message
+      const errorObj = error as { detail?: string; message?: string } | null;
+      const detail = errorObj?.detail || errorObj?.message || "Failed to update user";
+      console.error("Failed to update user:", detail, error);
+      // Rethrow with normalized structure
+      throw { detail, originalError: error };
+    }
+  };
+
   const isLoading = bootstrapping || (loading && user !== null);
 
   return (
-    <AuthContext.Provider value={{ user: user ?? null, loading: isLoading, login, register, logout, refresh }}>
+    <AuthContext.Provider value={{ user: user ?? null, loading: isLoading, login, register, logout, refresh, updateUser }}>
       {isLoading ? (
         <div className="min-h-screen flex items-center justify-center">
           <p>Loading...</p>

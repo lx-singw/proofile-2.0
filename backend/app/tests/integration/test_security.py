@@ -18,7 +18,7 @@ from urllib.parse import quote
 from app.core.security import get_password_hash, create_access_token
 from app.models.user import User, UserRole
 from app.services import user_service, profile_service
-from app.api.v1 import deps
+from app.api import deps
 from app.schemas.user import UserCreate
 from app.schemas.profile import ProfileCreate
 
