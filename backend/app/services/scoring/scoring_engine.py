@@ -39,13 +39,129 @@ RELATIONSHIP_WEIGHTS = {
 
 RECIPROCAL_DAMPENING = 0.8  # Applied when mutual ratings within 7 days
 
-# Dimension categories
+# Dimension categories (legacy - for backward compatibility)
 DIMENSION_CATEGORIES = {
     "technical": ["code_quality", "system_design", "debugging", "technical_depth"],
     "soft_skills": ["communication", "empathy", "collaboration", "mentorship"],
     "execution": ["reliability", "delivery", "ownership", "initiative"],
     "leadership": ["vision", "people_management", "strategic_thinking", "culture"],
 }
+
+# Category-specific rating dimensions based on user's opportunity_preference
+# Jobs users: Focus on professional competencies
+JOBS_RATING_DIMENSIONS = {
+    "technical_skills": {
+        "slug": "technical_skills",
+        "name": "Technical Skills",
+        "description": "Proficiency in tools, technologies, and methodologies",
+        "category": "technical",
+        "question": "How would you rate their technical abilities?",
+        "low_anchor": "Needs development",
+        "high_anchor": "Expert level"
+    },
+    "leadership": {
+        "slug": "leadership",
+        "name": "Leadership",
+        "description": "Team management, decision-making, and strategic thinking",
+        "category": "leadership",
+        "question": "How would you rate their leadership?",
+        "low_anchor": "Emerging leader",
+        "high_anchor": "Exceptional leader"
+    },
+    "collaboration": {
+        "slug": "collaboration",
+        "name": "Collaboration",
+        "description": "Teamwork, communication, and working across functions",
+        "category": "soft_skills",
+        "question": "How well do they collaborate with others?",
+        "low_anchor": "Works independently",
+        "high_anchor": "Outstanding collaborator"
+    },
+    "reliability": {
+        "slug": "reliability",
+        "name": "Reliability",
+        "description": "Delivery on commitments, deadlines, and attendance",
+        "category": "execution",
+        "question": "How reliable are they?",
+        "low_anchor": "Sometimes inconsistent",
+        "high_anchor": "Always dependable"
+    },
+    "problem_solving": {
+        "slug": "problem_solving",
+        "name": "Problem Solving",
+        "description": "Critical thinking, innovation, and handling challenges",
+        "category": "technical",
+        "question": "How well do they solve problems?",
+        "low_anchor": "Needs guidance",
+        "high_anchor": "Exceptional problem solver"
+    }
+}
+
+# Training users: Focus on growth potential and learning aptitude
+TRAINING_RATING_DIMENSIONS = {
+    "learning_aptitude": {
+        "slug": "learning_aptitude",
+        "name": "Learning Aptitude",
+        "description": "Quick learner, curiosity, and knowledge retention",
+        "category": "soft_skills",
+        "question": "How quickly do they learn new concepts?",
+        "low_anchor": "Steady learner",
+        "high_anchor": "Exceptionally fast learner"
+    },
+    "initiative": {
+        "slug": "initiative",
+        "name": "Initiative",
+        "description": "Proactive, self-driven, and takes ownership",
+        "category": "execution",
+        "question": "How much initiative do they show?",
+        "low_anchor": "Follows instructions",
+        "high_anchor": "Highly self-driven"
+    },
+    "coachability": {
+        "slug": "coachability",
+        "name": "Coachability",
+        "description": "Receptive to feedback, open to improvement",
+        "category": "soft_skills",
+        "question": "How receptive are they to feedback?",
+        "low_anchor": "Needs encouragement",
+        "high_anchor": "Actively seeks feedback"
+    },
+    "teamwork": {
+        "slug": "teamwork",
+        "name": "Teamwork",
+        "description": "Collaboration with peers, contribution to group success",
+        "category": "soft_skills",
+        "question": "How well do they work in a team?",
+        "low_anchor": "Individual contributor",
+        "high_anchor": "Outstanding team player"
+    },
+    "growth_potential": {
+        "slug": "growth_potential",
+        "name": "Growth Potential",
+        "description": "Future trajectory, ambition, and career readiness",
+        "category": "leadership",
+        "question": "What is their growth potential?",
+        "low_anchor": "Developing",
+        "high_anchor": "High potential"
+    }
+}
+
+
+def get_rating_dimensions_for_category(opportunity_preference: str = None) -> dict:
+    """
+    Get the appropriate rating dimensions based on user's opportunity preference.
+    
+    Args:
+        opportunity_preference: 'jobs', 'training_skills_programs', or 'both'/None
+        
+    Returns:
+        Dict of rating dimensions
+    """
+    if opportunity_preference == 'training_skills_programs':
+        return TRAINING_RATING_DIMENSIONS
+    else:
+        # Default to jobs dimensions (for 'jobs', 'both', or None)
+        return JOBS_RATING_DIMENSIONS
 
 
 def get_time_decay(rating_date: datetime) -> float:

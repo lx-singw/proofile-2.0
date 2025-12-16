@@ -136,48 +136,106 @@ def generate_profile_insights(user: User, profile: Optional[Profile], completene
 
 
 def generate_ai_response(user: User, message: str, context: str) -> str:
-    """Generate AI response based on user message and context.
+    """Generate AI response based on user message, context, and opportunity preference.
     
     In production, this would call OpenAI/Anthropic API.
-    For now, provides intelligent template-based responses.
+    For now, provides intelligent template-based responses personalized by category.
     """
     message_lower = message.lower()
     
-    # Career advice responses
+    # Get user's opportunity preference for personalized coaching
+    opportunity_pref = getattr(user, 'opportunity_preference', None) or 'both'
+    is_training_user = opportunity_pref == 'training_skills_programs'
+    is_jobs_user = opportunity_pref == 'jobs'
+    
+    # Career advice responses - personalized by category
     if any(word in message_lower for word in ["career", "job", "role", "position", "opportunity"]):
-        return f"""Based on your profile as a {user.experience_level or 'professional'} in {user.industry or 'your field'}, here are some career insights:
+        if is_training_user:
+            return f"""Based on your profile as a {user.experience_level or 'learner'} in {user.industry or 'your field'}, here's career guidance for your learning journey:
 
-1. **Current Market Trends**: The job market for your industry is evolving. Focus on in-demand skills and continuous learning.
+1. **Build Your Foundation**: Focus on completing learnerships and internships that provide structured learning with practical experience.
 
-2. **Your Strengths**: Your experience level gives you a solid foundation. Highlight your key achievements in your profile.
+2. **Certification Path**: Consider SETA-registered qualifications that are recognized by employers in South Africa.
 
-3. **Growth Opportunities**: Consider exploring related roles that leverage your existing skills while offering new challenges.
+3. **Portfolio Building**: Start documenting your projects and coursework - even school projects count!
 
-4. **Networking**: Build connections in your industry. Our platform can help you connect with professionals who share your interests.
+4. **Find Mentors**: Connect with professionals who can guide your career development.
 
-Would you like specific advice on job searching, skill development, or networking strategies?"""
+5. **Explore Apprenticeships**: Trade and technical apprenticeships offer excellent career pathways.
 
-    # Skills-related responses
+Would you like help finding training programs or connecting with mentors?"""
+        else:  # Jobs user or both
+            return f"""Based on your profile as a {user.experience_level or 'professional'} in {user.industry or 'your field'}, here are career insights:
+
+1. **Market Position**: Assess your salary against market rates. Are you being compensated fairly?
+
+2. **Your Strengths**: Your experience level gives you negotiating power. Highlight key achievements.
+
+3. **Growth Opportunities**: Consider roles that offer leadership growth or new technical challenges.
+
+4. **Networking**: Senior professionals and recruiters can open doors. Build strategic connections.
+
+5. **Interview Prep**: Keep your STAR stories ready for behavioral interviews.
+
+Would you like specific advice on salary negotiation, job searching, or interview preparation?"""
+
+    # Skills-related responses - personalized by category
     if any(word in message_lower for word in ["skill", "learn", "training", "course", "certification"]):
-        return f"""Great question about skills development! Here's what I recommend:
+        if is_training_user:
+            return f"""Great question about skills development! Here's what I recommend for learners:
 
-1. **Assess Current Skills**: Review your profile skills section. Are they up-to-date with industry demands?
+1. **Start with Basics**: Master foundational skills before moving to advanced topics. Python, Excel, and communication are universal.
 
-2. **Identify Gaps**: Based on job listings in your field, look for commonly requested skills you might be missing.
+2. **SETA Qualifications**: Look for NQF-aligned courses that count toward formal qualifications.
 
-3. **Learning Resources**: Consider online courses, certifications, or bootcamps to fill skill gaps.
+3. **Free Resources**: Use platforms like Coursera, edX, or YouTube for supplementary learning.
 
-4. **Practice & Apply**: Build projects or contribute to open source to demonstrate new skills.
+4. **Practical Projects**: Build a portfolio - even small projects demonstrate capability.
 
-5. **Get Endorsed**: Ask colleagues to endorse your skills on your profile for social proof.
+5. **Soft Skills Matter**: Employers value initiative, reliability, and willingness to learn.
 
-What specific skill areas are you looking to develop?"""
+6. **Track Progress**: Document your learning journey - it shows dedication to growth.
 
-    # Resume/profile help
+What area would you like to develop first - technical skills, soft skills, or both?"""
+        else:  # Jobs user
+            return f"""Great question about skills development! Here's what I recommend for professionals:
+
+1. **Assess Current Skills**: Review your profile. Are your skills aligned with market demands?
+
+2. **Identify Gaps**: Based on job listings in your field, what skills are commonly requested?
+
+3. **Strategic Certifications**: AWS, PMP, or industry-specific certs can boost your market value.
+
+4. **Leadership Skills**: Soft skills like communication and management become crucial for career growth.
+
+5. **Stay Current**: Technology evolves rapidly. Dedicate time to continuous learning.
+
+6. **Get Endorsed**: Ask colleagues to verify your skills for social proof.
+
+What specific skill areas are you looking to develop for career advancement?"""
+
+    # Resume/profile help - personalized by category
     if any(word in message_lower for word in ["resume", "cv", "profile", "portfolio"]):
-        return f"""I'd be happy to help with your professional profile! Here are some tips:
+        if is_training_user:
+            return f"""I'd be happy to help you build a strong profile as a learner! Here are some tips:
 
-1. **Strong Headline**: Your headline should capture your role and value proposition in under 120 characters.
+1. **Highlight Potential**: Focus on what you're learning, not just what you know.
+
+2. **Academic Projects**: School and course projects count as experience - describe them well!
+
+3. **Volunteer Work**: Any community or volunteer experience shows initiative.
+
+4. **Certifications**: List all your certificates, even online course completions.
+
+5. **Career Goals**: Clearly state what you want to learn and where you want to grow.
+
+6. **Mentor References**: Include references from teachers, mentors, or supervisors.
+
+Would you like help optimizing your profile for internship or learnership applications?"""
+        else:  # Jobs user
+            return f"""I'd be happy to help with your professional profile! Here are some tips:
+
+1. **Strong Headline**: Capture your role and value proposition in under 120 characters.
 
 2. **Quantify Achievements**: Use numbers to demonstrate impact (e.g., "Increased sales by 25%").
 
@@ -185,38 +243,68 @@ What specific skill areas are you looking to develop?"""
 
 4. **Professional Photo**: A clear, professional headshot significantly increases profile views.
 
-5. **Regular Updates**: Keep your profile current with recent projects and skills.
+5. **Leadership Examples**: Highlight team leadership, mentorship, or project ownership.
+
+6. **Results Focus**: Employers care about outcomes, not just responsibilities.
 
 Try our Resume Builder tool for AI-powered resume optimization!"""
 
-    # Interview preparation
+    # Interview preparation - personalized by category
     if any(word in message_lower for word in ["interview", "prepare", "question"]):
-        return """Here's how to prepare for your next interview:
+        if is_training_user:
+            return """Here's how to prepare for learnership or internship interviews:
+
+1. **Research the Program**: Understand the company, what you'll learn, and the career path.
+
+2. **Show Enthusiasm**: Employers value learners who are excited and eager to grow.
+
+3. **Prepare Examples**: Think of times you showed initiative, solved problems, or worked in teams.
+
+4. **Ask Good Questions**: "What skills will I develop?" "Who will mentor me?"
+
+5. **Be Honest**: It's okay to not know everything - show you're willing to learn.
+
+6. **Practice Basics**: Introduce yourself confidently and explain your career goals.
+
+Would you like to practice answering common learnership interview questions?"""
+        else:  # Jobs user
+            return """Here's how to prepare for your next job interview:
 
 1. **Research the Company**: Understand their mission, recent news, and culture.
 
-2. **STAR Method**: Structure your answers with Situation, Task, Action, Result.
+2. **STAR Method**: Structure answers with Situation, Task, Action, Result.
 
-3. **Prepare Questions**: Have thoughtful questions ready for the interviewer.
+3. **Salary Research**: Know your market value before discussing compensation.
 
-4. **Practice Common Questions**:
-   - Tell me about yourself
-   - Why do you want this role?
-   - Describe a challenging situation you handled
+4. **Prepare Questions**: Have thoughtful questions ready for the interviewer.
 
-5. **Technical Preparation**: Review relevant technical concepts for your field.
+5. **Practice Technical Questions**: Review relevant technical concepts for your field.
 
-Would you like me to help you practice specific interview scenarios?"""
+6. **Negotiate Confidently**: Be prepared to discuss salary expectations professionally.
 
-    # Default helpful response
-    return f"""Thanks for your question! As your AI career assistant, I'm here to help with:
+Would you like to practice specific interview scenarios or discuss salary negotiation strategies?"""
+
+    # Default helpful response - personalized by category
+    if is_training_user:
+        return f"""Thanks for your question! As your AI learning coach, I'm here to help with:
+
+• **Learning Paths**: Finding the right courses and qualifications
+• **Learnerships**: Discovering SETA-registered programs
+• **Internships**: Preparing for and finding internship opportunities
+• **Skills Building**: Identifying what skills to learn first
+• **Mentorship**: Connecting with mentors in your field
+• **Career Entry**: Preparing for your first role
+
+What would you like to focus on today? I'm here to support your learning journey!"""
+    else:  # Jobs user or both
+        return f"""Thanks for your question! As your AI career assistant, I'm here to help with:
 
 • **Career Planning**: Setting goals and mapping your career path
 • **Profile Optimization**: Making your profile stand out to recruiters
 • **Job Search**: Finding and applying to the right opportunities
 • **Skill Development**: Identifying skills to learn and grow
 • **Interview Prep**: Getting ready to ace your interviews
-• **Networking**: Building meaningful professional connections
+• **Salary Negotiation**: Getting paid what you're worth
 
 What would you like to focus on today? Feel free to ask me anything about your career journey!"""
 

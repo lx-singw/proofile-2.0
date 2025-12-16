@@ -28,6 +28,7 @@ import NextStepPrompt from "@/components/dashboard/NextStepPrompt";
 import { CompletenessWidget } from "@/components/profile/CompletenessWidget"; // New import
 import ResumeToolsMenu from "@/components/dashboard/ResumeToolsMenu";
 import VerificationSection from "@/components/dashboard/VerificationSection";
+import CategoryWidgets from "@/components/dashboard/CategoryWidgets";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -182,7 +183,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
-      
+
       <main className="flex-1" role="main">
         <div className="w-full px-6 py-8 space-y-8">
           <h1 className="sr-only">Dashboard</h1>
@@ -222,6 +223,9 @@ export default function DashboardPage() {
               <span className="text-sm font-medium text-gray-900 dark:text-white">Customize Dashboard</span>
             </button>
           </div>
+
+          {/* Category-Specific Widgets */}
+          <CategoryWidgets opportunityPreference={user?.opportunity_preference as 'jobs' | 'training_skills_programs' | 'both' | null} />
 
           {/* Resume Tools - Collapsed by default */}
           {preferences.visibleSections.resumeTools && (
