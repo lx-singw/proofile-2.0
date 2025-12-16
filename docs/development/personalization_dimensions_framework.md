@@ -522,21 +522,21 @@ interface UserPersonalization {
 
 ## Implementation Roadmap
 
-### Phase 1: Core Personalization
-- [ ] Opportunity Category (Jobs vs Training)
-- [ ] Experience Level
-- [ ] Industry/Sector
-- [ ] User Persona (enhance existing)
+### Phase 1: Core Personalization ✅
+- [x] Opportunity Category (Jobs vs Training)
+- [x] Experience Level
+- [x] Industry/Sector
+- [x] User Persona (enhance existing)
 
-### Phase 2: Context Personalization
-- [ ] Location/Province
-- [ ] Career Intent
-- [ ] Salary Expectations
-- [ ] Verification Level integration
+### Phase 2: Context Personalization ✅
+- [x] Location/Province
+- [x] Career Intent
+- [x] Salary Expectations
+- [x] Verification Level integration
 
-### Phase 3: Advanced Personalization
+### Phase 3: Advanced Personalization 🔄
 - [ ] Skills Profile deep integration
-- [ ] Work Mode filtering
+- [ ] Work Mode filtering ✅ (column added)
 - [ ] Engagement behavior tracking
 - [ ] AI-driven personalization engine
 
