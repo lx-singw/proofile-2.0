@@ -55,7 +55,35 @@ class User(Base, TimestampMixin):
     # Values: 'jobs', 'training_skills_programs', 'both'
     opportunity_preference = Column(String, nullable=True, default=None)
     
-    # Trust Score
+    # =========================================================================
+    # PERSONALIZATION DIMENSIONS (11 Dimensions Framework)
+    # =========================================================================
+    
+    # Dimension 4: Experience Level (extended)
+    years_experience = Column(Integer, nullable=True)
+    
+    # Dimension 5: Location/Province (SA-Specific)
+    province = Column(String, nullable=True)  # gauteng, western_cape, etc.
+    city = Column(String, nullable=True)
+    willing_to_relocate = Column(Boolean, default=False)
+    
+    # Dimension 6: Career Intent
+    # Values: actively_looking, passively_open, career_changer, upskilling, returning_to_work, exploring_options
+    career_intent = Column(String, nullable=True)
+    available_from = Column(String, nullable=True)  # Date as string for flexibility
+    notice_period_weeks = Column(Integer, nullable=True)
+    
+    # Dimension 9: Salary Expectations (ZAR)
+    salary_expectation_min = Column(Integer, nullable=True)
+    salary_expectation_max = Column(Integer, nullable=True)
+    salary_negotiable = Column(Boolean, default=True)
+    
+    # Dimension 10: Work Mode Preference
+    # Values: remote_only, hybrid, office_based, field_work, flexible
+    work_mode_preference = Column(String, nullable=True)
+    max_commute_minutes = Column(Integer, nullable=True)
+    
+    # Trust Score (Dimension 7 - already exists)
     trust_score = Column(Integer, default=0) # Global trust score (0-100)
     
     # Public profile fields

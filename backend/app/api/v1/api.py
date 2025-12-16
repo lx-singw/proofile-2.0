@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.v1 import users, auth, profiles, jobs, opportunities, ws, ai, resumes, activities, notifications, resume
-from app.api.v1 import social, ai_chat, verifications, discovery, analytics
+from app.api.v1 import social, ai_chat, verifications, discovery, analytics, personalization
 from app.routers import ratings, rating_requests, collaborators, verifications_peer
 from app.core.config import settings
 
@@ -77,6 +77,9 @@ api_router.include_router(discovery.router, prefix="/discovery", tags=["discover
 
 # Analytics: profile views, career insights, event tracking
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+
+# Personalization: user preferences and context for 11 dimensions
+api_router.include_router(personalization.router, prefix="/personalization", tags=["personalization"])
 
 # Feed: posts, reactions, comments (authenticated)
 try:
