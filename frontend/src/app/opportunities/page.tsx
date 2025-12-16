@@ -3,29 +3,35 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { jobService, type JobRecommendation } from '@/services/jobService';
-import { Bookmark, Building2, MapPin, Clock, DollarSign, Briefcase, Filter, Search, Sparkles, CheckCircle2, AlertCircle, Zap, BarChart2 } from 'lucide-react';
+import { opportunityService, type OpportunityRecommendation } from '@/services/opportunityService';
+import { Bookmark, Building2, MapPin, Clock, DollarSign, Briefcase, Filter, Search, Sparkles, CheckCircle2, AlertCircle, Zap, BarChart2, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 
-import AgentStatusWidget from '@/components/jobs/agents/AgentStatusWidget';
-import HunterLogStream from '@/components/jobs/agents/HunterLogStream';
-import SmartFilterBar from '@/components/jobs/filters/SmartFilterBar';
-import VerifiedToggle from '@/components/jobs/filters/VerifiedToggle';
-import SalaryRangeSlider from '@/components/jobs/filters/SalaryRangeSlider';
-import QuickApplyModal from '@/components/jobs/modals/QuickApplyModal';
+import AgentStatusWidget from '@/components/opportunities/agents/AgentStatusWidget';
+import HunterLogStream from '@/components/opportunities/agents/HunterLogStream';
+import SmartFilterBar from '@/components/opportunities/filters/SmartFilterBar';
+import VerifiedToggle from '@/components/opportunities/filters/VerifiedToggle';
+import SalaryRangeSlider from '@/components/opportunities/filters/SalaryRangeSlider';
+import QuickApplyModal from '@/components/opportunities/modals/QuickApplyModal';
 import { JobsStatsBar } from '@/components/ui/QuickStatsBar';
 import { JobsFAB } from '@/components/ui/FloatingActionButton';
 import { FadeIn } from '@/components/ui/PageTransition';
 import HelpTooltip, { HELP_CONTENT } from '@/components/ui/HelpTooltip';
 import axios from 'axios';
 
-export default function JobsPage() {
+// Category tab type
+type CategoryTab = 'all' | 'jobs' | 'training_skills_programs';
+
+export default function OpportunitiesPage() {
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
-    const [recommendations, setRecommendations] = useState<JobRecommendation[]>([]);
+    const [recommendations, setRecommendations] = useState<OpportunityRecommendation[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [error, setError] = useState<string | null>(null);
+
+    // Category Tab State
+    const [categoryTab, setCategoryTab] = useState<CategoryTab>('all');
 
     // Filter States
     const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -33,11 +39,11 @@ export default function JobsPage() {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Quick Apply Modal
-    const [quickApplyJob, setQuickApplyJob] = useState<{ id: number; title: string; company: string; score: number } | null>(null);
+    const [quickApplyOpportunity, setQuickApplyOpportunity] = useState<{ id: number; title: string; company: string; score: number } | null>(null);
 
     // AI Agent States
     const [agents] = useState([
-        { name: 'hunter' as const, status: 'active' as const, message: `Scanning ${recommendations.length} jobs` },
+        { name: 'hunter' as const, status: 'active' as const, message: `Scanning ${recommendations.length} opportunities` },
         { name: 'tailor' as const, status: 'idle' as const, message: 'Ready to customize' },
         { name: 'negotiator' as const, status: 'paused' as const, message: 'Premium feature' },
     ]);
@@ -45,39 +51,44 @@ export default function JobsPage() {
     // Redirect to login if not authenticated
     useEffect(() => {
         if (!authLoading && !user) {
-            router.push('/login?redirect=/jobs');
+            router.push('/login?redirect=/opportunities');
         }
     }, [user, authLoading, router]);
 
     useEffect(() => {
-        const fetchJobs = async () => {
-            if (!user) return; // Don't fetch if not authenticated
+        const fetchOpportunities = async () => {
+            if (!user) return;
 
             try {
                 setError(null);
-                const data = await jobService.getAdvancedRecommendations();
+                const data = await opportunityService.getAdvancedRecommendations();
                 setRecommendations(data);
             } catch (err) {
-                // Extract meaningful error message
-                let errorMessage = 'Failed to load job recommendations';
+                let errorMessage = 'Failed to load opportunity recommendations';
                 if (axios.isAxiosError(err)) {
                     if (err.response?.status === 401) {
-                        errorMessage = 'Please log in to see job recommendations';
+                        errorMessage = 'Please log in to see recommendations';
                     } else if (err.response?.data?.detail) {
                         errorMessage = err.response.data.detail;
                     }
                 }
                 setError(errorMessage);
-                console.error('Failed to fetch job recommendations:', err instanceof Error ? err.message : err);
+                console.error('Failed to fetch recommendations:', err instanceof Error ? err.message : err);
             } finally {
                 setLoading(false);
             }
         };
 
         if (user) {
-            fetchJobs();
+            fetchOpportunities();
         }
     }, [user]);
+
+    // Filter recommendations by category
+    const filteredRecommendations = recommendations.filter((r) => {
+        if (categoryTab === 'all') return true;
+        return r.opportunity?.category === categoryTab;
+    });
 
     const getMatchColor = (score: number) => {
         if (score >= 80) return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
@@ -107,9 +118,9 @@ export default function JobsPage() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             {/* Quick Stats Bar */}
             <JobsStatsBar
-                matchesToday={recommendations.length}
-                saved={recommendations.filter(r => r.matchScore >= 80).length}
-                profileMatch={recommendations.length > 0 ? Math.round(recommendations.reduce((sum, r) => sum + r.matchScore, 0) / recommendations.length) : 0}
+                matchesToday={filteredRecommendations.length}
+                saved={filteredRecommendations.filter(r => r.match_score >= 80).length}
+                profileMatch={filteredRecommendations.length > 0 ? Math.round(filteredRecommendations.reduce((sum, r) => sum + r.match_score, 0) / filteredRecommendations.length) : 0}
             />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -125,37 +136,70 @@ export default function JobsPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Briefcase className="w-8 h-8 text-purple-600" />
-                                Job Matches
+                                <Sparkles className="w-8 h-8 text-purple-600" />
+                                Opportunities
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mt-1">
-                                Opportunities matched to your profile and skills
+                                AI-matched opportunities for your career
                             </p>
                         </div>
 
                         <div className="flex items-center gap-3">
                             <Link
-                                href="/jobs/saved"
+                                href="/opportunities/saved"
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <Bookmark className="w-4 h-4" />
-                                Saved Jobs
+                                Saved
                             </Link>
                             <Link
-                                href="/jobs/agents"
+                                href="/opportunities/agents"
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <Zap className="w-4 h-4" />
                                 AI Agents
                             </Link>
                             <Link
-                                href="/jobs/market"
+                                href="/opportunities/market"
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                             >
                                 <BarChart2 className="w-4 h-4" />
                                 Market Intel
                             </Link>
                         </div>
+                    </div>
+
+                    {/* Category Tabs */}
+                    <div className="flex gap-2 mb-6">
+                        <button
+                            onClick={() => setCategoryTab('all')}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all ${categoryTab === 'all'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                                }`}
+                        >
+                            All
+                        </button>
+                        <button
+                            onClick={() => setCategoryTab('jobs')}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${categoryTab === 'jobs'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                                }`}
+                        >
+                            <Briefcase className="w-4 h-4" />
+                            Jobs
+                        </button>
+                        <button
+                            onClick={() => setCategoryTab('training_skills_programs')}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${categoryTab === 'training_skills_programs'
+                                    ? 'bg-emerald-600 text-white'
+                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                                }`}
+                        >
+                            <GraduationCap className="w-4 h-4" />
+                            Training & Skills
+                        </button>
                     </div>
 
                     {/* Smart Filter Bar */}

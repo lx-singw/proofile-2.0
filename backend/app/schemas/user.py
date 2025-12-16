@@ -5,10 +5,13 @@ These schemas define the data shape for API requests and responses,
 providing validation and serialization.
 """
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
-from typing import Optional
+from typing import Optional, Literal
 from datetime import datetime
-from app.models.user import UserRole, UserPersona
+from app.models.user import UserRole, UserPersona, OpportunityPreference
 from app.core.security import validate_password_strength
+
+# Opportunity Preference type for validation
+OpportunityPreferenceType = Literal['jobs', 'training_skills_programs', 'both']
 
 # --- Base Schema ---
 # Shared properties for all user-related schemas.
@@ -21,6 +24,7 @@ class UserBase(BaseModel):
     experience_level: Optional[str] = None
     primary_goal: Optional[str] = None
     industry: Optional[str] = None
+    opportunity_preference: Optional[OpportunityPreferenceType] = None
 
 # --- Create Schema ---
 # Properties to receive via API on creation.
@@ -43,6 +47,7 @@ class UserRead(UserBase):
     id: int
     is_active: bool
     created_at: Optional[datetime] = None
+    opportunity_preference: Optional[OpportunityPreferenceType] = None
     model_config = ConfigDict(from_attributes=True)
 
 # --- Update Schema ---
@@ -61,6 +66,7 @@ class UserUpdate(BaseModel):
     profile_visibility: Optional[str] = None
     bio: Optional[str] = None
     profile_photo_url: Optional[str] = None
+    opportunity_preference: Optional[OpportunityPreferenceType] = None
 
 # --- Settings Update Schema ---
 # For user to update their own account settings (requires current password verification)

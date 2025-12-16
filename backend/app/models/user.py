@@ -23,6 +23,14 @@ class UserPersona(str, enum.Enum):
     FREELANCER = "freelancer"
     RECRUITER = "recruiter"
 
+
+class OpportunityPreference(str, enum.Enum):
+    """User's primary opportunity category preference."""
+    JOBS = "jobs"  # Employment, contracts, freelance, consulting
+    TRAINING_SKILLS_PROGRAMS = "training_skills_programs"  # Internships, learnerships, apprenticeships
+    BOTH = "both"  # Interested in all opportunities
+
+
 class User(Base, TimestampMixin):
     __tablename__ = "users"
     
@@ -42,6 +50,10 @@ class User(Base, TimestampMixin):
     industry = Column(String, nullable=True)
     dashboard_preferences = Column(Text, nullable=True, default="{}")  # JSON string for dashboard settings
     skills = Column(Text, nullable=True)  # JSON array of skills as text
+    
+    # Opportunity Category Preference (set during onboarding)
+    # Values: 'jobs', 'training_skills_programs', 'both'
+    opportunity_preference = Column(String, nullable=True, default=None)
     
     # Trust Score
     trust_score = Column(Integer, default=0) # Global trust score (0-100)
