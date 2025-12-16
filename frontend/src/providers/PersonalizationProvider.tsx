@@ -116,9 +116,10 @@ export function PersonalizationProvider({
         try {
             setIsLoading(true);
             setError(null);
-            const data = await apiRequest<PersonalizationContext>(
-                "/personalization/context"
-            );
+            const data = await apiRequest<PersonalizationContext>({
+                url: "/api/v1/personalization/context",
+                method: "GET",
+            });
             setContext(data);
         } catch (err) {
             console.error("Failed to load personalization context:", err);
@@ -130,13 +131,11 @@ export function PersonalizationProvider({
 
     const updatePreferences = async (updates: PersonalizationUpdate) => {
         try {
-            const data = await apiRequest<PersonalizationContext>(
-                "/personalization/preferences",
-                {
-                    method: "PATCH",
-                    body: JSON.stringify(updates),
-                }
-            );
+            const data = await apiRequest<PersonalizationContext>({
+                url: "/api/v1/personalization/preferences",
+                method: "PATCH",
+                data: updates,
+            });
             setContext(data);
         } catch (err) {
             console.error("Failed to update preferences:", err);
