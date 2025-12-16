@@ -57,6 +57,7 @@ import { VerificationModal } from "@/components/verification/VerificationModal";
 import verificationService, { VerificationSummary } from "@/services/verificationService";
 import QuickStatsBar from "@/components/ui/QuickStatsBar";
 import { FadeIn } from "@/components/ui/PageTransition";
+import PersonalizationSettings from "@/components/settings/PersonalizationSettings";
 
 // Schema for account settings
 const accountSchema = z.object({
@@ -85,7 +86,7 @@ const profileSchema = z.object({
 type AccountFormValues = z.infer<typeof accountSchema>;
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-type TabId = "account" | "profile" | "privacy" | "verification" | "notifications" | "preferences" | "connected" | "billing" | "integrations" | "activity";
+type TabId = "account" | "profile" | "privacy" | "verification" | "notifications" | "preferences" | "personalization" | "connected" | "billing" | "integrations" | "activity";
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode; badge?: string }[] = [
   { id: "account", label: "Account", icon: <User className="w-4 h-4" /> },
@@ -95,6 +96,7 @@ const tabs: { id: TabId; label: string; icon: React.ReactNode; badge?: string }[
   { id: "connected", label: "Connected Accounts", icon: <LinkIcon className="w-4 h-4" /> },
   { id: "notifications", label: "Notifications", icon: <Bell className="w-4 h-4" /> },
   { id: "preferences", label: "Preferences", icon: <Palette className="w-4 h-4" /> },
+  { id: "personalization", label: "Personalization", icon: <Briefcase className="w-4 h-4" /> },
   { id: "billing", label: "Billing & Plans", icon: <CreditCard className="w-4 h-4" />, badge: "Pro" },
   { id: "integrations", label: "API & Integrations", icon: <Zap className="w-4 h-4" /> },
   { id: "activity", label: "Activity Log", icon: <Activity className="w-4 h-4" /> },
@@ -693,6 +695,17 @@ export default function SettingsPage() {
                   </div>
                 )}
 
+                {/* Personalization Tab */}
+                {activeTab === "personalization" && (
+                  <div className="space-y-6">
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Personalization Settings</h2>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Customize your job search and career preferences</p>
+                    </div>
+                    <PersonalizationSettings />
+                  </div>
+                )}
+
                 {/* Connected Accounts Tab */}
                 {activeTab === "connected" && (
                   <div className="space-y-6">
@@ -1059,8 +1072,8 @@ function ConnectedAccountCard({
 }) {
   return (
     <div className={`flex items-center justify-between p-4 rounded-xl border ${isConnected
-        ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900"
-        : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+      ? "bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900"
+      : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
       }`}>
       <div className="flex items-center gap-4">
         <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">{icon}</div>
@@ -1104,9 +1117,9 @@ function ActivityLogItem({
   return (
     <div className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
       <div className={`p-2 rounded-lg ${status === "success" ? "bg-green-100 dark:bg-green-900/30 text-green-600" :
-          status === "warning" ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600" :
-            status === "error" ? "bg-red-100 dark:bg-red-900/30 text-red-600" :
-              "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+        status === "warning" ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600" :
+          status === "error" ? "bg-red-100 dark:bg-red-900/30 text-red-600" :
+            "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
         }`}>
         {icon}
       </div>

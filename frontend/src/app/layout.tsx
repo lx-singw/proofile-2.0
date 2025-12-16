@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { PersonalizationProvider } from "@/providers/PersonalizationProvider";
 import { Toaster } from "sonner";
 import AppShell from "@/components/layout/AppShell";
 import "./globals.css";
@@ -41,14 +42,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <AppShell>
-              {children}
-            </AppShell>
-            <Toaster position="bottom-right" richColors />
+            <PersonalizationProvider>
+              <AppShell>
+                {children}
+              </AppShell>
+              <Toaster position="bottom-right" richColors />
+            </PersonalizationProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
-
