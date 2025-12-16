@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { jobService, type Job } from '@/services/jobService';
 import { Bookmark, Building2, MapPin, Briefcase } from 'lucide-react';
 import Link from 'next/link';
-import DashboardHeader from '@/components/layout/DashboardHeader';
+
 
 export default function SavedJobsPage() {
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -36,7 +36,7 @@ export default function SavedJobsPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
-            <DashboardHeader />
+            
             <main className="max-w-5xl mx-auto px-6 py-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

@@ -22,6 +22,7 @@ export interface JobRecommendation {
         skills_match: number;
         experience_match: number;
         industry_match: number;
+        verification_match?: number;  // NEW: Boost for verified users on verified jobs
     };
 }
 
@@ -31,7 +32,25 @@ export interface JobDetail {
     related_jobs: Job[];
 }
 
+export interface GetJobsParams {
+    skip?: number;
+    limit?: number;
+    verified_only?: boolean;
+}
+
 export const jobService = {
+    async getJobs(params: GetJobsParams = {}): Promise<Job[]> {
+        return apiRequest<Job[]>({
+            method: 'get',
+            url: '/api/v1/jobs/',
+            params: {
+                skip: params.skip || 0,
+                limit: params.limit || 10,
+                verified_only: params.verified_only || false,
+            },
+        });
+    },
+
     async getRecommendations(limit: number = 5): Promise<Job[]> {
         return apiRequest<Job[]>({
             method: 'get',

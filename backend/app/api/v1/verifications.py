@@ -43,7 +43,9 @@ async def get_verification_summary(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Get verification summary for the current user."""
+    """Get verification summary for the current user, including Trust Score."""
+    from app.services.trust_score_engine import calculate_trust_score, get_trust_level
+    
     result = await db.execute(
         select(Verification).where(Verification.user_id == current_user.id)
     )
@@ -52,20 +54,26 @@ async def get_verification_summary(
     # Build verification status map
     status_map = {v.verification_type: v.status for v in verifications}
     
-    # Calculate verification score
+    # Calculate trust score using the engine
+    # Note: trust_score_engine uses sync Session, but we're in async context.
+    # For now, we manually replicate the logic here. TODO: Refactor to async.
     score = 0
-    weights = {
-        "email": 20,
-        "phone": 15,
-        "identity": 25,
-        "education": 15,
-        "employment": 15,
-        "skills": 10
-    }
     
-    for v_type, weight in weights.items():
-        if status_map.get(v_type) == "verified":
-            score += weight
+    # Identity: +30
+    if status_map.get("identity") == "verified":
+        score += 30
+    elif status_map.get("email") == "verified" and status_map.get("phone") == "verified":
+        score += 10
+    
+    # Jobs: +15 each (max 40)
+    job_count = sum(1 for v in verifications if v.verification_type == "employment" and v.status == "verified")
+    score += min(job_count * 15, 40)
+    
+    # Skills: +5 each (max 20)
+    skill_count = sum(1 for v in verifications if v.verification_type == "skills" and v.status == "verified")
+    score += min(skill_count * 5, 20)
+    
+    score = min(100, score)
     
     return VerificationSummary(
         email_verified=status_map.get("email") == "verified",

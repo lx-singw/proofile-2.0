@@ -28,11 +28,32 @@ async def create_job(db: AsyncSession, job_in: JobCreate, employer_id: int) -> J
     return new_job
 
 
-async def get_jobs(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Job]:
+async def get_jobs(
+    db: AsyncSession, 
+    skip: int = 0, 
+    limit: int = 100,
+    verified_only: bool = False
+) -> list[Job]:
     """
     Retrieve job postings with pagination.
+    
+    Args:
+        db: Database session
+        skip: Number of records to skip
+        limit: Maximum number of records to return
+        verified_only: If True, only return jobs that require verified candidates
     """
-    result = await db.execute(select(Job).offset(skip).limit(limit).order_by(Job.created_at.desc()))
+    query = select(Job)
+    
+    if verified_only:
+        # Filter for jobs that require verification
+        query = query.where(
+            (Job.verified_candidates_only == True) | 
+            (Job.requires_verification_level >= 2)
+        )
+    
+    query = query.offset(skip).limit(limit).order_by(Job.created_at.desc())
+    result = await db.execute(query)
     return list(result.scalars().all())
 
 
@@ -126,7 +147,8 @@ async def get_recommended_jobs_advanced(
             "title_match": 0,
             "skills_match": 0,
             "experience_match": 0,
-            "industry_match": 0
+            "industry_match": 0,
+            "verification_match": 0  # NEW: Verification boost
         }
         
         # Title matching (50 points max)
@@ -150,6 +172,36 @@ async def get_recommended_jobs_advanced(
                     breakdown["skills_match"] = int(match_pct * 40)
             except:
                 pass
+        
+        # Experience level match (30 points max)
+        if user.experience_level and job.experience_level:
+            exp_map = {"entry": 1, "mid": 2, "senior": 3, "lead": 4}
+            user_exp = exp_map.get(user.experience_level, 0)
+            job_exp = exp_map.get(job.experience_level, 0)
+            if user_exp == job_exp:
+                breakdown["experience_match"] = 30
+            elif abs(user_exp - job_exp) == 1:
+                breakdown["experience_match"] = 15
+        
+        # Industry match (20 points)
+        if user.industry and job.industry:
+            if user.industry.lower() == job.industry.lower():
+                breakdown["industry_match"] = 20
+        
+        # Verification boost (30 points max) - NEW
+        # Verified users get a boost for jobs that prefer or require verification
+        user_trust_score = getattr(user, 'trust_score', 0) or 0
+        job_requires_verification = getattr(job, 'requires_verification_level', 0) or 0
+        job_verified_only = getattr(job, 'verified_candidates_only', False)
+        
+        if job_requires_verification >= 2 or job_verified_only:
+            # Job prefers verified candidates
+            if user_trust_score >= 70:  # Gold level
+                breakdown["verification_match"] = 30
+            elif user_trust_score >= 50:  # Silver level
+                breakdown["verification_match"] = 20
+            elif user_trust_score >= 30:  # Bronze level
+                breakdown["verification_match"] = 10
         
         # Experience level match (30 points max)
         if user.experience_level and job.experience_level:

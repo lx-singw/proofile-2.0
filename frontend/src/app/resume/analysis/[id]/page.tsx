@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ProofileLogo from "@/components/branding/ProofileLogo";
+
 import { useRouter } from "next/navigation";
 import { getResumeAnalysis } from "@/services/resumeService";
 import { useParams } from "next/navigation";
@@ -60,7 +60,7 @@ export default function ResumeAnalysisPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">
-          <ProofileLogo size={32} showWordmark={true} />
+          
         </header>
         <main className="max-w-6xl mx-auto py-12 px-4">
           <SkeletonAnalysis />
@@ -96,7 +96,7 @@ export default function ResumeAnalysisPage() {
             <span className="text-sm">Back to Upload</span>
           </button>
           <div className="h-6 w-px bg-gray-300 dark:bg-gray-700"></div>
-          <ProofileLogo size={32} showWordmark={true} />
+          
         </div>
         <div className="flex items-center gap-3">
           <button

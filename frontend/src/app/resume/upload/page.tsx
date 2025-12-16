@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ProofileLogo from "@/components/branding/ProofileLogo";
+
 import ResumeDropzone from "@/components/resume/ResumeDropzone";
 import { useRouter } from "next/navigation";
 import { uploadResume, resumeService, analyzePublicResume } from "@/services/resumeService";
@@ -130,7 +130,7 @@ export default function ResumeUploadPage() {
             <span className="text-sm font-medium">Back</span>
           </button>
           <div className="h-6 w-px bg-gray-300 dark:bg-gray-700"></div>
-          <ProofileLogo size={32} showWordmark={true} />
+          
         </div>
       </header>
 

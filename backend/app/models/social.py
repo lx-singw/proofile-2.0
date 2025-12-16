@@ -84,26 +84,57 @@ class Endorsement(Base, TimestampMixin):
 
 
 class Rating(Base, TimestampMixin):
-    """Professional rating from one user to another."""
+    """Professional rating from one user to another with anti-gaming measures."""
     __tablename__ = "ratings"
     
     id = Column(Integer, primary_key=True, index=True)
     rater_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     rated_user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    rater_name = Column(String(255), nullable=True)  # Name of rater (null if anonymous)
     score = Column(Integer, nullable=False)  # 1-5 rating
     category = Column(String(50), nullable=False)  # professionalism, communication, skills, reliability
     review = Column(Text, nullable=True)  # Optional review text
     is_anonymous = Column(Boolean, default=False)  # Allow anonymous ratings
+    
+    # Anti-Gaming: Relationship verification
+    company = Column(String(255), nullable=True)  # Company where they worked together
+    work_start_date = Column(DateTime, nullable=True)  # When working relationship started
+    work_end_date = Column(DateTime, nullable=True)  # When working relationship ended
+    relationship_type = Column(String(50), nullable=True)  # colleague, manager, direct_report, client
+    
+    # Anti-Gaming: Suspicious pattern detection
+    is_flagged = Column(Boolean, nullable=False, default=False, index=True)
+    flag_reason = Column(Text, nullable=True)
+    is_reviewed = Column(Boolean, nullable=False, default=False)
+    review_notes = Column(Text, nullable=True)  # Admin review notes
     
     # Relationships
     rater = relationship("User", foreign_keys=[rater_id], backref="given_ratings")
     rated_user = relationship("User", foreign_keys=[rated_user_id], backref="received_ratings")
     
     __table_args__ = (
-        UniqueConstraint('rater_id', 'rated_user_id', 'category', name='unique_category_rating'),
         CheckConstraint('rater_id != rated_user_id', name='no_self_rating'),
         CheckConstraint('score >= 1 AND score <= 5', name='valid_score_range'),
     )
+    
+    def to_dict(self) -> dict:
+        """Convert to dictionary for API responses"""
+        return {
+            'id': self.id,
+            'rater_id': self.rater_id,
+            'rated_user_id': self.rated_user_id,
+            'rater_name': self.rater_name,
+            'score': self.score,
+            'category': self.category,
+            'review': self.review,
+            'company': self.company,
+            'is_anonymous': self.is_anonymous,
+            'is_flagged': self.is_flagged,
+            'flag_reason': self.flag_reason,
+            'is_reviewed': self.is_reviewed,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
 
 
 class ProfileWatch(Base, TimestampMixin):

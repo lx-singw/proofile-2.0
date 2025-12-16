@@ -40,11 +40,15 @@ async def list_jobs(
     db: AsyncSession = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 10,
+    verified_only: bool = False,
 ):
     """
     List all available job postings.
+    
+    Args:
+        verified_only: If True, only return jobs that require verified candidates
     """
-    jobs = await job_service.get_jobs(db, skip=skip, limit=limit)
+    jobs = await job_service.get_jobs(db, skip=skip, limit=limit, verified_only=verified_only)
     return jobs
 
 @router.get("/recommendations", response_model=list[JobRead])

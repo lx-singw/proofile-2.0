@@ -180,7 +180,7 @@ export default function NextStepPrompt({
                 {step.priority === "high" && (
                     <div className="mt-4 text-center">
                         <button
-                            onClick={() => router.push("/dashboard")}
+                            onClick={() => router.push("/feed")}
                             className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         >
                             Skip for now

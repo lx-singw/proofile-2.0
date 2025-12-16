@@ -116,8 +116,20 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Shimmer animation for skeleton loading */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
   }
 }
 
@@ -127,45 +139,34 @@
  * One primary action per screen, clear visual distinction between action types.
  */
 @layer components {
+
   /* PRIMARY CTA - One per screen, bright and obvious */
   .cta-primary {
-    @apply px-6 py-3 bg-green-600 text-white text-lg font-bold 
-           rounded-xl hover:bg-green-700 shadow-lg hover:shadow-xl
-           transition-all inline-flex items-center justify-center gap-2;
+    @apply px-6 py-3 bg-green-600 text-white text-lg font-bold rounded-xl hover:bg-green-700 shadow-lg hover:shadow-xl transition-all inline-flex items-center justify-center gap-2;
   }
-  
+
   .cta-primary:disabled {
     @apply bg-gray-300 cursor-not-allowed shadow-none hover:bg-gray-300;
   }
 
   /* SECONDARY CTA - Below primary, neutral color */
   .cta-secondary {
-    @apply px-5 py-2.5 bg-white text-gray-700 font-medium 
-           rounded-lg border border-gray-200 hover:bg-gray-50 
-           transition-all inline-flex items-center justify-center gap-2
-           dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700;
+    @apply px-5 py-2.5 bg-white text-gray-700 font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-all inline-flex items-center justify-center gap-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700;
   }
 
   /* TERTIARY CTA - Text link style, subtle */
   .cta-tertiary {
-    @apply text-sm text-gray-600 hover:text-gray-900 
-           underline underline-offset-2 transition-colors
-           dark:text-gray-400 dark:hover:text-gray-200;
+    @apply text-sm text-gray-600 hover:text-gray-900 underline underline-offset-2 transition-colors dark:text-gray-400 dark:hover:text-gray-200;
   }
 
   /* SKIP LINK - Gray, dismissable, low priority */
   .skip-link {
-    @apply text-sm text-gray-400 hover:text-gray-500 
-           cursor-pointer transition-colors
-           dark:text-gray-500 dark:hover:text-gray-400;
+    @apply text-sm text-gray-400 hover:text-gray-500 cursor-pointer transition-colors dark:text-gray-500 dark:hover:text-gray-400;
   }
 
   /* Action Card - Clickable card with hover effect */
   .action-card {
-    @apply bg-white dark:bg-gray-800 rounded-2xl p-6 
-           shadow-lg border-2 border-transparent
-           hover:shadow-2xl hover:scale-[1.02] 
-           transition-all cursor-pointer;
+    @apply bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer;
   }
 
   .action-card:hover {
@@ -177,5 +178,88 @@
   .cta-secondary:focus-visible,
   .cta-tertiary:focus-visible {
     @apply outline-none ring-2 ring-green-500 ring-offset-2;
+  }
+}
+
+/* Dark Mode Polish */
+@layer utilities {
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Glow effects for dark mode */
+  .dark .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .dark .glow-green {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+
+  .dark .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  }
+
+  .dark .glow-yellow {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+  }
+
+  /* Enhanced gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
+  }
+
+  .dark .gradient-text {
+    @apply from-blue-400 to-purple-400;
+  }
+
+  /* Glass effect for dark mode */
+  .dark .glass {
+    @apply bg-gray-800/80 backdrop-blur-xl border border-gray-700/50;
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-gray-200/50;
+  }
+
+  /* Card hover glow in dark mode */
+  .dark .card-glow:hover {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.15), 0 0 20px rgba(168, 85, 247, 0.1);
+  }
+
+  /* Subtle text shadow for headers in dark mode */
+  .dark .text-glow {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Improved dark mode gradients */
+  .dark .bg-gradient-premium {
+    @apply bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900;
+  }
+
+  .bg-gradient-premium {
+    @apply bg-gradient-to-br from-white via-gray-50 to-white;
+  }
+
+  /* Enhanced focus ring for dark mode */
+  .dark .focus-ring:focus-visible {
+    @apply ring-2 ring-blue-400 ring-offset-2 ring-offset-gray-900;
+  }
+
+  .focus-ring:focus-visible {
+    @apply ring-2 ring-blue-500 ring-offset-2 ring-offset-white;
+  }
+
+  /* Subtle border glow */
+  .dark .border-glow {
+    @apply border-gray-700/50;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 }

@@ -8,6 +8,8 @@ export interface Verification {
   verification_data?: string; // JSON
   verified_value?: string;
   verified_at?: string;
+  trust_level?: "L1" | "L2" | "L3" | "L4" | "L5";
+  trust_points?: number;
 }
 
 export interface VerificationSummary {
@@ -41,10 +43,22 @@ export async function confirmEmailVerification(token: string): Promise<Verificat
   });
 }
 
+export async function createVerification(data: {
+  verification_type: string;
+  verification_data: string;
+}): Promise<Verification> {
+  return apiRequest<Verification>({
+    method: "post",
+    url: "/api/v1/verifications",
+    data,
+  });
+}
+
 const verificationService = {
   getVerificationSummary,
   initiateEmailVerification,
-  confirmEmailVerification
+  confirmEmailVerification,
+  createVerification
 };
 
 export default verificationService;

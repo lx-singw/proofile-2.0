@@ -1,7 +1,7 @@
-from typing import AsyncIterator
-from sqlalchemy import text
+from typing import AsyncIterator, Iterator
+from sqlalchemy import text, create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.engine.url import make_url, URL
 from app.core.config import settings
 
@@ -53,3 +53,53 @@ async def get_db() -> AsyncIterator[AsyncSession]:
 # Graceful shutdown helper to dispose engine
 async def dispose_engine() -> None:
     await engine.dispose()
+
+
+# ============ Synchronous Database Access (for Celery) ============
+
+# Build sync URL (remove asyncpg driver if present)
+sync_url: URL = make_url(raw_db_url)
+if "+" in sync_url.drivername:
+    sync_url = sync_url.set(drivername="postgresql+psycopg2")
+elif sync_url.drivername.startswith("postgresql"):
+    sync_url = sync_url.set(drivername="postgresql+psycopg2")
+
+try:
+    sync_engine = create_engine(
+        sync_url.render_as_string(hide_password=False),
+        pool_pre_ping=True,
+        echo=sqlalchemy_echo,
+        pool_size=pool_size,
+        max_overflow=max_overflow,
+        pool_timeout=pool_timeout,
+    )
+except Exception as e:
+    # Fallback: some deployments may not have psycopg2
+    sync_engine = None
+
+SyncSessionLocal = sessionmaker(
+    bind=sync_engine,
+    class_=Session,
+    expire_on_commit=False,
+    autoflush=False,
+    autocommit=False,
+) if sync_engine else None
+
+
+def get_db_sync() -> Session:
+    """Provide a synchronous Session for Celery tasks."""
+    if SyncSessionLocal is None:
+        raise RuntimeError("Synchronous database not configured. Install psycopg2-binary.")
+    session = SyncSessionLocal()
+    return session
+
+
+def get_sync_db() -> Iterator[Session]:
+    """FastAPI dependency for synchronous database session."""
+    if SyncSessionLocal is None:
+        raise RuntimeError("Synchronous database not configured. Install psycopg2-binary.")
+    session = SyncSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()

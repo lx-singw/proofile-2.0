@@ -6,7 +6,7 @@ import Link from "next/link"; // Added Link import
 import { ArrowLeft, Sparkles, Briefcase, FileText, Palette, MessageSquare, Clock, Wand2, Loader2, Database } from 'lucide-react';
 import useAuth from '@/hooks/useAuth';
 import SignUpModal from '@/components/auth/SignUpModal';
-import ProofileLogo from "@/components/branding/ProofileLogo";
+
 import { toast } from "@/lib/toast";
 import { startAIBuild } from "@/services/resumeService";
 
@@ -119,7 +119,7 @@ export default function AIBuildLandingPage() {
                             <span className="text-sm font-medium hidden sm:inline">Back</span>
                         </button>
                         <div className="h-6 w-px bg-gray-300 dark:bg-gray-700"></div>
-                        <ProofileLogo size={32} showWordmark={true} />
+                        
                     </div>
                 </div>
             </header>

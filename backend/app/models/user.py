@@ -43,6 +43,9 @@ class User(Base, TimestampMixin):
     dashboard_preferences = Column(Text, nullable=True, default="{}")  # JSON string for dashboard settings
     skills = Column(Text, nullable=True)  # JSON array of skills as text
     
+    # Trust Score
+    trust_score = Column(Integer, default=0) # Global trust score (0-100)
+    
     # Public profile fields
     username = Column(String, unique=True, index=True, nullable=True)  # Unique username for public profile URL
     bio = Column(Text, nullable=True)  # User bio/about section
@@ -68,6 +71,16 @@ class User(Base, TimestampMixin):
     
     # Relationship to Profile Data Sources
     data_sources: Mapped[list["app.models.profile_data_source.ProfileDataSource"]] = relationship("app.models.profile_data_source.ProfileDataSource", back_populates="user", cascade="all, delete-orphan", order_by="desc(ProfileDataSource.created_at)")
+    
+    # Trust System Relationships
+    trust_events: Mapped[list["app.models.trust_event.TrustEvent"]] = relationship("app.models.trust_event.TrustEvent", back_populates="user", cascade="all, delete-orphan", order_by="desc(TrustEvent.created_at)")
+    documents: Mapped[list["app.models.document.Document"]] = relationship("app.models.document.Document", back_populates="user", cascade="all, delete-orphan")
+    skill_attempts: Mapped[list["app.models.document.SkillAttempt"]] = relationship("app.models.document.SkillAttempt", back_populates="user", cascade="all, delete-orphan")
+    
+    # Feed System Relationships
+    posts: Mapped[list["app.models.post.Post"]] = relationship("app.models.post.Post", back_populates="user", cascade="all, delete-orphan", order_by="desc(Post.created_at)")
+    reactions: Mapped[list["app.models.reaction.Reaction"]] = relationship("app.models.reaction.Reaction", back_populates="user", cascade="all, delete-orphan")
+    comments: Mapped[list["app.models.comment.Comment"]] = relationship("app.models.comment.Comment", back_populates="user", cascade="all, delete-orphan")
 
 
 
@@ -110,5 +123,8 @@ def _user_after_update(mapper, connection, target: User) -> None:
 try:
     import app.models.resume  # noqa: F401
     import app.models.profile_data_source  # noqa: F401
+    import app.models.trust_event  # noqa: F401
+    import app.models.document  # noqa: F401
 except Exception:
     pass
+

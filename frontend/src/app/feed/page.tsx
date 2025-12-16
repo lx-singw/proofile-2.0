@@ -1,18 +1,27 @@
 "use client";
 
 import React, { useState } from "react";
-import DashboardHeader from "@/components/layout/DashboardHeader";
+import Link from "next/link";
+
 import { FeedCard, FeedItem } from "@/components/feed/FeedCard";
+import { CreatePostComposer, PostType, PostVisibility } from "@/components/feed/CreatePostComposer";
+import { FeedLeftSidebar } from "@/components/feed/FeedLeftSidebar";
+import { FeedRightSidebar } from "@/components/feed/FeedRightSidebar";
 import { Button } from "@/components/ui/button";
+import QuickStatsBar from "@/components/ui/QuickStatsBar";
+import { FadeIn } from "@/components/ui/PageTransition";
 import {
     Sparkles,
     Users,
     Briefcase,
     TrendingUp,
     Filter,
-    RefreshCw
+    RefreshCw,
+    Rss,
+    Shield,
+    Home,
+    Compass
 } from "lucide-react";
-import Link from "next/link";
 
 // Sample data (would come from API in production)
 const SAMPLE_FEED: FeedItem[] = [
@@ -64,14 +73,35 @@ const SAMPLE_FEED: FeedItem[] = [
 ];
 
 const SUGGESTED_PROFILES = [
-    { id: 1, name: "Alex Rivera", headline: "Full Stack Developer", match: 92 },
-    { id: 2, name: "Jordan Kim", headline: "Data Scientist", match: 88 },
-    { id: 3, name: "Taylor Hayes", headline: "Product Designer", match: 85 },
+    { id: "1", name: "Alex Rivera", headline: "Full Stack Developer", matchScore: 92 },
+    { id: "2", name: "Jordan Kim", headline: "Data Scientist", matchScore: 88 },
+    { id: "3", name: "Taylor Hayes", headline: "Product Designer", matchScore: 85 },
 ];
+
+const TRENDING_JOBS = [
+    { id: "1", title: "Senior Frontend Engineer", company: "Stripe", location: "Remote", matchScore: 94 },
+    { id: "2", title: "Product Manager", company: "Notion", location: "San Francisco", matchScore: 88 },
+    { id: "3", title: "Staff Engineer", company: "Vercel", location: "Remote", matchScore: 91 },
+];
+
+// Mock user data (would come from auth context in production)
+const CURRENT_USER = {
+    name: "John Doe",
+    headline: "Senior Software Engineer",
+    username: "johndoe",
+    trustScore: 78,
+    profileCompletion: 85,
+    stats: {
+        applications: 12,
+        interviews: 3,
+        savedJobs: 8,
+    },
+};
 
 export default function FeedPage() {
     const [feed, setFeed] = useState<FeedItem[]>(SAMPLE_FEED);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [activeTab, setActiveTab] = useState<"for-you" | "following">("for-you");
 
     const handleLike = (id: string) => {
         setFeed(prev => prev.map(item =>
@@ -88,123 +118,140 @@ export default function FeedPage() {
         setIsRefreshing(false);
     };
 
+    const handlePost = async (content: string, type: PostType, visibility: PostVisibility) => {
+        // Simulate API call
+        await new Promise(r => setTimeout(r, 500));
+
+        const newPost: FeedItem = {
+            id: Date.now().toString(),
+            type: type === "milestone" ? "milestone" : type === "job_share" ? "job_match" : "profile_update",
+            user: {
+                id: 1,
+                name: CURRENT_USER.name,
+                headline: CURRENT_USER.headline,
+                username: CURRENT_USER.username,
+            },
+            content,
+            likes: 0,
+            comments: 0,
+            created_at: new Date().toISOString(),
+            isLiked: false,
+        };
+
+        setFeed(prev => [newPost, ...prev]);
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <DashboardHeader />
+            {/* Quick Stats Bar */}
+            <QuickStatsBar
+                stats={[
+                    { label: "Feed Posts", value: feed.length },
+                    { label: "Connections", value: 247 },
+                    { label: "Job Matches", value: 12 },
+                ]}
+            />
 
-            <main className="max-w-6xl mx-auto px-4 py-8">
-                <div className="flex flex-col lg:flex-row gap-8">
-
-                    {/* Main Feed Column */}
-                    <div className="flex-1 max-w-2xl">
-                        {/* Feed Header */}
-                        <div className="flex items-center justify-between mb-6">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <FadeIn>
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                        <div>
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Sparkles className="w-6 h-6 text-purple-500" />
+                                <Rss className="w-7 h-7 text-purple-600" />
                                 Your Feed
                             </h1>
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={handleRefresh}
-                                    disabled={isRefreshing}
-                                    className="rounded-xl"
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mt-0.5">
+                                Stay updated with your professional network
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Feed Tabs */}
+                            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                                <button
+                                    onClick={() => setActiveTab("for-you")}
+                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all
+                                        ${activeTab === "for-you"
+                                            ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                        }`}
                                 >
-                                    <RefreshCw className={`w-4 h-4 mr-1.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                                    Refresh
-                                </Button>
-                                <Button variant="outline" size="sm" className="rounded-xl">
-                                    <Filter className="w-4 h-4 mr-1.5" />
-                                    Filter
-                                </Button>
+                                    <Sparkles className="w-4 h-4 inline mr-1" />
+                                    For You
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab("following")}
+                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all
+                                        ${activeTab === "following"
+                                            ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                        }`}
+                                >
+                                    <Users className="w-4 h-4 inline mr-1" />
+                                    Following
+                                </button>
                             </div>
-                        </div>
 
-                        {/* Feed Items */}
-                        <div className="space-y-4">
-                            {feed.map(item => (
-                                <FeedCard
-                                    key={item.id}
-                                    item={item}
-                                    onLike={handleLike}
-                                />
-                            ))}
-                        </div>
-
-                        {/* Load More */}
-                        <div className="mt-8 text-center">
-                            <Button variant="outline" className="rounded-xl">
-                                Load More
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleRefresh}
+                                disabled={isRefreshing}
+                                className="rounded-lg"
+                            >
+                                <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
                             </Button>
                         </div>
                     </div>
 
-                    {/* Sidebar */}
-                    <aside className="w-full lg:w-80 space-y-6">
-                        {/* Suggested Connections */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5">
-                            <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Users className="w-5 h-5 text-blue-500" />
-                                People You May Know
-                            </h3>
+                    {/* Three Column Layout */}
+                    <div className="flex flex-col lg:flex-row gap-6">
+                        {/* Left Sidebar - Profile */}
+                        <div className="hidden lg:block">
+                            <FeedLeftSidebar user={CURRENT_USER} />
+                        </div>
+
+                        {/* Main Feed Column */}
+                        <div className="flex-1 max-w-2xl mx-auto lg:mx-0 space-y-4">
+                            {/* Create Post Composer */}
+                            <CreatePostComposer
+                                onPost={handlePost}
+                                userName={CURRENT_USER.name}
+                                placeholder="What's happening in your career?"
+                            />
+
+                            {/* Feed Items */}
                             <div className="space-y-4">
-                                {SUGGESTED_PROFILES.map(profile => (
-                                    <div key={profile.id} className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
-                                            {profile.name.charAt(0)}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-gray-900 dark:text-white text-sm truncate">{profile.name}</p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{profile.headline}</p>
-                                        </div>
-                                        <span className="text-xs font-bold text-green-600 dark:text-green-400">{profile.match}%</span>
-                                    </div>
+                                {feed.map(item => (
+                                    <FeedCard
+                                        key={item.id}
+                                        item={item}
+                                        onLike={handleLike}
+                                    />
                                 ))}
                             </div>
-                            <Button variant="ghost" className="w-full mt-4 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl text-sm">
-                                View All
-                            </Button>
-                        </div>
 
-                        {/* Trending Jobs */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5">
-                            <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <Briefcase className="w-5 h-5 text-green-500" />
-                                Jobs For You
-                            </h3>
-                            <div className="space-y-3">
-                                <Link href="/jobs" className="block p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                    <p className="font-medium text-gray-900 dark:text-white text-sm">Senior Frontend Engineer</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Stripe • San Francisco</p>
-                                </Link>
-                                <Link href="/jobs" className="block p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                    <p className="font-medium text-gray-900 dark:text-white text-sm">Product Manager</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Notion • Remote</p>
-                                </Link>
-                            </div>
-                            <Button variant="ghost" asChild className="w-full mt-4 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-xl text-sm">
-                                <Link href="/jobs">Browse All Jobs</Link>
-                            </Button>
-                        </div>
-
-                        {/* Trending Topics */}
-                        <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl border border-purple-100 dark:border-purple-900/30 p-5">
-                            <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <TrendingUp className="w-5 h-5 text-purple-500" />
-                                Trending Now
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {["#AI", "#RemoteWork", "#TechCareers", "#ProductManagement", "#Startups"].map(tag => (
-                                    <span key={tag} className="px-3 py-1 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 cursor-pointer transition-colors">
-                                        {tag}
-                                    </span>
-                                ))}
+                            {/* Load More */}
+                            <div className="py-6 text-center">
+                                <Button variant="outline" className="rounded-xl">
+                                    Load More Posts
+                                </Button>
                             </div>
                         </div>
-                    </aside>
-                </div>
+
+                        {/* Right Sidebar - Agents & Suggestions */}
+                        <div className="hidden xl:block">
+                            <FeedRightSidebar
+                                suggestedProfiles={SUGGESTED_PROFILES}
+                                trendingJobs={TRENDING_JOBS}
+                                showAgents={true}
+                            />
+                        </div>
+                    </div>
+                </FadeIn>
             </main>
         </div>
     );
 }
+

@@ -1,7 +1,14 @@
 from fastapi import APIRouter
 from app.api.v1 import users, auth, profiles, jobs, ws, ai, resumes, activities, notifications, resume
 from app.api.v1 import social, ai_chat, verifications, discovery, analytics
+from app.routers import ratings, rating_requests, collaborators, verifications_peer
 from app.core.config import settings
+
+# Verification v2 routes (L1-L3 trust system)
+from app.api.v1.verification import identity_router, skills_router, documents_router, employment_router
+# Webhook handlers
+from app.api.v1.webhooks import stripe_router, sendgrid_router
+
 try:
 	# import test_events lazily
 	from app.api.v1 import test_events
@@ -27,17 +34,59 @@ api_router.include_router(notifications.router, prefix="/notifications", tags=["
 # Social features: follow, connect, star, endorse, rate
 api_router.include_router(social.router, prefix="/social", tags=["social"])
 
+# Ratings: professional ratings with anti-gaming measures
+api_router.include_router(ratings.router, tags=["ratings"])
+
+# Rating Requests: invitation-based rating flow
+api_router.include_router(rating_requests.router, tags=["rating-requests"])
+
+# Ratings v2: New reputation system with TrustRank
+try:
+    from app.api.v1 import ratings as ratings_v2
+    api_router.include_router(ratings_v2.router, tags=["ratings-v2"])
+except ImportError:
+    pass
+
+# Project Collaborators: Verified Work Graph
+api_router.include_router(collaborators.router, tags=["collaborators"])
+
 # AI Chat: career coaching, profile analysis
 api_router.include_router(ai_chat.router, prefix="/ai-chat", tags=["ai-chat"])
 
 # Verifications: email, phone, identity, education, employment
 api_router.include_router(verifications.router, prefix="/verifications", tags=["verifications"])
+# Peer Verifications: Crowdsourced Truth
+api_router.include_router(verifications_peer.router, tags=["verifications-peer"])
+
+# Verification v2 Routes: L1-L3 Trust Protocol
+api_router.include_router(identity_router, prefix="/verify", tags=["verify-identity"])
+api_router.include_router(skills_router, prefix="/verify", tags=["verify-skills"])
+api_router.include_router(documents_router, prefix="/verify", tags=["verify-documents"])
+api_router.include_router(employment_router, prefix="/verify", tags=["verify-employment"])
+
+# Webhooks: external service callbacks
+api_router.include_router(stripe_router, prefix="/webhooks", tags=["webhooks"])
+api_router.include_router(sendgrid_router, prefix="/webhooks", tags=["webhooks"])
 
 # Discovery: find and explore profiles
 api_router.include_router(discovery.router, prefix="/discovery", tags=["discovery"])
 
 # Analytics: profile views, career insights, event tracking
 api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+
+# Feed: posts, reactions, comments (authenticated)
+try:
+    from app.api.v1 import feed
+    api_router.include_router(feed.router, tags=["feed"])
+except ImportError:
+    pass
+
+# Portal: public jobs portal (no auth required)
+try:
+    from app.api.v1 import portal
+    api_router.include_router(portal.router, tags=["portal"])
+except ImportError:
+    pass
 
 # Test-only endpoints for e2e / local validation. Enable in test or development,
 # or when explicitly allowed via ENABLE_TEST_ROUTES. This keeps test helpers out of

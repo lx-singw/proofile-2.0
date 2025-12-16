@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import DashboardHeader from "@/components/layout/DashboardHeader";
+
 import {
     ProfileHeader
 } from "@/components/profile/ProfileHeader";
@@ -126,7 +126,7 @@ export default function ShowcasePage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <DashboardHeader />
+            
 
             <main className="max-w-6xl mx-auto px-4 py-8">
                 {/* Page Header */}

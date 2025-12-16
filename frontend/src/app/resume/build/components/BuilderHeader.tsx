@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ThemeSwitcher, { ColorScheme } from './ThemeSwitcher';
 import { cn } from '@/lib/utils';
-import ProofileLogo from '@/components/branding/ProofileLogo';
+
 
 interface BuilderHeaderProps {
     lastSaved?: Date;
@@ -88,26 +88,17 @@ export default function BuilderHeader({
     };
 
     return (
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-50 shadow-sm">
+        <header className="h-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 lg:px-6 sticky top-16 z-40">
             <div className="flex items-center gap-4">
-                <button
-                    onClick={() => router.push('/start')}
-                    className="flex items-center gap-2 text-gray-600 hover:text-green-600 transition-colors"
-                >
-                    <ArrowLeft size={20} />
-                    <span className="text-sm font-medium hidden sm:inline">Back</span>
-                </button>
-                <div className="h-6 w-px bg-gray-300"></div>
-                <ProofileLogo size={28} showWordmark={true} />
-
                 {/* Resume Name & History Dropdown */}
                 <div className="relative" ref={historyRef}>
                     <button
                         onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-                        className="flex items-center gap-2 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"
+                        className="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-1.5 rounded-lg transition-colors"
                     >
-                        <div className="flex flex-col items-start">
-                            <h1 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <div className="flex items-center gap-3">
+                            <FileText size={16} className="text-gray-500" />
+                            <h1 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                                 {resumeName}
                                 <ChevronDown size={14} className="text-gray-400" />
                             </h1>
@@ -152,7 +143,7 @@ export default function BuilderHeader({
                             ))}
                             <div className="border-t border-gray-100 mt-2 pt-2">
                                 <Link
-                                    href="/dashboard"
+                                    href="/resume"
                                     className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                 >
                                     View All Resumes

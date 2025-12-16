@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import DashboardHeader from "@/components/layout/DashboardHeader";
+
 import Link from "next/link";
 import {
     Search,
@@ -29,6 +29,8 @@ import * as discoveryService from "@/services/discoveryService";
 import * as socialService from "@/services/socialService";
 import type { DiscoveryProfile } from "@/services/discoveryService";
 import { toast } from "@/lib/toast";
+import QuickStatsBar from "@/components/ui/QuickStatsBar";
+import { FadeIn } from "@/components/ui/PageTransition";
 
 interface ProfileCardProps {
     profile: DiscoveryProfile;
@@ -124,10 +126,10 @@ function ProfileCard({ profile, onStarToggle }: ProfileCardProps) {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                    <button 
+                    <button
                         onClick={handleStarClick}
                         disabled={starLoading}
-                        className={`p-2 transition-colors ${isStarred ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`} 
+                        className={`p-2 transition-colors ${isStarred ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
                         title={isStarred ? "Unstar Profile" : "Star Profile"}
                     >
                         {starLoading ? (
@@ -155,13 +157,13 @@ export default function ExplorePage() {
     const { user, loading: authLoading } = useAuth();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("all");
-    
+
     // Data states
     const [trendingProfiles, setTrendingProfiles] = useState<DiscoveryProfile[]>([]);
     const [risingTalent, setRisingTalent] = useState<DiscoveryProfile[]>([]);
     const [topRated, setTopRated] = useState<DiscoveryProfile[]>([]);
     const [searchResults, setSearchResults] = useState<DiscoveryProfile[]>([]);
-    
+
     // Loading states
     const [loading, setLoading] = useState(true);
     const [searchLoading, setSearchLoading] = useState(false);
@@ -178,18 +180,18 @@ export default function ExplorePage() {
     useEffect(() => {
         async function fetchDiscoveryData() {
             if (!user) return;
-            
+
             try {
                 setLoading(true);
                 setError(null);
-                
+
                 // Fetch all discovery data in parallel
                 const [trendingRes, risingRes, topRatedRes] = await Promise.all([
                     discoveryService.getTrendingProfiles(1, 4),
                     discoveryService.getRisingTalent(1, 3),
                     discoveryService.getTopRatedProfiles(1, 2)
                 ]);
-                
+
                 setTrendingProfiles(trendingRes.profiles);
                 setRisingTalent(risingRes.profiles);
                 setTopRated(topRatedRes.profiles);
@@ -200,7 +202,7 @@ export default function ExplorePage() {
                 setLoading(false);
             }
         }
-        
+
         if (user) {
             fetchDiscoveryData();
         }
@@ -212,7 +214,7 @@ export default function ExplorePage() {
             setSearchResults([]);
             return;
         }
-        
+
         try {
             setSearchLoading(true);
             const results = await discoveryService.searchProfiles(searchQuery, 1, 10);
@@ -234,7 +236,7 @@ export default function ExplorePage() {
                 setSearchResults([]);
             }
         }, 300);
-        
+
         return () => clearTimeout(timer);
     }, [searchQuery, handleSearch]);
 
@@ -257,206 +259,233 @@ export default function ExplorePage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <DashboardHeader />
+            {/* Quick Stats Bar */}
+            <QuickStatsBar
+                stats={[
+                    { label: "Trending", value: trendingProfiles.length },
+                    { label: "Rising", value: risingTalent.length },
+                    { label: "Top Rated", value: topRated.length },
+                    { label: "Results", value: searchResults.length || "-" },
+                ]}
+            />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-                        <Search className="w-8 h-8 text-green-600" />
-                        Explore Proofile
-                    </h1>
-                    <p className="text-gray-600 dark:text-gray-400">
-                        Discover and connect with verified professionals across industries
-                    </p>
-                </div>
-
-                {/* Search & Filters */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
-                    <div className="flex flex-col lg:flex-row gap-4">
-                        {/* Search Input */}
-                        <div className="relative flex-1">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search by skills, role, company, or location..."
-                                className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            />
+                <FadeIn>
+                    {/* Header - Jobs Style */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <Search className="w-8 h-8 text-green-600" />
+                                Explore Proofile
+                            </h1>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1">
+                                Discover and connect with verified professionals across industries
+                            </p>
                         </div>
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/discover"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                <Users className="w-4 h-4" />
+                                Quick Discover
+                            </Link>
+                            <Link
+                                href="/feed"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                            >
+                                <TrendingUp className="w-4 h-4" />
+                                Feed
+                            </Link>
+                        </div>
+                    </div>
 
-                        {/* Filter Buttons */}
-                        <div className="flex items-center gap-2 flex-wrap">
-                            {filters.map((filter) => (
-                                <button
-                                    key={filter.id}
-                                    onClick={() => setSelectedFilter(filter.id)}
-                                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
-                                        selectedFilter === filter.id
+                    {/* Search & Filters */}
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
+                        <div className="flex flex-col lg:flex-row gap-4">
+                            {/* Search Input */}
+                            <div className="relative flex-1">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search by skills, role, company, or location..."
+                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                />
+                            </div>
+
+                            {/* Filter Buttons */}
+                            <div className="flex items-center gap-2 flex-wrap">
+                                {filters.map((filter) => (
+                                    <button
+                                        key={filter.id}
+                                        onClick={() => setSelectedFilter(filter.id)}
+                                        className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${selectedFilter === filter.id
                                             ? "bg-green-600 text-white"
                                             : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                                    }`}
-                                >
-                                    {filter.label}
+                                            }`}
+                                    >
+                                        {filter.label}
+                                    </button>
+                                ))}
+                                <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                    <Filter className="w-5 h-5" />
                                 </button>
-                            ))}
-                            <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
-                                <Filter className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Loading State */}
-                {loading && (
-                    <div className="flex items-center justify-center py-12">
-                        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-                        <span className="ml-2 text-gray-600 dark:text-gray-400">Loading profiles...</span>
-                    </div>
-                )}
-
-                {/* Error State */}
-                {error && (
-                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 mb-8 flex items-center gap-3">
-                        <AlertCircle className="w-6 h-6 text-red-600" />
-                        <span className="text-red-600 dark:text-red-400">{error}</span>
-                    </div>
-                )}
-
-                {/* Search Results */}
-                {searchQuery.trim() && searchResults.length > 0 && (
-                    <section className="mb-12">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Search className="w-5 h-5 text-green-500" />
-                                Search Results for "{searchQuery}"
-                            </h2>
-                            <span className="text-sm text-gray-500">{searchResults.length} profiles found</span>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {searchResults.map((profile) => (
-                                <ProfileCard key={profile.id} profile={profile} />
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {/* Search Loading */}
-                {searchLoading && (
-                    <div className="flex items-center justify-center py-8">
-                        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
-                        <span className="ml-2 text-gray-600 dark:text-gray-400">Searching...</span>
-                    </div>
-                )}
-
-                {/* No Search Results */}
-                {searchQuery.trim() && !searchLoading && searchResults.length === 0 && (
-                    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center mb-8">
-                        <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No profiles found</h3>
-                        <p className="text-gray-600 dark:text-gray-400">Try adjusting your search terms</p>
-                    </div>
-                )}
-
-                {/* Show sections only when not searching */}
-                {!searchQuery.trim() && !loading && (
-                    <>
-                        {/* Trending Profiles */}
-                        {trendingProfiles.length > 0 && (
-                            <section className="mb-12">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <Flame className="w-5 h-5 text-orange-500" />
-                                        Trending Profiles
-                                    </h2>
-                                    <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
-                                        View All <ChevronRight className="w-4 h-4" />
-                                    </button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {trendingProfiles.map((profile) => (
-                                        <ProfileCard key={profile.id} profile={profile} />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {/* Rising Talent */}
-                        {risingTalent.length > 0 && (
-                            <section className="mb-12">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <TrendingUp className="w-5 h-5 text-green-500" />
-                                        Rising Talent
-                                    </h2>
-                                    <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
-                                        View All <ChevronRight className="w-4 h-4" />
-                                    </button>
-                                </div>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                                    New profiles gaining traction this week
-                                </p>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {risingTalent.map((profile) => (
-                                        <ProfileCard key={profile.id} profile={profile} />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {/* Top Rated in Your Industry */}
-                        {topRated.length > 0 && (
-                            <section className="mb-12">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <Trophy className="w-5 h-5 text-yellow-500" />
-                                        Top Rated Professionals
-                                    </h2>
-                                    <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
-                                        View All <ChevronRight className="w-4 h-4" />
-                                    </button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {topRated.map((profile) => (
-                                        <ProfileCard key={profile.id} profile={profile} />
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {/* Empty State when no profiles exist */}
-                        {trendingProfiles.length === 0 && risingTalent.length === 0 && topRated.length === 0 && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-12 text-center">
-                                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No profiles yet</h3>
-                                <p className="text-gray-600 dark:text-gray-400 mb-6">Be one of the first to create your professional profile!</p>
-                                <Link
-                                    href="/profile"
-                                    className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors"
-                                >
-                                    Complete Your Profile
-                                </Link>
                             </div>
-                        )}
-                    </>
-                )}
+                        </div>
+                    </div>
 
-                {/* CTA Section */}
-                <div className="p-8 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border border-green-200 dark:border-green-800 text-center">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                        🌟 Stand Out in the Crowd
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto mb-4">
-                        Complete your profile, get verified, and start collecting ratings to appear in trending searches.
-                    </p>
-                    <Link
-                        href="/profile"
-                        className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors"
-                    >
-                        Complete Your Profile
-                    </Link>
-                </div>
+                    {/* Loading State */}
+                    {loading && (
+                        <div className="flex items-center justify-center py-12">
+                            <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+                            <span className="ml-2 text-gray-600 dark:text-gray-400">Loading profiles...</span>
+                        </div>
+                    )}
+
+                    {/* Error State */}
+                    {error && (
+                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 mb-8 flex items-center gap-3">
+                            <AlertCircle className="w-6 h-6 text-red-600" />
+                            <span className="text-red-600 dark:text-red-400">{error}</span>
+                        </div>
+                    )}
+
+                    {/* Search Results */}
+                    {searchQuery.trim() && searchResults.length > 0 && (
+                        <section className="mb-12">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <Search className="w-5 h-5 text-green-500" />
+                                    Search Results for "{searchQuery}"
+                                </h2>
+                                <span className="text-sm text-gray-500">{searchResults.length} profiles found</span>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {searchResults.map((profile) => (
+                                    <ProfileCard key={profile.id} profile={profile} />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Search Loading */}
+                    {searchLoading && (
+                        <div className="flex items-center justify-center py-8">
+                            <Loader2 className="w-6 h-6 animate-spin text-green-600" />
+                            <span className="ml-2 text-gray-600 dark:text-gray-400">Searching...</span>
+                        </div>
+                    )}
+
+                    {/* No Search Results */}
+                    {searchQuery.trim() && !searchLoading && searchResults.length === 0 && (
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 text-center mb-8">
+                            <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No profiles found</h3>
+                            <p className="text-gray-600 dark:text-gray-400">Try adjusting your search terms</p>
+                        </div>
+                    )}
+
+                    {/* Show sections only when not searching */}
+                    {!searchQuery.trim() && !loading && (
+                        <>
+                            {/* Trending Profiles */}
+                            {trendingProfiles.length > 0 && (
+                                <section className="mb-12">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                            <Flame className="w-5 h-5 text-orange-500" />
+                                            Trending Profiles
+                                        </h2>
+                                        <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
+                                            View All <ChevronRight className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        {trendingProfiles.map((profile) => (
+                                            <ProfileCard key={profile.id} profile={profile} />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Rising Talent */}
+                            {risingTalent.length > 0 && (
+                                <section className="mb-12">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                            <TrendingUp className="w-5 h-5 text-green-500" />
+                                            Rising Talent
+                                        </h2>
+                                        <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
+                                            View All <ChevronRight className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                                        New profiles gaining traction this week
+                                    </p>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        {risingTalent.map((profile) => (
+                                            <ProfileCard key={profile.id} profile={profile} />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Top Rated in Your Industry */}
+                            {topRated.length > 0 && (
+                                <section className="mb-12">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                            <Trophy className="w-5 h-5 text-yellow-500" />
+                                            Top Rated Professionals
+                                        </h2>
+                                        <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
+                                            View All <ChevronRight className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {topRated.map((profile) => (
+                                            <ProfileCard key={profile.id} profile={profile} />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Empty State when no profiles exist */}
+                            {trendingProfiles.length === 0 && risingTalent.length === 0 && topRated.length === 0 && (
+                                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-12 text-center">
+                                    <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No profiles yet</h3>
+                                    <p className="text-gray-600 dark:text-gray-400 mb-6">Be one of the first to create your professional profile!</p>
+                                    <Link
+                                        href="/profile"
+                                        className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors"
+                                    >
+                                        Complete Your Profile
+                                    </Link>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {/* CTA Section */}
+                    <div className="p-8 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border border-green-200 dark:border-green-800 text-center">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                            🌟 Stand Out in the Crowd
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto mb-4">
+                            Complete your profile, get verified, and start collecting ratings to appear in trending searches.
+                        </p>
+                        <Link
+                            href="/profile"
+                            className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors"
+                        >
+                            Complete Your Profile
+                        </Link>
+                    </div>
+                </FadeIn>
             </main>
         </div>
     );

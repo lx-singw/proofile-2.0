@@ -32,6 +32,7 @@ async def get_notifications(
     """
     Get notifications for the current user.
     """
+    print(f"DEBUG: get_notifications for user {current_user.id}")
     result = await db.execute(
         select(Notification)
         .where(Notification.user_id == current_user.id)
@@ -39,7 +40,9 @@ async def get_notifications(
         .offset(skip)
         .limit(limit)
     )
-    return result.scalars().all()
+    items = result.scalars().all()
+    print(f"DEBUG: Found {len(items)} notifications")
+    return items
 
 @router.get("/unread-count", response_model=int)
 async def get_unread_count(
@@ -49,11 +52,14 @@ async def get_unread_count(
     """
     Get count of unread notifications.
     """
+    print(f"DEBUG: get_unread_count for user {current_user.id}")
     result = await db.execute(
         select(func.count(Notification.id))
         .where(Notification.user_id == current_user.id, Notification.read == False)
     )
-    return result.scalar() or 0
+    count = result.scalar() or 0
+    print(f"DEBUG: Unread count: {count}")
+    return count
 
 @router.post("/{notification_id}/read", response_model=NotificationRead)
 async def mark_as_read(

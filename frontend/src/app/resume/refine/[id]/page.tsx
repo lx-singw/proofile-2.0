@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import ProofileLogo from "@/components/branding/ProofileLogo";
+
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -40,7 +40,7 @@ export default function ResumeRefinePage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">
-        <ProofileLogo size={32} showWordmark={true} />
+        
         <div className="flex items-center gap-4">
           <Link href="/resume/analysis/1" className="text-sm text-gray-500 hover:text-green-600">Back to Analysis</Link>
         </div>

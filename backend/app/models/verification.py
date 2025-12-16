@@ -27,9 +27,16 @@ class Verification(Base, TimestampMixin):
     expires_at = Column(DateTime, nullable=True)  # When verification expires
     failure_reason = Column(Text, nullable=True)  # Reason for failed verification
     
+    # Trust System Fields
+    trust_level = Column(String(20), nullable=True)  # L1, L2, L3
+    trust_points = Column(Integer, default=0) # Points contributed to global score
+    
     # Request/Token fields (for email/peer verification flows)
     token = Column(String, index=True, nullable=True)
     token_expires_at = Column(DateTime, nullable=True)
     
     # Relationships
     user = relationship("User", backref="verifications")
+    documents = relationship("app.models.document.Document", back_populates="verification")
+    audit_logs = relationship("app.models.trust_event.VerificationAuditLog", back_populates="verification", cascade="all, delete-orphan")
+

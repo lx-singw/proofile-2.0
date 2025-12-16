@@ -15,7 +15,7 @@ services:
     networks:
       - proofile-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-proofile_user} -d ${POSTGRES_DB:-proofile_dev}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-proofile_user} -d ${POSTGRES_DB:-proofile_dev}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,7 +32,7 @@ services:
     networks:
       - proofile-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -64,7 +64,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -97,7 +97,7 @@ services:
       backend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -127,7 +127,31 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
-    command: celery -A app.celery_app.celery_app worker --loglevel=info
+    command: celery -A app.celery_app.celery_app worker --loglevel=info -Q default,documents,emails,scrapers
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: proofile-beat
+    env_file: .env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql+asyncpg://proofile_user:proofile_password@postgres:5432/proofile_dev
+    volumes:
+      - ./backend:/app
+      - backend_cache:/app/.cache
+    working_dir: /app
+    networks:
+      - proofile-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      worker:
+        condition: service_started
+    restart: unless-stopped
+    command: celery -A app.celery_app.celery_app beat --loglevel=info
 
 networks:
   proofile-network:

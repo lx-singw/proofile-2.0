@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { resumeService, type Resume } from '@/services/resumeService';
 import ResumeCard from '@/components/dashboard/ResumeCard';
-import DashboardHeader from '@/components/layout/DashboardHeader';
+
 import { FileText, Plus, Sparkles, Lock } from 'lucide-react';
 
 export default function ResumeListPage() {
@@ -97,7 +97,7 @@ export default function ResumeListPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <DashboardHeader />
+            
             <main className="container mx-auto px-6 py-8">
                 <div className="flex items-center justify-between mb-8">
                     <div>

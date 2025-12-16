@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle, Download, Edit, ArrowRight, RefreshCw } from "lucide-react";
-import ProofileLogo from "@/components/branding/ProofileLogo";
+
 import { resumeService, type Resume } from "@/services/resumeService";
 import PreviewPanel from "../../build/components/PreviewPanel"; // Reusing existing preview
 import { toast } from "@/lib/toast";
@@ -71,7 +71,7 @@ export default function AIReviewPage() {
             <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <ProofileLogo size={28} showWordmark={true} />
+                        
                         <div className="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
                         <div className="flex items-center gap-2 text-green-600 font-medium">
                             <CheckCircle className="w-5 h-5" />

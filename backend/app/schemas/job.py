@@ -17,6 +17,8 @@ class JobBase(BaseModel):
     experience_level: str | None = None
     industry: str | None = None
     salary_range: str | None = None
+    requires_verification_level: int = 0  # 0=none, 1=L1 (skill), 2=L2 (employment), 3=L3 (identity)
+    verified_candidates_only: bool = False
     
     @field_validator('required_skills', mode='before')
     @classmethod

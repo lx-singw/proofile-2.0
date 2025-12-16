@@ -40,6 +40,17 @@ const nextConfig: NextConfig = {
   },
 
 
+  // Redirects for deprecated routes
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/verification",
+        destination: "/verification",
+        permanent: true,
+      },
+    ];
+  },
+
   // Enable API proxy rewrites for development
   async rewrites() {
     return [
@@ -62,7 +73,7 @@ const nextConfig: NextConfig = {
   webpack: (config, { isServer }) => {
     const isProduction = process.env.NODE_ENV === "production";
     const isClientBundle = !isServer;
-    
+
     if (isClientBundle && isProduction) {
       config.mode = "production";
       config.optimization = {

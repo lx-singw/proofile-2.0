@@ -179,7 +179,7 @@ export default function DashboardDropdown({
 
       {/* Dropdown Menu */}
       <div
-        className={`absolute top-full z-50 mt-2 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 ${align === "right" ? "right-0" : "left-0"
+        className={`absolute top-full z-[100] mt-2 w-48 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900 ${align === "right" ? "right-0" : "left-0"
           } transform transition-all duration-200 origin-top ${isOpen
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 -translate-y-2 pointer-events-none"

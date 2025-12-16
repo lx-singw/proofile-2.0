@@ -36,6 +36,7 @@ import {
     ProfileStatsCompact
 } from "@/components/social/SocialActions";
 import { ProfileModeToggle } from "@/components/profile/ProfileModeToggle";
+import { CollaboratorsList } from "@/components/profile/CollaboratorsList";
 
 export default function PublicProfilePage() {
     const params = useParams();
@@ -320,6 +321,11 @@ export default function PublicProfilePage() {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                {/* Verified Work Graph */}
+                <div className="mb-8">
+                    <CollaboratorsList userId={profile.user_id} isOwnProfile={isOwnProfile} />
                 </div>
 
                 {/* Resumes Section */}

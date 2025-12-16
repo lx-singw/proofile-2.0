@@ -12,7 +12,7 @@ import {
 import PersonaSelector from "@/components/dashboard/PersonaSelector";
 import OnboardingWizard, { type OnboardingData } from "@/components/dashboard/OnboardingWizard";
 import type { PersonaType } from "@/components/dashboard/PersonaSelector";
-import DashboardHeader from "@/components/layout/DashboardHeader";
+
 import FloatingActionButton from "@/components/dashboard/FloatingActionButton";
 import OnboardingTour from "@/components/dashboard/OnboardingTour";
 import { statsService, type UserStats } from "@/services/statsService";
@@ -26,6 +26,8 @@ import { resumeService, type Resume } from "@/services/resumeService";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 import NextStepPrompt from "@/components/dashboard/NextStepPrompt";
 import { CompletenessWidget } from "@/components/profile/CompletenessWidget"; // New import
+import ResumeToolsMenu from "@/components/dashboard/ResumeToolsMenu";
+import VerificationSection from "@/components/dashboard/VerificationSection";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -180,7 +182,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
-      <DashboardHeader />
+      
       <main className="flex-1" role="main">
         <div className="w-full px-6 py-8 space-y-8">
           <h1 className="sr-only">Dashboard</h1>
@@ -221,86 +223,10 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* Resume Tools */}
+          {/* Resume Tools - Collapsed by default */}
           {preferences.visibleSections.resumeTools && (
-            <div className="space-y-4" data-tour="resume-tools">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-                Resume Tools
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <button
-                  onClick={() => router.push("/resume/upload")}
-                  className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-green-600 dark:hover:border-green-500 transition-all hover:shadow-2xl hover:scale-105"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-transparent rounded-full blur-2xl"></div>
-                  <div className="relative">
-                    <div className="w-14 h-14 bg-gradient-to-br from-green-600 to-green-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Upload className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Upload Resume</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">Upload your existing resume for AI-powered refinement</p>
-                    <div className="inline-flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm">
-                      <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-xs rounded-full">AI Refined</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => router.push("/resume/build")}
-                  className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-purple-600 dark:hover:border-purple-500 transition-all hover:shadow-2xl hover:scale-105"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-full blur-2xl"></div>
-                  <div className="relative">
-                    <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <PenTool className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Build from Scratch</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">Create a professional resume with our guided builder</p>
-                    <div className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 font-semibold text-sm">
-                      <span>Start building</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => router.push("/resume/ai-build")}
-                  className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-blue-600 dark:hover:border-blue-500 transition-all hover:shadow-2xl hover:scale-105"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl"></div>
-                  <div className="relative">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Sparkles className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">AI Build from Profile</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">Let AI create a polished resume using your profile data</p>
-                    <div className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                      <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-xs rounded-full">✨ AI Powered</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => router.push("/resume")}
-                  className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-blue-600 dark:hover:border-blue-500 transition-all hover:shadow-2xl hover:scale-105"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl"></div>
-                  <div className="relative">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <FileText className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">My Resumes</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">View and manage your {resumes.length > 0 ? `${resumes.length} existing` : 'existing'} resumes</p>
-                    <div className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-                      <span>View all</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </button>
-              </div>
+            <div data-tour="resume-tools">
+              <ResumeToolsMenu />
             </div>
           )}
 
@@ -311,6 +237,10 @@ export default function DashboardPage() {
                 <Shield className="w-6 h-6 text-blue-600" />
                 Profile & Verification
               </h2>
+
+              {/* Trust Score & Verification Section */}
+              <VerificationSection />
+
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <button onClick={() => router.push("/profile")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:shadow-lg transition-all group">
                   <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Brain, CheckCircle, Loader2, FileText, Sparkles, Target, Layout } from "lucide-react";
-import ProofileLogo from "@/components/branding/ProofileLogo";
+
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
@@ -109,7 +109,7 @@ export default function AIProcessingPage() {
 
             <div className="relative z-10 w-full max-w-md text-center">
                 <div className="mb-8 flex justify-center">
-                    <ProofileLogo size={48} showWordmark={false} />
+                    
                 </div>
 
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">

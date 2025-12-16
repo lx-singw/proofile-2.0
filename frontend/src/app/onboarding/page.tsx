@@ -183,7 +183,7 @@ export default function OnboardingPage() {
                         <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 text-purple-600">
                             <User className="w-6 h-6" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Claim your handle</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Claim your username</h2>
                         <p className="text-gray-600 dark:text-gray-400 mb-6">
                             Choose a unique username for your professional profile URL.
                         </p>

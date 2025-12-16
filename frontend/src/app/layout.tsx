@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "sonner";
+import AppShell from "@/components/layout/AppShell";
 import "./globals.css";
 
 const inter = Inter({
@@ -40,11 +41,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            {children}
-            <Toaster position="top-right" richColors />
+            <AppShell>
+              {children}
+            </AppShell>
+            <Toaster position="bottom-right" richColors />
           </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+

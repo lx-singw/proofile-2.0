@@ -6,6 +6,9 @@ import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import NotificationBell from "./NotificationBell";
+import NotificationsPopover from "./NotificationsPopover";
+
+
 import DashboardDropdown from "./DashboardDropdown";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -77,7 +80,7 @@ export default function DashboardHeader({
   }
 
   return (
-    <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50">
+    <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-[60] overflow-visible">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left Section: Logo & Mobile Menu */}
@@ -96,7 +99,7 @@ export default function DashboardHeader({
               align="left"
             />
 
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/feed" className="flex items-center gap-2">
               <ProofileLogo size={32} showWordmark={true} />
             </Link>
           </div>
@@ -104,13 +107,17 @@ export default function DashboardHeader({
           {/* Right Section: Theme Toggle, Notifications & User Menu */}
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
-            <NotificationBell unreadCount={unreadCount} />
+            <NotificationsPopover
+              unreadCount={unreadCount}
+              onCountChange={setUnreadCount}
+              trigger={<NotificationBell unreadCount={unreadCount} />}
+            />
 
             <DashboardDropdown
               trigger={
                 <>
                   <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {user.full_name || user.email.split("@")[0]}
+                    {user.full_name || (user.email ? user.email.split("@")[0] : "User")}
                   </span>
                   {typeof user.avatarUrl === 'string' && user.avatarUrl ? (
                     <div className="relative w-8 h-8 rounded-full overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
@@ -124,7 +131,7 @@ export default function DashboardHeader({
                     </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">
-                      {(user.full_name || user.email).charAt(0).toUpperCase()}
+                      {(user.full_name || user.email || "U").charAt(0).toUpperCase()}
                     </div>
                   )}
                   {logoutLoading && (
