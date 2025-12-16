@@ -8,6 +8,7 @@ import {
     ReactNode,
 } from "react";
 import { apiRequest } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 
 // =============================================================================
 // Types
@@ -99,11 +100,19 @@ interface PersonalizationProviderProps {
 export function PersonalizationProvider({
     children,
 }: PersonalizationProviderProps) {
+    const { user, loading: authLoading } = useAuth();
     const [context, setContext] = useState<PersonalizationContext | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const loadContext = async () => {
+        // Don't fetch if user is not authenticated
+        if (!user) {
+            setIsLoading(false);
+            setContext(null);
+            return;
+        }
+
         try {
             setIsLoading(true);
             setError(null);
@@ -136,8 +145,11 @@ export function PersonalizationProvider({
     };
 
     useEffect(() => {
-        loadContext();
-    }, []);
+        // Wait for auth to finish loading before attempting to load context
+        if (!authLoading) {
+            loadContext();
+        }
+    }, [user, authLoading]);
 
     return (
         <PersonalizationCtx.Provider
