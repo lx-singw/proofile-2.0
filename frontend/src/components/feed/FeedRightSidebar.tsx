@@ -54,7 +54,7 @@ const DEFAULT_AGENTS: AgentStatus[] = [
         status: "Scanning for matches...",
         action: "View Jobs",
         actionLink: "/jobs",
-        color: "text-blue-500",
+        color: "text-emerald-500",
     },
     {
         name: "Tailor Agent",
@@ -62,7 +62,7 @@ const DEFAULT_AGENTS: AgentStatus[] = [
         status: "Resume ready",
         action: "Preview",
         actionLink: "/resume",
-        color: "text-purple-500",
+        color: "text-emerald-500",
     },
 ];
 
@@ -75,9 +75,9 @@ export function FeedRightSidebar({
         <aside className="w-full lg:w-80 space-y-4">
             {/* Agent HQ */}
             {showAgents && (
-                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 p-4">
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 p-4">
                     <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <Bot className="w-5 h-5 text-indigo-500" />
+                        <Bot className="w-5 h-5 text-emerald-500" />
                         Agent HQ
                         <span className="ml-auto text-xs font-normal px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
                             Active
@@ -101,7 +101,7 @@ export function FeedRightSidebar({
                                 {agent.action && agent.actionLink && (
                                     <Link
                                         href={agent.actionLink}
-                                        className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                                        className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
                                     >
                                         {agent.action}
                                         <ChevronRight className="w-3 h-3" />
@@ -117,7 +117,7 @@ export function FeedRightSidebar({
             {suggestedProfiles.length > 0 && (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4">
                     <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-blue-500" />
+                        <Users className="w-5 h-5 text-emerald-500" />
                         People You May Know
                     </h3>
                     <div className="space-y-3">
@@ -130,7 +130,7 @@ export function FeedRightSidebar({
                                         className="w-10 h-10 rounded-full object-cover"
                                     />
                                 ) : (
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">
                                         {profile.name.charAt(0)}
                                     </div>
                                 )}
@@ -152,7 +152,7 @@ export function FeedRightSidebar({
                     </div>
                     <Button
                         variant="ghost"
-                        className="w-full mt-4 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl text-sm"
+                        className="w-full mt-4 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl text-sm"
                     >
                         View All
                     </Button>
@@ -202,16 +202,16 @@ export function FeedRightSidebar({
             )}
 
             {/* Trending Topics */}
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl border border-purple-100 dark:border-purple-900/30 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 p-4">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-purple-500" />
+                    <TrendingUp className="w-5 h-5 text-emerald-500" />
                     Trending Now
                 </h3>
                 <div className="flex flex-wrap gap-2">
                     {["#AI", "#RemoteWork", "#TechCareers", "#ProductManagement", "#Startups"].map(tag => (
                         <span
                             key={tag}
-                            className="px-3 py-1 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 cursor-pointer transition-colors"
+                            className="px-3 py-1 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-500 cursor-pointer transition-colors"
                         >
                             {tag}
                         </span>
@@ -222,8 +222,8 @@ export function FeedRightSidebar({
             {/* Profile Views Insight */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                        <Eye className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                         <p className="text-sm font-bold text-gray-900 dark:text-white">234</p>

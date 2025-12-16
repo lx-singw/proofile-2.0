@@ -100,7 +100,7 @@ export function EditableField({
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="w-full p-2 rounded-md border border-blue-500 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900 min-h-[100px] resize-y text-gray-900 dark:text-gray-100"
+                    className="w-full p-2 rounded-md border border-emerald-500 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-900 min-h-[100px] resize-y text-gray-900 dark:text-gray-100"
                     placeholder={placeholder}
                     aria-label={label}
                 />
@@ -111,7 +111,7 @@ export function EditableField({
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="w-full p-2 rounded-md border border-blue-500 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900 text-gray-900 dark:text-gray-100"
+                    className="w-full p-2 rounded-md border border-emerald-500 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-900 text-gray-900 dark:text-gray-100"
                     placeholder={placeholder}
                     aria-label={label}
                 />

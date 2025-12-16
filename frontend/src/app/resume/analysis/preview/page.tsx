@@ -62,7 +62,7 @@ export default function PublicAnalysisPreviewPage() {
 
     const getScoreColor = (score: number) => {
         if (score >= 80) return "text-green-600";
-        if (score >= 60) return "text-yellow-600";
+        if (score >= 60) return "text-emerald-600";
         return "text-red-600";
     };
 
@@ -104,7 +104,7 @@ export default function PublicAnalysisPreviewPage() {
                     </button>
                     <button
                         onClick={() => handleRestrictedAction('save')}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2"
                     >
                         <Layout className="w-4 h-4" />
                         Template
@@ -126,7 +126,7 @@ export default function PublicAnalysisPreviewPage() {
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                             Resume Analysis
                         </h1>
-                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                        <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-medium rounded-full">
                             Preview Mode
                         </span>
                     </div>
@@ -206,9 +206,9 @@ export default function PublicAnalysisPreviewPage() {
                 </div>
 
                 {/* Key Insights */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 shadow-lg border border-blue-200 dark:border-blue-800 mb-8">
+                <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl p-8 shadow-lg border border-emerald-200 dark:border-emerald-800 mb-8">
                     <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <AlertCircle className="w-6 h-6 text-blue-600" />
+                        <AlertCircle className="w-6 h-6 text-emerald-600" />
                         Key Insights
                     </h2>
                     <ul className="space-y-2">

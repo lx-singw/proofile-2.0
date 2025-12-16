@@ -51,14 +51,14 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
         return (
             <Link
                 href={`/portal/${job.slug || job.id}`}
-                className="block p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-700 transition-all"
+                className="block p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-700 transition-all"
             >
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-100 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/30 flex items-center justify-center flex-shrink-0">
                         {job.company_logo_url ? (
                             <img src={job.company_logo_url} alt={job.company} className="w-6 h-6 object-contain" />
                         ) : (
-                            <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -82,15 +82,15 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
     return (
         <Link
             href={`/portal/${job.slug || job.id}`}
-            className="block bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-700 transition-all group"
+            className="block bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-700 transition-all group"
         >
             <div className="flex items-start gap-4">
                 {/* Company Logo */}
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/30 flex items-center justify-center flex-shrink-0">
                     {job.company_logo_url ? (
                         <img src={job.company_logo_url} alt={job.company} className="w-10 h-10 object-contain" />
                     ) : (
-                        <Building2 className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+                        <Building2 className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
                     )}
                 </div>
 
@@ -98,7 +98,7 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                 {job.title}
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400">{job.company}</p>

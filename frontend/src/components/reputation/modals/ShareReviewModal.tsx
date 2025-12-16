@@ -67,8 +67,8 @@ Check out my verified professional reputation on Proofile!`;
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Share2 className="h-5 w-5 text-blue-600" />
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <Share2 className="h-5 w-5 text-emerald-600" />
                         </div>
                         <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                             Share This Review
@@ -86,14 +86,14 @@ Check out my verified professional reputation on Proofile!`;
                 <div className="p-6">
                     <div
                         ref={cardRef}
-                        className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-xl p-6 text-white mb-6"
+                        className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl p-6 text-white mb-6"
                     >
                         {/* Stars */}
                         <div className="flex gap-1 mb-4">
                             {Array(5).fill(0).map((_, i) => (
                                 <svg
                                     key={i}
-                                    className={`w-6 h-6 ${i < review.rating ? 'text-yellow-400' : 'text-white/30'}`}
+                                    className={`w-6 h-6 ${i < review.rating ? 'text-emerald-400' : 'text-white/30'}`}
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                 >

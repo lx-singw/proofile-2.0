@@ -182,16 +182,16 @@ export default function DashboardPage() {
     : (showWelcome ? 'Welcome!' : 'Welcome back!');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-emerald-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
 
       <main className="flex-1" role="main">
         <div className="w-full px-6 py-8 space-y-8">
           <h1 className="sr-only">Dashboard</h1>
 
           {/* Welcome Header */}
-          <div data-tour="welcome" className="relative overflow-hidden bg-gradient-to-br from-green-500/10 via-purple-500/10 to-blue-500/10 rounded-3xl p-8 sm:p-12 border border-green-200 dark:border-green-800 shadow-xl">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-green-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-400/20 to-green-400/20 rounded-full blur-3xl"></div>
+          <div data-tour="welcome" className="relative overflow-hidden bg-gradient-to-br from-green-500/10 via-emerald-500/10 to-emerald-500/10 rounded-3xl p-8 sm:p-12 border border-green-200 dark:border-green-800 shadow-xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-emerald-400/20 to-green-400/20 rounded-full blur-3xl"></div>
             <div className="relative text-center">
               <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
                 {welcomeMessage}
@@ -217,9 +217,9 @@ export default function DashboardPage() {
           <div className="flex justify-end mb-6">
             <button
               onClick={() => setIsCustomizationOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-purple-400 dark:hover:border-purple-600 transition-all shadow-sm hover:shadow-md"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-400 dark:hover:border-emerald-600 transition-all shadow-sm hover:shadow-md"
             >
-              <Settings2 className="w-4 h-4 text-purple-600" />
+              <Settings2 className="w-4 h-4 text-emerald-600" />
               <span className="text-sm font-medium text-gray-900 dark:text-white">Customize Dashboard</span>
             </button>
           </div>
@@ -238,7 +238,7 @@ export default function DashboardPage() {
           {preferences.visibleSections.profileVerification && (
             <div className="space-y-4" data-tour="profile-verification">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Shield className="w-6 h-6 text-blue-600" />
+                <Shield className="w-6 h-6 text-emerald-600" />
                 Profile & Verification
               </h2>
 
@@ -257,35 +257,35 @@ export default function DashboardPage() {
                   <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-green-600" />
                 </button>
                 {/* ... other verification buttons ... */}
-                <button onClick={() => router.push("/verification")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all group">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <button onClick={() => router.push("/verification")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-lg transition-all group">
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Shield className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="font-semibold text-gray-900 dark:text-white text-sm">Verification</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Verify skills</div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-600" />
                 </button>
-                <button onClick={() => router.push("/ratings")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-yellow-500 hover:shadow-lg transition-all group">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <button onClick={() => router.push("/ratings")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-lg transition-all group">
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Star className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="font-semibold text-gray-900 dark:text-white text-sm">Peer Ratings</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Get endorsed</div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-yellow-600" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-600" />
                 </button>
-                <button onClick={() => router.push("/skills/leaderboard")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-lg transition-all group">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <button onClick={() => router.push("/skills/leaderboard")} className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-lg transition-all group">
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Trophy className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="font-semibold text-gray-900 dark:text-white text-sm">Leaderboard</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">Top skills</div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-purple-600" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-600" />
                 </button>
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function DashboardPage() {
           {/* Stats Overview */}
           {preferences.visibleSections.stats && (
             <div className="grid md:grid-cols-3 gap-6" data-tour="stats">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
                 <div className="flex items-center justify-between mb-2">
                   <FileText className="w-8 h-8 opacity-80" />
                   <span className="text-3xl font-bold">{statsLoading ? '...' : stats?.resumes_count || 0}</span>
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-sm opacity-90">Verifications</div>
               </div>
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
                 <div className="flex items-center justify-between mb-2">
                   <Star className="w-8 h-8 opacity-80" />
                   <span className="text-3xl font-bold">{statsLoading ? '...' : stats?.ratings_count || 0}</span>
@@ -341,9 +341,9 @@ export default function DashboardPage() {
               {/* Profile Completeness Widget */}
               {profile && <CompletenessWidget profile={profile} />}
 
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800 p-6">
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800 p-6">
                 <h4 className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-indigo-600" />
+                  <TrendingUp className="w-5 h-5 text-emerald-600" />
                   Job Match Stats
                 </h4>
                 <div className="space-y-3">
@@ -357,7 +357,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Recruiter Interest</span>
-                    <span className="font-bold text-purple-600">8 active</span>
+                    <span className="font-bold text-emerald-600">8 active</span>
                   </div>
                 </div>
               </div>

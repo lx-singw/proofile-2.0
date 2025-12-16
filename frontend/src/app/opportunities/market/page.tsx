@@ -26,7 +26,7 @@ export default function MarketIntelPage() {
             <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                        <BarChart2 className="w-8 h-8 text-blue-500" />
+                        <BarChart2 className="w-8 h-8 text-emerald-500" />
                         Market Intelligence
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -58,7 +58,7 @@ export default function MarketIntelPage() {
                         </div>
                         <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden relative">
                             <div
-                                className="absolute h-full bg-gradient-to-r from-blue-400 via-green-500 to-purple-500"
+                                className="absolute h-full bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-500"
                                 style={{ width: '100%' }}
                             />
                             <div
@@ -80,7 +80,7 @@ export default function MarketIntelPage() {
                 {/* Skill Demand */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-purple-500" />
+                        <TrendingUp className="w-5 h-5 text-emerald-500" />
                         Skill Demand Trends
                     </h2>
 
@@ -92,7 +92,7 @@ export default function MarketIntelPage() {
                                 </span>
                                 <div className="flex-1 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-500"
                                         style={{ width: `${skill.demand}%` }}
                                     />
                                 </div>

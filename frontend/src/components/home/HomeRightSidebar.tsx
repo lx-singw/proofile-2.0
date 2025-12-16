@@ -43,8 +43,8 @@ const SKILLS_LEADERBOARD: SkillLeaderboardItem[] = [
 ];
 
 const COMPANIES_HIRING: CompanyHiring[] = [
-    { id: "1", name: "Google", logo: "G", openRoles: 12, color: "from-blue-500 to-blue-600" },
-    { id: "2", name: "Stripe", logo: "S", openRoles: 8, color: "from-purple-500 to-purple-600" },
+    { id: "1", name: "Google", logo: "G", openRoles: 12, color: "from-emerald-500 to-emerald-600" },
+    { id: "2", name: "Stripe", logo: "S", openRoles: 8, color: "from-emerald-500 to-emerald-600" },
     { id: "3", name: "Airbnb", logo: "A", openRoles: 15, color: "from-pink-500 to-red-500" },
     { id: "4", name: "Shopify", logo: "S", openRoles: 6, color: "from-green-500 to-green-600" },
 ];
@@ -59,33 +59,33 @@ export default function HomeRightSidebar() {
     return (
         <aside className="w-full lg:w-80 space-y-4">
             {/* Career Tools Widget */}
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-2xl border border-orange-200 dark:border-orange-800/50 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800/50 p-4">
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-500 rounded-lg flex items-center justify-center">
                             <Wrench className="w-4 h-4 text-white" />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white text-sm">Career Tools</h3>
                     </div>
-                    <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/40 px-2 py-0.5 rounded-full">3 Tools</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full">3 Tools</span>
                 </div>
                 <div className="space-y-2 mb-3">
-                    <Link href="/jobs" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors group">
-                        <Briefcase className="w-4 h-4 text-orange-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">Job Matching</span>
+                    <Link href="/jobs" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
+                        <Briefcase className="w-4 h-4 text-emerald-500" />
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Job Matching</span>
                     </Link>
-                    <Link href="/dashboard/verification" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors group">
+                    <Link href="/dashboard/verification" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
                         <GraduationCap className="w-4 h-4 text-teal-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">Skills Assessment</span>
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Skills Assessment</span>
                     </Link>
-                    <Link href="/dashboard/verification" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors group">
-                        <Award className="w-4 h-4 text-yellow-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400">Get Verified</span>
+                    <Link href="/dashboard/verification" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
+                        <Award className="w-4 h-4 text-emerald-500" />
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Get Verified</span>
                     </Link>
                 </div>
                 <Link
                     href="/tools"
-                    className="flex items-center justify-center gap-1 w-full px-3 py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors text-xs"
+                    className="flex items-center justify-center gap-1 w-full px-3 py-2 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors text-xs"
                 >
                     <Wrench className="w-3 h-3" />
                     Explore All Tools
@@ -93,10 +93,10 @@ export default function HomeRightSidebar() {
             </div>
 
             {/* Skills Leaderboard */}
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-yellow-200 dark:border-gray-700 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-emerald-200 dark:border-gray-700 p-4">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <Trophy className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
+                        <Trophy className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
                         <h3 className="font-bold text-gray-900 dark:text-white">Top Rated Skills</h3>
                     </div>
                     <Link href="/skills" className="text-xs font-semibold text-green-600 hover:text-green-700 dark:text-green-400 flex items-center gap-1">
@@ -109,13 +109,13 @@ export default function HomeRightSidebar() {
                         <div
                             key={skill.rank}
                             className={`bg-white dark:bg-gray-900 rounded-xl p-3 border ${skill.rank === 1
-                                ? "border-yellow-200 dark:border-yellow-700"
+                                ? "border-emerald-200 dark:border-emerald-700"
                                 : "border-gray-200 dark:border-gray-700"
                                 }`}
                         >
                             <div className="flex items-center gap-2 mb-1">
                                 <span className={`text-lg font-bold ${skill.rank === 1
-                                    ? "text-yellow-600 dark:text-yellow-500"
+                                    ? "text-emerald-600 dark:text-emerald-500"
                                     : "text-gray-500"
                                     }`}>
                                     #{skill.rank}
@@ -128,7 +128,7 @@ export default function HomeRightSidebar() {
                                 {skill.professionals} verified professionals
                             </p>
                             <div className="flex items-center gap-1 mt-1">
-                                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                <Star className="w-3 h-3 text-emerald-500 fill-emerald-500" />
                                 <span className="text-xs font-semibold text-gray-900 dark:text-white">
                                     {skill.avgRating}
                                 </span>
@@ -140,10 +140,10 @@ export default function HomeRightSidebar() {
             </div>
 
             {/* Companies Hiring */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-blue-200 dark:border-gray-700 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-emerald-200 dark:border-gray-700 p-4">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+                        <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
                         <h3 className="font-bold text-gray-900 dark:text-white">Actively Hiring</h3>
                     </div>
                     <Link href="/companies" className="text-xs font-semibold text-green-600 hover:text-green-700 dark:text-green-400 flex items-center gap-1">
@@ -156,8 +156,8 @@ export default function HomeRightSidebar() {
                         <div
                             key={company.id}
                             className={`bg-white dark:bg-gray-900 rounded-xl p-3 border transition-colors cursor-pointer ${index % 2 === 0
-                                ? "border-blue-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500"
-                                : "border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500"
+                                ? "border-emerald-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-500"
+                                : "border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-500"
                                 }`}
                         >
                             <div className="flex items-center justify-between">
@@ -168,8 +168,8 @@ export default function HomeRightSidebar() {
                                     <div>
                                         <p className="font-bold text-gray-900 dark:text-white text-sm">{company.name}</p>
                                         <p className={`text-xs font-semibold ${index % 2 === 0
-                                            ? "text-blue-600 dark:text-blue-400"
-                                            : "text-purple-600 dark:text-purple-400"
+                                            ? "text-emerald-600 dark:text-emerald-400"
+                                            : "text-emerald-600 dark:text-emerald-400"
                                             }`}>
                                             {company.openRoles} open roles
                                         </p>

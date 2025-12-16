@@ -26,7 +26,7 @@ export default function AgentLogsPage() {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
-            case 'warning': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+            case 'warning': return <AlertTriangle className="w-4 h-4 text-emerald-500" />;
             case 'error': return <XCircle className="w-4 h-4 text-red-500" />;
             default: return null;
         }
@@ -35,8 +35,8 @@ export default function AgentLogsPage() {
     const getAgentColor = (agent: string) => {
         switch (agent) {
             case 'hunter': return 'text-green-600 bg-green-100 dark:bg-green-900/30';
-            case 'tailor': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/30';
-            case 'negotiator': return 'text-purple-600 bg-purple-100 dark:bg-purple-900/30';
+            case 'tailor': return 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30';
+            case 'negotiator': return 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30';
             default: return 'text-gray-600 bg-gray-100';
         }
     };

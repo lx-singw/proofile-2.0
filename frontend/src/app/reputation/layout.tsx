@@ -27,7 +27,7 @@ export default function ReputationLayout({ children }: ReputationLayoutProps) {
                 <div className="container mx-auto px-4">
                     {/* Reputation Center badge */}
                     <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center">
                             <Star className="h-5 w-5 text-white" />
                         </div>
                         <div>
@@ -35,7 +35,7 @@ export default function ReputationLayout({ children }: ReputationLayoutProps) {
                             <p className="text-xs text-gray-500 dark:text-gray-400">Professional Trust Network</p>
                         </div>
                         <div className="flex items-center gap-2 ml-4 text-sm text-gray-500 dark:text-gray-400">
-                            <Shield className="w-4 h-4 text-yellow-500" />
+                            <Shield className="w-4 h-4 text-emerald-500" />
                             <span>Powered by Proofile</span>
                         </div>
                     </div>
@@ -44,9 +44,9 @@ export default function ReputationLayout({ children }: ReputationLayoutProps) {
                     <div className="text-center text-sm text-gray-500 dark:text-gray-400">
                         <p>Your ratings are verified and cryptographically secured.</p>
                         <p className="mt-1">
-                            <a href="/privacy" className="underline hover:text-yellow-600">Privacy Policy</a>
+                            <a href="/privacy" className="underline hover:text-emerald-600">Privacy Policy</a>
                             {" · "}
-                            <a href="/reputation/how-it-works" className="underline hover:text-yellow-600">How It Works</a>
+                            <a href="/reputation/how-it-works" className="underline hover:text-emerald-600">How It Works</a>
                         </p>
                     </div>
                 </div>

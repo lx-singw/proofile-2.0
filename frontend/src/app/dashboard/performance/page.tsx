@@ -51,7 +51,7 @@ function getRatingColor(metricType: string, value?: number): string {
   if (!threshold) return 'text-gray-500';
 
   if (value <= threshold.good) return 'text-green-600';
-  if (value <= threshold.fair) return 'text-yellow-600';
+  if (value <= threshold.fair) return 'text-emerald-600';
   return 'text-red-600';
 }
 
@@ -248,9 +248,9 @@ export default function PerformancePage() {
       )}
 
       {/* Performance Guidelines */}
-      <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4 space-y-3">
-        <h3 className="font-semibold text-blue-900 dark:text-blue-100">Performance Targets</h3>
-        <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
+      <div className="bg-emerald-50 dark:bg-emerald-900 border border-emerald-200 dark:border-emerald-700 rounded-lg p-4 space-y-3">
+        <h3 className="font-semibold text-emerald-900 dark:text-emerald-100">Performance Targets</h3>
+        <ul className="text-sm text-emerald-800 dark:text-emerald-200 space-y-2">
           <li>✓ FCP (First Contentful Paint): &lt; 1.8s (Good)</li>
           <li>✓ LCP (Largest Contentful Paint): &lt; 2.5s (Good)</li>
           <li>✓ TTFB (Time to First Byte): &lt; 600ms (Good)</li>

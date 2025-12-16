@@ -130,8 +130,8 @@ export function RequestRatingModal({ isOpen, onClose, onSuccess }: RequestRating
                 {/* Header */}
                 <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between z-10">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                            <Send className="w-5 h-5 text-blue-600" />
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                            <Send className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -236,7 +236,7 @@ export function RequestRatingModal({ isOpen, onClose, onSuccess }: RequestRating
 
                         <button
                             type="submit"
-                            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
                         >
                             <Share2 className="w-5 h-5" />
                             Create & Share Request
@@ -246,7 +246,7 @@ export function RequestRatingModal({ isOpen, onClose, onSuccess }: RequestRating
 
                 {step === "submitting" && (
                     <div className="p-12 text-center">
-                        <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+                        <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mx-auto mb-4" />
                         <p className="text-gray-600 dark:text-gray-400">Creating your request...</p>
                     </div>
                 )}
@@ -308,10 +308,10 @@ export function RequestRatingModal({ isOpen, onClose, onSuccess }: RequestRating
                             {/* Email */}
                             <a
                                 href={`mailto:${formData.invitee_email}?subject=${encodeURIComponent(shareLinks.email_subject)}&body=${encodeURIComponent(shareLinks.email_body)}`}
-                                className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                                className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
                             >
-                                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                    <Mail className="w-5 h-5 text-blue-600" />
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                    <Mail className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div className="flex-1 text-left">
                                     <p className="font-medium text-gray-900 dark:text-white">Send Email</p>
@@ -322,10 +322,10 @@ export function RequestRatingModal({ isOpen, onClose, onSuccess }: RequestRating
                             {/* SMS */}
                             <a
                                 href={shareLinks.sms}
-                                className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
+                                className="w-full flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
                             >
-                                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                                    <Phone className="w-5 h-5 text-purple-600" />
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                    <Phone className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div className="flex-1 text-left">
                                     <p className="font-medium text-gray-900 dark:text-white">Send SMS</p>

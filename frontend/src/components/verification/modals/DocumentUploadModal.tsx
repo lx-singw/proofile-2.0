@@ -143,8 +143,8 @@ export default function DocumentUploadModal({
                                 className={`
                                     border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
                                     ${file
-                                        ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                                        : 'border-gray-300 dark:border-gray-600 hover:border-blue-400'}
+                                        ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20'
+                                        : 'border-gray-300 dark:border-gray-600 hover:border-emerald-400'}
                                 `}
                             >
                                 <input
@@ -157,7 +157,7 @@ export default function DocumentUploadModal({
 
                                 {file ? (
                                     <div className="flex items-center justify-center gap-3">
-                                        <FileText className="w-8 h-8 text-blue-500" />
+                                        <FileText className="w-8 h-8 text-emerald-500" />
                                         <span className="text-gray-900 dark:text-white font-medium">
                                             {file.name}
                                         </span>
@@ -185,7 +185,7 @@ export default function DocumentUploadModal({
                             <button
                                 onClick={handleUpload}
                                 disabled={!file}
-                                className="w-full mt-6 py-3 px-4 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="w-full mt-6 py-3 px-4 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 Upload & Analyze
                             </button>
@@ -194,7 +194,7 @@ export default function DocumentUploadModal({
 
                     {(state === 'uploading' || state === 'analyzing') && (
                         <div className="text-center py-8">
-                            <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+                            <Loader2 className="w-12 h-12 text-emerald-500 animate-spin mx-auto mb-4" />
                             <p className="text-gray-900 dark:text-white font-medium mb-4">
                                 {state === 'uploading' ? 'Uploading...' : 'Analyzing Document...'}
                             </p>

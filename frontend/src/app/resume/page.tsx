@@ -79,7 +79,7 @@ export default function ResumeListPage() {
                     <div className="space-y-3">
                         <button
                             onClick={() => router.push('/register')}
-                            className="w-full py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white rounded-xl font-semibold shadow-lg transition-all"
+                            className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-semibold shadow-lg transition-all"
                         >
                             Create Free Account
                         </button>
@@ -107,7 +107,7 @@ export default function ResumeListPage() {
                     <div className="flex gap-3">
                         <button
                             onClick={() => router.push('/resume/ai-build')}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md"
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md"
                         >
                             <Sparkles className="w-5 h-5" />
                             <span>AI Build</span>
@@ -145,7 +145,7 @@ export default function ResumeListPage() {
                                 <p className="text-gray-500 dark:text-gray-400 mb-6">Create your first resume to get started</p>
                                 <button
                                     onClick={() => router.push('/resume/build')}
-                                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium"
                                 >
                                     Create Resume
                                 </button>

@@ -41,10 +41,10 @@ export function AIProfileSuggestions({ suggestions, onApply, onRefresh, isLoadin
 
     const getTypeColor = (type: ProfileSuggestion["type"]) => {
         const colors = {
-            headline: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-            summary: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+            headline: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+            summary: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
             skill: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-            experience: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+            experience: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
         };
         return colors[type];
     };
@@ -52,7 +52,7 @@ export function AIProfileSuggestions({ suggestions, onApply, onRefresh, isLoadin
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             {/* Header */}
-            <div className="p-5 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500">
+            <div className="p-5 bg-gradient-to-r from-emerald-500 via-pink-500 to-rose-500">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -80,7 +80,7 @@ export function AIProfileSuggestions({ suggestions, onApply, onRefresh, isLoadin
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
                 {isLoading ? (
                     <div className="p-8 text-center">
-                        <Sparkles className="w-8 h-8 text-purple-500 mx-auto mb-3 animate-pulse" />
+                        <Sparkles className="w-8 h-8 text-emerald-500 mx-auto mb-3 animate-pulse" />
                         <p className="text-gray-500 dark:text-gray-400">Analyzing your profile...</p>
                     </div>
                 ) : suggestions.length === 0 ? (
@@ -128,7 +128,7 @@ export function AIProfileSuggestions({ suggestions, onApply, onRefresh, isLoadin
                                     disabled={appliedIds.has(suggestion.id)}
                                     className={`rounded-lg flex-shrink-0 ${appliedIds.has(suggestion.id)
                                             ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                                            : "bg-purple-600 hover:bg-purple-700 text-white"
+                                            : "bg-emerald-600 hover:bg-emerald-700 text-white"
                                         }`}
                                 >
                                     {appliedIds.has(suggestion.id) ? (

@@ -71,7 +71,7 @@ export default function ThemeSwitcher({ currentTheme, onThemeChange }: ThemeSwit
                                 {theme.name}
                             </div>
                             {currentTheme === theme.id && (
-                                <Check size={14} className="text-blue-600" />
+                                <Check size={14} className="text-emerald-600" />
                             )}
                         </button>
                     ))}

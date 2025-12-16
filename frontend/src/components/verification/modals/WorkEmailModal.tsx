@@ -143,8 +143,8 @@ export default function WorkEmailModal({
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Building2 className="h-5 w-5 text-blue-600" />
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <Building2 className="h-5 w-5 text-emerald-600" />
                         </div>
                         <div>
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -178,7 +178,7 @@ export default function WorkEmailModal({
                                         value={workEmail}
                                         onChange={(e) => setWorkEmail(e.target.value)}
                                         placeholder="you@company.com"
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                         required
                                     />
                                 </div>
@@ -197,7 +197,7 @@ export default function WorkEmailModal({
                             <button
                                 type="submit"
                                 disabled={loading || !workEmail}
-                                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>
@@ -242,7 +242,7 @@ export default function WorkEmailModal({
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                                     placeholder="000000"
-                                    className="w-full text-center text-2xl tracking-widest py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full text-center text-2xl tracking-widest py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     maxLength={6}
                                     required
                                 />
@@ -258,7 +258,7 @@ export default function WorkEmailModal({
                             <button
                                 type="submit"
                                 disabled={loading || otp.length !== 6}
-                                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>
@@ -278,7 +278,7 @@ export default function WorkEmailModal({
                                     type="button"
                                     onClick={handleResendOtp}
                                     disabled={loading}
-                                    className="text-sm text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                                    className="text-sm text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
                                 >
                                     Didn&apos;t receive the code? Resend
                                 </button>

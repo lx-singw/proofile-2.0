@@ -40,14 +40,14 @@ interface AIJobMatchesProps {
 export function AIJobMatches({ matches, onViewJob, onApply, isLoading }: AIJobMatchesProps) {
     const getMatchColor = (score: number) => {
         if (score >= 90) return "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30";
-        if (score >= 75) return "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30";
+        if (score >= 75) return "text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30";
         return "text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700";
     };
 
     if (isLoading) {
         return (
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center">
-                <Zap className="w-8 h-8 text-yellow-500 mx-auto mb-3 animate-pulse" />
+                <Zap className="w-8 h-8 text-emerald-500 mx-auto mb-3 animate-pulse" />
                 <p className="text-gray-500 dark:text-gray-400">Finding your perfect matches...</p>
             </div>
         );
@@ -58,10 +58,10 @@ export function AIJobMatches({ matches, onViewJob, onApply, isLoading }: AIJobMa
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-yellow-500" />
+                    <Zap className="w-5 h-5 text-emerald-500" />
                     <h3 className="font-bold text-gray-900 dark:text-white">AI Job Matches</h3>
                 </div>
-                <Link href="/jobs" className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                <Link href="/jobs" className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
                     View All
                     <ExternalLink className="w-3 h-3" />
                 </Link>
@@ -73,7 +73,7 @@ export function AIJobMatches({ matches, onViewJob, onApply, isLoading }: AIJobMa
                     <div
                         key={job.id}
                         className={`bg-white dark:bg-gray-800 rounded-xl border transition-all hover:shadow-md ${job.is_featured
-                                ? "border-yellow-300 dark:border-yellow-700 ring-1 ring-yellow-100 dark:ring-yellow-900/30"
+                                ? "border-emerald-300 dark:border-emerald-700 ring-1 ring-emerald-100 dark:ring-emerald-900/30"
                                 : "border-gray-200 dark:border-gray-700"
                             }`}
                     >
@@ -104,7 +104,7 @@ export function AIJobMatches({ matches, onViewJob, onApply, isLoading }: AIJobMa
                                             {job.title}
                                         </h4>
                                         {job.is_featured && (
-                                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                                            <Star className="w-4 h-4 text-emerald-500 fill-emerald-500 flex-shrink-0" />
                                         )}
                                     </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">{job.company}</p>
@@ -166,7 +166,7 @@ export function AIJobMatches({ matches, onViewJob, onApply, isLoading }: AIJobMa
                                 <Button
                                     size="sm"
                                     onClick={() => onApply(job.id)}
-                                    className="flex-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                                    className="flex-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white"
                                 >
                                     Quick Apply
                                 </Button>

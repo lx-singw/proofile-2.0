@@ -101,7 +101,7 @@ export default function TemplateGallery({ isOpen, onClose, currentTemplateId, on
                 {/* Header */}
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <Layout className="w-5 h-5 text-blue-600" />
+                        <Layout className="w-5 h-5 text-emerald-600" />
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Choose a Template</h2>
                     </div>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -113,7 +113,7 @@ export default function TemplateGallery({ isOpen, onClose, currentTemplateId, on
                 <div className="p-6 overflow-y-auto flex-1">
                     {loading ? (
                         <div className="flex justify-center items-center h-64">
-                            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -121,8 +121,8 @@ export default function TemplateGallery({ isOpen, onClose, currentTemplateId, on
                                 <div
                                     key={template.id}
                                     className={`group relative rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${currentTemplateId === template.id
-                                            ? 'border-blue-600 ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-gray-800'
-                                            : 'border-gray-200 dark:border-gray-700 hover:border-blue-400'
+                                            ? 'border-emerald-600 ring-2 ring-emerald-600 ring-offset-2 dark:ring-offset-gray-800'
+                                            : 'border-gray-200 dark:border-gray-700 hover:border-emerald-400'
                                         }`}
                                     onClick={() => handleSelect(template.id)}
                                 >
@@ -149,7 +149,7 @@ export default function TemplateGallery({ isOpen, onClose, currentTemplateId, on
                                         <div className="flex justify-between items-start mb-1">
                                             <h3 className="font-semibold text-gray-900 dark:text-white">{template.name}</h3>
                                             {currentTemplateId === template.id && (
-                                                <Check className="w-4 h-4 text-blue-600" />
+                                                <Check className="w-4 h-4 text-emerald-600" />
                                             )}
                                         </div>
                                         <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">

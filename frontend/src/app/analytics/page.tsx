@@ -74,8 +74,8 @@ export default function AnalyticsPage() {
                     {/* Header - Jobs Style */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                                <BarChart3 className="w-8 h-8 text-indigo-600" />
+                            <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                                <BarChart3 className="w-8 h-8 text-emerald-600" />
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -96,7 +96,7 @@ export default function AnalyticsPage() {
                             </Link>
                             <Link
                                 href="/jobs"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                             >
                                 <Briefcase className="w-4 h-4" />
                                 View Jobs
@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
                                         </span>
                                         <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                             <div
-                                                className="bg-indigo-500 h-2 rounded-full"
+                                                className="bg-emerald-500 h-2 rounded-full"
                                                 style={{ width: `${item.percentage}%` }}
                                             />
                                         </div>
@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
                                         <span className="text-gray-700 dark:text-gray-300">
                                             "{term.term}"
                                         </span>
-                                        <span className="text-sm font-medium text-indigo-600">
+                                        <span className="text-sm font-medium text-emerald-600">
                                             {term.count} times
                                         </span>
                                     </div>
@@ -208,7 +208,7 @@ export default function AnalyticsPage() {
                     </div>
 
                     {/* Coming Soon */}
-                    <div className="mt-8 p-8 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800 text-center">
+                    <div className="mt-8 p-8 bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800 text-center">
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                             📊 Advanced Analytics Coming Soon
                         </h3>

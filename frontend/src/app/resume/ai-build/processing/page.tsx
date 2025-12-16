@@ -103,8 +103,8 @@ export default function AIProcessingPage() {
         <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col items-center justify-center p-6 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-indigo-50 dark:bg-indigo-900/10 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-                <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-purple-50 dark:bg-purple-900/10 rounded-full blur-3xl opacity-50 animate-pulse delay-1000"></div>
+                <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-emerald-50 dark:bg-emerald-900/10 rounded-full blur-3xl opacity-50 animate-pulse"></div>
+                <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-emerald-50 dark:bg-emerald-900/10 rounded-full blur-3xl opacity-50 animate-pulse delay-1000"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-md text-center">
@@ -116,7 +116,7 @@ export default function AIProcessingPage() {
                     Building Your Resume
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 mb-12">
-                    Tailoring content for <span className="font-semibold text-indigo-600 dark:text-indigo-400">{role}</span>
+                    Tailoring content for <span className="font-semibold text-emerald-600 dark:text-emerald-400">{role}</span>
                 </p>
 
                 {/* Circular Progress */}
@@ -133,7 +133,7 @@ export default function AIProcessingPage() {
                         })}
                     />
                     {/* Pulsing ring effect */}
-                    <div className="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-indigo-900/30 animate-ping opacity-20"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-emerald-100 dark:border-emerald-900/30 animate-ping opacity-20"></div>
                 </div>
 
                 {/* Steps List */}
@@ -150,19 +150,19 @@ export default function AIProcessingPage() {
                                     }`}
                             >
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${isCompleted ? 'bg-green-100 text-green-600' :
-                                    isActive ? 'bg-indigo-100 text-indigo-600 animate-bounce' :
+                                    isActive ? 'bg-emerald-100 text-emerald-600 animate-bounce' :
                                         'bg-gray-200 text-gray-400'
                                     }`}>
                                     {isCompleted ? <CheckCircle className="w-5 h-5" /> : <Icon className="w-4 h-4" />}
                                 </div>
-                                <span className={`font-medium ${isActive ? 'text-indigo-600 dark:text-indigo-400' :
+                                <span className={`font-medium ${isActive ? 'text-emerald-600 dark:text-emerald-400' :
                                     isCompleted ? 'text-gray-900 dark:text-white' :
                                         'text-gray-500'
                                     }`}>
                                     {step.label}
                                 </span>
                                 {isActive && (
-                                    <Loader2 className="w-4 h-4 text-indigo-600 animate-spin ml-auto" />
+                                    <Loader2 className="w-4 h-4 text-emerald-600 animate-spin ml-auto" />
                                 )}
                             </div>
                         );

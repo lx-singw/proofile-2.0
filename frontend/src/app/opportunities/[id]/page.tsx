@@ -62,7 +62,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
                     <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">Job not found</p>
                     <button
                         onClick={() => router.back()}
-                        className="text-purple-600 hover:text-purple-700 font-medium"
+                        className="text-emerald-600 hover:text-emerald-700 font-medium"
                     >
                         Go back
                     </button>
@@ -107,7 +107,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
                                     </span>
                                 )}
                                 {job.experience_level && (
-                                    <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm capitalize">
+                                    <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-sm capitalize">
                                         {job.experience_level}
                                     </span>
                                 )}
@@ -120,8 +120,8 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
                                 onClick={handleSaveJob}
                                 disabled={saving}
                                 className={`px-4 py-2 rounded-lg border transition-colors ${is_saved
-                                        ? 'bg-purple-600 text-white border-purple-600'
-                                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-600'
+                                        ? 'bg-emerald-600 text-white border-emerald-600'
+                                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-emerald-600'
                                     }`}
                             >
                                 <Bookmark className={`w-5 h-5 ${is_saved ? 'fill-current' : ''}`} />
@@ -153,7 +153,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
                                     {job.required_skills.map((skill, index) => (
                                         <span
                                             key={index}
-                                            className="px-3 py-1.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg text-sm font-medium"
+                                            className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-medium"
                                         >
                                             {skill}
                                         </span>
@@ -171,7 +171,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
                                         <Link
                                             key={relatedJob.id}
                                             href={`/jobs/${relatedJob.id}`}
-                                            className="block bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-600 transition-colors"
+                                            className="block bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors"
                                         >
                                             <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                                                 {relatedJob.title}

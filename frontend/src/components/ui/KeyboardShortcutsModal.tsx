@@ -32,8 +32,8 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShor
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                <Keyboard className="w-5 h-5 text-blue-600" />
+                            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                <Keyboard className="w-5 h-5 text-emerald-600" />
                             </div>
                             <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                                 Keyboard Shortcuts

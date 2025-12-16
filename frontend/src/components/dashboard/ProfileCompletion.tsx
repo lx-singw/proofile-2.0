@@ -79,7 +79,7 @@ export default function ProfileCompletion({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Resume Completion
           </h3>
-          <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
             {completionPercentage}%
           </span>
         </div>
@@ -87,7 +87,7 @@ export default function ProfileCompletion({
         {/* Progress Bar */}
         <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300"
+            className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-300"
             style={{ width: `${completionPercentage}%` }}
           />
         </div>
@@ -106,7 +106,7 @@ export default function ProfileCompletion({
             className={`w-full flex items-start gap-3 p-3 rounded-lg transition-colors text-left ${
               step.completed
                 ? "bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800"
-                : "bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                : "bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
             }`}
           >
             {/* Checkmark or Circle */}
@@ -132,7 +132,7 @@ export default function ProfileCompletion({
 
             {/* Arrow */}
             {!step.completed && (
-              <ArrowRight className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+              <ArrowRight className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
             )}
           </button>
         ))}
@@ -146,7 +146,7 @@ export default function ProfileCompletion({
           </p>
           <a
             href={nextStep.href}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors text-sm font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-colors text-sm font-medium"
           >
             {nextStep.label}
             <ArrowRight className="w-4 h-4" />

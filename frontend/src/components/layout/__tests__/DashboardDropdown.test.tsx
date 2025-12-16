@@ -79,12 +79,12 @@ describe("DashboardDropdown", () => {
     // Arrow down
     await user.keyboard("{ArrowDown}");
     const dashboardLink = screen.getByText("Dashboard");
-    expect(dashboardLink.parentElement).toHaveClass("bg-blue-50");
+    expect(dashboardLink.parentElement).toHaveClass("bg-emerald-50");
 
     // Arrow down again
     await user.keyboard("{ArrowDown}");
     const settingsLink = screen.getByText("Settings");
-    expect(settingsLink.parentElement).toHaveClass("bg-blue-50");
+    expect(settingsLink.parentElement).toHaveClass("bg-emerald-50");
   });
 
   it("closes dropdown with Escape key", async () => {

@@ -222,8 +222,8 @@ export default function AIAssistantPage() {
     const getPriorityColor = (priority: string) => {
         switch (priority) {
             case "high": return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300";
-            case "medium": return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
-            case "low": return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300";
+            case "medium": return "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300";
+            case "low": return "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300";
             default: return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
         }
     };
@@ -245,7 +245,7 @@ export default function AIAssistantPage() {
                     {/* Header - Jobs Style */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+                            <div className="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
                                 <Bot className="w-8 h-8 text-white" />
                             </div>
                             <div>
@@ -275,7 +275,7 @@ export default function AIAssistantPage() {
                             </Link>
                             <Link
                                 href="/verification"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                             >
                                 <Shield className="w-4 h-4" />
                                 Get Verified
@@ -290,7 +290,7 @@ export default function AIAssistantPage() {
                             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <Brain className="w-5 h-5 text-purple-500" />
+                                        <Brain className="w-5 h-5 text-emerald-500" />
                                         Profile Analysis
                                     </h2>
                                     <div className="text-sm text-gray-500">Updated just now</div>
@@ -346,9 +346,9 @@ export default function AIAssistantPage() {
                             {/* Quick Wins */}
                             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
-                                    <Lightbulb className="w-5 h-5 text-yellow-500" />
+                                    <Lightbulb className="w-5 h-5 text-emerald-500" />
                                     Quick Wins
-                                    <span className="ml-2 px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs rounded-full">
+                                    <span className="ml-2 px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs rounded-full">
                                         Do these now
                                     </span>
                                 </h2>
@@ -396,7 +396,7 @@ export default function AIAssistantPage() {
                             {/* Career Growth Opportunities */}
                             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
-                                    <Target className="w-5 h-5 text-blue-500" />
+                                    <Target className="w-5 h-5 text-emerald-500" />
                                     Career Growth Opportunities
                                 </h2>
 
@@ -440,7 +440,7 @@ export default function AIAssistantPage() {
                                                 {opp.skillGaps.map((skill, skillIdx) => (
                                                     <span
                                                         key={skillIdx}
-                                                        className="px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-xs rounded-full"
+                                                        className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs rounded-full"
                                                     >
                                                         {skill}
                                                     </span>
@@ -456,12 +456,12 @@ export default function AIAssistantPage() {
                         <div className="space-y-8">
                             {/* AI Chat */}
                             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-[500px]">
-                                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-500 to-indigo-600">
+                                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-emerald-500 to-emerald-600">
                                     <h3 className="font-semibold text-white flex items-center gap-2">
                                         <MessageCircle className="w-5 h-5" />
                                         Ask AI Anything
                                     </h3>
-                                    <p className="text-sm text-purple-100">Get personalized career advice</p>
+                                    <p className="text-sm text-emerald-100">Get personalized career advice</p>
                                 </div>
 
                                 {/* Chat Messages */}
@@ -504,12 +504,12 @@ export default function AIAssistantPage() {
                                             onChange={(e) => setChatInput(e.target.value)}
                                             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                                             placeholder="Ask about your career..."
-                                            className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                            className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                         />
                                         <button
                                             onClick={handleSendMessage}
                                             disabled={!chatInput.trim() || isTyping}
-                                            className="p-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         >
                                             <Send className="w-5 h-5" />
                                         </button>
@@ -520,7 +520,7 @@ export default function AIAssistantPage() {
                             {/* Suggested Skills */}
                             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
                                 <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-purple-500" />
+                                    <Sparkles className="w-5 h-5 text-emerald-500" />
                                     Suggested Skills to Add
                                 </h3>
 
@@ -531,8 +531,8 @@ export default function AIAssistantPage() {
                                             className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                                                    <Zap className="w-4 h-4 text-purple-600" />
+                                                <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                                                    <Zap className="w-4 h-4 text-emerald-600" />
                                                 </div>
                                                 <span className="font-medium text-gray-900 dark:text-white text-sm">
                                                     {skill.name}
@@ -550,7 +550,7 @@ export default function AIAssistantPage() {
 
                                 <Link
                                     href="/profile/edit"
-                                    className="mt-4 w-full py-2 text-center text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center justify-center gap-1"
+                                    className="mt-4 w-full py-2 text-center text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center justify-center gap-1"
                                 >
                                     Add All Skills
                                     <ChevronRight className="w-4 h-4" />

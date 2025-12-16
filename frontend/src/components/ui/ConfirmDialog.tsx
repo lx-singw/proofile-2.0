@@ -40,15 +40,15 @@ export function ConfirmDialog({
                 };
             case "warning":
                 return {
-                    button: "bg-orange-600 hover:bg-orange-700",
-                    icon: "text-orange-600 dark:text-orange-500",
-                    iconBg: "bg-orange-100 dark:bg-orange-900/30",
+                    button: "bg-emerald-600 hover:bg-emerald-700",
+                    icon: "text-emerald-600 dark:text-emerald-500",
+                    iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
                 };
             case "info":
                 return {
-                    button: "bg-blue-600 hover:bg-blue-700",
-                    icon: "text-blue-600 dark:text-blue-500",
-                    iconBg: "bg-blue-100 dark:bg-blue-900/30",
+                    button: "bg-emerald-600 hover:bg-emerald-700",
+                    icon: "text-emerald-600 dark:text-emerald-500",
+                    iconBg: "bg-emerald-100 dark:bg-emerald-900/30",
                 };
         }
     };

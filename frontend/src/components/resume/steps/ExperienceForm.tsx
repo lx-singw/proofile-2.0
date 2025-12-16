@@ -30,7 +30,7 @@ export default function ExperienceForm({ data = [], onChange }: ExperienceFormPr
                 <h2 className="text-2xl font-semibold text-gray-900">Work Experience</h2>
                 <button
                     onClick={addExperience}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
                 >
                     <Plus className="w-4 h-4" />
                     Add Experience
@@ -57,7 +57,7 @@ export default function ExperienceForm({ data = [], onChange }: ExperienceFormPr
                                 type="text"
                                 value={exp.position}
                                 onChange={(e) => updateExperience(index, 'position', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="Software Engineer"
                             />
                         </div>
@@ -67,7 +67,7 @@ export default function ExperienceForm({ data = [], onChange }: ExperienceFormPr
                                 type="text"
                                 value={exp.company}
                                 onChange={(e) => updateExperience(index, 'company', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="Tech Corp"
                             />
                         </div>
@@ -80,7 +80,7 @@ export default function ExperienceForm({ data = [], onChange }: ExperienceFormPr
                                 type="text"
                                 value={exp.startDate}
                                 onChange={(e) => updateExperience(index, 'startDate', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="Jan 2020"
                             />
                         </div>
@@ -90,7 +90,7 @@ export default function ExperienceForm({ data = [], onChange }: ExperienceFormPr
                                 type="text"
                                 value={exp.endDate || ''}
                                 onChange={(e) => updateExperience(index, 'endDate', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="Present"
                             />
                         </div>
@@ -102,7 +102,7 @@ export default function ExperienceForm({ data = [], onChange }: ExperienceFormPr
                             value={exp.description}
                             onChange={(e) => updateExperience(index, 'description', e.target.value)}
                             rows={3}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                             placeholder="Describe your responsibilities and achievements..."
                         />
                     </div>

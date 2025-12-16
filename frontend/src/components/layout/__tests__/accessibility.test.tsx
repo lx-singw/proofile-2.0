@@ -100,16 +100,16 @@ describe("Accessibility Tests - Layout Components", () => {
       // Arrow down to first item
       await user.keyboard("{ArrowDown}");
       const dashboardItem = screen.getByText("Dashboard");
-      expect(dashboardItem.parentElement).toHaveClass("bg-blue-50");
+      expect(dashboardItem.parentElement).toHaveClass("bg-emerald-50");
 
       // Arrow down to second item
       await user.keyboard("{ArrowDown}");
       const settingsItem = screen.getByText("Settings");
-      expect(settingsItem.parentElement).toHaveClass("bg-blue-50");
+      expect(settingsItem.parentElement).toHaveClass("bg-emerald-50");
 
       // Arrow up back to first
       await user.keyboard("{ArrowUp}");
-      expect(dashboardItem.parentElement).toHaveClass("bg-blue-50");
+      expect(dashboardItem.parentElement).toHaveClass("bg-emerald-50");
     });
 
     it("should support Escape key to close", async () => {

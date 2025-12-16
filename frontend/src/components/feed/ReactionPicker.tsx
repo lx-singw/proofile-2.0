@@ -14,11 +14,11 @@ interface Reaction {
 }
 
 const REACTIONS: Reaction[] = [
-    { type: "like", emoji: "👍", label: "Like", color: "text-blue-600" },
-    { type: "celebrate", emoji: "🎉", label: "Celebrate", color: "text-yellow-600" },
+    { type: "like", emoji: "👍", label: "Like", color: "text-emerald-600" },
+    { type: "celebrate", emoji: "🎉", label: "Celebrate", color: "text-emerald-600" },
     { type: "support", emoji: "💪", label: "Support", color: "text-green-600" },
-    { type: "insightful", emoji: "💡", label: "Insightful", color: "text-purple-600" },
-    { type: "curious", emoji: "🤔", label: "Curious", color: "text-orange-600" },
+    { type: "insightful", emoji: "💡", label: "Insightful", color: "text-emerald-600" },
+    { type: "curious", emoji: "🤔", label: "Curious", color: "text-emerald-600" },
 ];
 
 interface ReactionPickerProps {
@@ -74,7 +74,7 @@ export function ReactionPicker({
                     onClick={handleButtonClick}
                     className={`flex items-center gap-1.5 rounded-lg transition-colors
                         ${currentReaction
-                            ? currentReactionData?.color || "text-blue-600"
+                            ? currentReactionData?.color || "text-emerald-600"
                             : "text-gray-500 dark:text-gray-400"
                         }`}
                 >

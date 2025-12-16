@@ -18,8 +18,8 @@ export function CompletenessWidget({ profile, className = "" }: CompletenessWidg
 
     // Determine state color
     let colorClass = "bg-red-500";
-    if (score >= 30) colorClass = "bg-yellow-500";
-    if (score >= 70) colorClass = "bg-blue-500";
+    if (score >= 30) colorClass = "bg-emerald-500";
+    if (score >= 70) colorClass = "bg-emerald-500";
     if (score >= 90) colorClass = "bg-green-500";
 
     return (
@@ -69,11 +69,11 @@ export function CompletenessWidget({ profile, className = "" }: CompletenessWidg
 
             {score < 100 && (
                 <div className="mt-6 pt-4 border-t border-gray-100">
-                    <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                        <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
+                        <AlertCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
                         <div>
-                            <p className="text-sm font-medium text-blue-900">Reach 'All-Star' status</p>
-                            <p className="text-xs text-blue-700 mt-1">Complete your profile to unlock premium job matches and badges.</p>
+                            <p className="text-sm font-medium text-emerald-900">Reach 'All-Star' status</p>
+                            <p className="text-xs text-emerald-700 mt-1">Complete your profile to unlock premium job matches and badges.</p>
                         </div>
                     </div>
                 </div>

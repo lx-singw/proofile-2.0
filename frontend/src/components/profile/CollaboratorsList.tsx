@@ -148,14 +148,14 @@ export function CollaboratorsList({ userId, isOwnProfile }: CollaboratorsListPro
             {activeTab === "pending" && isOwnProfile ? (
                 <div className="space-y-4">
                     {pendingItems.map(item => (
-                        <div key={item.id} className="border border-blue-100 dark:border-blue-900/30 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl p-4">
+                        <div key={item.id} className="border border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-xl p-4">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex items-start gap-3">
                                     {item.requester?.avatar_url ? (
                                         <img src={item.requester.avatar_url} className="w-10 h-10 rounded-full object-cover" />
                                     ) : (
-                                        <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                            <Users className="w-5 h-5 text-blue-600" />
+                                        <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                            <Users className="w-5 h-5 text-emerald-600" />
                                         </div>
                                     )}
                                     <div>
@@ -179,7 +179,7 @@ export function CollaboratorsList({ userId, isOwnProfile }: CollaboratorsListPro
                                 <div className="flex flex-col gap-2">
                                     <button
                                         onClick={() => handleRespond(item.id, "accept")}
-                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
+                                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
                                     >
                                         <Check className="w-4 h-4" />
                                         Confirm
@@ -199,7 +199,7 @@ export function CollaboratorsList({ userId, isOwnProfile }: CollaboratorsListPro
                 <div className="space-y-4">
                     {verifiedItems.length > 0 ? (
                         verifiedItems.map(item => (
-                            <div key={item.id} className="group border border-gray-100 dark:border-gray-700/50 hover:border-blue-200 dark:hover:border-blue-900/50 bg-white dark:bg-gray-800 rounded-xl p-4 transition-all">
+                            <div key={item.id} className="group border border-gray-100 dark:border-gray-700/50 hover:border-emerald-200 dark:hover:border-emerald-900/50 bg-white dark:bg-gray-800 rounded-xl p-4 transition-all">
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">

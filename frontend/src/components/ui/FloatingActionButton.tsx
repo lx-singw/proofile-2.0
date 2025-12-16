@@ -127,7 +127,7 @@ export default function FloatingActionButton({
                     onClick={() => setIsOpen(!isOpen)}
                     className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all active:scale-95 ${isOpen
                             ? "bg-gray-800 text-white rotate-45"
-                            : "bg-blue-600 text-white hover:bg-blue-700"
+                            : "bg-emerald-600 text-white hover:bg-emerald-700"
                         }`}
                     aria-label={isOpen ? "Close menu" : "Open menu"}
                     aria-expanded={isOpen}
@@ -173,7 +173,7 @@ export function ProfileFAB({ onShare }: { onShare?: () => void }) {
                     icon: <span className="text-lg">🔗</span>,
                     label: "Share",
                     onClick: onShare,
-                    color: "bg-blue-600 text-white hover:bg-blue-700"
+                    color: "bg-emerald-600 text-white hover:bg-emerald-700"
                 },
             ]}
         />
@@ -188,7 +188,7 @@ export function ReputationFAB({ onRequestRating }: { onRequestRating?: () => voi
                     icon: <span className="text-lg">⭐</span>,
                     label: "Request Rating",
                     onClick: onRequestRating,
-                    color: "bg-yellow-500 text-white hover:bg-yellow-600"
+                    color: "bg-emerald-500 text-white hover:bg-emerald-600"
                 },
                 {
                     icon: <span className="text-lg">👥</span>,

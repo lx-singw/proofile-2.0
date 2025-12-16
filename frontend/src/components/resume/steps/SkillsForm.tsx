@@ -40,12 +40,12 @@ export default function SkillsForm({ data = [], onChange }: SkillsFormProps) {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                     placeholder="Type a skill and press Enter or click Add"
                 />
                 <button
                     onClick={addSkill}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
                 >
                     <Plus className="w-4 h-4" />
                     Add
@@ -60,12 +60,12 @@ export default function SkillsForm({ data = [], onChange }: SkillsFormProps) {
                 {data.map((skill, index) => (
                     <div
                         key={index}
-                        className="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full"
+                        className="flex items-center gap-2 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full"
                     >
                         <span>{skill}</span>
                         <button
                             onClick={() => removeSkill(index)}
-                            className="hover:text-blue-900"
+                            className="hover:text-emerald-900"
                         >
                             <X className="w-4 h-4" />
                         </button>

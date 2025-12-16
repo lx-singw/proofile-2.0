@@ -30,7 +30,7 @@ export default function EducationForm({ data = [], onChange }: EducationFormProp
                 <h2 className="text-2xl font-semibold text-gray-900">Education</h2>
                 <button
                     onClick={addEducation}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
                 >
                     <Plus className="w-4 h-4" />
                     Add Education
@@ -57,7 +57,7 @@ export default function EducationForm({ data = [], onChange }: EducationFormProp
                                 type="text"
                                 value={edu.degree}
                                 onChange={(e) => updateEducation(index, 'degree', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="Bachelor of Science"
                             />
                         </div>
@@ -67,7 +67,7 @@ export default function EducationForm({ data = [], onChange }: EducationFormProp
                                 type="text"
                                 value={edu.field}
                                 onChange={(e) => updateEducation(index, 'field', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="Computer Science"
                             />
                         </div>
@@ -80,7 +80,7 @@ export default function EducationForm({ data = [], onChange }: EducationFormProp
                                 type="text"
                                 value={edu.institution}
                                 onChange={(e) => updateEducation(index, 'institution', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="University Name"
                             />
                         </div>
@@ -90,7 +90,7 @@ export default function EducationForm({ data = [], onChange }: EducationFormProp
                                 type="text"
                                 value={edu.graduationDate}
                                 onChange={(e) => updateEducation(index, 'graduationDate', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                                 placeholder="May 2020"
                             />
                         </div>

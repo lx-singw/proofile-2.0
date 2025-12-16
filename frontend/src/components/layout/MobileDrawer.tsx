@@ -68,7 +68,7 @@ export default function MobileDrawer({
       >
         {/* Close Button */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+          <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
             Menu
           </span>
           <button

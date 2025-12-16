@@ -224,7 +224,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
       </div>
     );
   }
@@ -249,7 +249,7 @@ export default function SettingsPage() {
           {/* Page Header - Jobs Style */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
                 <Settings2 className="w-8 h-8 text-white" />
               </div>
               <div>
@@ -270,7 +270,7 @@ export default function SettingsPage() {
               </Link>
               <Link
                 href="/verification"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
               >
                 <Shield className="w-4 h-4" />
                 Verification
@@ -287,14 +287,14 @@ export default function SettingsPage() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeTab === tab.id
-                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-l-4 border-blue-600"
+                      ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-l-4 border-emerald-600"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 border-l-4 border-transparent"
                       }`}
                   >
                     {tab.icon}
                     <span className="font-medium">{tab.label}</span>
                     {tab.badge && (
-                      <span className="ml-auto text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full font-bold">
+                      <span className="ml-auto text-xs bg-gradient-to-r from-emerald-500 to-emerald-500 text-white px-2 py-0.5 rounded-full font-bold">
                         {tab.badge}
                       </span>
                     )}
@@ -393,7 +393,7 @@ export default function SettingsPage() {
 
                     {/* Profile Photo */}
                     <div className="flex items-center gap-6">
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold">
                         {user.full_name?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
                       </div>
                       <div>
@@ -430,7 +430,7 @@ export default function SettingsPage() {
                           rows={4}
                           placeholder="Tell people about yourself..."
                           {...profileForm.register("bio")}
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         />
                         {profileForm.formState.errors.bio && (
                           <ErrorMessage>{profileForm.formState.errors.bio.message}</ErrorMessage>
@@ -445,7 +445,7 @@ export default function SettingsPage() {
                               type="radio"
                               value="public"
                               {...profileForm.register("profile_visibility")}
-                              className="w-4 h-4 text-blue-600"
+                              className="w-4 h-4 text-emerald-600"
                             />
                             <Globe className="w-5 h-5 text-green-600" />
                             <div>
@@ -458,7 +458,7 @@ export default function SettingsPage() {
                               type="radio"
                               value="private"
                               {...profileForm.register("profile_visibility")}
-                              className="w-4 h-4 text-blue-600"
+                              className="w-4 h-4 text-emerald-600"
                             />
                             <EyeOff className="w-5 h-5 text-gray-600" />
                             <div>
@@ -489,8 +489,8 @@ export default function SettingsPage() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center gap-4">
-                          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Lock className="w-5 h-5 text-blue-600" />
+                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <Lock className="w-5 h-5 text-emerald-600" />
                           </div>
                           <div>
                             <h3 className="font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h3>
@@ -502,8 +502,8 @@ export default function SettingsPage() {
 
                       <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center gap-4">
-                          <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                            <Globe className="w-5 h-5 text-orange-600" />
+                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <Globe className="w-5 h-5 text-emerald-600" />
                           </div>
                           <div>
                             <h3 className="font-medium text-gray-900 dark:text-white">Active Sessions</h3>
@@ -550,13 +550,13 @@ export default function SettingsPage() {
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Verification Center</h2>
                         <p className="text-sm text-gray-600 dark:text-gray-400">Verify your identity to build trust</p>
                       </div>
-                      <Link href="/verification" className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
+                      <Link href="/verification" className="text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center gap-1">
                         View Full Page <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>
 
                     {/* Trust Score */}
-                    <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-100 dark:border-blue-900/50">
+                    <div className="p-6 bg-gradient-to-r from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Your Verification Status</span>
                         <span className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -565,7 +565,7 @@ export default function SettingsPage() {
                       </div>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                         <div
-                          className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-emerald-600 to-emerald-600 h-3 rounded-full transition-all duration-500"
                           style={{ width: `${verificationSummary?.verification_score || 0}%` }}
                         ></div>
                       </div>
@@ -574,7 +574,7 @@ export default function SettingsPage() {
                     {/* Verification Cards */}
                     <div className="grid md:grid-cols-2 gap-4">
                       <VerificationSettingsCard
-                        icon={<Mail className="w-5 h-5 text-purple-600" />}
+                        icon={<Mail className="w-5 h-5 text-emerald-600" />}
                         title="Email"
                         isVerified={verificationSummary?.email_verified || false}
                         onVerify={() => setVerificationModalState({ isOpen: true, type: "email" })}
@@ -586,13 +586,13 @@ export default function SettingsPage() {
                         onVerify={() => setVerificationModalState({ isOpen: true, type: "phone" })}
                       />
                       <VerificationSettingsCard
-                        icon={<Briefcase className="w-5 h-5 text-orange-600" />}
+                        icon={<Briefcase className="w-5 h-5 text-emerald-600" />}
                         title="Work Email"
                         isVerified={false}
                         comingSoon
                       />
                       <VerificationSettingsCard
-                        icon={<Award className="w-5 h-5 text-blue-600" />}
+                        icon={<Award className="w-5 h-5 text-emerald-600" />}
                         title="Government ID"
                         isVerified={verificationSummary?.identity_verified || false}
                         comingSoon
@@ -660,8 +660,8 @@ export default function SettingsPage() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center gap-4">
-                          <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                            <Palette className="w-5 h-5 text-purple-600" />
+                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <Palette className="w-5 h-5 text-emerald-600" />
                           </div>
                           <div>
                             <h3 className="font-medium text-gray-900 dark:text-white">Theme</h3>
@@ -677,8 +677,8 @@ export default function SettingsPage() {
 
                       <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center gap-4">
-                          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Globe className="w-5 h-5 text-blue-600" />
+                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <Globe className="w-5 h-5 text-emerald-600" />
                           </div>
                           <div>
                             <h3 className="font-medium text-gray-900 dark:text-white">Language</h3>
@@ -743,12 +743,12 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/50">
-                      <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
+                      <h4 className="font-medium text-emerald-800 dark:text-emerald-300 mb-2 flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
                         Why connect accounts?
                       </h4>
-                      <ul className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
+                      <ul className="text-sm text-emerald-700 dark:text-emerald-400 space-y-1">
                         <li>• Auto-sync your professional profile</li>
                         <li>• One-click sign in across devices</li>
                         <li>• Import your work history automatically</li>
@@ -783,20 +783,20 @@ export default function SettingsPage() {
                         You're using 2 of 3 resume slots • 50 of 100 job applications
                       </div>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4">
-                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: '50%' }}></div>
+                        <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '50%' }}></div>
                       </div>
                     </div>
 
                     {/* Upgrade Card */}
-                    <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl border-2 border-amber-200 dark:border-amber-800">
+                    <div className="p-6 bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
+                        <div className="p-2 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-lg">
                           <Crown className="w-6 h-6 text-white" />
                         </div>
                         <div>
                           <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             Proofile Pro
-                            <span className="text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full">RECOMMENDED</span>
+                            <span className="text-xs bg-gradient-to-r from-emerald-500 to-emerald-500 text-white px-2 py-0.5 rounded-full">RECOMMENDED</span>
                           </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400">Unlock all premium features</p>
                         </div>
@@ -810,7 +810,7 @@ export default function SettingsPage() {
                       </ul>
                       <div className="flex items-center justify-between">
                         <span className="text-2xl font-bold text-gray-900 dark:text-white">$9.99<span className="text-sm font-normal text-gray-500">/mo</span></span>
-                        <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+                        <Button className="bg-gradient-to-r from-emerald-500 to-emerald-500 hover:from-emerald-600 hover:to-emerald-600">
                           Upgrade Now
                         </Button>
                       </div>
@@ -821,8 +821,8 @@ export default function SettingsPage() {
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Payment Methods</h3>
                       <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <CreditCard className="w-5 h-5 text-blue-600" />
+                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                            <CreditCard className="w-5 h-5 text-emerald-600" />
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 dark:text-white">No payment method</p>
@@ -894,12 +894,12 @@ export default function SettingsPage() {
                     </div>
 
                     {/* Documentation Link */}
-                    <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-between">
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <HelpCircle className="w-5 h-5 text-indigo-600" />
+                        <HelpCircle className="w-5 h-5 text-emerald-600" />
                         <div>
-                          <p className="font-medium text-indigo-800 dark:text-indigo-300">Need help with the API?</p>
-                          <p className="text-sm text-indigo-600 dark:text-indigo-400">Check out our developer documentation</p>
+                          <p className="font-medium text-emerald-800 dark:text-emerald-300">Need help with the API?</p>
+                          <p className="text-sm text-emerald-600 dark:text-emerald-400">Check out our developer documentation</p>
                         </div>
                       </div>
                       <Button variant="outline" className="flex items-center gap-2">
@@ -1045,7 +1045,7 @@ function NotificationToggle({
       </div>
       <button
         onClick={() => setChecked(!checked)}
-        className={`relative w-12 h-6 rounded-full transition-colors ${checked ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"
+        className={`relative w-12 h-6 rounded-full transition-colors ${checked ? "bg-emerald-600" : "bg-gray-300 dark:bg-gray-600"
           }`}
       >
         <span
@@ -1117,7 +1117,7 @@ function ActivityLogItem({
   return (
     <div className="flex items-start gap-4 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
       <div className={`p-2 rounded-lg ${status === "success" ? "bg-green-100 dark:bg-green-900/30 text-green-600" :
-        status === "warning" ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600" :
+        status === "warning" ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600" :
           status === "error" ? "bg-red-100 dark:bg-red-900/30 text-red-600" :
             "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
         }`}>

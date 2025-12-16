@@ -34,9 +34,9 @@ export default function TrustShield({
         L3: {
             label: 'Gold',
             description: 'Identity Verified',
-            bgClass: 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-300',
-            textClass: 'text-yellow-800',
-            iconClass: 'text-yellow-600'
+            bgClass: 'bg-gradient-to-r from-emerald-100 to-emerald-200 border-emerald-300',
+            textClass: 'text-emerald-800',
+            iconClass: 'text-emerald-600'
         },
         L2: {
             label: 'Silver',
@@ -48,9 +48,9 @@ export default function TrustShield({
         L1: {
             label: 'Bronze',
             description: 'Skill Verified',
-            bgClass: 'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200',
-            textClass: 'text-orange-700',
-            iconClass: 'text-orange-500'
+            bgClass: 'bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200',
+            textClass: 'text-emerald-700',
+            iconClass: 'text-emerald-500'
         }
     };
 
@@ -91,7 +91,7 @@ export function VerificationTooltip({
     return (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-3 text-sm min-w-[200px]">
             <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-4 h-4 text-blue-500" />
+                <Shield className="w-4 h-4 text-emerald-500" />
                 <span className="font-semibold text-gray-900 dark:text-white">
                     Verified by Proofile
                 </span>

@@ -74,7 +74,7 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                 {/* Header */}
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-purple-600" />
+                        <Sparkles className="w-5 h-5 text-emerald-600" />
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Content Enhancer</h2>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
@@ -93,7 +93,7 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                             value={text}
                             onChange={(e) => setText(e.target.value)}
                             rows={4}
-                            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
                             placeholder="Paste your bullet point or summary here..."
                         />
                     </div>
@@ -105,7 +105,7 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                                 key={type}
                                 onClick={() => setEnhancementType(type)}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${enhancementType === type
-                                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-2 border-purple-500'
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-2 border-emerald-500'
                                         : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 border-2 border-transparent hover:bg-gray-200 dark:hover:bg-gray-700'
                                     }`}
                             >
@@ -119,7 +119,7 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                         <button
                             onClick={handleRewrite}
                             disabled={loading || !text.trim()}
-                            className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-emerald-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <>
@@ -144,10 +144,10 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                                 <div className="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
                             </div>
 
-                            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-purple-100 dark:border-purple-800">
+                            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-xl p-6 border border-emerald-100 dark:border-emerald-800">
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                                        <Sparkles className="w-4 h-4 text-purple-600" />
+                                        <Sparkles className="w-4 h-4 text-emerald-600" />
                                         Enhanced Version
                                     </h3>
                                     <button
@@ -155,7 +155,7 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                                             navigator.clipboard.writeText(result.enhanced);
                                             toast.success("Copied to clipboard");
                                         }}
-                                        className="text-xs flex items-center gap-1 text-purple-600 hover:text-purple-700 font-medium"
+                                        className="text-xs flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium"
                                     >
                                         <Copy className="w-3 h-3" />
                                         Copy
@@ -167,13 +167,13 @@ export default function AIRewriteModal({ isOpen, onClose, resumeId, initialText 
                                 </p>
 
                                 {result.improvements && (
-                                    <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-800/50">
-                                        <p className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-2 uppercase tracking-wide">
+                                    <div className="mt-4 pt-4 border-t border-emerald-200 dark:border-emerald-800/50">
+                                        <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-2 uppercase tracking-wide">
                                             Improvements Made
                                         </p>
                                         <div className="flex flex-wrap gap-2">
                                             {result.improvements.map((imp: string, i: number) => (
-                                                <span key={i} className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs text-gray-600 dark:text-gray-300 border border-purple-100 dark:border-purple-800">
+                                                <span key={i} className="px-2 py-1 bg-white dark:bg-gray-800 rounded text-xs text-gray-600 dark:text-gray-300 border border-emerald-100 dark:border-emerald-800">
                                                     {imp}
                                                 </span>
                                             ))}

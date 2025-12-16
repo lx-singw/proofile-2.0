@@ -53,7 +53,7 @@ export default function AgentsPage() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                            <Zap className="w-8 h-8 text-yellow-500" />
+                            <Zap className="w-8 h-8 text-emerald-500" />
                             AI Agents
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -83,12 +83,12 @@ export default function AgentsPage() {
                                         <div className={`
                                             p-3 rounded-xl
                                             ${agent.status === 'active' ? 'bg-green-100 dark:bg-green-900/30' :
-                                                agent.status === 'paused' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
+                                                agent.status === 'paused' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
                                                     'bg-gray-100 dark:bg-gray-700'}
                                         `}>
                                             <Icon className={`w-6 h-6 
                                                 ${agent.status === 'active' ? 'text-green-600' :
-                                                    agent.status === 'paused' ? 'text-yellow-600' :
+                                                    agent.status === 'paused' ? 'text-emerald-600' :
                                                         'text-gray-500'}
                                             `} />
                                         </div>
@@ -100,7 +100,7 @@ export default function AgentsPage() {
                                                 <span className={`
                                                     px-2 py-0.5 text-xs font-medium rounded-full
                                                     ${agent.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                                                        agent.status === 'paused' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                        agent.status === 'paused' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
                                                             'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}
                                                 `}>
                                                     {agent.status}

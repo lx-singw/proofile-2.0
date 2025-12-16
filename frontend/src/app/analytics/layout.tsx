@@ -14,7 +14,7 @@ export default function AnalyticsLayout({
             <footer className="border-t border-gray-200 dark:border-gray-700 py-6 mt-auto bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
                             <BarChart3 className="h-5 w-5 text-white" />
                         </div>
                         <div>
@@ -22,16 +22,16 @@ export default function AnalyticsLayout({
                             <p className="text-xs text-gray-500 dark:text-gray-400">Profile Performance Insights</p>
                         </div>
                         <div className="flex items-center gap-2 ml-4 text-sm text-gray-500 dark:text-gray-400">
-                            <Shield className="w-4 h-4 text-indigo-500" />
+                            <Shield className="w-4 h-4 text-emerald-500" />
                             <span>Powered by Proofile</span>
                         </div>
                     </div>
                     <div className="text-center text-sm text-gray-500 dark:text-gray-400">
                         <p>Track your professional presence and engagement metrics.</p>
                         <p className="mt-1">
-                            <a href="/privacy" className="underline hover:text-indigo-600">Privacy Policy</a>
+                            <a href="/privacy" className="underline hover:text-emerald-600">Privacy Policy</a>
                             {" · "}
-                            <a href="/profile" className="underline hover:text-indigo-600">Update Profile</a>
+                            <a href="/profile" className="underline hover:text-emerald-600">Update Profile</a>
                         </p>
                     </div>
                 </div>

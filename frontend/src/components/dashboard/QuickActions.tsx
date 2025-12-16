@@ -70,11 +70,11 @@ export default function QuickActions() {
             href={action.href}
             className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
           >
-            <div className="text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <div className="text-gray-600 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
               {action.icon}
             </div>
             <div>
-              <div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <div className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 {action.label}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-500">

@@ -30,20 +30,20 @@ interface CareerInsightsProps {
 export function CareerInsights({ insights, isLoading }: CareerInsightsProps) {
     const getInsightIcon = (type: CareerInsight["type"]) => {
         const icons = {
-            trend: <TrendingUp className="w-4 h-4 text-blue-500" />,
+            trend: <TrendingUp className="w-4 h-4 text-emerald-500" />,
             opportunity: <Briefcase className="w-4 h-4 text-green-500" />,
-            skill_gap: <GraduationCap className="w-4 h-4 text-orange-500" />,
-            milestone: <Award className="w-4 h-4 text-purple-500" />,
+            skill_gap: <GraduationCap className="w-4 h-4 text-emerald-500" />,
+            milestone: <Award className="w-4 h-4 text-emerald-500" />,
         };
         return icons[type];
     };
 
     const getInsightStyles = (type: CareerInsight["type"]) => {
         const styles = {
-            trend: "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10",
+            trend: "border-l-emerald-500 bg-emerald-50 dark:bg-emerald-900/10",
             opportunity: "border-l-green-500 bg-green-50 dark:bg-green-900/10",
-            skill_gap: "border-l-orange-500 bg-orange-50 dark:bg-orange-900/10",
-            milestone: "border-l-purple-500 bg-purple-50 dark:bg-purple-900/10",
+            skill_gap: "border-l-emerald-500 bg-emerald-50 dark:bg-emerald-900/10",
+            milestone: "border-l-emerald-500 bg-emerald-50 dark:bg-emerald-900/10",
         };
         return styles[type];
     };
@@ -51,7 +51,7 @@ export function CareerInsights({ insights, isLoading }: CareerInsightsProps) {
     if (isLoading) {
         return (
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center">
-                <Lightbulb className="w-8 h-8 text-yellow-500 mx-auto mb-3 animate-pulse" />
+                <Lightbulb className="w-8 h-8 text-emerald-500 mx-auto mb-3 animate-pulse" />
                 <p className="text-gray-500 dark:text-gray-400">Analyzing your career data...</p>
             </div>
         );
@@ -61,7 +61,7 @@ export function CareerInsights({ insights, isLoading }: CareerInsightsProps) {
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-5 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Lightbulb className="w-5 h-5 text-yellow-500" />
+                    <Lightbulb className="w-5 h-5 text-emerald-500" />
                     Career Insights
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -89,7 +89,7 @@ export function CareerInsights({ insights, isLoading }: CareerInsightsProps) {
                                 {insight.actionUrl && (
                                     <Link
                                         href={insight.actionUrl}
-                                        className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 font-medium mt-2 hover:underline"
+                                        className="inline-flex items-center gap-1 text-sm text-emerald-600 dark:text-emerald-400 font-medium mt-2 hover:underline"
                                     >
                                         {insight.actionLabel || "Learn more"}
                                         <ArrowRight className="w-3 h-3" />

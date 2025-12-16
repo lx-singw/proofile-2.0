@@ -106,7 +106,7 @@ export default function VersionHistory({ isOpen, onClose, resumeId, onRestore }:
                 {/* Header */}
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <History className="w-5 h-5 text-orange-600" />
+                        <History className="w-5 h-5 text-emerald-600" />
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Version History</h2>
                     </div>
                     <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -118,18 +118,18 @@ export default function VersionHistory({ isOpen, onClose, resumeId, onRestore }:
                 <div className="p-6 overflow-y-auto flex-1">
                     {loading ? (
                         <div className="flex justify-center items-center h-48">
-                            <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+                            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {versions.map((version, index) => (
                                 <div
                                     key={version.id}
-                                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-orange-300 transition-colors"
+                                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 transition-colors"
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center flex-shrink-0">
-                                            <span className="font-bold text-orange-600 dark:text-orange-400">v{version.version_number}</span>
+                                        <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
+                                            <span className="font-bold text-emerald-600 dark:text-emerald-400">v{version.version_number}</span>
                                         </div>
                                         <div>
                                             <p className="font-semibold text-gray-900 dark:text-white">{version.description}</p>
@@ -148,7 +148,7 @@ export default function VersionHistory({ isOpen, onClose, resumeId, onRestore }:
                                         <button
                                             onClick={() => handleRestore(version.id)}
                                             disabled={restoring === version.id}
-                                            className="px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors flex items-center gap-2"
+                                            className="px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors flex items-center gap-2"
                                         >
                                             {restoring === version.id ? (
                                                 <Loader2 className="w-4 h-4 animate-spin" />

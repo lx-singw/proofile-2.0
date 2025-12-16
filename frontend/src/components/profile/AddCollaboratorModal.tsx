@@ -159,7 +159,7 @@ export function AddCollaboratorModal({ isOpen, onClose, onSuccess }: AddCollabor
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search by name..."
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                                     autoFocus
                                 />
                             </div>
@@ -167,7 +167,7 @@ export function AddCollaboratorModal({ isOpen, onClose, onSuccess }: AddCollabor
                             <div className="min-h-[200px]">
                                 {isSearching ? (
                                     <div className="flex justify-center py-8">
-                                        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                                        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
                                     </div>
                                 ) : searchResults.length > 0 ? (
                                     <div className="space-y-2">
@@ -180,8 +180,8 @@ export function AddCollaboratorModal({ isOpen, onClose, onSuccess }: AddCollabor
                                                 {user.avatar_url ? (
                                                     <img src={user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
                                                 ) : (
-                                                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                                        <UserIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                                        <UserIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                                                     </div>
                                                 )}
                                                 <div>
@@ -200,22 +200,22 @@ export function AddCollaboratorModal({ isOpen, onClose, onSuccess }: AddCollabor
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl mb-6">
+                            <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl mb-6">
                                 {selectedUser?.avatar_url ? (
                                     <img src={selectedUser.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
                                 ) : (
-                                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                        <UserIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                        <UserIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Collaborating with</p>
+                                    <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">Collaborating with</p>
                                     <p className="font-semibold text-gray-900 dark:text-white">{selectedUser?.full_name}</p>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => setStep("search")}
-                                    className="ml-auto text-xs text-blue-600 hover:underline"
+                                    className="ml-auto text-xs text-emerald-600 hover:underline"
                                 >
                                     Change
                                 </button>
@@ -290,7 +290,7 @@ export function AddCollaboratorModal({ isOpen, onClose, onSuccess }: AddCollabor
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
                             >
                                 {isSubmitting ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />

@@ -54,7 +54,7 @@ export function FeedLeftSidebar({ user }: FeedLeftSidebarProps) {
             {/* Profile Card */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                 {/* Banner */}
-                <div className="h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+                <div className="h-16 bg-gradient-to-r from-emerald-500 via-emerald-500 to-pink-500" />
 
                 {/* Profile Info */}
                 <div className="px-4 pb-4 -mt-8">
@@ -66,14 +66,14 @@ export function FeedLeftSidebar({ user }: FeedLeftSidebarProps) {
                                 className="w-16 h-16 rounded-full border-4 border-white dark:border-gray-800 object-cover"
                             />
                         ) : (
-                            <div className="w-16 h-16 rounded-full border-4 border-white dark:border-gray-800 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold">
+                            <div className="w-16 h-16 rounded-full border-4 border-white dark:border-gray-800 bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-xl font-bold">
                                 {userData.name.charAt(0).toUpperCase()}
                             </div>
                         )}
                     </Link>
 
                     <Link href={`/p/${userData.username || "me"}`} className="block mt-2">
-                        <h3 className="font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        <h3 className="font-bold text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
                             {userData.name}
                         </h3>
                     </Link>
@@ -84,14 +84,14 @@ export function FeedLeftSidebar({ user }: FeedLeftSidebarProps) {
                     {/* Trust Score */}
                     {userData.trustScore !== undefined && (
                         <div className="mt-3 flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-blue-500" />
+                            <Shield className="w-4 h-4 text-emerald-500" />
                             <span className="text-sm font-medium text-gray-900 dark:text-white">
                                 {userData.trustScore}%
                             </span>
                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-                                ${trustLevel === "Gold" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                                ${trustLevel === "Gold" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" :
                                     trustLevel === "Silver" ? "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300" :
-                                        "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+                                        "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                                 }`}>
                                 {trustLevel}
                             </span>
@@ -107,19 +107,19 @@ export function FeedLeftSidebar({ user }: FeedLeftSidebarProps) {
                                 <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
                                     Profile Completion
                                 </span>
-                                <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                                     {userData.profileCompletion}%
                                 </span>
                             </div>
                             <div className="h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+                                    className="h-full bg-gradient-to-r from-emerald-500 to-emerald-500 rounded-full transition-all duration-500"
                                     style={{ width: `${userData.profileCompletion}%` }}
                                 />
                             </div>
                             <Link
                                 href="/profile/edit"
-                                className="flex items-center gap-1 mt-2 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                                className="flex items-center gap-1 mt-2 text-xs text-emerald-600 dark:text-emerald-400 hover:underline"
                             >
                                 Complete your profile
                                 <ChevronRight className="w-3 h-3" />

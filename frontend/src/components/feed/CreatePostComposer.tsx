@@ -28,9 +28,9 @@ interface CreatePostComposerProps {
 
 const POST_TYPE_OPTIONS = [
     { type: "text" as PostType, icon: FileText, label: "Post", color: "text-gray-600" },
-    { type: "milestone" as PostType, icon: Gift, label: "Milestone", color: "text-yellow-600" },
-    { type: "job_share" as PostType, icon: Briefcase, label: "Share Job", color: "text-blue-600" },
-    { type: "poll" as PostType, icon: BarChart3, label: "Poll", color: "text-purple-600" },
+    { type: "milestone" as PostType, icon: Gift, label: "Milestone", color: "text-emerald-600" },
+    { type: "job_share" as PostType, icon: Briefcase, label: "Share Job", color: "text-emerald-600" },
+    { type: "poll" as PostType, icon: BarChart3, label: "Poll", color: "text-emerald-600" },
 ];
 
 const VISIBILITY_OPTIONS = [
@@ -101,7 +101,7 @@ export function CreatePostComposer({
                                 className="w-10 h-10 rounded-full object-cover"
                             />
                         ) : (
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold">
                                 {userName.charAt(0).toUpperCase()}
                             </div>
                         )}
@@ -116,7 +116,7 @@ export function CreatePostComposer({
                             onFocus={handleFocus}
                             placeholder={placeholder}
                             rows={isExpanded ? 3 : 1}
-                            className="w-full resize-none bg-gray-50 dark:bg-gray-700/50 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
+                            className="w-full resize-none bg-gray-50 dark:bg-gray-700/50 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
                             style={{ minHeight: isExpanded ? "80px" : "44px" }}
                         />
 
@@ -131,7 +131,7 @@ export function CreatePostComposer({
                                             onClick={() => setPostType(option.type)}
                                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
                                                 ${postType === option.type
-                                                    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500/30"
+                                                    ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/30"
                                                     : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
                                                 }`}
                                         >
@@ -174,7 +174,7 @@ export function CreatePostComposer({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg"
+                        className="text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg"
                         disabled={!isExpanded}
                     >
                         <ImageIcon className="w-5 h-5" />
@@ -182,7 +182,7 @@ export function CreatePostComposer({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-500 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 rounded-lg"
+                        className="text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg"
                         disabled={!isExpanded}
                     >
                         <Smile className="w-5 h-5" />
@@ -205,7 +205,7 @@ export function CreatePostComposer({
                             size="sm"
                             onClick={handleSubmit}
                             disabled={!content.trim() || isSubmitting}
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg px-4"
+                            className="bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 text-white rounded-lg px-4"
                         >
                             {isSubmitting ? (
                                 <span className="flex items-center gap-1">

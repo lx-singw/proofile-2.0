@@ -28,15 +28,15 @@ const AGENT_ACTIONS: AgentActionConfig[] = [
         type: "draft_cover",
         icon: <FileText className="w-4 h-4" />,
         label: "Draft Cover",
-        color: "text-blue-600 dark:text-blue-400",
-        bgColor: "bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30",
+        color: "text-emerald-600 dark:text-emerald-400",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30",
     },
     {
         type: "tailor_resume",
         icon: <Sparkles className="w-4 h-4" />,
         label: "Tailor Resume",
-        color: "text-purple-600 dark:text-purple-400",
-        bgColor: "bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30",
+        color: "text-emerald-600 dark:text-emerald-400",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30",
     },
     {
         type: "quick_apply",
@@ -52,8 +52,8 @@ const MESSAGE_ACTIONS: AgentActionConfig[] = [
         type: "draft_message",
         icon: <Send className="w-4 h-4" />,
         label: "Draft Congrats",
-        color: "text-orange-600 dark:text-orange-400",
-        bgColor: "bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30",
+        color: "text-emerald-600 dark:text-emerald-400",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30",
     },
 ];
 
@@ -85,10 +85,10 @@ export function AgentActionBar({
     };
 
     return (
-        <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 rounded-xl border border-indigo-100/50 dark:border-indigo-800/30 p-3">
+        <div className="bg-gradient-to-r from-emerald-50/50 to-emerald-50/50 dark:from-emerald-900/10 dark:to-emerald-900/10 rounded-xl border border-emerald-100/50 dark:border-emerald-800/30 p-3">
             {/* Agent Header */}
             <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-500 flex items-center justify-center">
                     <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -104,8 +104,8 @@ export function AgentActionBar({
                     <div className="ml-auto flex items-center gap-1">
                         <span className="text-xs text-gray-500 dark:text-gray-400">Match:</span>
                         <span className={`text-sm font-bold ${matchScore >= 90 ? "text-green-600 dark:text-green-400" :
-                                matchScore >= 70 ? "text-blue-600 dark:text-blue-400" :
-                                    "text-orange-600 dark:text-orange-400"
+                                matchScore >= 70 ? "text-emerald-600 dark:text-emerald-400" :
+                                    "text-emerald-600 dark:text-emerald-400"
                             }`}>
                             {matchScore}%
                         </span>
@@ -116,7 +116,7 @@ export function AgentActionBar({
             {/* Match Reason */}
             {matchReason && (
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 flex items-start gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />
                     {matchReason}
                 </p>
             )}

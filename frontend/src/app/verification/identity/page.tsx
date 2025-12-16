@@ -47,14 +47,14 @@ export default function IdentityVerificationPage() {
             case "intro":
                 return (
                     <div className="text-center">
-                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
                             <Shield className="w-10 h-10 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
                             Verify Your Identity
                         </h1>
                         <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">
-                            Unlock the <span className="font-semibold text-amber-600">Gold Badge</span> by
+                            Unlock the <span className="font-semibold text-emerald-600">Gold Badge</span> by
                             verifying your identity. This adds +30 points to your Trust Score and
                             opens premium job opportunities.
                         </p>
@@ -77,7 +77,7 @@ export default function IdentityVerificationPage() {
 
                         <button
                             onClick={handleStartVerification}
-                            className="px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg shadow-amber-500/25"
+                            className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/25"
                         >
                             Start Verification
                         </button>
@@ -92,8 +92,8 @@ export default function IdentityVerificationPage() {
             case "document":
                 return (
                     <div className="text-center">
-                        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
-                            <FileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                            <FileText className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                             Step 1: Scan Your ID
@@ -123,8 +123,8 @@ export default function IdentityVerificationPage() {
             case "selfie":
                 return (
                     <div className="text-center">
-                        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
-                            <Camera className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
+                            <Camera className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                             Step 2: Selfie Check
@@ -133,13 +133,13 @@ export default function IdentityVerificationPage() {
                             Position your face in the oval
                         </p>
 
-                        <div className="bg-slate-100 dark:bg-slate-800 rounded-full w-64 h-64 mx-auto flex items-center justify-center border-4 border-dashed border-purple-300 dark:border-purple-700">
+                        <div className="bg-slate-100 dark:bg-slate-800 rounded-full w-64 h-64 mx-auto flex items-center justify-center border-4 border-dashed border-emerald-300 dark:border-emerald-700">
                             <Camera className="w-16 h-16 text-slate-400" />
                         </div>
 
                         <button
                             onClick={() => setStep("processing")}
-                            className="mt-6 px-6 py-2 bg-purple-600 text-white rounded-lg"
+                            className="mt-6 px-6 py-2 bg-emerald-600 text-white rounded-lg"
                         >
                             Capture →
                         </button>
@@ -169,14 +169,14 @@ export default function IdentityVerificationPage() {
             case "complete":
                 return (
                     <div className="text-center py-12">
-                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
                             <CheckCircle className="w-10 h-10 text-white" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
                             Identity Verified! 🎉
                         </h2>
                         <p className="text-slate-600 dark:text-slate-400 mb-8">
-                            You&apos;ve earned the <span className="font-semibold text-amber-600">Gold Badge</span> and
+                            You&apos;ve earned the <span className="font-semibold text-emerald-600">Gold Badge</span> and
                             +30 Trust Score points.
                         </p>
 

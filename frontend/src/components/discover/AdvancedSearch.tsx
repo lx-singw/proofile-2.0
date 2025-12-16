@@ -99,24 +99,24 @@ export function AdvancedSearch({ onSearch, isLoading }: AdvancedSearchProps) {
                         value={filters.query}
                         onChange={(e) => setFilters(prev => ({ ...prev, query: e.target.value }))}
                         placeholder="Search professionals by name, skills, or company..."
-                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     />
                 </div>
                 <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowFilters(!showFilters)}
-                    className={`rounded-xl border-gray-200 dark:border-gray-700 ${showFilters ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700" : ""}`}
+                    className={`rounded-xl border-gray-200 dark:border-gray-700 ${showFilters ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700" : ""}`}
                 >
                     <Filter className="w-4 h-4 mr-2" />
                     Filters
                     {activeFilterCount > 0 && (
-                        <span className="ml-2 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
+                        <span className="ml-2 w-5 h-5 bg-emerald-600 text-white text-xs rounded-full flex items-center justify-center">
                             {activeFilterCount}
                         </span>
                     )}
                 </Button>
-                <Button type="submit" disabled={isLoading} className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
+                <Button type="submit" disabled={isLoading} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white">
                     {isLoading ? "Searching..." : "Search"}
                 </Button>
             </div>
@@ -127,7 +127,7 @@ export function AdvancedSearch({ onSearch, isLoading }: AdvancedSearchProps) {
                     <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-gray-900 dark:text-white">Filter Results</h3>
                         {activeFilterCount > 0 && (
-                            <button type="button" onClick={clearFilters} className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                            <button type="button" onClick={clearFilters} className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                                 <X className="w-3 h-3" /> Clear all
                             </button>
                         )}
@@ -190,8 +190,8 @@ export function AdvancedSearch({ onSearch, isLoading }: AdvancedSearchProps) {
                                     type="button"
                                     onClick={() => toggleSkill(skill)}
                                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${filters.skills.includes(skill)
-                                            ? "bg-blue-600 text-white border-blue-600"
-                                            : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-blue-400"
+                                            ? "bg-emerald-600 text-white border-emerald-600"
+                                            : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-emerald-400"
                                         }`}
                                 >
                                     {skill}
@@ -207,7 +207,7 @@ export function AdvancedSearch({ onSearch, isLoading }: AdvancedSearchProps) {
                             id="verified-only"
                             checked={filters.verified}
                             onChange={(e) => setFilters(prev => ({ ...prev, verified: e.target.checked }))}
-                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                         />
                         <label htmlFor="verified-only" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                             <CheckCircle className="w-4 h-4 text-green-500" />

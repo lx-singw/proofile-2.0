@@ -33,7 +33,7 @@ export function AnalyticsDashboardConnected() {
     if (isLoading) {
         return (
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center">
-                <BarChart3 className="w-8 h-8 text-blue-500 mx-auto mb-3 animate-pulse" />
+                <BarChart3 className="w-8 h-8 text-emerald-500 mx-auto mb-3 animate-pulse" />
                 <p className="text-gray-500 dark:text-gray-400">Loading analytics...</p>
             </div>
         );
@@ -45,7 +45,7 @@ export function AnalyticsDashboardConnected() {
             value: summary?.totalViews || 0,
             change: 12,
             changeLabel: "vs last week",
-            icon: <Eye className="w-4 h-4 text-blue-500" />,
+            icon: <Eye className="w-4 h-4 text-emerald-500" />,
         },
         {
             label: "Search Appearances",
@@ -59,14 +59,14 @@ export function AnalyticsDashboardConnected() {
             value: summary?.connections || 0,
             change: 5,
             changeLabel: "new this month",
-            icon: <Users className="w-4 h-4 text-purple-500" />,
+            icon: <Users className="w-4 h-4 text-emerald-500" />,
         },
         {
             label: "Avg. Rating",
             value: summary?.avgRating?.toFixed(1) || "4.8",
             change: 2,
             changeLabel: "improvement",
-            icon: <Star className="w-4 h-4 text-yellow-500" />,
+            icon: <Star className="w-4 h-4 text-emerald-500" />,
         },
     ];
 
@@ -106,7 +106,7 @@ export function AnalyticsDashboardConnected() {
             {/* Profile Views Chart */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <Eye className="w-5 h-5 text-blue-500" />
+                    <Eye className="w-5 h-5 text-emerald-500" />
                     Profile Views (Last 7 Days)
                 </h3>
                 <div className="h-40 flex items-end gap-2">
@@ -114,7 +114,7 @@ export function AnalyticsDashboardConnected() {
                         <div key={idx} className="flex-1 flex flex-col items-center gap-1">
                             <div className="w-full relative">
                                 <div
-                                    className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md transition-all hover:from-blue-600 hover:to-blue-500"
+                                    className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-md transition-all hover:from-emerald-600 hover:to-emerald-500"
                                     style={{ height: `${(day.views / maxViews) * 120}px` }}
                                 />
                             </div>
@@ -129,17 +129,17 @@ export function AnalyticsDashboardConnected() {
                 <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div className="p-5 border-b border-gray-200 dark:border-gray-700">
                         <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <Lightbulb className="w-5 h-5 text-yellow-500" />
+                            <Lightbulb className="w-5 h-5 text-emerald-500" />
                             Career Insights
                         </h3>
                     </div>
                     <div className="divide-y divide-gray-100 dark:divide-gray-700">
                         {insights.slice(0, 3).map((insight: any) => {
                             const icons: Record<string, React.ReactNode> = {
-                                trend: <TrendingUp className="w-4 h-4 text-blue-500" />,
+                                trend: <TrendingUp className="w-4 h-4 text-emerald-500" />,
                                 opportunity: <Briefcase className="w-4 h-4 text-green-500" />,
-                                skill_gap: <GraduationCap className="w-4 h-4 text-orange-500" />,
-                                milestone: <Award className="w-4 h-4 text-purple-500" />,
+                                skill_gap: <GraduationCap className="w-4 h-4 text-emerald-500" />,
+                                milestone: <Award className="w-4 h-4 text-emerald-500" />,
                             };
                             return (
                                 <div key={insight.id} className="p-4 flex items-start gap-3">
@@ -156,7 +156,7 @@ export function AnalyticsDashboardConnected() {
                                         {insight.actionUrl && (
                                             <Link
                                                 href={insight.actionUrl}
-                                                className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 font-medium mt-2 hover:underline"
+                                                className="inline-flex items-center gap-1 text-sm text-emerald-600 dark:text-emerald-400 font-medium mt-2 hover:underline"
                                             >
                                                 {insight.actionLabel || "Learn more"}
                                                 <ArrowRight className="w-3 h-3" />

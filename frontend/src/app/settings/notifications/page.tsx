@@ -43,8 +43,8 @@ export default function NotificationSettingsPage() {
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                <Mail className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                             </div>
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Email Notifications</h2>
@@ -104,7 +104,7 @@ export default function NotificationSettingsPage() {
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                            className="px-6 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                         >
                             {saving ? (
                                 <>Saving...</>

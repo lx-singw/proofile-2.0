@@ -165,7 +165,7 @@ export default function RateTokenPage() {
                 >
                     <Star
                         className={`w-10 h-10 ${star <= formData.score
-                                ? "text-yellow-400 fill-yellow-400"
+                                ? "text-emerald-400 fill-emerald-400"
                                 : "text-gray-300 dark:text-gray-600"
                             }`}
                     />
@@ -177,7 +177,7 @@ export default function RateTokenPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
             </div>
         );
     }
@@ -193,7 +193,7 @@ export default function RateTokenPage() {
                     <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
                     <button
                         onClick={() => router.push("/")}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
                     >
                         Go Home
                     </button>
@@ -215,7 +215,7 @@ export default function RateTokenPage() {
                     </p>
                     <button
                         onClick={() => router.push("/")}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
                     >
                         Done
                     </button>
@@ -225,12 +225,12 @@ export default function RateTokenPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-2xl mx-auto">
                 {/* Header Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6">
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                             {requestData?.requester.full_name?.charAt(0) || "?"}
                         </div>
                         <div>
@@ -242,7 +242,7 @@ export default function RateTokenPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-3 mb-4">
-                        <span className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm">
+                        <span className="flex items-center gap-1 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-sm">
                             <Briefcase className="w-4 h-4" />
                             {requestData?.relationship_type}
                         </span>
@@ -315,7 +315,7 @@ export default function RateTokenPage() {
                                     type="button"
                                     onClick={() => setFormData(prev => ({ ...prev, work_again: option }))}
                                     className={`px-4 py-2 rounded-lg border text-sm ${formData.work_again === option
-                                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700"
+                                            ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700"
                                             : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
                                         }`}
                                 >
@@ -397,7 +397,7 @@ export default function RateTokenPage() {
                                     type="checkbox"
                                     checked={formData.contact_visible_to_public}
                                     onChange={(e) => setFormData(prev => ({ ...prev, contact_visible_to_public: e.target.checked }))}
-                                    className="w-4 h-4 text-blue-600 rounded"
+                                    className="w-4 h-4 text-emerald-600 rounded"
                                 />
                                 <span className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                                     <Eye className="w-4 h-4" />
@@ -410,7 +410,7 @@ export default function RateTokenPage() {
                                     type="checkbox"
                                     checked={formData.is_anonymous}
                                     onChange={(e) => setFormData(prev => ({ ...prev, is_anonymous: e.target.checked }))}
-                                    className="w-4 h-4 text-blue-600 rounded"
+                                    className="w-4 h-4 text-emerald-600 rounded"
                                 />
                                 <span className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                                     <EyeOff className="w-4 h-4" />
@@ -424,7 +424,7 @@ export default function RateTokenPage() {
                     <button
                         type="submit"
                         disabled={submitting || formData.score === 0}
-                        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                     >
                         {submitting ? (
                             <>

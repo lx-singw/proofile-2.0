@@ -101,7 +101,7 @@ export function ShareProfileModal({
         {
             name: "LinkedIn",
             icon: Linkedin,
-            color: "bg-blue-700 hover:bg-blue-800",
+            color: "bg-emerald-700 hover:bg-emerald-800",
             href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(profileUrl)}`
         },
         {
@@ -132,7 +132,7 @@ export function ShareProfileModal({
                 {/* Header */}
                 <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between rounded-t-3xl">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                        <div className="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
                             <Share2 className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -190,7 +190,7 @@ export function ShareProfileModal({
                                 onClick={handleCopyLink}
                                 className={`p-3 rounded-xl font-medium transition-all flex items-center gap-2 ${copied
                                         ? "bg-green-600 text-white"
-                                        : "bg-blue-600 text-white hover:bg-blue-700"
+                                        : "bg-emerald-600 text-white hover:bg-emerald-700"
                                     }`}
                             >
                                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
@@ -220,14 +220,14 @@ export function ShareProfileModal({
                     </div>
 
                     {/* Pro Tips */}
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+                    <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3">
-                            <Lightbulb className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                            <span className="font-semibold text-yellow-800 dark:text-yellow-300 text-sm">Pro Tips</span>
+                            <Lightbulb className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                            <span className="font-semibold text-emerald-800 dark:text-emerald-300 text-sm">Pro Tips</span>
                         </div>
                         <ul className="space-y-2">
                             {proTips.map((tip, idx) => (
-                                <li key={idx} className="flex items-start gap-2 text-sm text-yellow-700 dark:text-yellow-400">
+                                <li key={idx} className="flex items-start gap-2 text-sm text-emerald-700 dark:text-emerald-400">
                                     <span>•</span>
                                     <span>{tip}</span>
                                 </li>

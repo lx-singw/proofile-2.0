@@ -20,11 +20,11 @@ export default function ActivityFeed() {
     switch (type) {
       case 'resume_created':
       case 'resume_updated':
-        return <FileText className="w-4 h-4 text-blue-500" />;
+        return <FileText className="w-4 h-4 text-emerald-500" />;
       case 'skill_verified':
         return <CheckCircle className="w-4 h-4 text-green-500" />;
       case 'rating_received':
-        return <Star className="w-4 h-4 text-yellow-500" />;
+        return <Star className="w-4 h-4 text-emerald-500" />;
       default:
         return <ActivityIcon className="w-4 h-4 text-gray-500" />;
     }

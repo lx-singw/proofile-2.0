@@ -114,14 +114,14 @@ export default function PeerVerificationHub() {
         <div className="space-y-8">
             {/* Pending Requests Section */}
             {pendingRequests.length > 0 && (
-                <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-900/30">
+                <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-emerald-200 dark:border-emerald-900/30">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-                        <Shield className="w-5 h-5 text-yellow-500" />
+                        <Shield className="w-5 h-5 text-emerald-500" />
                         Verify Your Peers
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2">
                         {pendingRequests.map(req => (
-                            <div key={req.id} className="p-4 rounded-xl bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/20">
+                            <div key={req.id} className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20">
                                 <div className="flex items-start gap-4">
                                     {req.requester.avatar_url ? (
                                         <Image src={req.requester.avatar_url} alt={req.requester.full_name} width={48} height={48} className="rounded-full object-cover" />
@@ -160,7 +160,7 @@ export default function PeerVerificationHub() {
             {/* Opportunities Section */}
             <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
-                    <UserPlus className="w-5 h-5 text-blue-500" />
+                    <UserPlus className="w-5 h-5 text-emerald-500" />
                     Verify Your History
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
@@ -169,8 +169,8 @@ export default function PeerVerificationHub() {
 
                 {suggestions.length === 0 ? (
                     <div className="text-center py-10 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-                        <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Building2 className="w-8 h-8 text-blue-500" />
+                        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Building2 className="w-8 h-8 text-emerald-500" />
                         </div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                             No Peer Suggestions Yet
@@ -180,7 +180,7 @@ export default function PeerVerificationHub() {
                         </p>
                         <a
                             href="/profile"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
                         >
                             <UserPlus className="w-4 h-4" />
                             Complete Work History
@@ -189,7 +189,7 @@ export default function PeerVerificationHub() {
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {suggestions.map((s, i) => (
-                            <div key={i} className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 transition-colors">
+                            <div key={i} className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors">
                                 <div className="flex items-center gap-3 mb-3">
                                     {s.user.avatar_url ? (
                                         <Image src={s.user.avatar_url} alt={s.user.full_name} width={40} height={40} className="rounded-full object-cover" />
@@ -222,7 +222,7 @@ export default function PeerVerificationHub() {
 
                                 <button
                                     onClick={() => handleSendRequest(s)}
-                                    className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+                                    className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
                                 >
                                     <UserPlus className="w-4 h-4" />
                                     Ask to Verify

@@ -105,7 +105,7 @@ export default function BuilderHeader({
                             <span className="text-xs text-gray-500 flex items-center gap-1.5">
                                 {isSaving ? (
                                     <>
-                                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
+                                        <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-pulse" />
                                         Saving...
                                     </>
                                 ) : lastSaved ? (
@@ -131,20 +131,20 @@ export default function BuilderHeader({
                                     className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-gray-50 group"
                                 >
                                     <div className="flex flex-col items-start">
-                                        <span className="font-medium text-gray-900 group-hover:text-blue-600">
+                                        <span className="font-medium text-gray-900 group-hover:text-emerald-600">
                                             {resume.name}
                                         </span>
                                         <span className="text-xs text-gray-500">
                                             {resume.lastEdited}
                                         </span>
                                     </div>
-                                    <FileText size={16} className="text-gray-400 group-hover:text-blue-500" />
+                                    <FileText size={16} className="text-gray-400 group-hover:text-emerald-500" />
                                 </button>
                             ))}
                             <div className="border-t border-gray-100 mt-2 pt-2">
                                 <Link
                                     href="/resume"
-                                    className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                    className="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                                 >
                                     View All Resumes
                                 </Link>
@@ -182,13 +182,13 @@ export default function BuilderHeader({
                                         className={cn(
                                             "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors",
                                             currentTemplate === template.id
-                                                ? "bg-blue-50 text-blue-700 font-medium"
+                                                ? "bg-emerald-50 text-emerald-700 font-medium"
                                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                         )}
                                     >
                                         {template.name}
                                         {currentTemplate === template.id && (
-                                            <Check size={14} className="text-blue-600" />
+                                            <Check size={14} className="text-emerald-600" />
                                         )}
                                     </button>
                                 ))}

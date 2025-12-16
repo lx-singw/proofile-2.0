@@ -40,12 +40,12 @@ export default function WelcomeBanner({
     : "Continue building your verified resume.";
 
   return (
-    <div className="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-900/50 p-8">
+    <div className="rounded-lg border border-emerald-200 bg-gradient-to-r from-emerald-50 to-emerald-50 dark:from-emerald-950/30 dark:to-emerald-950/30 dark:border-emerald-900/50 p-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left: Greeting & Message */}
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            {isNewUser && <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-pulse" />}
+            {isNewUser && <Sparkles className="w-5 h-5 text-emerald-600 dark:text-emerald-400 animate-pulse" />}
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               {greeting}
             </h2>
@@ -62,7 +62,7 @@ export default function WelcomeBanner({
               <Link
                 href={createProfileHref}
                 onClick={() => onCreateProfile?.()}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors font-medium whitespace-nowrap"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-colors font-medium whitespace-nowrap"
               >
                 Create professional profile
                 <ArrowRight className="w-4 h-4" />
@@ -79,7 +79,7 @@ export default function WelcomeBanner({
               <Link
                 href={viewProfileHref}
                 onClick={() => onViewProfile?.()}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors font-medium whitespace-nowrap"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-colors font-medium whitespace-nowrap"
               >
                 View profile
                 <ArrowRight className="w-4 h-4" />

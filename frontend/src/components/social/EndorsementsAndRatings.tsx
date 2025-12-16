@@ -21,14 +21,14 @@ export function EndorsementButton({
         <button
             onClick={onEndorse}
             className={`flex items-center gap-2 px-3 py-2 rounded-xl border transition-all ${isEndorsed
-                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300"
-                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-blue-300 dark:hover:border-blue-700"
+                    ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300"
+                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-emerald-300 dark:hover:border-emerald-700"
                 }`}
         >
             <ThumbsUp className={`w-4 h-4 ${isEndorsed ? "fill-current" : ""}`} />
             <span className="font-medium text-sm">{skillName}</span>
             <span className={`text-xs px-1.5 py-0.5 rounded-full ${isEndorsed
-                    ? "bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200"
+                    ? "bg-emerald-100 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-200"
                     : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                 }`}>
                 {endorsementCount}
@@ -60,7 +60,7 @@ export function SkillEndorsementSection({ skills, onEndorse, isOwner }: SkillEnd
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Award className="w-5 h-5 text-purple-500" />
+                    <Award className="w-5 h-5 text-emerald-500" />
                     Skills & Endorsements
                 </h3>
                 {!isOwner && (
@@ -115,7 +115,7 @@ export function RatingStars({ value, onChange, readonly = false, size = "md" }: 
                     className={`${readonly ? "cursor-default" : "cursor-pointer hover:scale-110"} transition-transform`}
                 >
                     <svg
-                        className={`${starSize} ${star <= displayValue ? "text-yellow-400 fill-yellow-400" : "text-gray-300 dark:text-gray-600"}`}
+                        className={`${starSize} ${star <= displayValue ? "text-emerald-400 fill-emerald-400" : "text-gray-300 dark:text-gray-600"}`}
                         viewBox="0 0 20 20"
                         fill="currentColor"
                     >
@@ -159,14 +159,14 @@ export function WriteReview({ onSubmit, isSubmitting }: WriteReviewProps) {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Share your experience working with this person..."
-                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-none min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-none min-h-[100px] focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 />
             </div>
 
             <Button
                 type="submit"
                 disabled={rating === 0 || isSubmitting}
-                className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50"
             >
                 {isSubmitting ? "Submitting..." : "Submit Review"}
             </Button>

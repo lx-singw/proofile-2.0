@@ -100,7 +100,7 @@ export default function PublicReputationPage({
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
             </div>
         );
     }
@@ -120,7 +120,7 @@ export default function PublicReputationPage({
                 <div className="flex items-start justify-between">
                     {/* User Info */}
                     <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold">
                             {data.user.avatarUrl ? (
                                 <img src={data.user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
                             ) : (
@@ -139,7 +139,7 @@ export default function PublicReputationPage({
                                     </span>
                                 )}
                                 {data.signals.includes('top_rated') && (
-                                    <span className="flex items-center gap-1 text-xs text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-full">
+                                    <span className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-full">
                                         <Award className="h-3 w-3" /> Top Rated
                                     </span>
                                 )}

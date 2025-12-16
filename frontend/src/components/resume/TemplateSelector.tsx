@@ -19,12 +19,12 @@ export default function TemplateSelector({ selectedTemplateId, onSelectTemplate 
             key={template.id}
             onClick={() => onSelectTemplate(template.id)}
             className={`relative group border-2 rounded-lg p-4 transition-all hover:shadow-lg ${selectedTemplateId === template.id
-                ? 'border-blue-600 bg-blue-50'
-                : 'border-gray-200 hover:border-blue-300'
+                ? 'border-emerald-600 bg-emerald-50'
+                : 'border-gray-200 hover:border-emerald-300'
               }`}
           >
             {selectedTemplateId === template.id && (
-              <div className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-1">
+              <div className="absolute top-2 right-2 bg-emerald-600 text-white rounded-full p-1">
                 <Check className="w-4 h-4" />
               </div>
             )}

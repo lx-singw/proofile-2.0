@@ -120,7 +120,7 @@ export default function OnboardingWizard({ persona, onComplete }: OnboardingWiza
     const isCurrentStep = (stepType: string) => currentStep === getStepNumber(stepType);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-emerald-50 to-emerald-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
             <div className="w-full max-w-3xl">
                 {isCurrentStep("goal") && (
                     <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">

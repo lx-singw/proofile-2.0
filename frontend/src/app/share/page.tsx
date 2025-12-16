@@ -37,8 +37,8 @@ export default function SharePage() {
 
     if (loading || !user) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+                <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -106,7 +106,7 @@ export default function SharePage() {
         {
             name: "LinkedIn",
             icon: Linkedin,
-            color: "bg-blue-700 hover:bg-blue-800",
+            color: "bg-emerald-700 hover:bg-emerald-800",
             href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(profileUrl)}`
         },
         {
@@ -118,7 +118,7 @@ export default function SharePage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 print:bg-white">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 print:bg-white">
             <div className="print:hidden">
                 
             </div>
@@ -135,7 +135,7 @@ export default function SharePage() {
                         </Link>
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                                <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                                <div className="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
                                     <Share2 className="w-6 h-6 text-white" />
                                 </div>
                                 Share Your Proofile
@@ -213,7 +213,7 @@ export default function SharePage() {
                                     onClick={handleCopyLink}
                                     className={`px-4 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${copied
                                             ? "bg-green-600 text-white"
-                                            : "bg-blue-600 text-white hover:bg-blue-700"
+                                            : "bg-emerald-600 text-white hover:bg-emerald-700"
                                         }`}
                                 >
                                     {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
@@ -242,26 +242,26 @@ export default function SharePage() {
                         </div>
 
                         {/* Pro Tips */}
-                        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6">
+                        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6">
                             <div className="flex items-center gap-2 mb-4">
-                                <Lightbulb className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                                <span className="font-bold text-yellow-800 dark:text-yellow-300">Pro Tips</span>
+                                <Lightbulb className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                <span className="font-bold text-emerald-800 dark:text-emerald-300">Pro Tips</span>
                             </div>
-                            <ul className="space-y-3 text-sm text-yellow-700 dark:text-yellow-400">
+                            <ul className="space-y-3 text-sm text-emerald-700 dark:text-emerald-400">
                                 <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500">✓</span>
+                                    <span className="text-emerald-500">✓</span>
                                     Add your QR code to your email signature
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500">✓</span>
+                                    <span className="text-emerald-500">✓</span>
                                     Print it on your business cards
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500">✓</span>
+                                    <span className="text-emerald-500">✓</span>
                                     Use it on conference name tags
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <span className="text-yellow-500">✓</span>
+                                    <span className="text-emerald-500">✓</span>
                                     Add it to your LinkedIn banner image
                                 </li>
                             </ul>

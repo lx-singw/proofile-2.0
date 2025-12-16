@@ -49,8 +49,8 @@ export default function QuickApplyModal({ isOpen, onClose, onSubmit, job }: Quic
                 {step === 'confirm' && (
                     <>
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                                <Sparkles className="w-6 h-6 text-purple-600" />
+                            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                                <Sparkles className="w-6 h-6 text-emerald-600" />
                             </div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                                 Quick Apply
@@ -77,7 +77,7 @@ export default function QuickApplyModal({ isOpen, onClose, onSubmit, job }: Quic
                             </button>
                             <button
                                 onClick={handleApply}
-                                className="flex-1 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 flex items-center justify-center gap-2"
+                                className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 flex items-center justify-center gap-2"
                             >
                                 <FileEdit className="w-4 h-4" />
                                 Apply Now
@@ -88,7 +88,7 @@ export default function QuickApplyModal({ isOpen, onClose, onSubmit, job }: Quic
 
                 {step === 'tailoring' && (
                     <div className="text-center py-8">
-                        <Loader2 className="w-12 h-12 mx-auto text-purple-500 animate-spin mb-4" />
+                        <Loader2 className="w-12 h-12 mx-auto text-emerald-500 animate-spin mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                             Tailoring your resume...
                         </h3>

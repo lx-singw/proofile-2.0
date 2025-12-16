@@ -149,7 +149,7 @@ export default function OnboardingTour({ onComplete }: OnboardingTourProps) {
         return hasCompletedTour ? (
             <button
                 onClick={restartTour}
-                className="fixed bottom-24 right-6 z-40 px-4 py-2 bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 rounded-full shadow-lg border border-purple-200 dark:border-purple-800 hover:shadow-xl transition-all text-sm font-medium"
+                className="fixed bottom-24 right-6 z-40 px-4 py-2 bg-white dark:bg-gray-800 text-emerald-600 dark:text-emerald-400 rounded-full shadow-lg border border-emerald-200 dark:border-emerald-800 hover:shadow-xl transition-all text-sm font-medium"
             >
                 Take Tour Again
             </button>
@@ -214,9 +214,9 @@ export default function OnboardingTour({ onComplete }: OnboardingTourProps) {
                                 <div
                                     key={index}
                                     className={`h-1 flex-1 rounded-full transition-colors ${index === currentStep
-                                            ? 'bg-purple-600'
+                                            ? 'bg-emerald-600'
                                             : index < currentStep
-                                                ? 'bg-purple-300'
+                                                ? 'bg-emerald-300'
                                                 : 'bg-gray-200 dark:bg-gray-700'
                                         }`}
                                 />
@@ -241,7 +241,7 @@ export default function OnboardingTour({ onComplete }: OnboardingTourProps) {
                         {currentStep < tourSteps.length - 1 ? (
                             <button
                                 onClick={handleNext}
-                                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+                                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl"
                             >
                                 <span>Next</span>
                                 <ChevronRight className="w-4 h-4" />

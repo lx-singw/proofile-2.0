@@ -53,8 +53,8 @@ const VARIANTS: Record<EmptyStateVariant, {
     },
     "no-results": {
         icon: Search,
-        iconColor: "text-blue-500",
-        bgColor: "bg-blue-50 dark:bg-blue-900/20",
+        iconColor: "text-emerald-500",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
         defaultTitle: "No results found",
         defaultDescription: "Try adjusting your search or filters.",
     },
@@ -74,29 +74,29 @@ const VARIANTS: Record<EmptyStateVariant, {
     },
     "no-jobs": {
         icon: Briefcase,
-        iconColor: "text-purple-500",
-        bgColor: "bg-purple-50 dark:bg-purple-900/20",
+        iconColor: "text-emerald-500",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
         defaultTitle: "No job matches yet",
         defaultDescription: "Complete your profile to get personalized job recommendations.",
     },
     "no-reviews": {
         icon: Star,
-        iconColor: "text-yellow-500",
-        bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+        iconColor: "text-emerald-500",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
         defaultTitle: "No reviews yet",
         defaultDescription: "Request ratings from colleagues to build your reputation.",
     },
     "no-experience": {
         icon: FileText,
-        iconColor: "text-blue-500",
-        bgColor: "bg-blue-50 dark:bg-blue-900/20",
+        iconColor: "text-emerald-500",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
         defaultTitle: "No experience added",
         defaultDescription: "Add your work history to showcase your professional journey.",
     },
     "no-skills": {
         icon: Sparkles,
-        iconColor: "text-indigo-500",
-        bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
+        iconColor: "text-emerald-500",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
         defaultTitle: "No skills added",
         defaultDescription: "Add your skills to help employers find you.",
     },
@@ -109,8 +109,8 @@ const VARIANTS: Record<EmptyStateVariant, {
     },
     "coming-soon": {
         icon: Sparkles,
-        iconColor: "text-purple-500",
-        bgColor: "bg-purple-50 dark:bg-purple-900/20",
+        iconColor: "text-emerald-500",
+        bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
         defaultTitle: "Coming Soon",
         defaultDescription: "We're working on something exciting. Stay tuned!",
     },
@@ -159,14 +159,14 @@ export default function EmptyState({
                 actionHref ? (
                     <Link
                         href={actionHref}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
                     >
                         {actionLabel}
                     </Link>
                 ) : (
                     <button
                         onClick={onAction}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
                     >
                         {actionLabel}
                     </button>

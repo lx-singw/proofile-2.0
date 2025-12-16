@@ -39,7 +39,7 @@ export default function QuickStatsBar({ stats, className = "" }: QuickStatsBarPr
                                 <span className="text-sm text-gray-500 dark:text-gray-400">
                                     {stat.label}:
                                 </span>
-                                <span className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                     {stat.value}
                                 </span>
                                 {stat.trend && (

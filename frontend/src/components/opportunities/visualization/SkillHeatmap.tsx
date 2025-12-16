@@ -19,8 +19,8 @@ export default function SkillHeatmap({ skills }: SkillHeatmapProps) {
     const getHeatColor = (userLevel: number, marketDemand: number) => {
         const gap = marketDemand - userLevel;
         if (gap <= 0) return 'bg-green-500'; // You're ahead
-        if (gap <= 20) return 'bg-yellow-500'; // Slight gap
-        if (gap <= 40) return 'bg-orange-500'; // Moderate gap
+        if (gap <= 20) return 'bg-emerald-500'; // Slight gap
+        if (gap <= 40) return 'bg-emerald-500'; // Moderate gap
         return 'bg-red-500'; // Critical gap
     };
 
@@ -41,7 +41,7 @@ export default function SkillHeatmap({ skills }: SkillHeatmapProps) {
                             {/* Your Level */}
                             <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-blue-500"
+                                    className="h-full bg-emerald-500"
                                     style={{ width: `${skill.userLevel}%` }}
                                 />
                             </div>
@@ -52,7 +52,7 @@ export default function SkillHeatmap({ skills }: SkillHeatmapProps) {
                             {/* Market Demand */}
                             <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-purple-500"
+                                    className="h-full bg-emerald-500"
                                     style={{ width: `${skill.marketDemand}%` }}
                                 />
                             </div>
@@ -64,11 +64,11 @@ export default function SkillHeatmap({ skills }: SkillHeatmapProps) {
             {/* Legend */}
             <div className="flex items-center justify-center gap-6 mt-4 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-blue-500 rounded" />
+                    <div className="w-3 h-3 bg-emerald-500 rounded" />
                     <span>Your Level</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-purple-500 rounded" />
+                    <div className="w-3 h-3 bg-emerald-500 rounded" />
                     <span>Market Demand</span>
                 </div>
             </div>

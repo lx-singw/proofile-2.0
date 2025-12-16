@@ -67,7 +67,7 @@ export default function PreviewPanel({ data, templateId, theme }: PreviewPanelPr
             </div>
 
             {/* Floating Action Button (Mobile) */}
-            <button className="lg:hidden absolute bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-xl flex items-center justify-center hover:bg-blue-700 transition-colors z-20">
+            <button className="lg:hidden absolute bottom-6 right-6 w-14 h-14 bg-emerald-600 text-white rounded-full shadow-xl flex items-center justify-center hover:bg-emerald-700 transition-colors z-20">
                 <Eye size={24} />
             </button>
         </div>

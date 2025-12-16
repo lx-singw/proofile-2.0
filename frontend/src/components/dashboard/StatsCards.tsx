@@ -69,7 +69,7 @@ export default function StatsCards({
             {/* Icon & Label */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg text-emerald-600 dark:text-emerald-400">
                   {stat.icon}
                 </div>
                 <div>
@@ -114,7 +114,7 @@ export default function StatsCards({
       <div className="mt-4">
         <button
           onClick={onViewStats}
-          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+          className="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
         >
           View detailed analytics →
         </button>

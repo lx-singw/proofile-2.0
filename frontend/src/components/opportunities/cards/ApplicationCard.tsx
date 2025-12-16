@@ -31,13 +31,13 @@ export default function ApplicationCard({
     const getStatusConfig = (status: ApplicationStatus) => {
         switch (status) {
             case 'pending':
-                return { icon: Clock, color: 'text-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/30', label: 'Pending' };
+                return { icon: Clock, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', label: 'Pending' };
             case 'submitted':
-                return { icon: CheckCircle, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30', label: 'Submitted' };
+                return { icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', label: 'Submitted' };
             case 'viewed':
                 return { icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-100 dark:bg-green-900/30', label: 'Viewed by Recruiter' };
             case 'interviewing':
-                return { icon: Loader2, color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30', label: 'Interviewing' };
+                return { icon: Loader2, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', label: 'Interviewing' };
             case 'rejected':
                 return { icon: XCircle, color: 'text-red-500', bg: 'bg-red-100 dark:bg-red-900/30', label: 'Not Selected' };
             case 'offered':

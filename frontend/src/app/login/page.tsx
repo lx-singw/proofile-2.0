@@ -8,7 +8,7 @@ import { Shield, CheckCircle, ArrowLeft } from "lucide-react";
 export default function LoginPage() {
   const router = useRouter();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-emerald-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       {/* Header */}
       <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">

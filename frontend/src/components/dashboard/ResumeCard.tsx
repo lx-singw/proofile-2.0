@@ -48,16 +48,16 @@ export default function ResumeCard({ id, name, template_id, updated_at, onExport
     };
 
     return (
-        <div className="group relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:border-blue-500 dark:hover:border-blue-400 transition-all">
+        <div className="group relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:border-emerald-500 dark:hover:border-emerald-400 transition-all">
             {/* Template Badge */}
             <div className="absolute top-4 right-4">
-                <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
+                <span className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium rounded-full">
                     {TEMPLATE_NAMES[template_id] || template_id}
                 </span>
             </div>
 
             {/* Icon */}
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="w-6 h-6 text-white" />
             </div>
 
@@ -76,7 +76,7 @@ export default function ResumeCard({ id, name, template_id, updated_at, onExport
             <div className="flex items-center gap-2">
                 <Link
                     href={`/resume/build?id=${id}`}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium"
                 >
                     <Edit className="w-4 h-4" />
                     <span>Edit</span>

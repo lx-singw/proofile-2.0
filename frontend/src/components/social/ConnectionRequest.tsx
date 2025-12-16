@@ -58,7 +58,7 @@ export function ConnectionButton({
                 <div className="flex gap-2">
                     <Button
                         onClick={onAccept}
-                        className={`rounded-xl bg-blue-600 hover:bg-blue-700 text-white ${sizeClasses}`}
+                        className={`rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white ${sizeClasses}`}
                     >
                         <Check className="w-4 h-4 mr-1.5" />
                         Accept
@@ -77,7 +77,7 @@ export function ConnectionButton({
             return (
                 <Button
                     onClick={onConnect}
-                    className={`rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-sm ${sizeClasses}`}
+                    className={`rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm ${sizeClasses}`}
                 >
                     <UserPlus className="w-4 h-4 mr-1.5" />
                     Connect
@@ -119,7 +119,7 @@ export function ConnectionRequestCard({ request, onAccept, onReject }: Connectio
                         unoptimized
                     />
                 ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold">
                         {request.user.name.charAt(0)}
                     </div>
                 )}
@@ -142,7 +142,7 @@ export function ConnectionRequestCard({ request, onAccept, onReject }: Connectio
             <div className="flex gap-2 mt-4">
                 <Button
                     onClick={() => onAccept(request.id)}
-                    className="flex-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                    className="flex-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm"
                 >
                     Accept
                 </Button>

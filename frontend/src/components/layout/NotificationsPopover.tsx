@@ -95,7 +95,7 @@ export default function NotificationsPopover({
                         {unreadCount > 0 && (
                             <button
                                 onClick={markAllRead}
-                                className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                                className="text-xs text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
                             >
                                 <Check className="w-3 h-3" /> Mark all read
                             </button>
@@ -116,12 +116,12 @@ export default function NotificationsPopover({
                                     key={notification.id}
                                     className={`p-3 rounded-lg border transition-all ${notification.read
                                         ? "bg-transparent border-transparent opacity-75"
-                                        : "bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30"
+                                        : "bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/30"
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
                                         <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${notification.type === 'success' ? 'bg-green-500' :
-                                            notification.type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+                                            notification.type === 'warning' ? 'bg-emerald-500' : 'bg-emerald-500'
                                             }`} />
                                         <div className="flex-1 min-w-0">
                                             <h4 className={`text-sm font-medium text-gray-900 dark:text-white ${!notification.read ? 'font-bold' : ''}`}>
@@ -137,7 +137,7 @@ export default function NotificationsPopover({
                                                 {notification.link && (
                                                     <Link
                                                         href={notification.link}
-                                                        className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                                                        className="text-xs text-emerald-600 hover:underline flex items-center gap-1"
                                                         onClick={() => {
                                                             if (!notification.read) markAsRead(notification.id);
                                                             setIsOpen(false);

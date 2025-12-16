@@ -225,7 +225,7 @@ export default function DashboardDropdown({
                               <a
                                 href={subItem.href}
                                 className={`block px-4 py-2 text-sm ${isSubActive
-                                  ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
                                   : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                                   } transition-colors flex items-center gap-2`}
                                 role="menuitem"
@@ -253,7 +253,7 @@ export default function DashboardDropdown({
                   ref={el => { itemRefs.current[index] = el; }}
                   href={item.href}
                   className={`block px-4 py-2 text-sm ${highlightedIndex === index || isActive
-                    ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
                     : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800"
                     } transition-colors flex items-center gap-2`}
                   role="menuitem"

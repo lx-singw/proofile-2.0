@@ -96,7 +96,7 @@ export default function ResumeDropzone({
         }
 
         if (uploading) {
-            return `${baseClasses} border-blue-500 bg-blue-50 dark:bg-blue-900/20`;
+            return `${baseClasses} border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20`;
         }
 
         if (isDragging) {
@@ -132,7 +132,7 @@ export default function ResumeDropzone({
                     ) : error ? (
                         <XCircle className="w-16 h-16 text-red-600" />
                     ) : uploading ? (
-                        <Loader2 className="w-16 h-16 text-blue-600 animate-spin" />
+                        <Loader2 className="w-16 h-16 text-emerald-600 animate-spin" />
                     ) : (
                         <div className={`w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center ${isDragging ? 'scale-110' : ''} transition-transform`}>
                             <Upload className="w-10 h-10 text-white" />
@@ -160,10 +160,10 @@ export default function ResumeDropzone({
                         </>
                     ) : uploading ? (
                         <>
-                            <h3 className="text-xl font-bold text-blue-700 dark:text-blue-400">
+                            <h3 className="text-xl font-bold text-emerald-700 dark:text-emerald-400">
                                 Uploading...
                             </h3>
-                            <p className="text-sm text-blue-600 dark:text-blue-500">
+                            <p className="text-sm text-emerald-600 dark:text-emerald-500">
                                 {selectedFile?.name}
                             </p>
                         </>

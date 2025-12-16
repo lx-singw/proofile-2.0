@@ -158,7 +158,7 @@ export default function FeedPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Rss className="w-7 h-7 text-purple-600" />
+                                <Rss className="w-7 h-7 text-emerald-600" />
                                 Your Feed
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 text-sm mt-0.5">

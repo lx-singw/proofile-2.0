@@ -91,8 +91,8 @@ export function ApplyModal({
                         className={`
                             relative border-2 rounded-xl p-5 transition-all cursor-pointer
                             ${hoveredOption === "proofile"
-                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                                : "border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10"}
+                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
+                                : "border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/10"}
                         `}
                     >
                         {/* Recommended Badge */}
@@ -101,7 +101,7 @@ export function ApplyModal({
                         </div>
 
                         <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
                                 <Zap className="w-6 h-6 text-white" />
                             </div>
 
@@ -122,13 +122,13 @@ export function ApplyModal({
 
                                 {/* CTA Button */}
                                 {isAuthenticated ? (
-                                    <Button className="mt-4 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl">
+                                    <Button className="mt-4 w-full bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 text-white rounded-xl">
                                         <Zap className="w-4 h-4 mr-2" />
                                         Quick Apply Now
                                     </Button>
                                 ) : (
                                     <Link href={`/signup?redirect=/jobs/${job.id}/apply`} className="block mt-4">
-                                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl">
+                                        <Button className="w-full bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 text-white rounded-xl">
                                             Create Free Account
                                             <ArrowRight className="w-4 h-4 ml-2" />
                                         </Button>
@@ -138,7 +138,7 @@ export function ApplyModal({
                                 {!isAuthenticated && (
                                     <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
                                         Already have an account?{" "}
-                                        <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+                                        <Link href="/login" className="text-emerald-600 dark:text-emerald-400 hover:underline">
                                             Sign in
                                         </Link>
                                     </p>
@@ -189,11 +189,11 @@ export function ApplyModal({
                 <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700">
                     <p className="text-xs text-center text-gray-500 dark:text-gray-400">
                         By applying, you agree to our{" "}
-                        <Link href="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
+                        <Link href="/terms" className="text-emerald-600 dark:text-emerald-400 hover:underline">
                             Terms of Service
                         </Link>{" "}
                         and{" "}
-                        <Link href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
+                        <Link href="/privacy" className="text-emerald-600 dark:text-emerald-400 hover:underline">
                             Privacy Policy
                         </Link>
                     </p>

@@ -47,7 +47,7 @@ export default function AIReviewPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
             </div>
         );
     }
@@ -58,7 +58,7 @@ export default function AIReviewPage() {
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Resume Not Found</h1>
                 <button
                     onClick={() => router.push('/resume/ai-build')}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg"
                 >
                     Try Again
                 </button>
@@ -96,7 +96,7 @@ export default function AIReviewPage() {
                         </button>
                         <button
                             onClick={() => router.push(`/resume/build?id=${resumeId}`)} // Assuming build page supports editing by ID
-                            className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium shadow-sm"
+                            className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium shadow-sm"
                         >
                             <Edit className="w-4 h-4" />
                             Edit & Refine

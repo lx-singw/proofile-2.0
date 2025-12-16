@@ -87,7 +87,7 @@ export default function PublicProfilePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
                 <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 px-6 py-4">
                     <ProofileLogo size={32} showWordmark={true} />
                 </header>
@@ -103,7 +103,7 @@ export default function PublicProfilePage() {
 
     if (notFound || !profile) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center">
                 <div className="text-center space-y-4">
                     <div className="text-6xl">🔍</div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile Not Found</h1>
@@ -112,7 +112,7 @@ export default function PublicProfilePage() {
                     </p>
                     <Link
                         href="/"
-                        className="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                        className="inline-block mt-6 px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors"
                     >
                         Go Home
                     </Link>
@@ -141,7 +141,7 @@ export default function PublicProfilePage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
             {/* Mode Toggle for Owner */}
             {isOwnProfile && (
                 <ProfileModeToggle
@@ -170,7 +170,7 @@ export default function PublicProfilePage() {
                         {isOwnProfile && (
                             <Link
                                 href="/settings"
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                                className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
                             >
                                 Edit Profile
                             </Link>
@@ -191,15 +191,15 @@ export default function PublicProfilePage() {
             {/* Private Profile Warning Banner */}
             {profile.is_private && isOwnProfile && (
                 <div className="max-w-5xl mx-auto px-4 pt-6">
-                    <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
-                        <EyeOff className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
+                    <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                        <EyeOff className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-yellow-800 dark:text-yellow-300 font-medium">Your profile is set to private</p>
-                            <p className="text-yellow-700 dark:text-yellow-400 text-sm">Only you can see this preview. Other people won't be able to view your profile unless you make it public.</p>
+                            <p className="text-emerald-800 dark:text-emerald-300 font-medium">Your profile is set to private</p>
+                            <p className="text-emerald-700 dark:text-emerald-400 text-sm">Only you can see this preview. Other people won't be able to view your profile unless you make it public.</p>
                         </div>
                         <Link
                             href="/settings?tab=profile"
-                            className="px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-lg hover:bg-yellow-700 transition-colors flex-shrink-0"
+                            className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex-shrink-0"
                         >
                             Make Public
                         </Link>
@@ -212,7 +212,7 @@ export default function PublicProfilePage() {
                 <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8">
                     <div className="flex items-start gap-6">
                         {/* Avatar */}
-                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
+                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
                             {profile.full_name?.charAt(0)?.toUpperCase() || profile.username.charAt(0).toUpperCase()}
                         </div>
 
@@ -262,7 +262,7 @@ export default function PublicProfilePage() {
                             {/* Rating display */}
                             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                                 <div className="flex items-center gap-1">
-                                    <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                                    <Star className="w-5 h-5 text-emerald-500 fill-emerald-500" />
                                     <span className="font-bold text-gray-900 dark:text-white">{profileStats.rating}/5.0</span>
                                     <span className="text-sm text-gray-500">({profileStats.ratingCount} ratings)</span>
                                 </div>
@@ -345,11 +345,11 @@ export default function PublicProfilePage() {
                             {profile.resumes.map((resume) => (
                                 <div
                                     key={resume.id}
-                                    className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer group"
+                                    className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-700 transition-all cursor-pointer group"
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
-                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                                 {resume.name}
                                             </h3>
                                             <div className="flex items-center gap-3 mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -365,7 +365,7 @@ export default function PublicProfilePage() {
 
                                         <Link
                                             href={`/resume/${resume.id}`}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                            className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2"
                                         >
                                             <Download className="w-4 h-4" />
                                             View
@@ -379,7 +379,7 @@ export default function PublicProfilePage() {
 
                 {/* CTA for non-logged-in users */}
                 {!user && (
-                    <div className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-3xl p-8 border border-green-200 dark:border-green-800 text-center">
+                    <div className="mt-8 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-3xl p-8 border border-green-200 dark:border-green-800 text-center">
                         <div className="max-w-2xl mx-auto">
                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                                 Create Your Own Professional Identity

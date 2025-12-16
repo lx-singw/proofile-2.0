@@ -80,9 +80,9 @@ export default function SuggestedActions({
       case "high":
         return "border-l-4 border-red-500 bg-red-50 dark:bg-red-900/10";
       case "medium":
-        return "border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/10";
+        return "border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/10";
       default:
-        return "border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/10";
+        return "border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/10";
     }
   };
 
@@ -90,7 +90,7 @@ export default function SuggestedActions({
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
-        <Lightbulb className="w-5 h-5 text-yellow-500" />
+        <Lightbulb className="w-5 h-5 text-emerald-500" />
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           Suggested Actions
         </h3>
@@ -125,7 +125,7 @@ export default function SuggestedActions({
             <a
               href={action.href}
               onClick={() => onActionClick?.(action.id)}
-              className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors mt-2"
+              className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors mt-2"
             >
               {action.cta}
               <ArrowRight className="w-3 h-3" />

@@ -69,22 +69,22 @@ export default function ResumeToolsMenu({ className = '' }: ResumeToolsMenuProps
                             href={action.href}
                             className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
                         >
-                            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                <action.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                                <action.icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                             </div>
                             <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                     {action.label}
                                 </p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">{action.description}</p>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
                         </Link>
                     ))}
 
                     <Link
                         href="/tools"
-                        className="flex items-center justify-center gap-2 w-full py-3 mt-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
+                        className="flex items-center justify-center gap-2 w-full py-3 mt-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl transition-colors"
                     >
                         View All Tools
                         <ArrowRight className="w-4 h-4" />

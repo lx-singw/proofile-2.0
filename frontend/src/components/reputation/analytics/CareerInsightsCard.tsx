@@ -112,7 +112,7 @@ export default function CareerInsightsCard() {
             {/* Header with Tabs */}
             <div className="border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 p-4 pb-0">
-                    <BarChart2 className="w-5 h-5 text-indigo-600" />
+                    <BarChart2 className="w-5 h-5 text-emerald-600" />
                     <h3 className="font-semibold text-gray-900 dark:text-white">Career Insights</h3>
                 </div>
                 <div className="flex gap-1 px-4 mt-4">
@@ -121,7 +121,7 @@ export default function CareerInsightsCard() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === tab.id
-                                    ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600"
+                                    ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-b-2 border-emerald-600"
                                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                                 }`}
                         >
@@ -163,8 +163,8 @@ export default function CareerInsightsCard() {
 
                                 {/* Milestone */}
                                 {data.growth.milestone && (
-                                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 rounded-lg mb-6">
-                                        <p className="text-indigo-800 dark:text-indigo-300 font-medium">
+                                    <div className="bg-gradient-to-r from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 p-4 rounded-lg mb-6">
+                                        <p className="text-emerald-800 dark:text-emerald-300 font-medium">
                                             {data.growth.milestone}
                                         </p>
                                     </div>
@@ -239,16 +239,16 @@ export default function CareerInsightsCard() {
                                             ))}
                                         </ul>
                                     </div>
-                                    <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg">
+                                    <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <Target className="w-5 h-5 text-amber-600" />
-                                            <span className="font-medium text-amber-800 dark:text-amber-300">
+                                            <Target className="w-5 h-5 text-emerald-600" />
+                                            <span className="font-medium text-emerald-800 dark:text-emerald-300">
                                                 Growth Areas
                                             </span>
                                         </div>
                                         <ul className="space-y-1">
                                             {data.comparison.growth_areas.map((s, i) => (
-                                                <li key={i} className="text-sm text-amber-700 dark:text-amber-400">
+                                                <li key={i} className="text-sm text-emerald-700 dark:text-emerald-400">
                                                     • {s}
                                                 </li>
                                             ))}
@@ -273,7 +273,7 @@ export default function CareerInsightsCard() {
                                                     className={`absolute h-full rounded-full transition-all ${dim.percentile >= 70
                                                             ? "bg-green-500"
                                                             : dim.percentile >= 40
-                                                                ? "bg-yellow-500"
+                                                                ? "bg-emerald-500"
                                                                 : "bg-red-500"
                                                         }`}
                                                     style={{ width: `${dim.percentile}%` }}
@@ -312,7 +312,7 @@ export default function CareerInsightsCard() {
                                         className={`p-2 rounded-lg ${suggestion.priority === "high"
                                                 ? "bg-red-100 dark:bg-red-900/30 text-red-600"
                                                 : suggestion.priority === "medium"
-                                                    ? "bg-amber-100 dark:bg-amber-900/30 text-amber-600"
+                                                    ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600"
                                                     : "bg-green-100 dark:bg-green-900/30 text-green-600"
                                             }`}
                                     >

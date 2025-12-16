@@ -86,13 +86,13 @@ export default function VerificationPage() {
     if (authLoading || (loading && !summary)) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
             {/* Quick Stats Bar */}
             <VerificationStatsBar
                 verifiedPercent={summary?.verification_score || 0}
@@ -181,19 +181,19 @@ export default function VerificationPage() {
                     </div>
 
                     {/* Peer Employment Verification */}
-                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-8 border border-blue-100 dark:border-blue-900/30">
-                        <h2 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-2">Employment Verification</h2>
-                        <p className="text-blue-700 dark:text-blue-300 mb-6">
+                    <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-6 mb-8 border border-emerald-100 dark:border-emerald-900/30">
+                        <h2 className="text-xl font-bold text-emerald-900 dark:text-emerald-100 mb-2">Employment Verification</h2>
+                        <p className="text-emerald-700 dark:text-emerald-300 mb-6">
                             We use a crowdsourced trust graph. Verify your work history by asking peers who worked with you at the same time.
                         </p>
                         <PeerVerificationHub />
                     </div>
 
                     {/* Why Verify Section */}
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/50 p-8">
+                    <div className="bg-gradient-to-r from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/50 p-8">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                <Sparkles className="w-6 h-6 text-blue-600" />
+                            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                <Sparkles className="w-6 h-6 text-emerald-600" />
                             </div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Why verify?</h2>
                         </div>
@@ -210,8 +210,8 @@ export default function VerificationPage() {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex-shrink-0">
-                                    <Users className="w-5 h-5 text-purple-600" />
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex-shrink-0">
+                                    <Users className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-white">Employers trust verified profiles</h3>
@@ -220,8 +220,8 @@ export default function VerificationPage() {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex-shrink-0">
-                                    <Award className="w-5 h-5 text-orange-600" />
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex-shrink-0">
+                                    <Award className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-white">Higher job match quality</h3>
@@ -230,8 +230,8 @@ export default function VerificationPage() {
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
-                                    <Eye className="w-5 h-5 text-blue-600" />
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex-shrink-0">
+                                    <Eye className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-white">Stand out from competition</h3>
@@ -245,7 +245,7 @@ export default function VerificationPage() {
                     <div className="mt-8 text-center">
                         <Link
                             href="/settings?tab=verification"
-                            className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center gap-1"
+                            className="text-emerald-600 hover:text-emerald-700 font-medium inline-flex items-center gap-1"
                         >
                             Manage all verifications in Settings <ChevronRight className="w-4 h-4" />
                         </Link>

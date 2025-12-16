@@ -34,8 +34,8 @@ export default function TemplateSelectionStep({
                         className={cn(
                             "relative group cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200",
                             selectedTemplate === template.id
-                                ? "border-blue-600 ring-4 ring-blue-50 shadow-xl scale-[1.02]"
-                                : "border-gray-200 hover:border-blue-400 hover:shadow-lg"
+                                ? "border-emerald-600 ring-4 ring-emerald-50 shadow-xl scale-[1.02]"
+                                : "border-gray-200 hover:border-emerald-400 hover:shadow-lg"
                         )}
                         onClick={() => onTemplateSelect(template.id)}
                     >
@@ -64,11 +64,11 @@ export default function TemplateSelectionStep({
 
                             {/* Overlay */}
                             <div className={cn(
-                                "absolute inset-0 bg-blue-900/0 transition-colors flex items-center justify-center",
-                                selectedTemplate === template.id ? "bg-blue-900/10" : "group-hover:bg-blue-900/5"
+                                "absolute inset-0 bg-emerald-900/0 transition-colors flex items-center justify-center",
+                                selectedTemplate === template.id ? "bg-emerald-900/10" : "group-hover:bg-emerald-900/5"
                             )}>
                                 {selectedTemplate === template.id && (
-                                    <div className="bg-blue-600 text-white p-3 rounded-full shadow-lg animate-in zoom-in">
+                                    <div className="bg-emerald-600 text-white p-3 rounded-full shadow-lg animate-in zoom-in">
                                         <Check size={24} />
                                     </div>
                                 )}
@@ -92,7 +92,7 @@ export default function TemplateSelectionStep({
                             className={cn(
                                 "flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all",
                                 selectedTheme === theme.id
-                                    ? "border-blue-600 bg-blue-50 text-blue-900"
+                                    ? "border-emerald-600 bg-emerald-50 text-emerald-900"
                                     : "border-gray-200 hover:border-gray-300 text-gray-700"
                             )}
                         >
@@ -101,7 +101,7 @@ export default function TemplateSelectionStep({
                                 style={{ backgroundColor: theme.color }}
                             />
                             <span className="font-medium">{theme.name}</span>
-                            {selectedTheme === theme.id && <Check size={16} className="ml-2 text-blue-600" />}
+                            {selectedTheme === theme.id && <Check size={16} className="ml-2 text-emerald-600" />}
                         </button>
                     ))}
                 </div>
@@ -110,7 +110,7 @@ export default function TemplateSelectionStep({
             <div className="flex justify-end">
                 <button
                     onClick={onContinue}
-                    className="flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
+                    className="flex items-center gap-2 px-8 py-4 bg-emerald-600 text-white rounded-xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
                 >
                     Start Building
                     <ArrowRight size={20} />

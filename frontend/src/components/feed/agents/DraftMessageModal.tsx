@@ -112,7 +112,7 @@ export function DraftMessageModal({
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-500 flex items-center justify-center">
                             <Sparkles className="w-4 h-4 text-white" />
                         </div>
                         <div>
@@ -137,8 +137,8 @@ export function DraftMessageModal({
                 {/* Context Badge */}
                 {contextDetails && (
                     <div className="px-4 pt-3">
-                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2">
-                            <p className="text-xs text-blue-700 dark:text-blue-300">
+                        <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg px-3 py-2">
+                            <p className="text-xs text-emerald-700 dark:text-emerald-300">
                                 <Wand2 className="w-3 h-3 inline mr-1" />
                                 Context: {contextDetails}
                             </p>
@@ -155,12 +155,12 @@ export function DraftMessageModal({
                             placeholder="Your message..."
                             rows={5}
                             disabled={isGenerating}
-                            className="w-full resize-none bg-gray-50 dark:bg-gray-700/50 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:opacity-50"
+                            className="w-full resize-none bg-gray-50 dark:bg-gray-700/50 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:opacity-50"
                         />
 
                         {isGenerating && (
                             <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-700/80 rounded-xl">
-                                <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                                     <Sparkles className="w-5 h-5 animate-pulse" />
                                     <span className="text-sm font-medium">Generating...</span>
                                 </div>
@@ -174,7 +174,7 @@ export function DraftMessageModal({
                         size="sm"
                         onClick={generateDraft}
                         disabled={isGenerating}
-                        className="mt-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg"
+                        className="mt-2 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg"
                     >
                         <RefreshCw className={`w-4 h-4 mr-1.5 ${isGenerating ? "animate-spin" : ""}`} />
                         Regenerate
@@ -215,7 +215,7 @@ export function DraftMessageModal({
                             size="sm"
                             onClick={handleSend}
                             disabled={!message.trim() || isSending}
-                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg px-4"
+                            className="bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 text-white rounded-lg px-4"
                         >
                             {isSending ? (
                                 <span className="flex items-center gap-1">

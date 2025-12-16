@@ -171,7 +171,7 @@ export default function OnboardingPage() {
                         </p>
 
                         {importStatus === 'importing' && (
-                            <div className="flex flex-col items-center gap-3 text-blue-600">
+                            <div className="flex flex-col items-center gap-3 text-emerald-600">
                                 <Loader2 className="w-8 h-8 animate-spin" />
                                 <span className="text-sm font-medium">Importing your resume analysis...</span>
                             </div>
@@ -200,16 +200,16 @@ export default function OnboardingPage() {
                             <button
                                 onClick={() => setOpportunityPreference('jobs')}
                                 className={`w-full p-5 rounded-xl border-2 text-left transition-all ${opportunityPreference === 'jobs'
-                                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                                    ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-emerald-300'
                                     }`}
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className={`p-3 rounded-xl ${opportunityPreference === 'jobs' ? 'bg-blue-600 text-white' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'}`}>
+                                    <div className={`p-3 rounded-xl ${opportunityPreference === 'jobs' ? 'bg-emerald-600 text-white' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600'}`}>
                                         <Briefcase className="w-6 h-6" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className={`font-bold text-lg ${opportunityPreference === 'jobs' ? 'text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-white'}`}>
+                                        <h3 className={`font-bold text-lg ${opportunityPreference === 'jobs' ? 'text-emerald-900 dark:text-emerald-100' : 'text-gray-900 dark:text-white'}`}>
                                             💼 Jobs
                                         </h3>
                                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -256,11 +256,11 @@ export default function OnboardingPage() {
                             <button
                                 onClick={() => setOpportunityPreference('both')}
                                 className={`w-full p-4 rounded-xl border-2 text-center transition-all ${opportunityPreference === 'both'
-                                    ? 'border-purple-600 bg-purple-50 dark:bg-purple-900/20'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-purple-300'
+                                    ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-emerald-300'
                                     }`}
                             >
-                                <span className={`font-medium ${opportunityPreference === 'both' ? 'text-purple-900 dark:text-purple-100' : 'text-gray-600 dark:text-gray-400'}`}>
+                                <span className={`font-medium ${opportunityPreference === 'both' ? 'text-emerald-900 dark:text-emerald-100' : 'text-gray-600 dark:text-gray-400'}`}>
                                     ✨ I'm interested in both
                                 </span>
                             </button>
@@ -269,7 +269,7 @@ export default function OnboardingPage() {
                         <button
                             onClick={handleCategorySelect}
                             disabled={!opportunityPreference || loading}
-                            className="w-full py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-xl font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 text-white rounded-xl font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {loading ? <Loader2 className="animate-spin" /> : <>Continue <ArrowRight className="w-4 h-4" /></>}
                         </button>
@@ -278,7 +278,7 @@ export default function OnboardingPage() {
 
                 {step === 'username' && (
                     <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 animate-fade-in">
-                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 text-purple-600">
+                        <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mb-6 text-emerald-600">
                             <User className="w-6 h-6" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Claim your username</h2>
@@ -297,7 +297,7 @@ export default function OnboardingPage() {
                                         type="text"
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                                        className="w-full pl-24 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 outline-none transition-all"
+                                        className="w-full pl-24 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                                         placeholder="username"
                                     />
                                 </div>
@@ -305,7 +305,7 @@ export default function OnboardingPage() {
                             <button
                                 onClick={handleUsernameSubmit}
                                 disabled={!username || loading}
-                                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 className="animate-spin" /> : <>Continue <ArrowRight className="w-4 h-4" /></>}
                             </button>
@@ -315,7 +315,7 @@ export default function OnboardingPage() {
 
                 {step === 'visibility' && (
                     <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 animate-fade-in">
-                        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 text-blue-600">
+                        <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mb-6 text-emerald-600">
                             <Globe className="w-6 h-6" />
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Profile Visibility</h2>
@@ -327,15 +327,15 @@ export default function OnboardingPage() {
                             <button
                                 onClick={() => setVisibility('public')}
                                 className={`w-full p-4 rounded-xl border-2 text-left transition-all flex items-start gap-4 ${visibility === 'public'
-                                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                                    ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'
+                                    : 'border-gray-200 dark:border-gray-700 hover:border-emerald-300'
                                     }`}
                             >
-                                <div className={`p-2 rounded-lg ${visibility === 'public' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
+                                <div className={`p-2 rounded-lg ${visibility === 'public' ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
                                     <Globe className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h3 className={`font-bold ${visibility === 'public' ? 'text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-white'}`}>Public</h3>
+                                    <h3 className={`font-bold ${visibility === 'public' ? 'text-emerald-900 dark:text-emerald-100' : 'text-gray-900 dark:text-white'}`}>Public</h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">Visible to everyone. Perfect for job seeking and networking.</p>
                                 </div>
                             </button>
@@ -360,7 +360,7 @@ export default function OnboardingPage() {
                         <button
                             onClick={handleComplete}
                             disabled={loading}
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {loading ? <Loader2 className="animate-spin" /> : <>Finish Setup <Sparkles className="w-4 h-4" /></>}
                         </button>
@@ -370,7 +370,7 @@ export default function OnboardingPage() {
                 {step === 'tour' && (
                     <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 animate-fade-in max-w-2xl w-full">
                         <div className="text-center mb-8">
-                            <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-indigo-600">
+                            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-600">
                                 <LayoutDashboard className="w-8 h-8" />
                             </div>
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your Proofile Dashboard</h2>
@@ -381,7 +381,7 @@ export default function OnboardingPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                             <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 flex items-start gap-3">
-                                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600">
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
                                     <User className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -399,7 +399,7 @@ export default function OnboardingPage() {
                                 </div>
                             </div>
                             <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 flex items-start gap-3">
-                                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600">
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
                                     <ShieldCheck className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -408,7 +408,7 @@ export default function OnboardingPage() {
                                 </div>
                             </div>
                             <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 flex items-start gap-3">
-                                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg text-yellow-600">
+                                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
                                     <Star className="w-5 h-5" />
                                 </div>
                                 <div>
@@ -420,7 +420,7 @@ export default function OnboardingPage() {
 
                         <button
                             onClick={handleTourComplete}
-                            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
                         >
                             Start Exploring <ArrowRight className="w-4 h-4" />
                         </button>

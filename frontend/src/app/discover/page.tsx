@@ -86,7 +86,7 @@ export default function DiscoverPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
         );
     }
@@ -122,7 +122,7 @@ export default function DiscoverPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Sparkles className="w-8 h-8 text-purple-500" />
+                                <Sparkles className="w-8 h-8 text-emerald-500" />
                                 Discover Professionals
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -139,7 +139,7 @@ export default function DiscoverPage() {
                             </Link>
                             <Link
                                 href="/feed"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                             >
                                 <TrendingUp className="w-4 h-4" />
                                 Feed
@@ -157,7 +157,7 @@ export default function DiscoverPage() {
                         <div className="lg:col-span-3 space-y-4">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                    <Flame className="w-5 h-5 text-orange-500" />
+                                    <Flame className="w-5 h-5 text-emerald-500" />
                                     Recommended For You
                                 </h2>
                                 <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -220,7 +220,7 @@ export default function DiscoverPage() {
                             </div>
 
                             {/* Tips */}
-                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/30 p-5">
+                            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 p-5">
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">💡 Pro Tip</h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">
                                     Verified profiles get 3x more visibility in search results. Complete your verification today!

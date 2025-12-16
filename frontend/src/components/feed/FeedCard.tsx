@@ -48,13 +48,13 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
     const getTypeIcon = () => {
         switch (item.type) {
             case "job_match":
-                return <Briefcase className="w-4 h-4 text-blue-500" />;
+                return <Briefcase className="w-4 h-4 text-emerald-500" />;
             case "skill_verified":
                 return <CheckCircle className="w-4 h-4 text-green-500" />;
             case "resume_shared":
-                return <FileText className="w-4 h-4 text-purple-500" />;
+                return <FileText className="w-4 h-4 text-emerald-500" />;
             case "milestone":
-                return <Award className="w-4 h-4 text-yellow-500" />;
+                return <Award className="w-4 h-4 text-emerald-500" />;
             default:
                 return <TrendingUp className="w-4 h-4 text-gray-500" />;
         }
@@ -86,7 +86,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                                 unoptimized
                             />
                         ) : (
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-lg">
                                 {item.user.name.charAt(0)}
                             </div>
                         )}
@@ -94,7 +94,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                            <Link href={`/p/${item.user.username || item.user.id}`} className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
+                            <Link href={`/p/${item.user.username || item.user.id}`} className="font-semibold text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors truncate">
                                 {item.user.name}
                             </Link>
                             <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
@@ -130,7 +130,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                         variant="ghost"
                         size="sm"
                         onClick={() => onLike?.(item.id)}
-                        className={`flex items-center gap-1.5 rounded-lg ${item.isLiked ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`}
+                        className={`flex items-center gap-1.5 rounded-lg ${item.isLiked ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-gray-400"}`}
                     >
                         <ThumbsUp className={`w-4 h-4 ${item.isLiked ? "fill-current" : ""}`} />
                         <span className="text-sm font-medium">{item.likes || ""}</span>

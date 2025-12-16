@@ -43,11 +43,11 @@ export default function JobRecommendations() {
             {jobs.map((job) => (
                 <div
                     key={job.id}
-                    className="group relative p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all hover:border-purple-200 dark:hover:border-purple-800"
+                    className="group relative p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all hover:border-emerald-200 dark:hover:border-emerald-800"
                 >
                     <div className="flex justify-between items-start mb-2">
                         <div>
-                            <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 transition-colors">
+                            <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors">
                                 {job.title}
                             </h3>
                             <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -55,7 +55,7 @@ export default function JobRecommendations() {
                                 <span>{job.company_name}</span>
                             </div>
                         </div>
-                        <div className="bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 text-xs font-medium px-2 py-1 rounded-full flex items-center gap-1">
+                        <div className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium px-2 py-1 rounded-full flex items-center gap-1">
                             <Sparkles className="w-3 h-3" />
                             <span>Match</span>
                         </div>
@@ -69,7 +69,7 @@ export default function JobRecommendations() {
                         <div className="flex-1" />
                         <Link
                             href={`/jobs/${job.id}`}
-                            className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline font-medium"
+                            className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
                         >
                             View Details
                             <ChevronRight className="w-3 h-3" />
@@ -80,7 +80,7 @@ export default function JobRecommendations() {
 
             <Link
                 href="/jobs"
-                className="block text-center text-sm text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors py-2"
+                className="block text-center text-sm text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors py-2"
             >
                 View all jobs
             </Link>

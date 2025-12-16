@@ -134,7 +134,7 @@ export function RateProfessionalModal({
                     >
                         <Star
                             className={`w-5 h-5 ${star <= rating
-                                    ? "text-yellow-400 fill-yellow-400"
+                                    ? "text-emerald-400 fill-emerald-400"
                                     : "text-gray-300 dark:text-gray-600"
                                 }`}
                         />
@@ -155,8 +155,8 @@ export function RateProfessionalModal({
                 {/* Header */}
                 <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between z-10">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
-                            <Star className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                            <Star className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -190,7 +190,7 @@ export function RateProfessionalModal({
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, relationship: type.id }))}
                                         className={`p-3 rounded-lg border text-left transition-all ${formData.relationship === type.id
-                                                ? "border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20"
+                                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
                                                 : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
                                             }`}
                                     >
@@ -217,7 +217,7 @@ export function RateProfessionalModal({
                                     value={formData.company}
                                     onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
                                     placeholder="Where did you work together?"
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-2">
@@ -230,7 +230,7 @@ export function RateProfessionalModal({
                                         type="month"
                                         value={formData.startDate}
                                         onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                                        className="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm"
+                                        className="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                                     />
                                 </div>
                                 <div>
@@ -241,7 +241,7 @@ export function RateProfessionalModal({
                                         type="month"
                                         value={formData.endDate}
                                         onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                                        className="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-sm"
+                                        className="w-full px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                                     />
                                 </div>
                             </div>
@@ -276,7 +276,7 @@ export function RateProfessionalModal({
                                 value={formData.strengths}
                                 onChange={(e) => setFormData(prev => ({ ...prev, strengths: e.target.value }))}
                                 placeholder="What are their greatest professional strengths?"
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none min-h-[80px]"
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none min-h-[80px]"
                             />
                         </div>
 
@@ -291,7 +291,7 @@ export function RateProfessionalModal({
                                 value={formData.areasForGrowth}
                                 onChange={(e) => setFormData(prev => ({ ...prev, areasForGrowth: e.target.value }))}
                                 placeholder="Constructive feedback (optional)"
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none min-h-[60px]"
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none min-h-[60px]"
                             />
                         </div>
 
@@ -307,7 +307,7 @@ export function RateProfessionalModal({
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, workAgain: option.id }))}
                                         className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${formData.workAgain === option.id
-                                                ? "border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300"
+                                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300"
                                                 : "border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-300"
                                             }`}
                                     >
@@ -324,7 +324,7 @@ export function RateProfessionalModal({
                                     type="checkbox"
                                     checked={formData.isPublic}
                                     onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
-                                    className="w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500"
+                                    className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
                                 />
                                 <div className="flex items-center gap-2">
                                     <Eye className="w-4 h-4 text-gray-500" />
@@ -338,7 +338,7 @@ export function RateProfessionalModal({
                                     type="checkbox"
                                     checked={formData.isAnonymous}
                                     onChange={(e) => setFormData(prev => ({ ...prev, isAnonymous: e.target.checked }))}
-                                    className="w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500"
+                                    className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
                                 />
                                 <div className="flex items-center gap-2">
                                     <EyeOff className="w-4 h-4 text-gray-500" />
@@ -352,7 +352,7 @@ export function RateProfessionalModal({
                         {/* Submit */}
                         <button
                             type="submit"
-                            className="w-full py-3 bg-yellow-600 text-white font-semibold rounded-xl hover:bg-yellow-700 transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
                         >
                             <Send className="w-5 h-5" />
                             Submit Rating
@@ -362,7 +362,7 @@ export function RateProfessionalModal({
 
                 {step === "submitting" && (
                     <div className="p-12 text-center">
-                        <Loader2 className="w-12 h-12 animate-spin text-yellow-600 mx-auto mb-4" />
+                        <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mx-auto mb-4" />
                         <p className="text-gray-600 dark:text-gray-400">Submitting your rating...</p>
                     </div>
                 )}

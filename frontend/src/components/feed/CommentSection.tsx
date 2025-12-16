@@ -86,7 +86,7 @@ export function CommentSection({
                             className="w-8 h-8 rounded-full object-cover"
                         />
                     ) : (
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-sm font-bold">
                             {currentUser?.name?.charAt(0) || "U"}
                         </div>
                     )}
@@ -99,7 +99,7 @@ export function CommentSection({
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
-                        className="w-full bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 pr-12 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        className="w-full bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 pr-12 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                     />
                     <Button
                         type="submit"
@@ -108,7 +108,7 @@ export function CommentSection({
                         disabled={!newComment.trim() || isSubmitting}
                         className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full h-7 w-7 p-0"
                     >
-                        <Send className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <Send className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     </Button>
                 </div>
             </form>
@@ -129,7 +129,7 @@ export function CommentSection({
                     {hasMore && (
                         <button
                             onClick={() => setIsExpanded(true)}
-                            className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                            className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
                         >
                             View {comments.length - maxVisible} more comments
                         </button>
@@ -160,7 +160,7 @@ function CommentItem({ comment, onLike, onReply, isReply }: CommentItemProps) {
                         className={`rounded-full object-cover ${isReply ? "w-6 h-6" : "w-8 h-8"}`}
                     />
                 ) : (
-                    <div className={`rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold ${isReply ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm"}`}>
+                    <div className={`rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold ${isReply ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm"}`}>
                         {comment.user.name.charAt(0)}
                     </div>
                 )}
@@ -177,7 +177,7 @@ function CommentItem({ comment, onLike, onReply, isReply }: CommentItemProps) {
                             {comment.user.name}
                         </Link>
                         {comment.user.isVerified && (
-                            <Shield className="w-3.5 h-3.5 text-blue-500" />
+                            <Shield className="w-3.5 h-3.5 text-emerald-500" />
                         )}
                         {comment.user.headline && (
                             <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
@@ -195,7 +195,7 @@ function CommentItem({ comment, onLike, onReply, isReply }: CommentItemProps) {
                     <button
                         onClick={() => onLike?.(comment.id)}
                         className={`text-xs font-medium transition-colors ${comment.isLiked
-                                ? "text-blue-600 dark:text-blue-400"
+                                ? "text-emerald-600 dark:text-emerald-400"
                                 : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                             }`}
                     >

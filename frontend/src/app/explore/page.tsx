@@ -114,7 +114,7 @@ function ProfileCard({ profile, onStarToggle }: ProfileCardProps) {
                 <div className="flex items-center gap-4">
                     {profile.average_rating !== null && (
                         <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                            <Star className="w-4 h-4 text-emerald-500 fill-emerald-500" />
                             <span className="font-semibold text-gray-900 dark:text-white">{profile.average_rating.toFixed(1)}</span>
                         </div>
                     )}
@@ -129,7 +129,7 @@ function ProfileCard({ profile, onStarToggle }: ProfileCardProps) {
                     <button
                         onClick={handleStarClick}
                         disabled={starLoading}
-                        className={`p-2 transition-colors ${isStarred ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                        className={`p-2 transition-colors ${isStarred ? 'text-emerald-500' : 'text-gray-400 hover:text-emerald-500'}`}
                         title={isStarred ? "Unstar Profile" : "Star Profile"}
                     >
                         {starLoading ? (
@@ -395,7 +395,7 @@ export default function ExplorePage() {
                                 <section className="mb-12">
                                     <div className="flex items-center justify-between mb-4">
                                         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <Flame className="w-5 h-5 text-orange-500" />
+                                            <Flame className="w-5 h-5 text-emerald-500" />
                                             Trending Profiles
                                         </h2>
                                         <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
@@ -438,7 +438,7 @@ export default function ExplorePage() {
                                 <section className="mb-12">
                                     <div className="flex items-center justify-between mb-4">
                                         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            <Trophy className="w-5 h-5 text-yellow-500" />
+                                            <Trophy className="w-5 h-5 text-emerald-500" />
                                             Top Rated Professionals
                                         </h2>
                                         <button className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">

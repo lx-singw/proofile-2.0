@@ -37,28 +37,28 @@ const LIVE_ACTIVITY: LiveActivityItem[] = [
     {
         id: "2",
         icon: <Star className="w-5 h-5" />,
-        iconColor: "text-yellow-500",
+        iconColor: "text-emerald-500",
         text: <><span className="font-semibold">Marcus Johnson</span> received 5-star rating from colleague</>,
         time: "5m ago"
     },
     {
         id: "3",
         icon: <Briefcase className="w-5 h-5" />,
-        iconColor: "text-blue-500",
+        iconColor: "text-emerald-500",
         text: <><span className="font-semibold">TechCorp</span> posted <span className="font-semibold">Senior Developer</span> role</>,
         time: "8m ago"
     },
     {
         id: "4",
         icon: <Shield className="w-5 h-5" />,
-        iconColor: "text-purple-500",
+        iconColor: "text-emerald-500",
         text: <><span className="font-semibold">Alex Rivera</span> completed skills verification</>,
         time: "12m ago"
     },
     {
         id: "5",
         icon: <Users className="w-5 h-5" />,
-        iconColor: "text-blue-500",
+        iconColor: "text-emerald-500",
         text: <><span className="font-semibold">3 new companies</span> joined Proofile</>,
         time: "15m ago"
     },
@@ -75,33 +75,33 @@ export default function HomeLeftSidebar() {
     return (
         <aside className="w-full lg:w-72 space-y-4">
             {/* Resume Tools Widget */}
-            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800/50 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800/50 p-4">
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
                             <FileText className="w-4 h-4 text-white" />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white text-sm">Resume Tools</h3>
                     </div>
-                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/40 px-2 py-0.5 rounded-full">3 Tools</span>
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full">3 Tools</span>
                 </div>
                 <div className="space-y-2 mb-3">
-                    <Link href="/resume/build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors group">
-                        <RefreshCw className="w-4 h-4 text-blue-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Generate from Profile</span>
+                    <Link href="/resume/build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
+                        <RefreshCw className="w-4 h-4 text-emerald-500" />
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Generate from Profile</span>
                     </Link>
-                    <Link href="/resume/upload" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors group">
+                    <Link href="/resume/upload" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
                         <Upload className="w-4 h-4 text-green-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Upload & Analyze</span>
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Upload & Analyze</span>
                     </Link>
-                    <Link href="/resume/ai-build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors group">
-                        <Sparkles className="w-4 h-4 text-purple-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">AI Build Resume</span>
+                    <Link href="/resume/ai-build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
+                        <Sparkles className="w-4 h-4 text-emerald-500" />
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">AI Build Resume</span>
                     </Link>
                 </div>
                 <Link
                     href="/tools"
-                    className="flex items-center justify-center gap-1 w-full px-3 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors text-xs"
+                    className="flex items-center justify-center gap-1 w-full px-3 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors text-xs"
                 >
                     <Wrench className="w-3 h-3" />
                     View All Tools
@@ -139,9 +139,9 @@ export default function HomeLeftSidebar() {
             </div>
 
             {/* For Talent Card */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/50 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 p-4">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
                         <Users className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900 dark:text-white">For Talent</h3>
@@ -173,9 +173,9 @@ export default function HomeLeftSidebar() {
             </div>
 
             {/* For Recruiters Card */}
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl border border-purple-100 dark:border-purple-800/50 p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 p-4">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
                         <Award className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900 dark:text-white">For Recruiters</h3>

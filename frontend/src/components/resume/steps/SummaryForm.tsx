@@ -13,7 +13,7 @@ export default function SummaryForm({ data, onChange }: SummaryFormProps) {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">Professional Summary</h3>
-                <button className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <button className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors">
                     <Wand2 size={14} />
                     Generate with AI
                 </button>
@@ -30,7 +30,7 @@ export default function SummaryForm({ data, onChange }: SummaryFormProps) {
                     value={data || ''}
                     onChange={(e) => onChange(e.target.value)}
                     rows={6}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none text-sm leading-relaxed"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none text-sm leading-relaxed"
                     placeholder="e.g. Results-driven Product Manager with 5+ years of experience leading cross-functional teams..."
                 />
             </div>

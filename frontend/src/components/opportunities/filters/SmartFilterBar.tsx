@@ -26,14 +26,14 @@ export default function SmartFilterBar({ onFilter, suggestions = [] }: SmartFilt
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
             <div className="relative">
-                <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500" />
+                <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500" />
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && onFilter(query)}
                     placeholder="Describe your ideal job in natural language..."
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border-0 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border-0 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 />
             </div>
 

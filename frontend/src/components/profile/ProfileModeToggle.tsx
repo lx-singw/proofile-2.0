@@ -51,7 +51,7 @@ export function ProfileModeToggle({ currentMode, username, isPrivate }: ProfileM
                                     This is how others see your profile
                                 </p>
                                 {isPrivate && (
-                                    <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded-full font-medium">
+                                    <span className="text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-1 rounded-full font-medium">
                                         Private
                                     </span>
                                 )}

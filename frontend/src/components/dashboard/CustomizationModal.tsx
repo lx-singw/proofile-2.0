@@ -32,7 +32,7 @@ export default function CustomizationModal({
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-800">
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <Layout className="w-5 h-5 text-purple-600" />
+                        <Layout className="w-5 h-5 text-emerald-600" />
                         Customize Dashboard
                     </h2>
                     <button
@@ -60,7 +60,7 @@ export default function CustomizationModal({
                                 <button
                                     onClick={() => onToggleSection(key)}
                                     className={`p-2 rounded-lg transition-all ${preferences.visibleSections[key]
-                                            ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400'
+                                            ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'
                                             : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
                                         }`}
                                 >

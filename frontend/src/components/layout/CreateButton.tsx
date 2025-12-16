@@ -24,7 +24,7 @@ export default function CreateButton({
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center justify-center rounded-md px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors"
+      className="inline-flex items-center justify-center rounded-md px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-colors"
       aria-label={ariaLabel}
       aria-haspopup="true"
     >

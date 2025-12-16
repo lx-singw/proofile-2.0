@@ -23,7 +23,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                     type="text"
                     value={data.name || ''}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="John Davidson"
                 />
             </div>
@@ -34,7 +34,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                     type="text"
                     value={data.title || ''}
                     onChange={(e) => handleChange('title', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="Senior Product Manager"
                 />
             </div>
@@ -45,7 +45,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                     type="email"
                     value={data.email || ''}
                     onChange={(e) => handleChange('email', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="john@example.com"
                 />
             </div>
@@ -56,7 +56,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                     type="tel"
                     value={data.phone || ''}
                     onChange={(e) => handleChange('phone', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="+1 (555) 123-4567"
                 />
             </div>
@@ -67,7 +67,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                     type="text"
                     value={data.address || ''}
                     onChange={(e) => handleChange('address', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="123 Main St"
                 />
             </div>
@@ -79,7 +79,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                         type="text"
                         value={data.city || ''}
                         onChange={(e) => handleChange('city', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="New York"
                     />
                 </div>
@@ -89,7 +89,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                         type="text"
                         value={data.state || ''}
                         onChange={(e) => handleChange('state', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="NY"
                     />
                 </div>
@@ -102,7 +102,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                         type="text"
                         value={data.postalCode || ''}
                         onChange={(e) => handleChange('postalCode', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="10001"
                     />
                 </div>
@@ -112,7 +112,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                         type="text"
                         value={data.country || ''}
                         onChange={(e) => handleChange('country', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="USA"
                     />
                 </div>
@@ -125,7 +125,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                         type="text"
                         value={data.linkedin || ''}
                         onChange={(e) => handleChange('linkedin', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="linkedin.com/in/johndoe"
                     />
                 </div>
@@ -135,7 +135,7 @@ export default function PersonalInfoForm({ data = {}, onChange }: PersonalInfoFo
                         type="text"
                         value={data.website || ''}
                         onChange={(e) => handleChange('website', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         placeholder="johndoe.com"
                     />
                 </div>

@@ -141,7 +141,7 @@ export default function ToolsPage() {
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
                 <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+                    <div className="animate-spin w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full" />
                 </div>
             </div>
         );
@@ -164,7 +164,7 @@ export default function ToolsPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Wrench className="w-8 h-8 text-indigo-600" />
+                                <Wrench className="w-8 h-8 text-emerald-600" />
                                 Career Tools
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -189,7 +189,7 @@ export default function ToolsPage() {
                             </Link>
                             <Link
                                 href="/resume/ai-build"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                             >
                                 <Sparkles className="w-4 h-4" />
                                 AI Resume
@@ -208,18 +208,18 @@ export default function ToolsPage() {
                                 <Link
                                     key={index}
                                     href={tool.href}
-                                    className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-lg transition-all group"
+                                    className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-lg transition-all group"
                                 >
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${tool.color}-100 dark:bg-${tool.color}-900/30`}>
                                         <tool.icon className={`w-6 h-6 text-${tool.color}-600 dark:text-${tool.color}-400`} />
                                     </div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                         {tool.title}
                                     </h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                                         {tool.description}
                                     </p>
-                                    <span className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400">
+                                    <span className="inline-flex items-center gap-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                                         Get Started <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                     </span>
                                 </Link>
@@ -235,7 +235,7 @@ export default function ToolsPage() {
                             </h2>
                             <Link
                                 href="/resume"
-                                className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                                className="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
                             >
                                 Manage All <ArrowRight className="w-4 h-4" />
                             </Link>
@@ -244,7 +244,7 @@ export default function ToolsPage() {
                         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                             {loadingResumes ? (
                                 <div className="p-8 text-center">
-                                    <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto" />
+                                    <div className="animate-spin w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full mx-auto" />
                                 </div>
                             ) : resumes.length === 0 ? (
                                 <div className="p-8 text-center">
@@ -252,7 +252,7 @@ export default function ToolsPage() {
                                     <p className="text-gray-500 dark:text-gray-400 mb-4">No resumes yet</p>
                                     <Link
                                         href="/resume/build"
-                                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
                                     >
                                         Create Your First Resume
                                     </Link>
@@ -262,8 +262,8 @@ export default function ToolsPage() {
                                     {resumes.slice(0, 5).map((resume) => (
                                         <div key={resume.id} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                                    <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                                <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                                                    <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                                                 </div>
                                                 <div>
                                                     <p className="font-medium text-gray-900 dark:text-white">{resume.name}</p>
@@ -290,7 +290,7 @@ export default function ToolsPage() {
                                                 </button>
                                                 <Link
                                                     href={`/resume/build?id=${resume.id}`}
-                                                    className="px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                    className="px-3 py-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
                                                 >
                                                     Edit
                                                 </Link>

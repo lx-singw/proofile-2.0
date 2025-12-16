@@ -58,15 +58,15 @@ export default function UpsellBanner({
     if (!content) return null;
 
     return (
-        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 p-0.5">
-            <div className="relative bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50 rounded-[10px] p-4">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-400 p-0.5">
+            <div className="relative bg-gradient-to-r from-emerald-50 to-emerald-50 dark:from-emerald-950/50 dark:to-emerald-950/50 rounded-[10px] p-4">
                 {/* Sparkle decorations */}
-                <Sparkles className="absolute top-2 right-2 w-5 h-5 text-amber-400 opacity-50" />
-                <Sparkles className="absolute bottom-2 right-8 w-4 h-4 text-yellow-400 opacity-40" />
+                <Sparkles className="absolute top-2 right-2 w-5 h-5 text-emerald-400 opacity-50" />
+                <Sparkles className="absolute bottom-2 right-8 w-4 h-4 text-emerald-400 opacity-40" />
 
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0">
                             <Shield className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -81,7 +81,7 @@ export default function UpsellBanner({
 
                     <Link
                         href={content.href}
-                        className="flex items-center gap-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors whitespace-nowrap"
+                        className="flex items-center gap-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors whitespace-nowrap"
                     >
                         {content.cta}
                         <ArrowRight className="w-4 h-4" />
@@ -91,7 +91,7 @@ export default function UpsellBanner({
                 {onDismiss && (
                     <button
                         onClick={onDismiss}
-                        className="absolute top-2 right-2 text-amber-600/50 hover:text-amber-600 dark:text-amber-400/50 dark:hover:text-amber-400"
+                        className="absolute top-2 right-2 text-emerald-600/50 hover:text-emerald-600 dark:text-emerald-400/50 dark:hover:text-emerald-400"
                     >
                         ×
                     </button>

@@ -10,11 +10,11 @@ interface AssetWalletProps {
 const LevelBadge = ({ level }: { level?: string }) => {
     switch (level) {
         case 'L3': // Identity (Gold)
-            return <div className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full border border-yellow-200">GOLD</div>;
+            return <div className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200">GOLD</div>;
         case 'L2': // History (Silver)
             return <div className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-full border border-slate-200">SILVER</div>;
         case 'L1': // Skills (Bronze)
-            return <div className="px-2 py-0.5 bg-orange-50 text-orange-700 text-xs font-bold rounded-full border border-orange-200">BRONZE</div>;
+            return <div className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">BRONZE</div>;
         default:
             return null;
     }
@@ -45,7 +45,7 @@ const AssetCard = ({
             className={`
                 relative group cursor-pointer overflow-hidden rounded-xl border transition-all duration-300
                 ${isVerified
-                    ? 'bg-white border-blue-200 shadow-sm hover:shadow-md hover:border-blue-300'
+                    ? 'bg-white border-emerald-200 shadow-sm hover:shadow-md hover:border-emerald-300'
                     : 'bg-slate-50 border-dashed border-slate-300 hover:bg-slate-100'}
             `}
         >
@@ -56,7 +56,7 @@ const AssetCard = ({
 
             <div className="p-4">
                 <div className="flex justify-between items-start mb-3">
-                    <div className={`p-2 rounded-lg ${isVerified ? 'bg-blue-50 text-blue-600' : 'bg-slate-200 text-slate-500'}`}>
+                    <div className={`p-2 rounded-lg ${isVerified ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-200 text-slate-500'}`}>
                         <Icon size={24} />
                     </div>
                     {isVerified ? (
@@ -81,7 +81,7 @@ const AssetCard = ({
                         <span className="text-xs text-slate-400">{levelLabel}</span>
                     </div>
                     {isVerified && (
-                        <Shield className="text-blue-200 group-hover:text-blue-400 transition-colors" size={16} />
+                        <Shield className="text-emerald-200 group-hover:text-emerald-400 transition-colors" size={16} />
                     )}
                 </div>
             </div>
@@ -89,7 +89,7 @@ const AssetCard = ({
             {/* Action Overlay */}
             {!isVerified && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-sm font-medium text-blue-600">
+                    <span className="bg-white border border-slate-200 shadow-sm px-4 py-2 rounded-lg text-sm font-medium text-emerald-600">
                         Verify Now
                     </span>
                 </div>
@@ -109,10 +109,10 @@ export default function AssetWallet({ verifications, onVerifyClick }: AssetWalle
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-slate-900 flex items-center">
-                    <Shield className="mr-2 text-blue-600" />
+                    <Shield className="mr-2 text-emerald-600" />
                     Your Trust Assets
                 </h2>
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                <button className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
                     View Blockchain Record
                 </button>
             </div>
@@ -154,9 +154,9 @@ export default function AssetWallet({ verifications, onVerifyClick }: AssetWalle
                 {/* Pending Actions / Empty State */}
                 <div
                     onClick={() => onVerifyClick('new')}
-                    className="border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center p-6 cursor-pointer hover:border-blue-300 hover:bg-slate-50 transition-all text-slate-400 hover:text-blue-600 min-h-[200px]"
+                    className="border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center p-6 cursor-pointer hover:border-emerald-300 hover:bg-slate-50 transition-all text-slate-400 hover:text-emerald-600 min-h-[200px]"
                 >
-                    <div className="bg-slate-100 p-4 rounded-full mb-3 group-hover:bg-blue-100 transition-colors">
+                    <div className="bg-slate-100 p-4 rounded-full mb-3 group-hover:bg-emerald-100 transition-colors">
                         <Lock size={24} />
                     </div>
                     <span className="font-medium">Unlock New Asset</span>

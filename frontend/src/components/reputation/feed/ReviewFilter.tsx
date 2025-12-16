@@ -55,7 +55,7 @@ export default function ReviewFilter({
                         <span>{filter.label}</span>
                         {count !== undefined && (
                             <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive
-                                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600'
+                                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600'
                                     : 'bg-gray-200 dark:bg-gray-600 text-gray-500'
                                 }`}>
                                 {count}

@@ -41,7 +41,7 @@ export default function GapAnalysisBadge({ gaps, maxDisplay = 3 }: GapAnalysisBa
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
             <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <AlertTriangle size={16} className="text-yellow-500" />
+                <AlertTriangle size={16} className="text-emerald-500" />
                 Skill Gaps ({gaps.length})
                 {criticalCount > 0 && (
                     <span className="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs rounded-full">
@@ -59,7 +59,7 @@ export default function GapAnalysisBadge({ gaps, maxDisplay = 3 }: GapAnalysisBa
                             ${gap.severity === 'critical'
                                 ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/10'
                                 : gap.severity === 'moderate'
-                                    ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/10'
+                                    ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/10'
                                     : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50'
                             }
                         `}
@@ -78,7 +78,7 @@ export default function GapAnalysisBadge({ gaps, maxDisplay = 3 }: GapAnalysisBa
                                 ${gap.severity === 'critical'
                                     ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                                     : gap.severity === 'moderate'
-                                        ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                                        ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
                                         : 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400'
                                 }
                             `}>

@@ -136,8 +136,8 @@ export default function VerificationSection({ userId }: VerificationSectionProps
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'verified': return 'text-green-600 bg-green-50 dark:bg-green-900/20';
-            case 'pending': return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20';
-            default: return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20';
+            case 'pending': return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20';
+            default: return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20';
         }
     };
 
@@ -156,14 +156,14 @@ export default function VerificationSection({ userId }: VerificationSectionProps
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-blue-600" />
+                        <Shield className="h-5 w-5 text-emerald-600" />
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Trust Score
                         </h3>
                     </div>
                     <a
                         href="/verification"
-                        className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                        className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
                     >
                         View All <ArrowRight className="h-4 w-4" />
                     </a>
@@ -207,7 +207,7 @@ export default function VerificationSection({ userId }: VerificationSectionProps
                                 {item.status !== 'verified' && (
                                     <button
                                         onClick={() => handleVerifyClick(item.type)}
-                                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+                                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
                                     >
                                         Verify
                                     </button>
@@ -216,7 +216,7 @@ export default function VerificationSection({ userId }: VerificationSectionProps
                         ))}
 
                         {trustScore < 50 && (
-                            <div className="flex items-center gap-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-700 dark:text-amber-400 text-xs">
+                            <div className="flex items-center gap-2 p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-700 dark:text-emerald-400 text-xs">
                                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                                 <span>Complete verifications to unlock premium job opportunities</span>
                             </div>

@@ -13,7 +13,7 @@ export default function AIImproveModal({ isOpen, onClose, onImprove }: AIImprove
     const options = [
         {
             id: 'summary',
-            icon: <FileText className="h-5 w-5 text-blue-600" />,
+            icon: <FileText className="h-5 w-5 text-emerald-600" />,
             title: 'Enhance Professional Summary',
             description: 'Make your summary more compelling and impactful.'
         },
@@ -25,13 +25,13 @@ export default function AIImproveModal({ isOpen, onClose, onImprove }: AIImprove
         },
         {
             id: 'keywords',
-            icon: <Target className="h-5 w-5 text-purple-600" />,
+            icon: <Target className="h-5 w-5 text-emerald-600" />,
             title: 'Optimize Keywords',
             description: 'Target a specific job description.'
         },
         {
             id: 'regenerate',
-            icon: <RefreshCw className="h-5 w-5 text-orange-600" />,
+            icon: <RefreshCw className="h-5 w-5 text-emerald-600" />,
             title: 'Complete Regeneration',
             description: 'Start over with a different approach.'
         }
@@ -42,7 +42,7 @@ export default function AIImproveModal({ isOpen, onClose, onImprove }: AIImprove
             <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-blue-600" />
+                        <Sparkles className="h-5 w-5 text-emerald-600" />
                         <h2 className="text-lg font-semibold text-gray-900">AI Enhancement Options</h2>
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -57,7 +57,7 @@ export default function AIImproveModal({ isOpen, onClose, onImprove }: AIImprove
                         <button
                             key={option.id}
                             onClick={() => onImprove(option.id)}
-                            className="w-full flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-left group"
+                            className="w-full flex items-start gap-4 p-4 rounded-lg border border-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition-all text-left group"
                         >
                             <div className="bg-white p-2 rounded-lg border border-gray-100 shadow-sm group-hover:scale-110 transition-transform">
                                 {option.icon}

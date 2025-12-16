@@ -44,7 +44,7 @@ function JobsWidgets() {
                 subtitle="2 in review"
                 icon={<Briefcase className="w-8 h-8" />}
                 href="/opportunities/saved"
-                gradient="bg-gradient-to-br from-blue-500 to-blue-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
             <Widget
                 title="Interview Schedule"
@@ -52,7 +52,7 @@ function JobsWidgets() {
                 subtitle="This week"
                 icon={<Calendar className="w-8 h-8" />}
                 href="/calendar"
-                gradient="bg-gradient-to-br from-purple-500 to-purple-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
             <Widget
                 title="Salary Benchmark"
@@ -68,7 +68,7 @@ function JobsWidgets() {
                 subtitle="Profile views"
                 icon={<TrendingUp className="w-8 h-8" />}
                 href="/analytics"
-                gradient="bg-gradient-to-br from-orange-500 to-orange-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
         </div>
     );
@@ -92,7 +92,7 @@ function TrainingWidgets() {
                 subtitle="3 modules left"
                 icon={<BookOpen className="w-8 h-8" />}
                 href="/learning/progress"
-                gradient="bg-gradient-to-br from-blue-500 to-blue-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
             <Widget
                 title="Certificate Timeline"
@@ -100,7 +100,7 @@ function TrainingWidgets() {
                 subtitle="Coming soon"
                 icon={<Award className="w-8 h-8" />}
                 href="/certifications"
-                gradient="bg-gradient-to-br from-yellow-500 to-yellow-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
             <Widget
                 title="Mentor Connections"
@@ -108,7 +108,7 @@ function TrainingWidgets() {
                 subtitle="Active mentors"
                 icon={<Users className="w-8 h-8" />}
                 href="/mentors"
-                gradient="bg-gradient-to-br from-purple-500 to-purple-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
         </div>
     );
@@ -124,7 +124,7 @@ function BothWidgets() {
                 subtitle="Jobs & Training"
                 icon={<Target className="w-8 h-8" />}
                 href="/opportunities/saved"
-                gradient="bg-gradient-to-br from-indigo-500 to-indigo-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
             <Widget
                 title="Skills Progress"
@@ -140,7 +140,7 @@ function BothWidgets() {
                 subtitle="Events & interviews"
                 icon={<Clock className="w-8 h-8" />}
                 href="/calendar"
-                gradient="bg-gradient-to-br from-purple-500 to-purple-600"
+                gradient="bg-gradient-to-br from-emerald-500 to-emerald-600"
             />
             <Widget
                 title="Connections"
@@ -169,9 +169,9 @@ export default function CategoryWidgets({ opportunityPreference }: CategoryWidge
     return (
         <div className="space-y-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                {opportunityPreference === 'jobs' && <Briefcase className="w-5 h-5 text-blue-600" />}
+                {opportunityPreference === 'jobs' && <Briefcase className="w-5 h-5 text-emerald-600" />}
                 {opportunityPreference === 'training_skills_programs' && <GraduationCap className="w-5 h-5 text-emerald-600" />}
-                {(opportunityPreference === 'both' || !opportunityPreference) && <Target className="w-5 h-5 text-indigo-600" />}
+                {(opportunityPreference === 'both' || !opportunityPreference) && <Target className="w-5 h-5 text-emerald-600" />}
                 {getCategoryLabel()}
             </h2>
             

@@ -55,13 +55,13 @@ export default function PortalFilters({
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-blue-500" />
+                    <Filter className="w-5 h-5 text-emerald-500" />
                     Filters
                 </h3>
                 {hasFilters && (
                     <button
                         onClick={onClearAll}
-                        className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                        className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
                     >
                         <X className="w-4 h-4" />
                         Clear all
@@ -79,7 +79,7 @@ export default function PortalFilters({
                                 type="checkbox"
                                 checked={selectedWorkTypes.includes(option.value)}
                                 onChange={() => toggleFilter(option.value, selectedWorkTypes, onWorkTypeChange)}
-                                className="rounded text-blue-600 focus:ring-blue-500"
+                                className="rounded text-emerald-600 focus:ring-emerald-500"
                             />
                             <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                 {option.label}
@@ -102,7 +102,7 @@ export default function PortalFilters({
                                 type="checkbox"
                                 checked={selectedExperienceLevels.includes(option.value)}
                                 onChange={() => toggleFilter(option.value, selectedExperienceLevels, onExperienceLevelChange)}
-                                className="rounded text-blue-600 focus:ring-blue-500"
+                                className="rounded text-emerald-600 focus:ring-emerald-500"
                             />
                             <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                 {option.label}
@@ -125,7 +125,7 @@ export default function PortalFilters({
                                 type="checkbox"
                                 checked={selectedCategories.includes(option.value)}
                                 onChange={() => toggleFilter(option.value, selectedCategories, onCategoryChange)}
-                                className="rounded text-blue-600 focus:ring-blue-500"
+                                className="rounded text-emerald-600 focus:ring-emerald-500"
                             />
                             <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                 {option.label}
@@ -137,7 +137,7 @@ export default function PortalFilters({
                     ))}
                 </div>
                 {categories.length > 5 && (
-                    <button className="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    <button className="mt-3 text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
                         Show all categories
                     </button>
                 )}

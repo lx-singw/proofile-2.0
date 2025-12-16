@@ -40,11 +40,11 @@ export default function PublicProofPage({ params }: PublicProofPageProps) {
     const getLevelStyles = (level: string) => {
         switch (level) {
             case "gold":
-                return "from-amber-400 via-yellow-300 to-amber-500 border-amber-300";
+                return "from-emerald-400 via-emerald-300 to-emerald-500 border-emerald-300";
             case "silver":
                 return "from-slate-300 via-slate-200 to-slate-400 border-slate-300";
             default:
-                return "from-orange-400 via-orange-300 to-orange-500 border-orange-300";
+                return "from-emerald-400 via-emerald-300 to-emerald-500 border-emerald-300";
         }
     };
 
@@ -57,15 +57,15 @@ export default function PublicProofPage({ params }: PublicProofPageProps) {
 
                     <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 overflow-hidden">
                         {/* Holographic effect overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
 
                         {/* Badge tier label */}
                         <div className="text-center mb-6">
                             <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${mockVerification.level === "gold"
-                                    ? "bg-amber-500/20 text-amber-300"
+                                    ? "bg-emerald-500/20 text-emerald-300"
                                     : mockVerification.level === "silver"
                                         ? "bg-slate-400/20 text-slate-300"
-                                        : "bg-orange-500/20 text-orange-300"
+                                        : "bg-emerald-500/20 text-emerald-300"
                                 }`}>
                                 <Shield className="w-3 h-3" />
                                 {mockVerification.level} Tier

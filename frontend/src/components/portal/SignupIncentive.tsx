@@ -18,7 +18,7 @@ export default function SignupIncentive({ variant = "sidebar" }: SignupIncentive
 
     if (variant === "banner") {
         return (
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-3 px-4">
+            <div className="bg-gradient-to-r from-emerald-600 via-emerald-600 to-emerald-600 text-white py-3 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <Sparkles className="w-5 h-5" />
@@ -28,11 +28,11 @@ export default function SignupIncentive({ variant = "sidebar" }: SignupIncentive
                     </div>
                     <div className="flex items-center gap-3">
                         <Link href="/register">
-                            <Button size="sm" className="bg-white text-blue-600 hover:bg-blue-50">
+                            <Button size="sm" className="bg-white text-emerald-600 hover:bg-emerald-50">
                                 Sign Up Free
                             </Button>
                         </Link>
-                        <Link href="/login" className="text-sm text-blue-100 hover:text-white hover:underline">
+                        <Link href="/login" className="text-sm text-emerald-100 hover:text-white hover:underline">
                             Sign In
                         </Link>
                     </div>
@@ -44,8 +44,8 @@ export default function SignupIncentive({ variant = "sidebar" }: SignupIncentive
     if (variant === "modal") {
         return (
             <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                     Get More From Your Job Search
@@ -64,13 +64,13 @@ export default function SignupIncentive({ variant = "sidebar" }: SignupIncentive
                     ))}
                 </div>
                 <Link href="/register">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3">
+                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3">
                         Create Free Account
                     </Button>
                 </Link>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
                     Already have an account?{" "}
-                    <Link href="/login" className="text-blue-600 hover:underline">Sign in</Link>
+                    <Link href="/login" className="text-emerald-600 hover:underline">Sign in</Link>
                 </p>
             </div>
         );
@@ -78,9 +78,9 @@ export default function SignupIncentive({ variant = "sidebar" }: SignupIncentive
 
     // Default sidebar variant
     return (
-        <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/30 p-5">
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/30 p-5">
             <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-5 h-5 text-blue-600" />
+                <Sparkles className="w-5 h-5 text-emerald-600" />
                 <h3 className="font-bold text-gray-900 dark:text-white">Get Matched</h3>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -95,13 +95,13 @@ export default function SignupIncentive({ variant = "sidebar" }: SignupIncentive
                 ))}
             </ul>
             <Link href="/register">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl">
+                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl">
                     Create Free Account
                 </Button>
             </Link>
             <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
                 Already have an account?{" "}
-                <Link href="/login" className="text-blue-600 hover:underline">Sign in</Link>
+                <Link href="/login" className="text-emerald-600 hover:underline">Sign in</Link>
             </p>
         </div>
     );

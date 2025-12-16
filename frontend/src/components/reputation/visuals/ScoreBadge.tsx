@@ -21,8 +21,8 @@ export default function ScoreBadge({
     showStars = true
 }: ScoreBadgeProps) {
     const getTier = (score: number): { label: string; bgClass: string; textClass: string } => {
-        if (score >= 4.5) return { label: 'Exceptional', bgClass: 'bg-gradient-to-r from-yellow-400 to-yellow-600', textClass: 'text-yellow-900' };
-        if (score >= 4.0) return { label: 'Excellent', bgClass: 'bg-gradient-to-r from-blue-400 to-blue-600', textClass: 'text-blue-900' };
+        if (score >= 4.5) return { label: 'Exceptional', bgClass: 'bg-gradient-to-r from-emerald-400 to-emerald-600', textClass: 'text-emerald-900' };
+        if (score >= 4.0) return { label: 'Excellent', bgClass: 'bg-gradient-to-r from-emerald-400 to-emerald-600', textClass: 'text-emerald-900' };
         if (score >= 3.5) return { label: 'Good', bgClass: 'bg-gradient-to-r from-green-400 to-green-600', textClass: 'text-green-900' };
         if (score >= 3.0) return { label: 'Average', bgClass: 'bg-gradient-to-r from-gray-400 to-gray-600', textClass: 'text-gray-900' };
         return { label: 'Needs Work', bgClass: 'bg-gradient-to-r from-red-400 to-red-600', textClass: 'text-red-900' };

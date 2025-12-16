@@ -17,10 +17,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                         <div>
                             <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Jobs</h4>
                             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                                <li><Link href="/portal?filter=remote" className="hover:text-blue-600">Remote Jobs</Link></li>
-                                <li><Link href="/portal?category=technology" className="hover:text-blue-600">Tech Jobs</Link></li>
-                                <li><Link href="/portal?category=finance" className="hover:text-blue-600">Finance Jobs</Link></li>
-                                <li><Link href="/portal?experience=entry" className="hover:text-blue-600">Entry Level</Link></li>
+                                <li><Link href="/portal?filter=remote" className="hover:text-emerald-600">Remote Jobs</Link></li>
+                                <li><Link href="/portal?category=technology" className="hover:text-emerald-600">Tech Jobs</Link></li>
+                                <li><Link href="/portal?category=finance" className="hover:text-emerald-600">Finance Jobs</Link></li>
+                                <li><Link href="/portal?experience=entry" className="hover:text-emerald-600">Entry Level</Link></li>
                             </ul>
                         </div>
 
@@ -28,10 +28,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                         <div>
                             <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Locations</h4>
                             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                                <li><Link href="/portal?location=johannesburg" className="hover:text-blue-600">Johannesburg</Link></li>
-                                <li><Link href="/portal?location=cape-town" className="hover:text-blue-600">Cape Town</Link></li>
-                                <li><Link href="/portal?location=durban" className="hover:text-blue-600">Durban</Link></li>
-                                <li><Link href="/portal?location=pretoria" className="hover:text-blue-600">Pretoria</Link></li>
+                                <li><Link href="/portal?location=johannesburg" className="hover:text-emerald-600">Johannesburg</Link></li>
+                                <li><Link href="/portal?location=cape-town" className="hover:text-emerald-600">Cape Town</Link></li>
+                                <li><Link href="/portal?location=durban" className="hover:text-emerald-600">Durban</Link></li>
+                                <li><Link href="/portal?location=pretoria" className="hover:text-emerald-600">Pretoria</Link></li>
                             </ul>
                         </div>
 
@@ -39,9 +39,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                         <div>
                             <h4 className="font-semibold text-gray-900 dark:text-white mb-4">For Job Seekers</h4>
                             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                                <li><Link href="/register" className="hover:text-blue-600">Create Profile</Link></li>
-                                <li><Link href="/resume/build" className="hover:text-blue-600">Build Resume</Link></li>
-                                <li><Link href="/verification" className="hover:text-blue-600">Get Verified</Link></li>
+                                <li><Link href="/register" className="hover:text-emerald-600">Create Profile</Link></li>
+                                <li><Link href="/resume/build" className="hover:text-emerald-600">Build Resume</Link></li>
+                                <li><Link href="/verification" className="hover:text-emerald-600">Get Verified</Link></li>
                             </ul>
                         </div>
 
@@ -49,9 +49,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                         <div>
                             <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Proofile</h4>
                             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                                <li><Link href="/" className="hover:text-blue-600">About Us</Link></li>
-                                <li><Link href="/privacy" className="hover:text-blue-600">Privacy Policy</Link></li>
-                                <li><Link href="/terms" className="hover:text-blue-600">Terms of Service</Link></li>
+                                <li><Link href="/" className="hover:text-emerald-600">About Us</Link></li>
+                                <li><Link href="/privacy" className="hover:text-emerald-600">Privacy Policy</Link></li>
+                                <li><Link href="/terms" className="hover:text-emerald-600">Terms of Service</Link></li>
                             </ul>
                         </div>
                     </div>

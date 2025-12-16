@@ -102,15 +102,15 @@ export default function GapAnalysisPage() {
                         {recommendations.map((rec, i) => (
                             <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                                        <BookOpen className="w-5 h-5 text-blue-600" />
+                                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                        <BookOpen className="w-5 h-5 text-emerald-600" />
                                     </div>
                                     <div>
                                         <div className="font-medium text-gray-900 dark:text-white">{rec.title}</div>
                                         <div className="text-sm text-gray-500">{rec.provider} • {rec.duration}</div>
                                     </div>
                                 </div>
-                                <button className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+                                <button className="px-3 py-1.5 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700">
                                     Start
                                 </button>
                             </div>

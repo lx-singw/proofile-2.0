@@ -80,7 +80,7 @@ export default function VerificationHistoryPage() {
             case "failed":
                 return <XCircle className="w-5 h-5 text-red-500" />;
             default:
-                return <AlertCircle className="w-5 h-5 text-amber-500" />;
+                return <AlertCircle className="w-5 h-5 text-emerald-500" />;
         }
     };
 
@@ -138,7 +138,7 @@ export default function VerificationHistoryPage() {
                                     ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400"
                                     : event.status === "failed"
                                         ? "bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400"
-                                        : "bg-amber-100 text-amber-600 dark:bg-amber-900/50 dark:text-amber-400"
+                                        : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400"
                                 }`}>
                                 {getTypeIcon(event.type)}
                             </div>

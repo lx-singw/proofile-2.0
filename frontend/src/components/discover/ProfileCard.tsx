@@ -28,7 +28,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ profile, onConnect, showMatchScore }: ProfileCardProps) {
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 hover:shadow-lg transition-all hover:border-blue-200 dark:hover:border-blue-800 group">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5 hover:shadow-lg transition-all hover:border-emerald-200 dark:hover:border-emerald-800 group">
             <div className="flex items-start gap-4">
                 {/* Avatar */}
                 <Link href={`/p/${profile.username || profile.id}`} className="flex-shrink-0">
@@ -42,7 +42,7 @@ export function ProfileCard({ profile, onConnect, showMatchScore }: ProfileCardP
                             unoptimized
                         />
                     ) : (
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl group-hover:scale-105 transition-transform">
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-xl group-hover:scale-105 transition-transform">
                             {profile.name.charAt(0)}
                         </div>
                     )}
@@ -53,12 +53,12 @@ export function ProfileCard({ profile, onConnect, showMatchScore }: ProfileCardP
                     <div className="flex items-center gap-2 mb-1">
                         <Link
                             href={`/p/${profile.username || profile.id}`}
-                            className="font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
+                            className="font-bold text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors truncate"
                         >
                             {profile.name}
                         </Link>
                         {profile.is_verified && (
-                            <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                         )}
                         {showMatchScore && profile.match_score && (
                             <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">
@@ -80,7 +80,7 @@ export function ProfileCard({ profile, onConnect, showMatchScore }: ProfileCardP
                         )}
                         {profile.rating && (
                             <span className="flex items-center gap-1">
-                                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                <Star className="w-3 h-3 text-emerald-500 fill-emerald-500" />
                                 {profile.rating.toFixed(1)}
                                 {profile.rating_count && <span className="text-gray-400">({profile.rating_count})</span>}
                             </span>
@@ -110,7 +110,7 @@ export function ProfileCard({ profile, onConnect, showMatchScore }: ProfileCardP
                     variant="outline"
                     size="sm"
                     onClick={() => onConnect?.(profile.id)}
-                    className="rounded-lg border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 flex-shrink-0"
+                    className="rounded-lg border-gray-200 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-600 flex-shrink-0"
                 >
                     <UserPlus className="w-4 h-4" />
                 </Button>

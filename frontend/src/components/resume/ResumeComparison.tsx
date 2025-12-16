@@ -13,7 +13,7 @@ function ScoreComparison({ current, potential, category }: ScoreComparisonProps)
     const improvementPercent = Math.round((improvement / current) * 100);
 
     return (
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-emerald-50 dark:from-gray-800 dark:to-emerald-900/20 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="flex-1">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {category}

@@ -34,15 +34,15 @@ export default function AgentStatusWidget({ agents, onToggle }: AgentStatusWidge
                 return {
                     icon: FileEdit,
                     label: 'Tailor',
-                    color: 'text-blue-500',
-                    bgColor: 'bg-blue-100 dark:bg-blue-900/30'
+                    color: 'text-emerald-500',
+                    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30'
                 };
             case 'negotiator':
                 return {
                     icon: DollarSign,
                     label: 'Negotiator',
-                    color: 'text-purple-500',
-                    bgColor: 'bg-purple-100 dark:bg-purple-900/30'
+                    color: 'text-emerald-500',
+                    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30'
                 };
             default:
                 return {
@@ -59,7 +59,7 @@ export default function AgentStatusWidget({ agents, onToggle }: AgentStatusWidge
             case 'active':
                 return <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />;
             case 'paused':
-                return <span className="w-2 h-2 rounded-full bg-yellow-500" />;
+                return <span className="w-2 h-2 rounded-full bg-emerald-500" />;
             default:
                 return <span className="w-2 h-2 rounded-full bg-gray-400" />;
         }
@@ -68,7 +68,7 @@ export default function AgentStatusWidget({ agents, onToggle }: AgentStatusWidge
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Zap size={16} className="text-yellow-500" />
+                <Zap size={16} className="text-emerald-500" />
                 AI Agents
             </h3>
 

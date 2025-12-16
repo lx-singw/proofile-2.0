@@ -31,7 +31,7 @@ export function ProfileTabs({ activeTab, onTabChange, countMap }: ProfileTabsPro
                                 className={cn(
                                     "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors relative",
                                     isActive
-                                        ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                                        ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
                                         : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
                                 )}
                                 aria-current={isActive ? "page" : undefined}
@@ -41,7 +41,7 @@ export function ProfileTabs({ activeTab, onTabChange, countMap }: ProfileTabsPro
                                     <span className={cn(
                                         "ml-2 py-0.5 px-2 rounded-full text-xs font-medium",
                                         isActive
-                                            ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                                            ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
                                             : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-200"
                                     )}>
                                         {countMap[tab.id]}

@@ -158,12 +158,12 @@ export default function AIProcessPage() {
                         {/* Outer Ring */}
                         <div className="h-32 w-32 rounded-full border-4 border-gray-700 flex items-center justify-center relative">
                             <div 
-                                className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"
+                                className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"
                                 style={{ animationDuration: '1.5s' }}
                             ></div>
-                            <Brain className="h-12 w-12 text-blue-400 animate-pulse" />
+                            <Brain className="h-12 w-12 text-emerald-400 animate-pulse" />
                         </div>
-                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 px-3 py-1 rounded-full border border-gray-700 text-xs font-mono text-blue-300">
+                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gray-800 px-3 py-1 rounded-full border border-gray-700 text-xs font-mono text-emerald-300">
                             {Math.round(progress)}%
                         </div>
                     </div>
@@ -189,7 +189,7 @@ export default function AIProcessPage() {
                         <div className="flex-1"></div>
                         <div className="flex gap-1.5">
                             <div className="h-2.5 w-2.5 rounded-full bg-red-500/50"></div>
-                            <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/50"></div>
+                            <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/50"></div>
                             <div className="h-2.5 w-2.5 rounded-full bg-green-500/50"></div>
                         </div>
                     </div>
@@ -207,11 +207,11 @@ export default function AIProcessPage() {
 
                 {/* Dynamic Tips */}
                 <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 flex items-start gap-4 backdrop-blur-sm">
-                    <div className="bg-blue-500/10 p-2 rounded-lg">
-                        <Cpu className="h-5 w-5 text-blue-400" />
+                    <div className="bg-emerald-500/10 p-2 rounded-lg">
+                        <Cpu className="h-5 w-5 text-emerald-400" />
                     </div>
                     <div>
-                        <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">AI Insight</h3>
+                        <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">AI Insight</h3>
                         <p className="text-gray-300 text-sm transition-all duration-500 ease-in-out">
                             {TIPS[currentTip]}
                         </p>

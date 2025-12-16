@@ -213,11 +213,11 @@
 
   /* Enhanced gradient text */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-purple-600;
   }
 
   .dark .gradient-text {
-    @apply from-blue-400 to-purple-400;
+    @apply from-emerald-400 to-purple-400;
   }
 
   /* Glass effect for dark mode */
@@ -250,11 +250,11 @@
 
   /* Enhanced focus ring for dark mode */
   .dark .focus-ring:focus-visible {
-    @apply ring-2 ring-blue-400 ring-offset-2 ring-offset-gray-900;
+    @apply ring-2 ring-emerald-400 ring-offset-2 ring-offset-gray-900;
   }
 
   .focus-ring:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2 ring-offset-white;
+    @apply ring-2 ring-emerald-500 ring-offset-2 ring-offset-white;
   }
 
   /* Subtle border glow */

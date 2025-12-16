@@ -42,9 +42,9 @@ export default function HunterLogStream({ isLive = true }: HunterLogStreamProps)
     const getIcon = (type: string) => {
         switch (type) {
             case 'success': return <CheckCircle className="w-3 h-3 text-green-500" />;
-            case 'warning': return <AlertTriangle className="w-3 h-3 text-yellow-500" />;
+            case 'warning': return <AlertTriangle className="w-3 h-3 text-emerald-500" />;
             case 'error': return <AlertTriangle className="w-3 h-3 text-red-500" />;
-            default: return <span className="w-3 h-3 text-blue-500">›</span>;
+            default: return <span className="w-3 h-3 text-emerald-500">›</span>;
         }
     };
 
@@ -70,7 +70,7 @@ export default function HunterLogStream({ isLive = true }: HunterLogStreamProps)
                         {getIcon(log.type)}
                         <span className={`
                             ${log.type === 'success' ? 'text-green-400' :
-                                log.type === 'warning' ? 'text-yellow-400' :
+                                log.type === 'warning' ? 'text-emerald-400' :
                                     log.type === 'error' ? 'text-red-400' :
                                         'text-gray-300'}
                         `}>

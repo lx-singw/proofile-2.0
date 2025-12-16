@@ -47,7 +47,7 @@ export function ProfileHeader({
         <div className="relative mb-8 group">
             {/* Cover Image */}
             <div className="h-48 sm:h-64 rounded-b-[2.5rem] overflow-hidden relative shadow-lg">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 animate-gradient-x">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-emerald-600 to-emerald-600 animate-gradient-x">
                     <div className="absolute top-0 left-0 w-full h-full opacity-20">
                         <div className="absolute top-10 left-10 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse-slow"></div>
                         <div className="absolute bottom-10 right-10 w-64 h-64 bg-pink-400 rounded-full mix-blend-overlay filter blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
@@ -93,7 +93,7 @@ export function ProfileHeader({
                                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
                                         {user.full_name}
                                         {isVerified && (
-                                            <CheckCircle className="w-6 h-6 text-blue-500 fill-blue-50 dark:fill-blue-900/20" />
+                                            <CheckCircle className="w-6 h-6 text-emerald-500 fill-emerald-50 dark:fill-emerald-900/20" />
                                         )}
                                     </h1>
 
@@ -103,7 +103,7 @@ export function ProfileHeader({
                                             onSave={(val) => onUpdate({ headline: val })}
                                             isOwner={isOwner}
                                             placeholder="Add a professional headline (e.g. Senior Software Engineer)"
-                                            className="text-lg text-blue-600 dark:text-blue-400 font-medium"
+                                            className="text-lg text-emerald-600 dark:text-emerald-400 font-medium"
                                         />
                                     </div>
 
@@ -133,7 +133,7 @@ export function ProfileHeader({
                                             onClick={onFollow}
                                             className={`font-semibold rounded-xl transition-all ${isFollowing
                                                     ? "bg-gray-100 hover:bg-gray-200 text-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
-                                                    : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
+                                                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900/20"
                                                 }`}
                                         >
                                             <UserPlus className="w-4 h-4 mr-2" />

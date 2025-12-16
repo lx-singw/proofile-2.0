@@ -50,9 +50,9 @@ export default function ProfilePage() {
 
   if (loading || profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-500 font-medium animate-pulse">Loading profile...</p>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function ProfilePage() {
   const completenessScore = profile.completeness_score || 30;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Quick Stats Bar */}
       <ProfileStatsBar
         completeness={profile?.completeness_score || 30}
@@ -103,7 +103,7 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Users className="w-8 h-8 text-blue-600" />
+                <Users className="w-8 h-8 text-emerald-600" />
                 Your Profile
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -128,7 +128,7 @@ export default function ProfilePage() {
               </Link>
               <Link
                 href={`/p/${user.username}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Public Profile
@@ -145,7 +145,7 @@ export default function ProfilePage() {
             <div className="flex flex-col md:flex-row items-start gap-6">
               {/* Avatar */}
               <div className="relative group">
-                <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                   {user.full_name?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
                 </div>
                 <button
@@ -176,7 +176,7 @@ export default function ProfilePage() {
                     </Link>
                     <Link
                       href="/settings?tab=profile"
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2"
                     >
                       <Edit3 className="w-4 h-4" />
                       Edit Profile
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">About</h2>
                   <button
                     onClick={() => router.push("/settings?tab=profile")}
-                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    className="text-emerald-600 hover:text-emerald-700 text-sm font-medium"
                   >
                     Edit
                   </button>
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                     <Briefcase className="w-5 h-5" />
                     Experience
                   </h2>
-                  <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                  <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
                     + Add
                   </button>
                 </div>
@@ -240,7 +240,7 @@ export default function ProfilePage() {
                   <div className="space-y-6">
                     {profile.experience_data.map((exp: any, idx: number) => (
                       <div key={idx} className="flex gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex-shrink-0 flex items-center justify-center text-blue-600 font-bold text-sm">
+                        <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0 flex items-center justify-center text-emerald-600 font-bold text-sm">
                           {exp.company?.substring(0, 2).toUpperCase()}
                         </div>
                         <div className="flex-1">
@@ -257,7 +257,7 @@ export default function ProfilePage() {
                   <div className="text-center py-8 text-gray-500">
                     <Briefcase className="w-12 h-12 mx-auto mb-3 opacity-30" />
                     <p>No experience added yet</p>
-                    <button className="mt-2 text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    <button className="mt-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
                       Add your first experience →
                     </button>
                   </div>
@@ -274,7 +274,7 @@ export default function ProfilePage() {
                     </h2>
                     <button
                       onClick={() => setIsCollaboratorModalOpen(true)}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                      className="text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center gap-1"
                     >
                       + Add Collaborator
                     </button>
@@ -290,7 +290,7 @@ export default function ProfilePage() {
                     <Award className="w-5 h-5" />
                     Skills
                   </h2>
-                  <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                  <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
                     + Add
                   </button>
                 </div>
@@ -309,7 +309,7 @@ export default function ProfilePage() {
                   <div className="text-center py-8 text-gray-500">
                     <Award className="w-12 h-12 mx-auto mb-3 opacity-30" />
                     <p>No skills added yet</p>
-                    <button className="mt-2 text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    <button className="mt-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
                       Add your skills →
                     </button>
                   </div>
@@ -343,7 +343,7 @@ export default function ProfilePage() {
                         strokeWidth="8"
                         strokeDasharray={`${completenessScore * 2.26} 226`}
                         strokeLinecap="round"
-                        className="text-blue-600"
+                        className="text-emerald-600"
                       />
                     </svg>
                     <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-gray-900 dark:text-white">
@@ -362,7 +362,7 @@ export default function ProfilePage() {
                 </div>
                 <Link
                   href="/settings?tab=profile"
-                  className="block text-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  className="block text-center text-emerald-600 hover:text-emerald-700 text-sm font-medium"
                 >
                   Complete your profile →
                 </Link>
@@ -375,7 +375,7 @@ export default function ProfilePage() {
                     <Shield className="w-5 h-5 text-green-600" />
                     Verification
                   </h3>
-                  <Link href="/verification" className="text-blue-600 hover:text-blue-700 text-xs font-medium">
+                  <Link href="/verification" className="text-emerald-600 hover:text-emerald-700 text-xs font-medium">
                     Manage
                   </Link>
                 </div>
@@ -398,7 +398,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/50 p-6">
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-900/50 p-6">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
                 <div className="space-y-3">
                   <button
@@ -410,7 +410,7 @@ export default function ProfilePage() {
                   </button>
                   <Link
                     href={`/p/${user.username}`}
-                    className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-emerald-600 text-white rounded-xl text-sm font-medium hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
                   >
                     Preview as Public
                     <ChevronRight className="w-4 h-4" />

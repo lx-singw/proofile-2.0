@@ -73,13 +73,13 @@ export function AIChatAssistant({
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-[500px]">
             {/* Header */}
-            <div className="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center gap-3">
+            <div className="p-4 bg-gradient-to-r from-emerald-600 to-emerald-600 flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-xl">
                     <Bot className="w-5 h-5 text-white" />
                 </div>
                 <div>
                     <h3 className="font-bold text-white">Career Assistant</h3>
-                    <p className="text-purple-100 text-xs">Powered by AI</p>
+                    <p className="text-emerald-100 text-xs">Powered by AI</p>
                 </div>
                 <div className="ml-auto flex items-center gap-1.5">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
@@ -91,7 +91,7 @@ export function AIChatAssistant({
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && (
                     <div className="text-center py-8">
-                        <Sparkles className="w-10 h-10 text-purple-400 mx-auto mb-3" />
+                        <Sparkles className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
                         <p className="text-gray-900 dark:text-white font-medium">How can I help you today?</p>
                         <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
                             Ask me about your profile, job search, or career advice
@@ -116,13 +116,13 @@ export function AIChatAssistant({
                         className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
                     >
                         <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === "user"
-                                ? "bg-blue-600 text-white"
-                                : "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                                ? "bg-emerald-600 text-white"
+                                : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
                             }`}>
                             {message.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                         </div>
                         <div className={`max-w-[75%] p-3 rounded-2xl ${message.role === "user"
-                                ? "bg-blue-600 text-white rounded-br-md"
+                                ? "bg-emerald-600 text-white rounded-br-md"
                                 : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-bl-md"
                             }`}>
                             <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -132,8 +132,8 @@ export function AIChatAssistant({
 
                 {isLoading && (
                     <div className="flex gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                            <Bot className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                            <Bot className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-2xl rounded-bl-md">
                             <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
@@ -154,12 +154,12 @@ export function AIChatAssistant({
                         onChange={(e) => setInput(e.target.value)}
                         placeholder={placeholder}
                         disabled={isLoading}
-                        className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
+                        className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50"
                     />
                     <Button
                         type="submit"
                         disabled={!input.trim() || isLoading}
-                        className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white px-4"
+                        className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4"
                     >
                         <Send className="w-4 h-4" />
                     </Button>

@@ -92,13 +92,13 @@ export default function OpportunitiesPage() {
 
     const getMatchColor = (score: number) => {
         if (score >= 80) return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
-        if (score >= 50) return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400';
+        if (score >= 50) return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400';
         return 'text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-400';
     };
 
     const getScoreBarColor = (score: number) => {
         if (score >= 80) return 'bg-green-500';
-        if (score >= 50) return 'bg-yellow-500';
+        if (score >= 50) return 'bg-emerald-500';
         return 'bg-gray-400';
     };
 
@@ -106,7 +106,7 @@ export default function OpportunitiesPage() {
     if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
         );
     }
@@ -136,7 +136,7 @@ export default function OpportunitiesPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Sparkles className="w-8 h-8 text-purple-600" />
+                                <Sparkles className="w-8 h-8 text-emerald-600" />
                                 Opportunities
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -161,7 +161,7 @@ export default function OpportunitiesPage() {
                             </Link>
                             <Link
                                 href="/opportunities/market"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                             >
                                 <BarChart2 className="w-4 h-4" />
                                 Market Intel
@@ -174,7 +174,7 @@ export default function OpportunitiesPage() {
                         <button
                             onClick={() => setCategoryTab('all')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all ${categoryTab === 'all'
-                                ? 'bg-purple-600 text-white'
+                                ? 'bg-emerald-600 text-white'
                                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
                                 }`}
                         >
@@ -183,7 +183,7 @@ export default function OpportunitiesPage() {
                         <button
                             onClick={() => setCategoryTab('jobs')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${categoryTab === 'jobs'
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-emerald-600 text-white'
                                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
                                 }`}
                         >
@@ -259,7 +259,7 @@ export default function OpportunitiesPage() {
                                             <div className="flex-1">
                                                 <div className="flex items-start justify-between mb-2">
                                                     <div>
-                                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 transition-colors">
+                                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors">
                                                             <Link href={`/opportunities/${opportunity.id}`}>
                                                                 {opportunity.title}
                                                             </Link>
@@ -279,7 +279,7 @@ export default function OpportunitiesPage() {
 
                                                 <div className="flex flex-wrap gap-3 my-4">
                                                     {job.job_type && (
-                                                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium">
+                                                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
                                                             <Clock className="w-3 h-3" />
                                                             {job.job_type}
                                                         </span>
@@ -301,7 +301,7 @@ export default function OpportunitiesPage() {
                                                 {/* Match Breakdown */}
                                                 <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 mt-4">
                                                     <div className="text-sm font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                                        <Sparkles className="w-4 h-4 text-purple-500" />
+                                                        <Sparkles className="w-4 h-4 text-emerald-500" />
                                                         Why you&apos;re a match
                                                     </div>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -349,7 +349,7 @@ export default function OpportunitiesPage() {
                                                         company: opportunity.company_name,
                                                         score: match_score
                                                     })}
-                                                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                                                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
                                                 >
                                                     Quick Apply
                                                 </button>

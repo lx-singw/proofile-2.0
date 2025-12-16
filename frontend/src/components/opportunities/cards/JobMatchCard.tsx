@@ -47,8 +47,8 @@ export default function JobMatchCard({
 }: JobMatchCardProps) {
     const getScoreColor = (score: number) => {
         if (score >= 85) return { bg: 'bg-green-500', text: 'text-green-600', ring: 'ring-green-200' };
-        if (score >= 70) return { bg: 'bg-blue-500', text: 'text-blue-600', ring: 'ring-blue-200' };
-        if (score >= 50) return { bg: 'bg-yellow-500', text: 'text-yellow-600', ring: 'ring-yellow-200' };
+        if (score >= 70) return { bg: 'bg-emerald-500', text: 'text-emerald-600', ring: 'ring-emerald-200' };
+        if (score >= 50) return { bg: 'bg-emerald-500', text: 'text-emerald-600', ring: 'ring-emerald-200' };
         return { bg: 'bg-red-500', text: 'text-red-600', ring: 'ring-red-200' };
     };
 
@@ -56,7 +56,7 @@ export default function JobMatchCard({
 
     const getReasonIcon = (type: string, isVerified: boolean) => {
         if (isVerified) return <CheckCircle size={14} className="text-green-500" />;
-        return <AlertTriangle size={14} className="text-yellow-500" />;
+        return <AlertTriangle size={14} className="text-emerald-500" />;
     };
 
     return (
@@ -65,7 +65,7 @@ export default function JobMatchCard({
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                     {/* Company Logo Placeholder */}
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
                         {company.charAt(0)}
                     </div>
                     <div>
@@ -82,7 +82,7 @@ export default function JobMatchCard({
                 <button
                     onClick={onSave}
                     className={`p-2 rounded-lg transition-colors ${isSaved
-                            ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600'
+                            ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400'
                         }`}
                 >
@@ -145,7 +145,7 @@ export default function JobMatchCard({
             <div className="flex flex-wrap gap-3">
                 <button
                     onClick={onApply}
-                    className="flex-1 py-2.5 px-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white font-medium rounded-xl hover:from-emerald-700 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
                 >
                     <Sparkles size={16} />
                     Apply with Tailored Resume

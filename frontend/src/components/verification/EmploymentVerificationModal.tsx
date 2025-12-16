@@ -110,8 +110,8 @@ export function EmploymentVerificationModal({
                 {/* Header */}
                 <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                            <Briefcase className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                            <Briefcase className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -149,7 +149,7 @@ export function EmploymentVerificationModal({
                                     value={formData.companyName}
                                     onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
                                     placeholder="e.g., TechCorp Inc."
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 />
                             </div>
 
@@ -164,7 +164,7 @@ export function EmploymentVerificationModal({
                                         value={formData.role}
                                         onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
                                         placeholder="e.g., Senior Engineer"
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     />
                                 </div>
                                 <div>
@@ -176,7 +176,7 @@ export function EmploymentVerificationModal({
                                         value={formData.department}
                                         onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
                                         placeholder="e.g., Engineering"
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     />
                                 </div>
                             </div>
@@ -199,7 +199,7 @@ export function EmploymentVerificationModal({
                                         required
                                         value={formData.startDate}
                                         onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     />
                                 </div>
                                 <div>
@@ -211,7 +211,7 @@ export function EmploymentVerificationModal({
                                         value={formData.endDate}
                                         onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
                                         disabled={formData.isCurrent}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50"
                                     />
                                 </div>
                             </div>
@@ -221,7 +221,7 @@ export function EmploymentVerificationModal({
                                     type="checkbox"
                                     checked={formData.isCurrent}
                                     onChange={(e) => setFormData(prev => ({ ...prev, isCurrent: e.target.checked }))}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
                                 />
                                 <span className="text-sm text-gray-700 dark:text-gray-300">
                                     I currently work here
@@ -246,7 +246,7 @@ export function EmploymentVerificationModal({
                                     value={formData.managerName}
                                     onChange={(e) => setFormData(prev => ({ ...prev, managerName: e.target.value }))}
                                     placeholder="e.g., Sarah Johnson"
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 />
                             </div>
 
@@ -262,7 +262,7 @@ export function EmploymentVerificationModal({
                                         value={formData.managerEmail}
                                         onChange={(e) => setFormData(prev => ({ ...prev, managerEmail: e.target.value }))}
                                         placeholder="manager@company.com"
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     />
                                 </div>
                                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -272,8 +272,8 @@ export function EmploymentVerificationModal({
                         </div>
 
                         {/* Info Box */}
-                        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                            <p className="text-sm text-blue-700 dark:text-blue-300">
+                        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4">
+                            <p className="text-sm text-emerald-700 dark:text-emerald-300">
                                 📧 We'll send a verification email to your manager. They can confirm or decline
                                 with one click. Your email will not be shared publicly.
                             </p>
@@ -283,7 +283,7 @@ export function EmploymentVerificationModal({
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             {loading ? (
                                 <>
@@ -338,7 +338,7 @@ export function EmploymentVerificationModal({
                         </p>
                         <button
                             onClick={() => setStep("form")}
-                            className="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+                            className="px-6 py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
                         >
                             Try Again
                         </button>

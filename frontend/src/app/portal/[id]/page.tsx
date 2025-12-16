@@ -167,11 +167,11 @@ export default function PortalJobPage() {
                         {/* Header Card */}
                         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 mb-6">
                             <div className="flex items-start gap-4 mb-6">
-                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center flex-shrink-0">
+                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/30 flex items-center justify-center flex-shrink-0">
                                     {job.company_logo_url ? (
                                         <img src={job.company_logo_url} alt={job.company} className="w-12 h-12 object-contain" />
                                     ) : (
-                                        <Building2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                                        <Building2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                                     )}
                                 </div>
                                 <div className="flex-1">
@@ -216,12 +216,12 @@ export default function PortalJobPage() {
                                     </span>
                                 )}
                                 {job.experience_level && (
-                                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-medium rounded-full">
+                                    <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-medium rounded-full">
                                         {job.experience_level.charAt(0).toUpperCase() + job.experience_level.slice(1)} Level
                                     </span>
                                 )}
                                 {job.category && (
-                                    <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-sm font-medium rounded-full">
+                                    <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-medium rounded-full">
                                         {job.category.charAt(0).toUpperCase() + job.category.slice(1)}
                                     </span>
                                 )}
@@ -231,7 +231,7 @@ export default function PortalJobPage() {
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <Button
                                     onClick={() => setShowApplyModal(true)}
-                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3"
+                                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3"
                                 >
                                     <Zap className="w-5 h-5 mr-2" />
                                     Apply with Proofile
@@ -290,12 +290,12 @@ export default function PortalJobPage() {
                     {/* Right Column - Sidebar */}
                     <aside className="w-full lg:w-80 space-y-6">
                         {/* Quick Apply CTA */}
-                        <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
+                        <div className="bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-2xl p-6 text-white">
                             <div className="flex items-center gap-2 mb-3">
                                 <Sparkles className="w-6 h-6" />
                                 <h3 className="font-bold text-lg">Quick Apply with Proofile</h3>
                             </div>
-                            <ul className="space-y-2 mb-4 text-sm text-blue-100">
+                            <ul className="space-y-2 mb-4 text-sm text-emerald-100">
                                 <li className="flex items-center gap-2">
                                     <CheckCircle className="w-4 h-4" />
                                     One-click application
@@ -310,7 +310,7 @@ export default function PortalJobPage() {
                                 </li>
                             </ul>
                             <Link href="/register">
-                                <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 rounded-xl">
+                                <Button className="w-full bg-white text-emerald-600 hover:bg-emerald-50 rounded-xl">
                                     Create Free Account
                                 </Button>
                             </Link>
@@ -390,7 +390,7 @@ export default function PortalJobPage() {
                         </p>
                         <div className="space-y-3">
                             <Link href="/register">
-                                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3">
+                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3">
                                     <Sparkles className="w-5 h-5 mr-2" />
                                     Create Account & Apply
                                 </Button>

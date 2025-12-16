@@ -78,7 +78,7 @@ export default function PersonalizationSettings() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center p-8">
-                <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+                <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
             </div>
         );
     }
@@ -92,8 +92,8 @@ export default function PersonalizationSettings() {
             {/* Location Section */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                        <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">Location</h3>
@@ -109,7 +109,7 @@ export default function PersonalizationSettings() {
                         <select
                             value={getValue("province") as string}
                             onChange={(e) => handleChange("province", e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select province</option>
                             {PROVINCES.map((p) => (
@@ -129,7 +129,7 @@ export default function PersonalizationSettings() {
                             value={getValue("city") as string}
                             onChange={(e) => handleChange("city", e.target.value)}
                             placeholder="e.g., Johannesburg"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -139,7 +139,7 @@ export default function PersonalizationSettings() {
                                 type="checkbox"
                                 checked={getValue("willing_to_relocate") as boolean}
                                 onChange={(e) => handleChange("willing_to_relocate", e.target.checked)}
-                                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                             />
                             <span className="text-sm text-gray-700 dark:text-gray-300">
                                 I am willing to relocate
@@ -152,8 +152,8 @@ export default function PersonalizationSettings() {
             {/* Career Intent Section */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                        <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <Briefcase className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">Career Intent</h3>
@@ -169,7 +169,7 @@ export default function PersonalizationSettings() {
                         <select
                             value={getValue("career_intent") as string}
                             onChange={(e) => handleChange("career_intent", e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select status</option>
                             {CAREER_INTENTS.map((c) => (
@@ -191,7 +191,7 @@ export default function PersonalizationSettings() {
                             value={getValue("notice_period_weeks") as number || ""}
                             onChange={(e) => handleChange("notice_period_weeks", parseInt(e.target.value) || null)}
                             placeholder="e.g., 4"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
                 </div>
@@ -221,7 +221,7 @@ export default function PersonalizationSettings() {
                             value={getValue("salary_expectation_min") as number || ""}
                             onChange={(e) => handleChange("salary_expectation_min", parseInt(e.target.value) || null)}
                             placeholder="e.g., 350000"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -236,7 +236,7 @@ export default function PersonalizationSettings() {
                             value={getValue("salary_expectation_max") as number || ""}
                             onChange={(e) => handleChange("salary_expectation_max", parseInt(e.target.value) || null)}
                             placeholder="e.g., 500000"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
 
@@ -246,7 +246,7 @@ export default function PersonalizationSettings() {
                                 type="checkbox"
                                 checked={getValue("salary_negotiable") as boolean}
                                 onChange={(e) => handleChange("salary_negotiable", e.target.checked)}
-                                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                             />
                             <span className="text-sm text-gray-700 dark:text-gray-300">
                                 Salary is negotiable
@@ -259,8 +259,8 @@ export default function PersonalizationSettings() {
             {/* Work Mode Section */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                        <Building2 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">Work Mode</h3>
@@ -276,7 +276,7 @@ export default function PersonalizationSettings() {
                         <select
                             value={getValue("work_mode_preference") as string}
                             onChange={(e) => handleChange("work_mode_preference", e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">Select preference</option>
                             {WORK_MODES.map((w) => (
@@ -298,7 +298,7 @@ export default function PersonalizationSettings() {
                             value={getValue("max_commute_minutes") as number || ""}
                             onChange={(e) => handleChange("max_commute_minutes", parseInt(e.target.value) || null)}
                             placeholder="e.g., 45"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
                 </div>
@@ -307,8 +307,8 @@ export default function PersonalizationSettings() {
             {/* Experience Section */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                        <Clock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <Clock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">Experience</h3>
@@ -327,7 +327,7 @@ export default function PersonalizationSettings() {
                         value={getValue("years_experience") as number || ""}
                         onChange={(e) => handleChange("years_experience", parseInt(e.target.value) || null)}
                         placeholder="e.g., 5"
-                        className="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                        className="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
             </section>
@@ -338,7 +338,7 @@ export default function PersonalizationSettings() {
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {saving ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

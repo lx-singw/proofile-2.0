@@ -69,13 +69,13 @@ export default function AIInsightsCard({
     const getPriorityStyles = (type: string) => {
         switch (type) {
             case "headline":
-                return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10";
+                return "border-l-emerald-500 bg-emerald-50 dark:bg-emerald-900/10";
             case "skill":
                 return "border-l-green-500 bg-green-50 dark:bg-green-900/10";
             case "summary":
-                return "border-l-purple-500 bg-purple-50 dark:bg-purple-900/10";
+                return "border-l-emerald-500 bg-emerald-50 dark:bg-emerald-900/10";
             default:
-                return "border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/10";
+                return "border-l-emerald-500 bg-emerald-50 dark:bg-emerald-900/10";
         }
     };
 
@@ -89,7 +89,7 @@ export default function AIInsightsCard({
     return (
         <div className={`bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden ${className}`}>
             {/* Header */}
-            <div className="p-6 bg-gradient-to-r from-purple-500 to-indigo-600">
+            <div className="p-6 bg-gradient-to-r from-emerald-500 to-emerald-600">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-white/20 rounded-xl">
@@ -97,7 +97,7 @@ export default function AIInsightsCard({
                         </div>
                         <div>
                             <h3 className="font-bold text-white text-lg">🤖 AI Profile Assistant</h3>
-                            <p className="text-purple-100 text-sm">
+                            <p className="text-emerald-100 text-sm">
                                 Hi {userName}! Here's how to improve your profile
                             </p>
                         </div>
@@ -126,7 +126,7 @@ export default function AIInsightsCard({
             {/* Quick Wins - AI Suggestions */}
             <div className="p-4 space-y-3">
                 <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="w-4 h-4 text-yellow-500" />
+                    <Lightbulb className="w-4 h-4 text-emerald-500" />
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">
                         💡 Quick Wins (Do these now)
                     </span>
@@ -134,7 +134,7 @@ export default function AIInsightsCard({
 
                 {loading ? (
                     <div className="flex items-center justify-center py-4">
-                        <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                        <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
                     </div>
                 ) : suggestions.length > 0 ? (
                     suggestions.slice(0, 3).map((suggestion) => (
@@ -171,7 +171,7 @@ export default function AIInsightsCard({
                                     <button
                                         onClick={() => handleApply(suggestion.id)}
                                         disabled={applyingId === suggestion.id}
-                                        className="px-2 py-1 text-xs font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded transition-colors flex-shrink-0 disabled:opacity-50"
+                                        className="px-2 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded transition-colors flex-shrink-0 disabled:opacity-50"
                                     >
                                         {applyingId === suggestion.id ? (
                                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -193,7 +193,7 @@ export default function AIInsightsCard({
             {/* Career Growth Opportunities */}
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
-                    <Target className="w-4 h-4 text-indigo-600" />
+                    <Target className="w-4 h-4 text-emerald-600" />
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">
                         🎯 Career Growth Opportunities
                     </span>
@@ -208,11 +208,11 @@ export default function AIInsightsCard({
                             <div className="flex items-center gap-2">
                                 <div className="w-16 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-indigo-500 rounded-full"
+                                        className="h-full bg-emerald-500 rounded-full"
                                         style={{ width: `${opp.readiness}%` }}
                                     />
                                 </div>
-                                <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
                                     {opp.readiness}%
                                 </span>
                             </div>
@@ -225,7 +225,7 @@ export default function AIInsightsCard({
             <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                 <Link
                     href="/ai-assistant"
-                    className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                    className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
                 >
                     <Sparkles className="w-4 h-4" />
                     Ask AI Anything About Your Career

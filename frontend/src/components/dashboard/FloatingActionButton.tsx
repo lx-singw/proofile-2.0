@@ -13,7 +13,7 @@ export default function FloatingActionButton() {
             icon: <PenTool className="w-5 h-5" />,
             label: 'Build Resume',
             onClick: () => router.push('/resume/build'),
-            color: 'from-purple-600 to-purple-700',
+            color: 'from-emerald-600 to-emerald-700',
         },
         {
             icon: <Upload className="w-5 h-5" />,
@@ -25,7 +25,7 @@ export default function FloatingActionButton() {
             icon: <User className="w-5 h-5" />,
             label: 'View Profile',
             onClick: () => router.push('/profile'),
-            color: 'from-blue-600 to-blue-700',
+            color: 'from-emerald-600 to-emerald-700',
         },
         {
             icon: <HelpCircle className="w-5 h-5" />,
@@ -67,7 +67,7 @@ export default function FloatingActionButton() {
             {/* Main FAB Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-full shadow-2xl flex items-center justify-center text-white transition-all hover:scale-110 ${isOpen ? 'rotate-45' : 'rotate-0'
+                className={`w-14 h-14 bg-gradient-to-br from-emerald-600 to-emerald-600 hover:from-emerald-700 hover:to-emerald-700 rounded-full shadow-2xl flex items-center justify-center text-white transition-all hover:scale-110 ${isOpen ? 'rotate-45' : 'rotate-0'
                     }`}
                 aria-label={isOpen ? 'Close quick actions' : 'Open quick actions'}
             >

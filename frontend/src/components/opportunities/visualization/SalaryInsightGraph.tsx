@@ -29,8 +29,8 @@ export default function SalaryInsightGraph({ range, location, role }: SalaryInsi
     const getTrend = () => {
         if (!userPosition) return null;
         if (userPosition > 75) return { icon: TrendingUp, text: 'Above market', color: 'text-green-600' };
-        if (userPosition > 40) return { icon: Minus, text: 'At market', color: 'text-blue-600' };
-        return { icon: TrendingDown, text: 'Below market', color: 'text-yellow-600' };
+        if (userPosition > 40) return { icon: Minus, text: 'At market', color: 'text-emerald-600' };
+        return { icon: TrendingDown, text: 'Below market', color: 'text-emerald-600' };
     };
 
     const trend = getTrend();
@@ -54,7 +54,7 @@ export default function SalaryInsightGraph({ range, location, role }: SalaryInsi
                     <span>{formatSalary(range.max)}</span>
                 </div>
 
-                <div className="h-3 bg-gradient-to-r from-blue-200 via-green-200 to-purple-200 rounded-full relative">
+                <div className="h-3 bg-gradient-to-r from-emerald-200 via-green-200 to-emerald-200 rounded-full relative">
                     {/* Median marker */}
                     <div
                         className="absolute top-0 h-full w-0.5 bg-green-600"
@@ -64,7 +64,7 @@ export default function SalaryInsightGraph({ range, location, role }: SalaryInsi
                     {/* User target marker */}
                     {userPosition !== null && (
                         <div
-                            className="absolute -top-1 w-2 h-5 bg-purple-600 rounded"
+                            className="absolute -top-1 w-2 h-5 bg-emerald-600 rounded"
                             style={{ left: `${userPosition}%`, transform: 'translateX(-50%)' }}
                         />
                     )}

@@ -43,13 +43,13 @@ export default function AISuggestions() {
                     key={suggestion.id}
                     className={cn(
                         "bg-white/90 backdrop-blur-md border rounded-xl p-4 shadow-2xl animate-in slide-in-from-right-10 duration-500",
-                        suggestion.type === 'improvement' ? "border-blue-200" : "border-amber-200"
+                        suggestion.type === 'improvement' ? "border-emerald-200" : "border-emerald-200"
                     )}
                 >
                     <div className="flex items-start gap-3">
                         <div className={cn(
                             "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0",
-                            suggestion.type === 'improvement' ? "bg-blue-100 text-blue-600" : "bg-amber-100 text-amber-600"
+                            suggestion.type === 'improvement' ? "bg-emerald-100 text-emerald-600" : "bg-emerald-100 text-emerald-600"
                         )}>
                             {suggestion.type === 'improvement' ? <Sparkles size={16} /> : <Lightbulb size={16} />}
                         </div>
@@ -61,7 +61,7 @@ export default function AISuggestions() {
 
                             <div className="flex items-center gap-3">
                                 {suggestion.action && (
-                                    <button className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors">
+                                    <button className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors">
                                         {suggestion.action}
                                         <ArrowRight size={12} />
                                     </button>

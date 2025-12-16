@@ -38,7 +38,7 @@ export default function ReviewCard({
             <Star
                 key={i}
                 size={14}
-                className={i < score ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}
+                className={i < score ? 'text-emerald-500 fill-emerald-500' : 'text-gray-300'}
             />
         ));
     };
@@ -47,13 +47,13 @@ export default function ReviewCard({
         <div className={`
             bg-white dark:bg-gray-800 rounded-xl border p-5 transition-all
             ${isStaked
-                ? 'border-purple-300 dark:border-purple-700 shadow-md'
+                ? 'border-emerald-300 dark:border-emerald-700 shadow-md'
                 : 'border-gray-200 dark:border-gray-700'}
         `}>
             {/* Staked Badge */}
             {isStaked && (
-                <div className="flex items-center gap-2 mb-3 text-purple-600 dark:text-purple-400">
-                    <div className="p-1 bg-purple-100 dark:bg-purple-900/30 rounded">
+                <div className="flex items-center gap-2 mb-3 text-emerald-600 dark:text-emerald-400">
+                    <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded">
                         <Shield size={14} />
                     </div>
                     <span className="text-xs font-semibold uppercase tracking-wider">
@@ -64,7 +64,7 @@ export default function ReviewCard({
 
             {/* Author Header */}
             <div className="flex items-start gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-semibold">
                     {author.avatarUrl ? (
                         <img src={author.avatarUrl} alt={author.name} className="w-full h-full rounded-full object-cover" />
                     ) : (
@@ -109,7 +109,7 @@ export default function ReviewCard({
                     {dimensions.map((dim, i) => (
                         <span
                             key={i}
-                            className="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs rounded-full"
+                            className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs rounded-full"
                         >
                             {dim.label}: {dim.score.toFixed(1)}
                         </span>

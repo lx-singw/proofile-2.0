@@ -40,11 +40,11 @@ export default function ProgressStepper({
             <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Progress</span>
-                    <span className="text-xs font-bold text-blue-600">{progress}%</span>
+                    <span className="text-xs font-bold text-emerald-600">{progress}%</span>
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-500 ease-out"
+                        className="h-full bg-gradient-to-r from-emerald-600 to-emerald-600 rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -63,14 +63,14 @@ export default function ProgressStepper({
                             onClick={() => onStepClick(index)}
                             className={cn(
                                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group relative",
-                                isActive && "bg-blue-50 text-blue-700 shadow-sm",
+                                isActive && "bg-emerald-50 text-emerald-700 shadow-sm",
                                 isCompleted && !isActive && "text-gray-700 hover:bg-gray-50",
                                 isPending && "text-gray-500 hover:bg-gray-50"
                             )}
                         >
                             {/* Left accent bar for active step */}
                             {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full" />
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-emerald-600 rounded-r-full" />
                             )}
 
                             {/* Status Icon */}
@@ -79,7 +79,7 @@ export default function ProgressStepper({
                                     <CheckCircle2 size={20} className="text-green-500" />
                                 ) : isActive ? (
                                     <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none">
-                                        <circle cx="10" cy="10" r="8" fill="currentColor" className="text-blue-600" />
+                                        <circle cx="10" cy="10" r="8" fill="currentColor" className="text-emerald-600" />
                                         <circle cx="10" cy="10" r="3" fill="white" className="animate-pulse" />
                                     </svg>
                                 ) : (
@@ -95,7 +95,7 @@ export default function ProgressStepper({
                             {/* Step Icon */}
                             <div className={cn(
                                 "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-                                isActive && "bg-blue-100 text-blue-600",
+                                isActive && "bg-emerald-100 text-emerald-600",
                                 isCompleted && !isActive && "bg-green-50 text-green-600",
                                 isPending && "bg-gray-50 text-gray-400 group-hover:bg-gray-100"
                             )}>
@@ -109,12 +109,12 @@ export default function ProgressStepper({
             {/* AI Assistant Card */}
             <div className="p-4 border-t border-gray-100">
                 {onAIClick && (
-                    <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-4 text-white shadow-lg">
+                    <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-4 text-white shadow-lg">
                         <div className="flex items-center gap-2 mb-2">
-                            <Sparkles size={16} className="text-yellow-300 animate-pulse" />
+                            <Sparkles size={16} className="text-emerald-300 animate-pulse" />
                             <span className="font-bold text-sm">AI Assistant</span>
                         </div>
-                        <p className="text-xs text-indigo-100 mb-3">
+                        <p className="text-xs text-emerald-100 mb-3">
                             Get smart suggestions for your resume content.
                         </p>
                         <button

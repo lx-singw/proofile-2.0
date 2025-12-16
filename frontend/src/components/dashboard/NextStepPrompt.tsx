@@ -51,7 +51,7 @@ export default function NextStepPrompt({
         if (!isVerified) {
             return {
                 icon: Shield,
-                iconColor: "text-blue-600 bg-blue-100 dark:bg-blue-900/30",
+                iconColor: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30",
                 title: "Verify your work history",
                 description: "Verified profiles get 3x more job opportunities",
                 time: "5 min",
@@ -68,7 +68,7 @@ export default function NextStepPrompt({
         if (!hasRatings) {
             return {
                 icon: Star,
-                iconColor: "text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30",
+                iconColor: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30",
                 title: "Get your first peer rating",
                 description: "Invite a former colleague to rate your work",
                 time: "1 min",
@@ -85,7 +85,7 @@ export default function NextStepPrompt({
         // Profile is complete - show job discovery
         return {
             icon: Briefcase,
-            iconColor: "text-purple-600 bg-purple-100 dark:bg-purple-900/30",
+            iconColor: "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30",
             title: "Explore job matches",
             description: "See jobs matched to your verified profile",
             time: "",
@@ -108,7 +108,7 @@ export default function NextStepPrompt({
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden">
             {/* Progress Header */}
             {completionPercent < 100 && (
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             🎯 Complete Your Profile
@@ -119,7 +119,7 @@ export default function NextStepPrompt({
                     </div>
                     <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-500"
                             style={{ width: `${completionPercent}%` }}
                         />
                     </div>
@@ -203,13 +203,13 @@ export default function NextStepPrompt({
                             </span>
                         )}
                         {isVerified && (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded-full">
                                 <CheckCircle className="w-3 h-3" />
                                 Verified
                             </span>
                         )}
                         {hasRatings && (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-yellow-700 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded-full">
                                 <CheckCircle className="w-3 h-3" />
                                 Rated
                             </span>

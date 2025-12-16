@@ -104,7 +104,7 @@ export default function MatchBreakdown({ dimensions, size = 180 }: MatchBreakdow
                                 x={x}
                                 y={y - 10}
                                 textAnchor="middle"
-                                className="text-xs font-bold fill-purple-600"
+                                className="text-xs font-bold fill-emerald-600"
                             >
                                 {dim.score}%
                             </text>
@@ -136,7 +136,7 @@ export default function MatchBreakdown({ dimensions, size = 180 }: MatchBreakdow
                     <div key={i} className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                         <span className={`
                             w-2 h-2 rounded-full
-                            ${dim.score >= 80 ? 'bg-green-500' : dim.score >= 50 ? 'bg-yellow-500' : 'bg-red-500'}
+                            ${dim.score >= 80 ? 'bg-green-500' : dim.score >= 50 ? 'bg-emerald-500' : 'bg-red-500'}
                         `} />
                         {dim.label}: {dim.score}%
                     </div>

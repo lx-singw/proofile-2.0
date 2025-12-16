@@ -45,7 +45,7 @@ export default function ReputationPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
                 <div className="text-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-yellow-600 mx-auto mb-2" />
+                    <Loader2 className="h-8 w-8 animate-spin text-emerald-600 mx-auto mb-2" />
                     <p className="text-gray-500">Loading your reputation...</p>
                 </div>
             </div>
@@ -120,7 +120,7 @@ export default function ReputationPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Star className="w-8 h-8 text-yellow-500" />
+                                <Star className="w-8 h-8 text-emerald-500" />
                                 Your Professional Reputation
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -145,7 +145,7 @@ export default function ReputationPage() {
                             </button>
                             <Link
                                 href={`/p/${user?.username || 'me'}`}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
                             >
                                 <Users className="w-4 h-4" />
                                 Public Profile
@@ -196,7 +196,7 @@ export default function ReputationPage() {
                     <CareerInsightsCard />
 
                     {/* Request Ratings */}
-                    <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800">
+                    <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl p-6 border border-emerald-200 dark:border-emerald-800">
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                             <Send className="w-5 h-5" />
                             Request Ratings
@@ -207,14 +207,14 @@ export default function ReputationPage() {
                         <div className="flex flex-wrap gap-3">
                             <button
                                 onClick={() => setRequestModalOpen(true)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2"
                             >
                                 <Share2 className="w-4 h-4" />
                                 Request a Rating
                             </button>
                             <button
                                 onClick={() => setRateModalOpen(true)}
-                                className="px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2"
                             >
                                 <UserPlus className="w-4 h-4" />
                                 Rate Someone

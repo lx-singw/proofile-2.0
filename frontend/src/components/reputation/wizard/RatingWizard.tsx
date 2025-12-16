@@ -113,7 +113,7 @@ export default function RatingWizard({
                 <div
                     key={s}
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${s === step
-                            ? 'bg-blue-600 text-white scale-110'
+                            ? 'bg-emerald-600 text-white scale-110'
                             : s < step
                                 ? 'bg-green-500 text-white'
                                 : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
@@ -150,7 +150,7 @@ export default function RatingWizard({
                         >
                             <Star
                                 className={`h-10 w-10 ${score <= overallScore
-                                        ? 'text-yellow-500 fill-yellow-500'
+                                        ? 'text-emerald-500 fill-emerald-500'
                                         : 'text-gray-300 dark:text-gray-600'
                                     }`}
                             />
@@ -201,7 +201,7 @@ export default function RatingWizard({
                                 </span>
                                 <p className="text-xs text-gray-500">{DIMENSIONS.find(d => d.slug === dim.slug)?.description}</p>
                             </div>
-                            <span className="text-lg font-bold text-blue-600">
+                            <span className="text-lg font-bold text-emerald-600">
                                 {dim.score.toFixed(1)}
                             </span>
                         </div>
@@ -212,7 +212,7 @@ export default function RatingWizard({
                             step="0.5"
                             value={dim.score}
                             onChange={(e) => updateDimensionScore(dim.slug, parseFloat(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                         />
                         <div className="flex justify-between text-xs text-gray-400">
                             <span>Needs work</span>
@@ -241,7 +241,7 @@ export default function RatingWizard({
                 placeholder={`What was it like working with ${requester.name}? Share specific examples...`}
                 rows={5}
                 maxLength={2000}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
             />
             <p className="text-xs text-gray-400 text-right">
                 {textContent.length}/2000 characters
@@ -271,7 +271,7 @@ export default function RatingWizard({
                 <button
                     onClick={() => setIsAnonymous(!isAnonymous)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${isAnonymous
-                            ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400'
+                            ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400'
                             : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400'
                         }`}
                 >
@@ -304,7 +304,7 @@ export default function RatingWizard({
                         {Array(5).fill(0).map((_, i) => (
                             <Star
                                 key={i}
-                                className={`h-5 w-5 ${i < overallScore ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
+                                className={`h-5 w-5 ${i < overallScore ? 'text-emerald-500 fill-emerald-500' : 'text-gray-300'}`}
                             />
                         ))}
                     </div>
@@ -372,7 +372,7 @@ export default function RatingWizard({
                 {step < totalSteps ? (
                     <button
                         onClick={() => setStep(step + 1)}
-                        className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
                     >
                         Next
                         <ChevronRight className="h-5 w-5" />

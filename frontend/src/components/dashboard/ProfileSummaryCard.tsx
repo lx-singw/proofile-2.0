@@ -41,7 +41,7 @@ export default function ProfileSummaryCard({
     <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
       {/* Avatar */}
       <div className="flex flex-col items-center text-center mb-4">
-        <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold mb-3">
+        <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center text-2xl font-bold mb-3">
           {initial}
         </div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -58,13 +58,13 @@ export default function ProfileSummaryCard({
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
             Resume Complete
           </span>
-          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+          <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             {completionPercentage}%
           </span>
         </div>
         <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300"
+            className="h-full bg-emerald-600 dark:bg-emerald-500 transition-all duration-300"
             style={{ width: `${completionPercentage}%` }}
           />
         </div>
@@ -86,7 +86,7 @@ export default function ProfileSummaryCard({
       <div className="space-y-2">
         <Link
           href="/profile/edit"
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors text-sm font-medium"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 dark:hover:bg-emerald-500 transition-colors text-sm font-medium"
         >
           <Edit2 className="w-4 h-4" />
           Edit Resume

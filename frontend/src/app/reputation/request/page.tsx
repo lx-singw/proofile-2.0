@@ -113,7 +113,7 @@ export default function RequestRatingPage() {
                             value={form.email}
                             onChange={(e) => updateForm('email', e.target.value)}
                             placeholder="colleague@company.com"
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
                 </div>
@@ -127,7 +127,7 @@ export default function RequestRatingPage() {
                         value={form.name}
                         onChange={(e) => updateForm('name', e.target.value)}
                         placeholder="John Doe"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
             </div>
@@ -152,7 +152,7 @@ export default function RequestRatingPage() {
                         key={rel.value}
                         onClick={() => updateForm('relationship', rel.value)}
                         className={`w-full p-4 rounded-xl border-2 text-left transition-all ${form.relationship === rel.value
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
                                 : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                             }`}
                     >
@@ -164,7 +164,7 @@ export default function RequestRatingPage() {
                                 <p className="text-sm text-gray-500">{rel.description}</p>
                             </div>
                             {form.relationship === rel.value && (
-                                <CheckCircle className="h-5 w-5 text-blue-500" />
+                                <CheckCircle className="h-5 w-5 text-emerald-500" />
                             )}
                         </div>
                     </button>
@@ -197,7 +197,7 @@ export default function RequestRatingPage() {
                             value={form.company}
                             onChange={(e) => updateForm('company', e.target.value)}
                             placeholder="TechCorp Inc"
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                         />
                     </div>
                 </div>
@@ -211,7 +211,7 @@ export default function RequestRatingPage() {
                         value={form.role}
                         onChange={(e) => updateForm('role', e.target.value)}
                         placeholder="Senior Product Manager"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
                     />
                 </div>
 
@@ -226,7 +226,7 @@ export default function RequestRatingPage() {
                             onChange={(e) => updateForm('message', e.target.value)}
                             placeholder="Hi! I'd appreciate your feedback on our time working together..."
                             rows={3}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 resize-none"
                         />
                     </div>
                 </div>
@@ -259,7 +259,7 @@ export default function RequestRatingPage() {
                         />
                         <button
                             onClick={copyLink}
-                            className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="p-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
                         >
                             {copied ? <CheckCircle className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
                         </button>
@@ -284,7 +284,7 @@ export default function RequestRatingPage() {
                     <div
                         key={s}
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-all ${s === step
-                                ? 'bg-blue-600 text-white scale-110'
+                                ? 'bg-emerald-600 text-white scale-110'
                                 : s < step
                                     ? 'bg-green-500 text-white'
                                     : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
@@ -316,7 +316,7 @@ export default function RequestRatingPage() {
                     <button
                         onClick={() => setStep(step + 1)}
                         disabled={step === 1 && !form.email || step === 2 && !form.relationship}
-                        className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg"
+                        className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white rounded-lg"
                     >
                         Next
                         <ChevronRight className="h-5 w-5" />

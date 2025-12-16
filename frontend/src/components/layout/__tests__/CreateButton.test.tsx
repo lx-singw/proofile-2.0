@@ -40,13 +40,13 @@ describe("CreateButton", () => {
   it("has blue background styling", () => {
     render(<CreateButton />);
     const button = screen.getByRole("button");
-    expect(button).toHaveClass("bg-blue-600");
+    expect(button).toHaveClass("bg-emerald-600");
   });
 
   it("has hover state styling", () => {
     render(<CreateButton />);
     const button = screen.getByRole("button");
-    expect(button).toHaveClass("hover:bg-blue-700");
+    expect(button).toHaveClass("hover:bg-emerald-700");
   });
 
   it("displays plus icon correctly", () => {

@@ -51,13 +51,13 @@ export function ScoreBar({ score, label, maxScore = 100 }: ScoreBarProps) {
 
     const getColor = (val: number) => {
         if (val >= 80) return 'bg-green-500';
-        if (val >= 60) return 'bg-yellow-500';
+        if (val >= 60) return 'bg-emerald-500';
         return 'bg-red-500';
     };
 
     const getTextColor = (val: number) => {
         if (val >= 80) return 'text-green-600';
-        if (val >= 60) return 'text-yellow-600';
+        if (val >= 60) return 'text-emerald-600';
         return 'text-red-600';
     };
 

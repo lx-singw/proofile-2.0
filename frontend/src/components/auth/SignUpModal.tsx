@@ -85,9 +85,9 @@ export default function SignUpModal({ isOpen, onClose, triggerAction, score }: S
                 </button>
 
                 {/* Header */}
-                <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white text-center">
+                <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-8 text-white text-center">
                     <h2 className="text-2xl font-bold mb-2">{content.title}</h2>
-                    <p className="text-blue-100 font-medium">{content.subtitle}</p>
+                    <p className="text-emerald-100 font-medium">{content.subtitle}</p>
                 </div>
 
                 {/* Content */}

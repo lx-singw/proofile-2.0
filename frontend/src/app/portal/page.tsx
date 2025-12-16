@@ -271,7 +271,7 @@ export default function PortalPage() {
                                 <div className="space-y-2">
                                     {["Entry Level", "Mid Level", "Senior", "Lead/Manager"].map((level) => (
                                         <label key={level} className="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" className="rounded text-blue-600" />
+                                            <input type="checkbox" className="rounded text-emerald-600" />
                                             <span className="text-sm text-gray-600 dark:text-gray-400">{level}</span>
                                         </label>
                                     ))}
@@ -284,7 +284,7 @@ export default function PortalPage() {
                                 <div className="space-y-2">
                                     {CATEGORIES.slice(0, 5).map((cat) => (
                                         <label key={cat} className="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" className="rounded text-blue-600" />
+                                            <input type="checkbox" className="rounded text-emerald-600" />
                                             <span className="text-sm text-gray-600 dark:text-gray-400">{cat}</span>
                                         </label>
                                     ))}

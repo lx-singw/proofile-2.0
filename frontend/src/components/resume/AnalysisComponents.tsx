@@ -16,7 +16,7 @@ export function ExpandablePanel({ title, score, icon, children, defaultExpanded 
 
     const getScoreColor = (score: number) => {
         if (score >= 80) return 'text-green-600';
-        if (score >= 60) return 'text-yellow-600';
+        if (score >= 60) return 'text-emerald-600';
         return 'text-red-600';
     };
 
@@ -69,7 +69,7 @@ export function InsightItem({ type, text, action }: InsightItemProps) {
             case 'success':
                 return <CheckCircle className="w-5 h-5 text-green-600" />;
             case 'warning':
-                return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
+                return <AlertTriangle className="w-5 h-5 text-emerald-600" />;
             case 'error':
                 return <AlertTriangle className="w-5 h-5 text-red-600" />;
         }
@@ -115,14 +115,14 @@ export function AIRefinementTools({ onToolSelect }: AIRefinementToolsProps) {
             icon: <Sparkles className="w-6 h-6 text-white" />,
             title: 'Enhance Writing Quality',
             description: 'Transform weak bullet points into impactful achievements',
-            color: 'from-purple-500 to-pink-600'
+            color: 'from-emerald-500 to-pink-600'
         },
         {
             id: 'optimize-keywords',
             icon: <Key className="w-6 h-6 text-white" />,
             title: 'Optimize Keywords',
             description: 'Add missing industry-specific keywords automatically',
-            color: 'from-blue-500 to-indigo-600'
+            color: 'from-emerald-500 to-emerald-600'
         },
         {
             id: 'fix-ats',
@@ -136,7 +136,7 @@ export function AIRefinementTools({ onToolSelect }: AIRefinementToolsProps) {
             icon: <Wand2 className="w-6 h-6 text-white" />,
             title: 'Full AI Makeover',
             description: 'Let AI optimize everything at once (recommended)',
-            color: 'from-orange-500 to-red-600'
+            color: 'from-emerald-500 to-red-600'
         }
     ];
 

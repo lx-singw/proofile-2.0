@@ -27,7 +27,7 @@ export default function VerificationTooltip({
             case "high":
                 return "text-emerald-600 dark:text-emerald-400";
             case "medium":
-                return "text-amber-600 dark:text-amber-400";
+                return "text-emerald-600 dark:text-emerald-400";
             case "low":
                 return "text-red-600 dark:text-red-400";
         }
@@ -38,7 +38,7 @@ export default function VerificationTooltip({
             case "high":
                 return "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800";
             case "medium":
-                return "bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800";
+                return "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800";
             case "low":
                 return "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800";
         }

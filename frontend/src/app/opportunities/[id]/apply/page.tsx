@@ -62,7 +62,7 @@ export default function ApplyPage() {
                                 <div className={`
                                     w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
                                     ${isComplete ? 'bg-green-500 text-white' :
-                                        isCurrent ? 'bg-purple-600 text-white' :
+                                        isCurrent ? 'bg-emerald-600 text-white' :
                                             'bg-gray-200 dark:bg-gray-700 text-gray-500'}
                                 `}>
                                     {isComplete ? <CheckCircle className="w-4 h-4" /> : i + 1}
@@ -89,7 +89,7 @@ export default function ApplyPage() {
 
                             <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <Sparkles className="w-5 h-5 text-purple-500" />
+                                    <Sparkles className="w-5 h-5 text-emerald-500" />
                                     <span className="font-medium text-gray-900 dark:text-white">AI Tailor will:</span>
                                 </div>
                                 <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400 ml-8">
@@ -102,7 +102,7 @@ export default function ApplyPage() {
 
                             <button
                                 onClick={handleTailor}
-                                className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-xl hover:from-purple-700 hover:to-blue-700 flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-600 text-white font-medium rounded-xl hover:from-emerald-700 hover:to-emerald-700 flex items-center justify-center gap-2"
                             >
                                 <FileEdit className="w-5 h-5" />
                                 Start AI Tailoring
@@ -112,7 +112,7 @@ export default function ApplyPage() {
 
                     {step === 'tailoring' && (
                         <div className="text-center py-12">
-                            <Loader2 className="w-12 h-12 mx-auto text-purple-500 animate-spin mb-4" />
+                            <Loader2 className="w-12 h-12 mx-auto text-emerald-500 animate-spin mb-4" />
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                                 AI is tailoring your resume...
                             </h2>
@@ -167,7 +167,7 @@ export default function ApplyPage() {
                             </p>
                             <Link
                                 href="/jobs"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white font-medium rounded-xl hover:bg-purple-700"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700"
                             >
                                 Browse More Jobs
                             </Link>
