@@ -174,8 +174,8 @@ export default function OpportunitiesPage() {
                         <button
                             onClick={() => setCategoryTab('all')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all ${categoryTab === 'all'
-                                    ? 'bg-purple-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                                ? 'bg-purple-600 text-white'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
                                 }`}
                         >
                             All
@@ -183,8 +183,8 @@ export default function OpportunitiesPage() {
                         <button
                             onClick={() => setCategoryTab('jobs')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${categoryTab === 'jobs'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
                                 }`}
                         >
                             <Briefcase className="w-4 h-4" />
@@ -193,8 +193,8 @@ export default function OpportunitiesPage() {
                         <button
                             onClick={() => setCategoryTab('training_skills_programs')}
                             className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${categoryTab === 'training_skills_programs'
-                                    ? 'bg-emerald-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                                ? 'bg-emerald-600 text-white'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
                                 }`}
                         >
                             <GraduationCap className="w-4 h-4" />
@@ -253,22 +253,22 @@ export default function OpportunitiesPage() {
                                     </p>
                                 </div>
                             ) : (
-                                recommendations.map(({ job, match_score, score_breakdown }) => (
-                                    <div key={job.id} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all group">
+                                recommendations.map(({ opportunity, match_score, score_breakdown }) => (
+                                    <div key={opportunity.id} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all group">
                                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                                             <div className="flex-1">
                                                 <div className="flex items-start justify-between mb-2">
                                                     <div>
                                                         <h2 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 transition-colors">
-                                                            <Link href={`/jobs/${job.id}`}>
-                                                                {job.title}
+                                                            <Link href={`/opportunities/${opportunity.id}`}>
+                                                                {opportunity.title}
                                                             </Link>
                                                         </h2>
                                                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mt-1">
                                                             <Building2 className="w-4 h-4" />
-                                                            <span className="font-medium">{job.company_name}</span>
+                                                            <span className="font-medium">{opportunity.company_name}</span>
                                                             <span>•</span>
-                                                            <span className="text-sm">{job.location || 'Remote'}</span>
+                                                            <span className="text-sm">{opportunity.location || 'Remote'}</span>
                                                         </div>
                                                     </div>
                                                     <div className={`px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1.5 ${getMatchColor(match_score)}`}>
@@ -343,10 +343,10 @@ export default function OpportunitiesPage() {
 
                                             <div className="flex md:flex-col gap-2 mt-4 md:mt-0 md:min-w-[140px]">
                                                 <button
-                                                    onClick={() => setQuickApplyJob({
-                                                        id: job.id,
-                                                        title: job.title,
-                                                        company: job.company_name,
+                                                    onClick={() => setQuickApplyOpportunity({
+                                                        id: opportunity.id,
+                                                        title: opportunity.title,
+                                                        company: opportunity.company_name,
                                                         score: match_score
                                                     })}
                                                     className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
@@ -354,7 +354,7 @@ export default function OpportunitiesPage() {
                                                     Quick Apply
                                                 </button>
                                                 <Link
-                                                    href={`/jobs/${job.id}/gap-analysis`}
+                                                    href={`/opportunities/${opportunity.id}/gap-analysis`}
                                                     className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                                 >
                                                     Gap Analysis
@@ -368,18 +368,18 @@ export default function OpportunitiesPage() {
                     </div>
 
                     {/* Quick Apply Modal */}
-                    {quickApplyJob && (
+                    {quickApplyOpportunity && (
                         <QuickApplyModal
-                            isOpen={!!quickApplyJob}
-                            onClose={() => setQuickApplyJob(null)}
+                            isOpen={!!quickApplyOpportunity}
+                            onClose={() => setQuickApplyOpportunity(null)}
                             onSubmit={() => {
-                                console.log('Applied to:', quickApplyJob);
-                                setQuickApplyJob(null);
+                                console.log('Applied to:', quickApplyOpportunity);
+                                setQuickApplyOpportunity(null);
                             }}
                             job={{
-                                title: quickApplyJob.title,
-                                company: quickApplyJob.company,
-                                matchScore: quickApplyJob.score
+                                title: quickApplyOpportunity.title,
+                                company: quickApplyOpportunity.company,
+                                matchScore: quickApplyOpportunity.score
                             }}
                         />
                     )}
@@ -387,7 +387,7 @@ export default function OpportunitiesPage() {
             </main>
 
             {/* Mobile FAB */}
-            <JobsFAB onQuickApply={() => quickApplyJob && setQuickApplyJob(null)} />
+            <JobsFAB onQuickApply={() => quickApplyOpportunity && setQuickApplyOpportunity(null)} />
         </div>
     );
 }
