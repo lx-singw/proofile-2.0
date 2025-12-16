@@ -1,8 +1,12 @@
 from .base import Base
 from .user import User
 from .profile import Profile
-from .job import Job
-from .saved_job import SavedJob
+
+# Opportunities (renamed from Jobs)
+from .opportunity import Opportunity, Job  # Job is alias for backward compatibility
+from .saved_opportunity import SavedOpportunity, SavedJob  # SavedJob is alias
+from .portal_opportunity import PortalOpportunity, PortalJob  # PortalJob is alias
+
 from .activity import Activity
 from .notification import Notification
 from .resume import Resume
@@ -21,6 +25,3 @@ from .document import Document, SkillAttempt
 from .post import Post, PostType, PostVisibility
 from .reaction import Reaction, ReactionType
 from .comment import Comment
-
-# Portal Models
-from .portal_job import PortalJob

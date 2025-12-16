@@ -7,13 +7,13 @@ import {
 /**
  * PRIMARY NAVIGATION
  * 
- * Main nav items: Home, Verification, Ratings, Jobs & AI Agents, More
+ * Main nav items: Home, Verification, Ratings, Opportunities & AI Agents, More
  */
 export const PRIMARY_NAV_ITEMS = [
   { label: "Home", href: "/dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
   { label: "Verification", href: "/dashboard/verification", icon: <Shield className="w-4 h-4" /> },
   { label: "Ratings", href: "/reputation", icon: <Star className="w-4 h-4" /> },
-  { label: "Job Matching & AI Agents", href: "/jobs", icon: <Briefcase className="w-4 h-4" /> },
+  { label: "Opportunities", href: "/opportunities", icon: <Briefcase className="w-4 h-4" /> },
 ];
 
 /**

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import users, auth, profiles, jobs, ws, ai, resumes, activities, notifications, resume
+from app.api.v1 import users, auth, profiles, jobs, opportunities, ws, ai, resumes, activities, notifications, resume
 from app.api.v1 import social, ai_chat, verifications, discovery, analytics
 from app.routers import ratings, rating_requests, collaborators, verifications_peer
 from app.core.config import settings
@@ -21,7 +21,11 @@ api_router = APIRouter(prefix="/api/v1") # Add prefix here for consistency
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(profiles.router, prefix="/profiles", tags=["profiles"])
-api_router.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
+
+# Opportunities (new primary route) and Jobs (legacy alias for backward compatibility)
+api_router.include_router(opportunities.router, prefix="/opportunities", tags=["opportunities"])
+api_router.include_router(jobs.router, prefix="/jobs", tags=["jobs"])  # Keep for backward compatibility
+
 api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
 api_router.include_router(resumes.router, prefix="/resumes", tags=["resumes"])
 api_router.include_router(resume.upload_router, prefix="/resume", tags=["resume-upload"])
