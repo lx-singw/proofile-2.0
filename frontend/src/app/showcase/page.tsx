@@ -94,7 +94,7 @@ function ComponentSection({ title, description, children }: ComponentSectionProp
         <div className="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full p-4 bg-gray-50 dark:bg-gray-800 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="w-full p-4 bg-gray-50 dark:bg-gray-800 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
             >
                 <div className="text-left">
                     <h3 className="font-bold text-gray-900 dark:text-white">{title}</h3>

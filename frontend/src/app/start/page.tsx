@@ -23,7 +23,7 @@ export default function StartPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
             <header className="border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm sticky top-0 z-50 flex items-center justify-between px-6 py-4">
                 <div className="flex items-center gap-4">
-                    <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 transition-colors">
+                    <button onClick={() => router.push('/')} className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 transition-all duration-200 hover:scale-[1.02]">
                         <ArrowLeft className="w-5 h-5" />
                         <span className="text-sm font-medium">Back</span>
                     </button>
@@ -131,7 +131,7 @@ export default function StartPage() {
                     <div className="text-center">
                         <Link
                             href="/login"
-                            className="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                            className="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 hover:scale-[1.02]"
                         >
                             Already have an account? Sign in
                         </Link>

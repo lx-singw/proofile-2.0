@@ -186,7 +186,7 @@ export default function PortalPage() {
 
                     {/* Search Bar */}
                     <div className="max-w-4xl mx-auto">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-2xl flex flex-col md:flex-row gap-2">
+                        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 p-2 shadow-2xl flex flex-col md:flex-row gap-2">
                             {/* Job Search */}
                             <div className="flex-1 flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-700 rounded-xl">
                                 <Search className="w-5 h-5 text-gray-400" />
@@ -226,7 +226,7 @@ export default function PortalPage() {
                             {["Remote Jobs", "Entry Level", "Tech Jobs", "Finance"].map((tag) => (
                                 <button
                                     key={tag}
-                                    className="px-4 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-colors"
+                                    className="px-4 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
                                 >
                                     {tag}
                                 </button>
@@ -241,7 +241,7 @@ export default function PortalPage() {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Filters Sidebar */}
                     <aside className="w-full lg:w-72 space-y-6">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5">
+                        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-100 dark:border-gray-700 p-5">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                     <Filter className="w-5 h-5 text-emerald-500" />
@@ -302,7 +302,7 @@ export default function PortalPage() {
                                 Create a free profile and get AI-matched to jobs that fit your skills.
                             </p>
                             <Link href="/register">
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl">
+                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-xl">
                                     Create Free Account
                                 </Button>
                             </Link>
@@ -333,7 +333,7 @@ export default function PortalPage() {
                                 <Link
                                     key={job.id}
                                     href={`/portal/${job.slug || job.id}`}
-                                    className="block bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-700 transition-all group"
+                                    className="block bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-100 dark:border-gray-700 p-6 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-700 transition-all group"
                                 >
                                     <div className="flex items-start gap-4">
                                         {/* Company Logo */}
@@ -349,7 +349,7 @@ export default function PortalPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div>
-                                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-all duration-200 hover:scale-[1.02]">
                                                         {job.title}
                                                     </h3>
                                                     <p className="text-gray-600 dark:text-gray-400">{job.company}</p>
@@ -431,7 +431,7 @@ export default function PortalPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link href="/register">
-                            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl">
+                            <Button className="bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white px-8 py-3 rounded-xl">
                                 <Zap className="w-5 h-5 mr-2" />
                                 Create Free Account
                             </Button>

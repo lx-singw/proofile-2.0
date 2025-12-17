@@ -263,14 +263,14 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3">
               <Link
                 href="/profile"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
               >
                 <User className="w-4 h-4" />
                 Profile
               </Link>
               <Link
                 href="/verification"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
               >
                 <Shield className="w-4 h-4" />
                 Verification
@@ -286,7 +286,7 @@ export default function SettingsPage() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeTab === tab.id
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200 hover:scale-[1.02] ${activeTab === tab.id
                       ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-l-4 border-emerald-600"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 border-l-4 border-transparent"
                       }`}
@@ -1045,7 +1045,7 @@ function NotificationToggle({
       </div>
       <button
         onClick={() => setChecked(!checked)}
-        className={`relative w-12 h-6 rounded-full transition-colors ${checked ? "bg-emerald-600" : "bg-gray-300 dark:bg-gray-600"
+        className={`relative w-12 h-6 rounded-full transition-all duration-200 hover:scale-[1.02] ${checked ? "bg-emerald-600" : "bg-gray-300 dark:bg-gray-600"
           }`}
       >
         <span

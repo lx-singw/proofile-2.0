@@ -129,7 +129,7 @@ export default function SharePage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/profile"
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 hover:scale-[1.02]"
                         >
                             <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                         </Link>
@@ -149,7 +149,7 @@ export default function SharePage() {
                     <div className="flex items-center gap-2">
                         <Link
                             href={`/p/${user.username}`}
-                            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] flex items-center gap-2"
                         >
                             <Eye className="w-4 h-4" />
                             Preview
@@ -182,14 +182,14 @@ export default function SharePage() {
                         <div className="space-y-3">
                             <button
                                 onClick={handleDownloadQR}
-                                className="w-full py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
                             >
                                 <Download className="w-5 h-5" />
                                 Download QR Code
                             </button>
                             <button
                                 onClick={handlePrint}
-                                className="w-full py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
                             >
                                 <Printer className="w-5 h-5" />
                                 Print
@@ -200,7 +200,7 @@ export default function SharePage() {
                     {/* Share Options Card */}
                     <div className="space-y-6">
                         {/* Short Link */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-lg border border-gray-200 dark:border-gray-700 p-6">
                             <h3 className="font-bold text-gray-900 dark:text-white mb-4">Your Profile Link</h3>
                             <div className="flex items-center gap-2">
                                 <div className="flex-1 flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-xl">
@@ -213,7 +213,7 @@ export default function SharePage() {
                                     onClick={handleCopyLink}
                                     className={`px-4 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${copied
                                             ? "bg-green-600 text-white"
-                                            : "bg-emerald-600 text-white hover:bg-emerald-700"
+                                            : "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25"
                                         }`}
                                 >
                                     {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
@@ -223,7 +223,7 @@ export default function SharePage() {
                         </div>
 
                         {/* Social Share Buttons */}
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-lg border border-gray-200 dark:border-gray-700 p-6">
                             <h3 className="font-bold text-gray-900 dark:text-white mb-4">Share via</h3>
                             <div className="grid grid-cols-2 gap-3">
                                 {shareLinks.map((link) => (
@@ -232,7 +232,7 @@ export default function SharePage() {
                                         href={link.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`flex items-center justify-center gap-2 py-3 rounded-xl text-white font-semibold transition-colors ${link.color}`}
+                                        className={`flex items-center justify-center gap-2 py-3 rounded-xl text-white font-semibold transition-all duration-200 hover:scale-[1.02] ${link.color}`}
                                     >
                                         <link.icon className="w-5 h-5" />
                                         {link.name}

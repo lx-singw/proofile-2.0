@@ -305,7 +305,7 @@ export default function OnboardingPage() {
                             <button
                                 onClick={handleUsernameSubmit}
                                 disabled={!username || loading}
-                                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-xl font-bold transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 className="animate-spin" /> : <>Continue <ArrowRight className="w-4 h-4" /></>}
                             </button>
@@ -360,7 +360,7 @@ export default function OnboardingPage() {
                         <button
                             onClick={handleComplete}
                             disabled={loading}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-xl font-bold transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {loading ? <Loader2 className="animate-spin" /> : <>Finish Setup <Sparkles className="w-4 h-4" /></>}
                         </button>
@@ -420,7 +420,7 @@ export default function OnboardingPage() {
 
                         <button
                             onClick={handleTourComplete}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-xl font-bold transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
                         >
                             Start Exploring <ArrowRight className="w-4 h-4" />
                         </button>

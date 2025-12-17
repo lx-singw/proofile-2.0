@@ -261,21 +261,21 @@ export default function AIAssistantPage() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/profile"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Brain className="w-4 h-4" />
                                 Profile
                             </Link>
                             <Link
                                 href="/jobs"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Briefcase className="w-4 h-4" />
                                 Jobs
                             </Link>
                             <Link
                                 href="/verification"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Shield className="w-4 h-4" />
                                 Get Verified
@@ -287,7 +287,7 @@ export default function AIAssistantPage() {
                         {/* Left Column - Insights & Quick Wins */}
                         <div className="lg:col-span-2 space-y-8">
                             {/* Profile Analysis Card */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 p-6">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                         <Brain className="w-5 h-5 text-emerald-500" />
@@ -344,7 +344,7 @@ export default function AIAssistantPage() {
                             </div>
 
                             {/* Quick Wins */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 p-6">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
                                     <Lightbulb className="w-5 h-5 text-emerald-500" />
                                     Quick Wins
@@ -357,7 +357,7 @@ export default function AIAssistantPage() {
                                     {quickWins.map((win) => (
                                         <div
                                             key={win.id}
-                                            className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                            className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                                         >
                                             <div className="flex items-start gap-4">
                                                 <div className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
@@ -382,7 +382,7 @@ export default function AIAssistantPage() {
                                                 </div>
                                                 <Link
                                                     href={win.actionLink}
-                                                    className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1 flex-shrink-0"
+                                                    className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all duration-200 hover:scale-[1.02] flex items-center gap-1 flex-shrink-0"
                                                 >
                                                     {win.action}
                                                     <ArrowRight className="w-4 h-4" />
@@ -394,7 +394,7 @@ export default function AIAssistantPage() {
                             </div>
 
                             {/* Career Growth Opportunities */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 p-6">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
                                     <Target className="w-5 h-5 text-emerald-500" />
                                     Career Growth Opportunities
@@ -455,7 +455,7 @@ export default function AIAssistantPage() {
                         {/* Right Column - Chat & Skills */}
                         <div className="space-y-8">
                             {/* AI Chat */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-[500px]">
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-[500px]">
                                 <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-emerald-500 to-emerald-600">
                                     <h3 className="font-semibold text-white flex items-center gap-2">
                                         <MessageCircle className="w-5 h-5" />
@@ -509,7 +509,7 @@ export default function AIAssistantPage() {
                                         <button
                                             onClick={handleSendMessage}
                                             disabled={!chatInput.trim() || isTyping}
-                                            className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02]"
                                         >
                                             <Send className="w-5 h-5" />
                                         </button>
@@ -518,7 +518,7 @@ export default function AIAssistantPage() {
                             </div>
 
                             {/* Suggested Skills */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 p-6">
                                 <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
                                     <Sparkles className="w-5 h-5 text-emerald-500" />
                                     Suggested Skills to Add
@@ -581,7 +581,7 @@ export default function AIAssistantPage() {
 
                                 <Link
                                     href="/jobs"
-                                    className="mt-4 w-full py-3 bg-green-600 text-white text-center font-semibold rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                                    className="mt-4 w-full py-3 bg-green-600 text-white text-center font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
                                 >
                                     <Briefcase className="w-5 h-5" />
                                     View Matched Jobs

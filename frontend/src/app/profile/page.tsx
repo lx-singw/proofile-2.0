@@ -114,21 +114,21 @@ export default function ProfilePage() {
             <div className="flex items-center gap-3">
               <Link
                 href="/settings?tab=profile"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
               >
                 <Edit3 className="w-4 h-4" />
                 Edit Profile
               </Link>
               <Link
                 href="/verification"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
               >
                 <Shield className="w-4 h-4" />
                 Verification
               </Link>
               <Link
                 href={`/p/${user.username}`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
               >
                 <ExternalLink className="w-4 h-4" />
                 Public Profile
@@ -169,14 +169,14 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-2">
                     <Link
                       href="/share"
-                      className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-[1.02] flex items-center gap-2"
                     >
                       <ExternalLink className="w-4 h-4" />
                       Share
                     </Link>
                     <Link
                       href="/settings?tab=profile"
-                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02] flex items-center gap-2"
                     >
                       <Edit3 className="w-4 h-4" />
                       Edit Profile
@@ -210,7 +210,7 @@ export default function ProfilePage() {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* About Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">About</h2>
                   <button
@@ -226,7 +226,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Experience Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <Briefcase className="w-5 h-5" />
@@ -284,7 +284,7 @@ export default function ProfilePage() {
               )}
 
               {/* Skills Section */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <Award className="w-5 h-5" />
@@ -320,7 +320,7 @@ export default function ProfilePage() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Profile Completeness */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Profile Completeness</h3>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="relative w-20 h-20">
@@ -369,7 +369,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Verification Status */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <Shield className="w-5 h-5 text-green-600" />
@@ -403,14 +403,14 @@ export default function ProfilePage() {
                 <div className="space-y-3">
                   <button
                     onClick={handleShare}
-                    className="w-full py-2.5 px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
                   >
                     <ExternalLink className="w-4 h-4" />
                     Share Profile
                   </button>
                   <Link
                     href={`/p/${user.username}`}
-                    className="w-full py-2.5 px-4 bg-emerald-600 text-white rounded-xl text-sm font-medium hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-emerald-600 text-white rounded-xl text-sm font-medium hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2"
                   >
                     Preview as Public
                     <ChevronRight className="w-4 h-4" />

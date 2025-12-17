@@ -175,21 +175,21 @@ export default function ToolsPage() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/resume"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <FileText className="w-4 h-4" />
                                 My Resumes
                             </Link>
                             <Link
                                 href="/verification"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Shield className="w-4 h-4" />
                                 Verification
                             </Link>
                             <Link
                                 href="/resume/ai-build"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Sparkles className="w-4 h-4" />
                                 AI Resume
@@ -213,7 +213,7 @@ export default function ToolsPage() {
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${tool.color}-100 dark:bg-${tool.color}-900/30`}>
                                         <tool.icon className={`w-6 h-6 text-${tool.color}-600 dark:text-${tool.color}-400`} />
                                     </div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-all duration-200 hover:scale-[1.02]">
                                         {tool.title}
                                     </h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -241,7 +241,7 @@ export default function ToolsPage() {
                             </Link>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 overflow-hidden">
                             {loadingResumes ? (
                                 <div className="p-8 text-center">
                                     <div className="animate-spin w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full mx-auto" />
@@ -252,7 +252,7 @@ export default function ToolsPage() {
                                     <p className="text-gray-500 dark:text-gray-400 mb-4">No resumes yet</p>
                                     <Link
                                         href="/resume/build"
-                                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-lg font-medium transition-all duration-200 hover:scale-[1.02]"
                                     >
                                         Create Your First Resume
                                     </Link>
@@ -260,7 +260,7 @@ export default function ToolsPage() {
                             ) : (
                                 <div className="divide-y divide-gray-200 dark:divide-gray-700">
                                     {resumes.slice(0, 5).map((resume) => (
-                                        <div key={resume.id} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                        <div key={resume.id} className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 hover:scale-[1.02]">
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
                                                     <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
@@ -276,21 +276,21 @@ export default function ToolsPage() {
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => handleExport(resume.id)}
-                                                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                                                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 hover:scale-[1.02]"
                                                     title="Download"
                                                 >
                                                     <Download className="w-4 h-4 text-gray-500" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(resume.id)}
-                                                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 hover:scale-[1.02]"
                                                     title="Delete"
                                                 >
                                                     <Trash2 className="w-4 h-4 text-gray-500 hover:text-red-500" />
                                                 </button>
                                                 <Link
                                                     href={`/resume/build?id=${resume.id}`}
-                                                    className="px-3 py-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
+                                                    className="px-3 py-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200 hover:scale-[1.02]"
                                                 >
                                                     Edit
                                                 </Link>
@@ -318,7 +318,7 @@ export default function ToolsPage() {
                                     <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gray-100 dark:bg-gray-700">
                                         <tool.icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
                                     </div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-all duration-200 hover:scale-[1.02]">
                                         {tool.title}
                                     </h3>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">

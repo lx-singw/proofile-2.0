@@ -142,7 +142,8 @@ export default function FeedPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        // 1. GRADIENT BACKGROUND
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/50 dark:from-gray-900 dark:via-emerald-950/20 dark:to-teal-950/30">
             {/* Quick Stats Bar */}
             <QuickStatsBar
                 stats={[
@@ -152,53 +153,55 @@ export default function FeedPage() {
                 ]}
             />
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            {/* 7. IMPROVED SPACING */}
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <FadeIn>
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <Rss className="w-7 h-7 text-emerald-600" />
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                                <Rss className="w-7 h-7 text-emerald-600 drop-shadow-lg" />
                                 Your Feed
                             </h1>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm mt-0.5">
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
                                 Stay updated with your professional network
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            {/* Feed Tabs */}
-                            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                        <div className="flex items-center gap-3">
+                            {/* 2. GLASS MORPHISM + 4. HOVER ANIMATIONS on tabs */}
+                            <div className="flex bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-xl p-1.5 shadow-lg shadow-emerald-500/5 border border-white/20 dark:border-gray-700/50">
                                 <button
                                     onClick={() => setActiveTab("for-you")}
-                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all
+                                    className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200
                                         ${activeTab === "for-you"
-                                            ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                            ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25"
+                                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-700/50"
                                         }`}
                                 >
-                                    <Sparkles className="w-4 h-4 inline mr-1" />
+                                    <Sparkles className="w-4 h-4 inline mr-1.5" />
                                     For You
                                 </button>
                                 <button
                                     onClick={() => setActiveTab("following")}
-                                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all
+                                    className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200
                                         ${activeTab === "following"
-                                            ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                            ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25"
+                                            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-700/50"
                                         }`}
                                 >
-                                    <Users className="w-4 h-4 inline mr-1" />
+                                    <Users className="w-4 h-4 inline mr-1.5" />
                                     Following
                                 </button>
                             </div>
 
+                            {/* 6. BUTTON GLOW EFFECT */}
                             <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={handleRefresh}
                                 disabled={isRefreshing}
-                                className="rounded-lg"
+                                className="rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-200"
                             >
                                 <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
                             </Button>
@@ -206,35 +209,44 @@ export default function FeedPage() {
                     </div>
 
                     {/* Three Column Layout */}
-                    <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="flex flex-col lg:flex-row gap-8">
                         {/* Left Sidebar - Profile */}
                         <div className="hidden lg:block">
                             <FeedLeftSidebar user={CURRENT_USER} />
                         </div>
 
                         {/* Main Feed Column */}
-                        <div className="flex-1 max-w-2xl mx-auto lg:mx-0 space-y-4">
-                            {/* Create Post Composer */}
-                            <CreatePostComposer
-                                onPost={handlePost}
-                                userName={CURRENT_USER.name}
-                                placeholder="What's happening in your career?"
-                            />
+                        <div className="flex-1 max-w-2xl mx-auto lg:mx-0 space-y-5">
+                            {/* 2. GLASS MORPHISM + 5. BORDER ACCENT on composer */}
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl border-l-4 border-emerald-500 shadow-xl shadow-emerald-500/5 overflow-hidden">
+                                <CreatePostComposer
+                                    onPost={handlePost}
+                                    userName={CURRENT_USER.name}
+                                    placeholder="What's happening in your career?"
+                                />
+                            </div>
 
-                            {/* Feed Items */}
-                            <div className="space-y-4">
+                            {/* Feed Items with 4. HOVER ANIMATIONS */}
+                            <div className="space-y-5">
                                 {feed.map(item => (
-                                    <FeedCard
+                                    <div
                                         key={item.id}
-                                        item={item}
-                                        onLike={handleLike}
-                                    />
+                                        className="transform hover:scale-[1.01] hover:-translate-y-1 transition-all duration-200"
+                                    >
+                                        <FeedCard
+                                            item={item}
+                                            onLike={handleLike}
+                                        />
+                                    </div>
                                 ))}
                             </div>
 
-                            {/* Load More */}
-                            <div className="py-6 text-center">
-                                <Button variant="outline" className="rounded-xl">
+                            {/* Load More - 6. BUTTON GLOW */}
+                            <div className="py-8 text-center">
+                                <Button
+                                    variant="outline"
+                                    className="rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:scale-[1.02] hover:shadow-lg transition-all duration-200"
+                                >
                                     Load More Posts
                                 </Button>
                             </div>
@@ -254,4 +266,3 @@ export default function FeedPage() {
         </div>
     );
 }
-

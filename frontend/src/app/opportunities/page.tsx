@@ -147,21 +147,21 @@ export default function OpportunitiesPage() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/opportunities/saved"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Bookmark className="w-4 h-4" />
                                 Saved
                             </Link>
                             <Link
                                 href="/opportunities/agents"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Zap className="w-4 h-4" />
                                 AI Agents
                             </Link>
                             <Link
                                 href="/opportunities/market"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <BarChart2 className="w-4 h-4" />
                                 Market Intel
@@ -259,7 +259,7 @@ export default function OpportunitiesPage() {
                                             <div className="flex-1">
                                                 <div className="flex items-start justify-between mb-2">
                                                     <div>
-                                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors">
+                                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-600 transition-all duration-200 hover:scale-[1.02]">
                                                             <Link href={`/opportunities/${opportunity.id}`}>
                                                                 {opportunity.title}
                                                             </Link>
@@ -349,13 +349,13 @@ export default function OpportunitiesPage() {
                                                         company: opportunity.company_name,
                                                         score: match_score
                                                     })}
-                                                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                                                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                                                 >
                                                     Quick Apply
                                                 </button>
                                                 <Link
                                                     href={`/opportunities/${opportunity.id}/gap-analysis`}
-                                                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                                                 >
                                                     Gap Analysis
                                                 </Link>

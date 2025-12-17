@@ -28,7 +28,7 @@ export default function HomePage() {
               <nav className="hidden lg:flex items-center gap-1">
                 {/* Product Dropdown */}
                 <div className="relative" onMouseEnter={() => setProductOpen(true)} onMouseLeave={() => setProductOpen(false)}>
-                  <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 hover:scale-[1.02] rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                     Product
                     <ChevronDown className="w-4 h-4" />
                   </button>
@@ -52,7 +52,7 @@ export default function HomePage() {
 
                 {/* Solutions Dropdown */}
                 <div className="relative" onMouseEnter={() => setSolutionsOpen(true)} onMouseLeave={() => setSolutionsOpen(false)}>
-                  <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 hover:scale-[1.02] rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                     Solutions
                     <ChevronDown className="w-4 h-4" />
                   </button>
@@ -74,17 +74,17 @@ export default function HomePage() {
                   )}
                 </div>
 
-                <Link href="/portal" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                <Link href="/portal" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 hover:scale-[1.02] rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                   Jobs
                 </Link>
 
-                <Link href="#pricing" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                <Link href="#pricing" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 hover:scale-[1.02] rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                   Pricing
                 </Link>
 
                 {/* Resources Dropdown */}
                 <div className="relative" onMouseEnter={() => setResourcesOpen(true)} onMouseLeave={() => setResourcesOpen(false)}>
-                  <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <button className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 hover:scale-[1.02] rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
                     Resources
                     <ChevronDown className="w-4 h-4" />
                   </button>
@@ -109,7 +109,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Link href="/login" className="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 transition-colors">
+              <Link href="/login" className="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 transition-all duration-200 hover:scale-[1.02]">
                 Sign in
               </Link>
               <Link href="/start" className="px-5 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
@@ -150,7 +150,7 @@ export default function HomePage() {
                 Create Free Profile
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link href="/login" className="inline-flex items-center justify-center gap-2 px-6 py-3 text-green-600 dark:text-green-400 font-medium border border-green-600 dark:border-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
+              <Link href="/login" className="inline-flex items-center justify-center gap-2 px-6 py-3 text-green-600 dark:text-green-400 font-medium border border-green-600 dark:border-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200 hover:scale-[1.02]">
                 Sign in
               </Link>
             </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
             </div>
 
             {/* Job Search Section - Main Feed Content */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700">
               <JobSearchSection maxJobs={12} showFilters={true} className="py-4" />
             </div>
           </div>
@@ -225,33 +225,33 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-bold mb-4">Product</h3>
               <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-colors">Features</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Security</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Features</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Pricing</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Security</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-bold mb-4">Company</h3>
               <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">About</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Careers</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-bold mb-4">Resources</h3>
               <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Community</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Blog</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Help Center</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Community</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-bold mb-4">Legal</h3>
               <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-colors">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Terms</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Security</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Privacy</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Terms</Link></li>
+                <li><Link href="#" className="hover:text-white transition-all duration-200 hover:scale-[1.02]">Security</Link></li>
               </ul>
             </div>
           </div>

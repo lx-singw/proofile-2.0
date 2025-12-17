@@ -132,14 +132,14 @@ export default function DiscoverPage() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/explore"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Compass className="w-4 h-4" />
                                 Explore
                             </Link>
                             <Link
                                 href="/feed"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <TrendingUp className="w-4 h-4" />
                                 Feed
@@ -168,7 +168,7 @@ export default function DiscoverPage() {
                             {isSearching ? (
                                 <div className="space-y-4">
                                     {[1, 2, 3].map((i) => (
-                                        <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-5 animate-pulse">
+                                        <div key={i} className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 p-5 animate-pulse">
                                             <div className="flex gap-4">
                                                 <div className="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-xl" />
                                                 <div className="flex-1 space-y-2">
@@ -196,7 +196,7 @@ export default function DiscoverPage() {
                         {/* Sidebar */}
                         <aside className="space-y-6">
                             {/* Trending Categories */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5">
+                            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-100 dark:border-gray-700 p-5">
                                 <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-green-500" />
                                     Trending
@@ -205,7 +205,7 @@ export default function DiscoverPage() {
                                     {TRENDING_CATEGORIES.map((cat, idx) => (
                                         <button
                                             key={idx}
-                                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 hover:scale-[1.02] text-left"
                                         >
                                             <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
                                                 <cat.icon className="w-4 h-4 text-gray-600 dark:text-gray-400" />

@@ -116,21 +116,21 @@ export default function VerificationPage() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/verification/history"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Clock className="w-4 h-4" />
                                 History
                             </Link>
                             <Link
                                 href="/verification/identity"
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Lock className="w-4 h-4" />
                                 Identity
                             </Link>
                             <Link
                                 href={`/p/${user?.username || 'me'}`}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Eye className="w-4 h-4" />
                                 Public Profile
@@ -139,7 +139,7 @@ export default function VerificationPage() {
                     </div>
 
                     {/* Progress Card with Trust Score Ring */}
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8 shadow-sm">
+                    <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700 p-6 mb-8 shadow-sm">
                         <div className="flex items-center gap-6">
                             {/* Trust Score Ring */}
                             <TrustScoreRing score={summary?.verification_score || 0} size={100} />
