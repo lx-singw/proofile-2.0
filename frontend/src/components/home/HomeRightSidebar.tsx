@@ -59,15 +59,16 @@ export default function HomeRightSidebar() {
     return (
         <aside className="w-full lg:w-80 space-y-4">
             {/* Career Tools Widget */}
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800/50 p-4">
-                <div className="flex items-center justify-between mb-3">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-teal-200/50 dark:border-teal-800/30 p-4 overflow-hidden shadow-lg shadow-teal-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500" />
+                <div className="flex items-center justify-between mb-3 pt-1">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg shadow-teal-500/30">
                             <Wrench className="w-4 h-4 text-white" />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white text-sm">Career Tools</h3>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full">3 Tools</span>
+                    <span className="text-xs font-bold text-white bg-gradient-to-r from-teal-500 to-cyan-500 px-2 py-0.5 rounded-full">3 Tools</span>
                 </div>
                 <div className="space-y-2 mb-3">
                     <Link href="/jobs" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
@@ -93,10 +94,13 @@ export default function HomeRightSidebar() {
             </div>
 
             {/* Skills Leaderboard */}
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-emerald-200 dark:border-gray-700 p-4">
-                <div className="flex items-center justify-between mb-4">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-amber-200/50 dark:border-amber-800/30 p-4 overflow-hidden shadow-lg shadow-amber-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500" />
+                <div className="flex items-center justify-between mb-4 pt-1">
                     <div className="flex items-center gap-2">
-                        <Trophy className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
+                        <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/30">
+                            <Trophy className="w-4 h-4 text-white" />
+                        </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">Top Rated Skills</h3>
                     </div>
                     <Link href="/skills" className="text-xs font-semibold text-green-600 hover:text-green-700 dark:text-green-400 flex items-center gap-1">
@@ -140,10 +144,13 @@ export default function HomeRightSidebar() {
             </div>
 
             {/* Companies Hiring */}
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-emerald-200 dark:border-gray-700 p-4">
-                <div className="flex items-center justify-between mb-4">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-indigo-200/50 dark:border-indigo-800/30 p-4 overflow-hidden shadow-lg shadow-indigo-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
+                <div className="flex items-center justify-between mb-4 pt-1">
                     <div className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
+                        <div className="p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/30">
+                            <Building2 className="w-4 h-4 text-white" />
+                        </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">Actively Hiring</h3>
                     </div>
                     <Link href="/companies" className="text-xs font-semibold text-green-600 hover:text-green-700 dark:text-green-400 flex items-center gap-1">
@@ -183,10 +190,13 @@ export default function HomeRightSidebar() {
             </div>
 
             {/* Salary Insights */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-green-200 dark:border-gray-700 p-4">
-                <div className="flex items-center justify-between mb-4">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-green-200/50 dark:border-green-800/30 p-4 overflow-hidden shadow-lg shadow-green-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500" />
+                <div className="flex items-center justify-between mb-4 pt-1">
                     <div className="flex items-center gap-2">
-                        <DollarSign className="w-5 h-5 text-green-600 dark:text-green-500" />
+                        <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg shadow-green-500/30">
+                            <DollarSign className="w-4 h-4 text-white" />
+                        </div>
                         <h3 className="font-bold text-gray-900 dark:text-white">Salary Insights</h3>
                     </div>
                     <Link href="/salaries" className="text-xs font-semibold text-green-600 hover:text-green-700 dark:text-green-400 flex items-center gap-1">

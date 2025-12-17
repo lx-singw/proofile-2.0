@@ -137,14 +137,18 @@ export default function FilterSidebar({
     }, 0);
 
     return (
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-lg shadow-emerald-500/5">
+        <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-emerald-200/50 dark:border-emerald-800/30 p-5 shadow-lg shadow-emerald-500/10 overflow-hidden">
+            {/* Gradient accent at top */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 pt-1">
                 <div className="flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Filters</h3>
+                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500">
+                        <Filter className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="font-semibold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">Filters</h3>
                     {activeFilterCount > 0 && (
-                        <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-medium rounded-full">
+                        <span className="px-2 py-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-medium rounded-full">
                             {activeFilterCount}
                         </span>
                     )}

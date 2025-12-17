@@ -75,15 +75,16 @@ export default function HomeLeftSidebar() {
     return (
         <aside className="w-full lg:w-72 space-y-4">
             {/* Resume Tools Widget */}
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800/50 p-4">
-                <div className="flex items-center justify-between mb-3">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-emerald-200/50 dark:border-emerald-800/30 p-4 overflow-hidden shadow-lg shadow-emerald-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
+                <div className="flex items-center justify-between mb-3 pt-1">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30">
                             <FileText className="w-4 h-4 text-white" />
                         </div>
                         <h3 className="font-bold text-gray-900 dark:text-white text-sm">Resume Tools</h3>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full">3 Tools</span>
+                    <span className="text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 px-2 py-0.5 rounded-full">3 Tools</span>
                 </div>
                 <div className="space-y-2 mb-3">
                     <Link href="/resume/build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
@@ -109,8 +110,9 @@ export default function HomeLeftSidebar() {
             </div>
 
             {/* Live Platform Activity */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-green-200/50 dark:border-green-800/30 overflow-hidden shadow-lg shadow-green-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500" />
+                <div className="p-4 border-b border-gray-100 dark:border-gray-700 pt-2">
                     <div className="flex items-center gap-2">
                         <div className="relative">
                             <TrendingUp className="w-5 h-5 text-green-500" />
@@ -139,9 +141,10 @@ export default function HomeLeftSidebar() {
             </div>
 
             {/* For Talent Card */}
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 p-4">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-blue-200/50 dark:border-blue-800/30 p-4 overflow-hidden shadow-lg shadow-blue-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+                <div className="flex items-center gap-3 mb-4 pt-1">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
                         <Users className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900 dark:text-white">For Talent</h3>
@@ -173,9 +176,10 @@ export default function HomeLeftSidebar() {
             </div>
 
             {/* For Recruiters Card */}
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-50 dark:from-emerald-900/20 dark:to-emerald-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/50 p-4">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-lg flex items-center justify-center">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-purple-200/50 dark:border-purple-800/30 p-4 overflow-hidden shadow-lg shadow-purple-500/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500" />
+                <div className="flex items-center gap-3 mb-4 pt-1">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/30">
                         <Award className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900 dark:text-white">For Recruiters</h3>

@@ -46,7 +46,7 @@ export default function FeaturedSections({ className = "" }: FeaturedSectionsPro
                 const recentResponse = await portalService.searchJobs({
                     sort_by: "posted_at",
                     sort_order: "desc",
-                    per_page: 4
+                    size: 4
                 });
 
                 // For trending, we'd ideally sort by views/applies
@@ -54,7 +54,7 @@ export default function FeaturedSections({ className = "" }: FeaturedSectionsPro
                 const trendingResponse = await portalService.searchJobs({
                     sort_by: "views_count",
                     sort_order: "desc",
-                    per_page: 4
+                    size: 4
                 });
 
                 if (recentResponse?.jobs) {
@@ -99,13 +99,15 @@ export default function FeaturedSections({ className = "" }: FeaturedSectionsPro
     return (
         <div className={`space-y-6 ${className}`}>
             {/* Recently Posted */}
-            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-lg shadow-emerald-500/5">
-                <div className="flex items-center justify-between mb-4">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-cyan-200/50 dark:border-cyan-800/30 p-5 shadow-lg shadow-cyan-500/10 overflow-hidden">
+                {/* Gradient accent at top */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500" />
+                <div className="flex items-center justify-between mb-4 pt-1">
                     <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <div className="p-1.5 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500">
+                            <Clock className="w-4 h-4 text-white" />
                         </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">Recently Posted</h3>
+                        <h3 className="font-semibold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">Recently Posted</h3>
                     </div>
                     <Link
                         href="/portal?sort_by=posted_at"
@@ -132,14 +134,16 @@ export default function FeaturedSections({ className = "" }: FeaturedSectionsPro
             </div>
 
             {/* Trending */}
-            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl border border-gray-100 dark:border-gray-700 p-5 shadow-lg shadow-emerald-500/5">
-                <div className="flex items-center justify-between mb-4">
+            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-amber-200/50 dark:border-amber-800/30 p-5 shadow-lg shadow-amber-500/10 overflow-hidden">
+                {/* Gradient accent at top */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500" />
+                <div className="flex items-center justify-between mb-4 pt-1">
                     <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                            <TrendingUp className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500">
+                            <TrendingUp className="w-4 h-4 text-white" />
                         </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">Trending</h3>
-                        <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full">
+                        <h3 className="font-semibold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">Trending</h3>
+                        <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-medium rounded-full">
                             <Sparkles className="w-3 h-3" />
                             Hot
                         </span>
