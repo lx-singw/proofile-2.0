@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import JobSearchSection from "@/components/portal/JobSearchSection";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
+import FeaturedSections from "@/components/portal/FeaturedSections";
 import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
 
 export default function HomePage() {
@@ -220,8 +221,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right Sidebar - Hidden on mobile, visible on xl+ */}
-          <div className="hidden xl:block flex-shrink-0">
+          {/* Right Sidebar - Featured Sections + Profile on xl+ */}
+          <div className="hidden xl:block flex-shrink-0 w-80 space-y-6">
+            <FeaturedSections />
             <HomeRightSidebar />
           </div>
         </div>

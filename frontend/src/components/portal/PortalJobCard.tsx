@@ -11,6 +11,7 @@ import {
     ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import OpportunityBadge from "@/components/portal/OpportunityBadge";
 
 interface PortalJob {
     id: number;
@@ -25,6 +26,8 @@ interface PortalJob {
     experience_level?: string;
     category?: string;
     job_type?: string;
+    opportunity_category?: string;
+    opportunity_type?: string;
     is_remote: boolean;
     posted_at?: string;
     source: string;
@@ -69,11 +72,16 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
                             {job.company} • {job.location}
                         </p>
                     </div>
-                    {job.is_remote && (
-                        <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full flex-shrink-0">
-                            Remote
-                        </span>
-                    )}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                        {job.opportunity_type && (
+                            <OpportunityBadge type={job.opportunity_type} size="sm" showIcon={false} />
+                        )}
+                        {job.is_remote && (
+                            <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
+                                Remote
+                            </span>
+                        )}
+                    </div>
                 </div>
             </Link>
         );
@@ -141,6 +149,10 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
 
                     {/* Skills & Tags */}
                     <div className="flex flex-wrap gap-2 mt-4">
+                        {/* Opportunity Type Badge */}
+                        {job.opportunity_type && (
+                            <OpportunityBadge type={job.opportunity_type} size="sm" />
+                        )}
                         {job.is_remote && (
                             <span className="px-2.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
                                 Remote
