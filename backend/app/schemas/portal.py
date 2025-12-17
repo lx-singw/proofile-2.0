@@ -38,6 +38,8 @@ class PortalJobCard(BaseModel):
     experience_level: Optional[str] = None
     category: Optional[str] = None
     job_type: Optional[str] = None
+    opportunity_category: Optional[str] = None  # 'jobs', 'training_skills_programs'
+    opportunity_type: Optional[str] = None  # 'employment', 'internship', etc.
     is_remote: bool = False
     posted_at: Optional[datetime] = None
     source: str
@@ -80,6 +82,8 @@ class PortalSearchParams(BaseModel):
     skills: Optional[List[str]] = None
     source: Optional[str] = None
     posted_within_days: Optional[int] = None  # Jobs posted in last N days
+    opportunity_category: Optional[str] = None  # 'jobs', 'training_skills_programs'
+    opportunity_types: Optional[List[str]] = None  # ['employment', 'internship', ...]
     page: int = Field(default=1, ge=1)
     size: int = Field(default=20, ge=1, le=100)
     sort_by: str = Field(default="posted_at", pattern="^(posted_at|salary_max|views_count)$")
@@ -107,6 +111,8 @@ class PortalFacets(BaseModel):
     experience_levels: List["FacetItem"] = []
     job_types: List["FacetItem"] = []
     sources: List["FacetItem"] = []
+    opportunity_categories: List["FacetItem"] = []
+    opportunity_types: List["FacetItem"] = []
 
 
 class FacetItem(BaseModel):

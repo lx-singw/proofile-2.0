@@ -31,6 +31,8 @@ export interface PortalJobCard {
     experience_level?: string;
     category?: string;
     job_type?: string;
+    opportunity_category?: string;
+    opportunity_type?: string;
     is_remote: boolean;
     posted_at?: string;
     source: string;
@@ -61,6 +63,8 @@ export interface PortalFacets {
     experience_levels: FacetItem[];
     job_types: FacetItem[];
     sources: FacetItem[];
+    opportunity_categories: FacetItem[];
+    opportunity_types: FacetItem[];
 }
 
 export interface PortalSearchResponse {
@@ -85,6 +89,8 @@ export interface PortalSearchParams {
     salary_max?: number;
     source?: string;
     posted_within_days?: number;
+    opportunity_category?: string;
+    opportunity_types?: string[];
     page?: number;
     size?: number;
     sort_by?: "posted_at" | "salary_max" | "views_count";

@@ -107,6 +107,14 @@ class PortalService:
             cutoff = datetime.utcnow() - timedelta(days=params.posted_within_days)
             query = query.filter(PortalJob.posted_at >= cutoff)
         
+        # Opportunity category filter
+        if params.opportunity_category:
+            query = query.filter(PortalJob.opportunity_category == params.opportunity_category)
+        
+        # Opportunity types filter (multiple selection)
+        if params.opportunity_types:
+            query = query.filter(PortalJob.opportunity_type.in_(params.opportunity_types))
+        
         # Get total count before pagination
         total = query.count()
         
@@ -302,6 +310,8 @@ class PortalService:
             experience_level=job.experience_level,
             category=job.category,
             job_type=job.job_type,
+            opportunity_category=job.opportunity_category,
+            opportunity_type=job.opportunity_type,
             is_remote=job.is_remote,
             posted_at=job.posted_at,
             source=job.source
@@ -410,6 +420,49 @@ class PortalService:
         facets.sources = [
             FacetItem(value=src, label=src.upper(), count=count)
             for src, count in source_counts
+        ]
+        
+        # Opportunity categories
+        opp_cat_counts = self.db.query(
+            PortalJob.opportunity_category,
+            func.count(PortalJob.id)
+        ).filter(
+            PortalJob.is_active == True,
+            PortalJob.opportunity_category.isnot(None)
+        ).group_by(PortalJob.opportunity_category).all()
+        
+        category_labels = {
+            'jobs': 'Jobs',
+            'training_skills_programs': 'Training & Skills Programs'
+        }
+        facets.opportunity_categories = [
+            FacetItem(value=cat, label=category_labels.get(cat, cat), count=count)
+            for cat, count in opp_cat_counts if cat
+        ]
+        
+        # Opportunity types
+        opp_type_counts = self.db.query(
+            PortalJob.opportunity_type,
+            func.count(PortalJob.id)
+        ).filter(
+            PortalJob.is_active == True,
+            PortalJob.opportunity_type.isnot(None)
+        ).group_by(PortalJob.opportunity_type).all()
+        
+        type_labels = {
+            'employment': 'Employment',
+            'contract': 'Contract',
+            'freelance': 'Freelance',
+            'consulting': 'Consulting',
+            'board': 'Board',
+            'volunteer': 'Volunteer',
+            'internship': 'Internship',
+            'learnership': 'Learnership',
+            'apprenticeship': 'Apprenticeship'
+        }
+        facets.opportunity_types = [
+            FacetItem(value=otype, label=type_labels.get(otype, otype), count=count)
+            for otype, count in opp_type_counts if otype
         ]
         
         return facets

@@ -59,6 +59,10 @@ class PortalJob(Base, TimestampMixin):
     category = Column(String(100), nullable=True, index=True)  # 'technology', 'finance', etc.
     job_type = Column(String(50), nullable=True)  # 'full-time', 'part-time', 'contract'
     
+    # Opportunity Classification
+    opportunity_category = Column(String(50), nullable=True, index=True)  # 'jobs', 'training_skills_programs'
+    opportunity_type = Column(String(50), nullable=True, index=True)  # 'employment', 'internship', 'learnership', etc.
+    
     # Dates
     posted_at = Column(DateTime, nullable=True, index=True)
     expires_at = Column(DateTime, nullable=True)
