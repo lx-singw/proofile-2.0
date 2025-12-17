@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { CheckCircle, Shield, Star, Zap, ArrowRight, ChevronDown, Briefcase } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import JobSearchSection from "@/components/portal/JobSearchSection";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
 import FeaturedSections from "@/components/portal/FeaturedSections";
+import FilterSidebar from "@/components/portal/FilterSidebar";
+import portalService from "@/services/portalService";
 import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
 
 export default function HomePage() {
@@ -19,6 +21,66 @@ export default function HomePage() {
   // Opportunity filter state
   const [selectedCategory, setSelectedCategory] = useState<OpportunityCategory>(null);
   const [selectedTypes, setSelectedTypes] = useState<OpportunityType[]>([]);
+
+  // Sidebar filter state
+  const [sidebarFilters, setSidebarFilters] = useState<{
+    category?: string;
+    location?: string;
+    experience_level?: string;
+    job_type?: string;
+    opportunity_category?: string;
+    opportunity_types?: string[];
+  }>({});
+
+  // Facets from API
+  const [facets, setFacets] = useState<any>(null);
+  const [facetsLoading, setFacetsLoading] = useState(true);
+
+  // Fetch facets on mount
+  useEffect(() => {
+    const fetchFacets = async () => {
+      try {
+        setFacetsLoading(true);
+        const response = await portalService.searchJobs({
+          page: 1,
+          size: 1 // We just need facets
+        });
+        if (response?.facets) {
+          setFacets(response.facets);
+        }
+      } catch (error) {
+        console.error("Error fetching facets:", error);
+      } finally {
+        setFacetsLoading(false);
+      }
+    };
+    fetchFacets();
+  }, []);
+
+  // Handle filter changes from sidebar
+  const handleFilterChange = useCallback((filterName: string, value: string | string[]) => {
+    setSidebarFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+
+    // Sync opportunity types with the main filter
+    if (filterName === "opportunity_types" && Array.isArray(value)) {
+      setSelectedTypes(value as OpportunityType[]);
+    }
+  }, []);
+
+  // Clear all filters
+  const handleClearFilters = useCallback(() => {
+    setSidebarFilters({});
+    setSelectedCategory(null);
+    setSelectedTypes([]);
+  }, []);
+
+  // Combined opportunity types from both filter sources
+  const combinedOpportunityTypes = selectedTypes.length > 0
+    ? selectedTypes
+    : (sidebarFilters.opportunity_types || []) as OpportunityType[];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -181,8 +243,15 @@ export default function HomePage() {
       {/* Main Content - 3 Column Layout */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Sidebar - Hidden on mobile, visible on lg+ */}
-          <div className="hidden lg:block flex-shrink-0">
+          {/* Left Sidebar - FilterSidebar + Profile on lg+ */}
+          <div className="hidden lg:block flex-shrink-0 w-72 space-y-6">
+            <FilterSidebar
+              facets={facets}
+              selectedFilters={sidebarFilters}
+              onFilterChange={handleFilterChange}
+              onClearFilters={handleClearFilters}
+              isLoading={facetsLoading}
+            />
             <HomeLeftSidebar />
           </div>
 
@@ -216,7 +285,7 @@ export default function HomePage() {
                 showFilters={true}
                 className="py-4"
                 opportunityCategory={selectedCategory}
-                opportunityTypes={selectedTypes}
+                opportunityTypes={combinedOpportunityTypes}
               />
             </div>
           </div>
