@@ -92,6 +92,28 @@ JOB_TEMPLATES = {
     ],
 }
 
+# Training & Skills Program templates
+TRAINING_TEMPLATES = {
+    "internship": [
+        {"title": "Software Developer Intern", "skills": ["Python", "JavaScript", "Git"], "exp": "entry", "duration": "6 months"},
+        {"title": "Data Science Intern", "skills": ["Python", "SQL", "Statistics"], "exp": "entry", "duration": "12 months"},
+        {"title": "Finance Graduate Programme", "skills": ["Excel", "Financial Analysis", "SAP"], "exp": "entry", "duration": "24 months"},
+        {"title": "Marketing Intern", "skills": ["Social Media", "Analytics", "Copywriting"], "exp": "entry", "duration": "6 months"},
+        {"title": "IT Graduate Programme", "skills": ["Networking", "Cloud", "Security"], "exp": "entry", "duration": "18 months"},
+    ],
+    "learnership": [
+        {"title": "ICT Learnership (NQF 4)", "skills": ["Computer Literacy", "Networking", "Technical Support"], "exp": "entry", "duration": "12 months"},
+        {"title": "Financial Services Learnership", "skills": ["Customer Service", "Banking", "Compliance"], "exp": "entry", "duration": "12 months"},
+        {"title": "Business Administration Learnership", "skills": ["Administration", "MS Office", "Communication"], "exp": "entry", "duration": "12 months"},
+        {"title": "Retail Operations Learnership", "skills": ["Customer Service", "Inventory", "POS Systems"], "exp": "entry", "duration": "12 months"},
+    ],
+    "apprenticeship": [
+        {"title": "Electrical Apprenticeship", "skills": ["Electrical Installation", "Safety", "Wiring"], "exp": "entry", "duration": "36 months"},
+        {"title": "Mechanical Fitter Apprenticeship", "skills": ["Mechanical Systems", "Welding", "Maintenance"], "exp": "entry", "duration": "36 months"},
+        {"title": "Plumbing Apprenticeship", "skills": ["Plumbing", "Safety", "Installation"], "exp": "entry", "duration": "36 months"},
+    ],
+}
+
 # Locations
 LOCATIONS = [
     {"city": "Johannesburg", "province": "Gauteng"},
@@ -105,7 +127,13 @@ LOCATIONS = [
 
 LOCATION_TYPES = ["onsite", "hybrid", "remote"]
 JOB_TYPES = ["full-time", "contract", "part-time"]
-SOURCES = ["careers24", "pnet", "linkedin", "indeed", "glassdoor"]
+SOURCES = ["careers24", "pnet", "linkedin", "indeed", "careerjunction", "studentroom"]
+
+# Opportunity types mapping
+OPPORTUNITY_TYPES = {
+    "jobs": ["employment", "contract", "freelance", "consulting"],
+    "training_skills_programs": ["internship", "learnership", "apprenticeship"],
+}
 
 # Salary ranges by experience level (monthly in ZAR)
 SALARY_RANGES = {
@@ -191,6 +219,15 @@ def seed_portal_jobs(db: Session, count: int = 30) -> int:
         # Some jobs expire
         expires_at = posted_at + timedelta(days=random.randint(30, 90)) if random.random() > 0.3 else None
         
+        # Determine opportunity category and type
+        job_type_picked = random.choice(JOB_TYPES)
+        if job_type_picked == "contract":
+            opportunity_type = "contract"
+        elif category == "consulting":
+            opportunity_type = "consulting"
+        else:
+            opportunity_type = "employment"
+        
         # Create job
         job = PortalJob(
             external_id=f"seed-{i+1}",
@@ -210,7 +247,9 @@ def seed_portal_jobs(db: Session, count: int = 30) -> int:
             skills=job_template["skills"],
             experience_level=exp_level,
             category=category,
-            job_type=random.choice(JOB_TYPES),
+            job_type=job_type_picked,
+            opportunity_category="jobs",
+            opportunity_type=opportunity_type,
             posted_at=posted_at,
             expires_at=expires_at,
             is_active=True,
@@ -222,6 +261,74 @@ def seed_portal_jobs(db: Session, count: int = 30) -> int:
         
         db.add(job)
         jobs_created += 1
+    
+    # Seed training programs (internships, learnerships, apprenticeships)
+    training_sources = ["studentroom", "yes4youth", "careerjunction", "careers24"]
+    training_count = count // 3  # About 1/3 as many training opportunities
+    
+    for opp_type, templates in TRAINING_TEMPLATES.items():
+        for i in range(training_count // len(TRAINING_TEMPLATES)):
+            template = random.choice(templates)
+            company = random.choice(COMPANIES)
+            location = random.choice(LOCATIONS)
+            
+            # Training programs are typically entry level with lower/no salary
+            salary_min = random.randint(3000, 8000) if opp_type == "learnership" else random.randint(8000, 15000)
+            salary_max = salary_min + random.randint(2000, 5000)
+            
+            days_ago = random.randint(0, 14)
+            posted_at = datetime.utcnow() - timedelta(days=days_ago)
+            expires_at = posted_at + timedelta(days=random.randint(14, 45))
+            
+            job = PortalJob(
+                external_id=f"training-{opp_type}-{i+1}",
+                source=random.choice(training_sources),
+                title=template["title"],
+                company=company["name"],
+                company_logo_url=company["logo"],
+                location=f"{location['city']}, {location['province']}",
+                location_type="onsite" if opp_type in ["learnership", "apprenticeship"] else random.choice(["onsite", "hybrid"]),
+                city=location["city"],
+                country="South Africa",
+                salary_min=salary_min,
+                salary_max=salary_max,
+                salary_currency="ZAR",
+                salary_period="monthly",
+                description=f"""## {template['title']} at {company['name']}
+
+This is a {template.get('duration', '12 month')} {opp_type} opportunity for young South Africans.
+
+## Requirements
+- South African citizen between 18-35 years
+- Matric certificate
+- Strong interest in {', '.join(template['skills'][:2])}
+- Good communication skills
+
+## What You'll Learn
+- Hands-on experience in {', '.join(template['skills'])}
+- Industry-relevant skills
+- Professional development
+
+## Duration: {template.get('duration', '12 months')}
+
+This opportunity is part of the YES (Youth Employment Service) initiative.""",
+                skills=template["skills"],
+                experience_level="entry",
+                category="training",
+                job_type="learnership" if opp_type == "learnership" else "internship",
+                opportunity_category="training_skills_programs",
+                opportunity_type=opp_type,
+                posted_at=posted_at,
+                expires_at=expires_at,
+                is_active=True,
+                is_verified=random.random() > 0.5,
+                views_count=random.randint(50, 300),
+                applies_count=random.randint(10, 100),
+                slug=slugify(f"{template['title']}-{company['name']}-{opp_type}-{i+1}"),
+            )
+            
+            db.add(job)
+            jobs_created += 1
     
     db.commit()
     return jobs_created
