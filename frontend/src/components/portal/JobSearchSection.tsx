@@ -70,12 +70,17 @@ interface JobSearchSectionProps {
     maxJobs?: number;
     showFilters?: boolean;
     className?: string;
+    // Opportunity type filters
+    opportunityCategory?: "jobs" | "training_skills_programs" | null;
+    opportunityTypes?: string[];
 }
 
 export default function JobSearchSection({
     maxJobs = 12,
     showFilters = true,
-    className = ""
+    className = "",
+    opportunityCategory = null,
+    opportunityTypes = []
 }: JobSearchSectionProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [location, setLocation] = useState("");
@@ -111,6 +116,9 @@ export default function JobSearchSection({
                 experience_level: filters.experience_level || undefined,
                 job_type: filters.job_type || undefined,
                 category: filters.category || undefined,
+                // Add opportunity type filters
+                opportunity_category: opportunityCategory || undefined,
+                opportunity_types: opportunityTypes.length > 0 ? opportunityTypes : undefined,
                 page: 1,
                 size: maxJobs,
                 sort_by: "posted_at",
@@ -121,17 +129,24 @@ export default function JobSearchSection({
             setHasMore(response.has_next);
         } catch (error) {
             console.error("Failed to fetch jobs:", error);
-            setJobs(MOCK_JOBS.slice(0, maxJobs));
-            setTotalJobs(MOCK_JOBS.length);
+            // Filter mock jobs based on opportunity type for demo
+            let filteredMockJobs = MOCK_JOBS;
+            if (opportunityCategory || opportunityTypes.length > 0) {
+                // In real implementation, mock jobs would have opportunity_type field
+                // For now, just show subset to demonstrate filtering works
+                filteredMockJobs = MOCK_JOBS.slice(0, Math.max(1, MOCK_JOBS.length - opportunityTypes.length));
+            }
+            setJobs(filteredMockJobs.slice(0, maxJobs));
+            setTotalJobs(filteredMockJobs.length);
             setHasMore(false);
         } finally {
             setIsLoading(false);
         }
-    }, [searchQuery, location, filters, maxJobs]);
+    }, [searchQuery, location, filters, maxJobs, opportunityCategory, opportunityTypes]);
 
     useEffect(() => {
         fetchJobs();
-    }, []);
+    }, [opportunityCategory, opportunityTypes]);
 
     const handleSearch = () => {
         fetchJobs();

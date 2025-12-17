@@ -8,11 +8,16 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import JobSearchSection from "@/components/portal/JobSearchSection";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
+import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
 
 export default function HomePage() {
   const [productOpen, setProductOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
+
+  // Opportunity filter state
+  const [selectedCategory, setSelectedCategory] = useState<OpportunityCategory>(null);
+  const [selectedTypes, setSelectedTypes] = useState<OpportunityType[]>([]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -186,7 +191,7 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Briefcase className="w-6 h-6 text-green-600" />
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Latest Jobs</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Latest Opportunities</h2>
               </div>
               <Link href="/portal" className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-400 flex items-center gap-1">
                 View all
@@ -194,9 +199,24 @@ export default function HomePage() {
               </Link>
             </div>
 
+            {/* Opportunity Type Filter - NEW SUBHEADER */}
+            <OpportunityTypeFilter
+              selectedCategory={selectedCategory}
+              selectedTypes={selectedTypes}
+              onCategoryChange={setSelectedCategory}
+              onTypeChange={setSelectedTypes}
+              className="mb-4"
+            />
+
             {/* Job Search Section - Main Feed Content */}
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-200 dark:border-gray-700">
-              <JobSearchSection maxJobs={12} showFilters={true} className="py-4" />
+              <JobSearchSection
+                maxJobs={12}
+                showFilters={true}
+                className="py-4"
+                opportunityCategory={selectedCategory}
+                opportunityTypes={selectedTypes}
+              />
             </div>
           </div>
 
