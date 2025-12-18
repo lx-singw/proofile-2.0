@@ -19,6 +19,9 @@ export type Profile = {
   skills_data?: string[];
   experience_data?: any[];
   education_data?: any[];
+  experiences?: any[]; // Structured experiences
+  portfolio?: any[];   // Structured portfolio items
+  verifications?: any[]; // Verification records (including gold status)
 };
 
 export type CreateProfilePayload = {
@@ -162,6 +165,9 @@ export interface PublicProfile {
   persona?: string;
   industry?: string;
   resumes: PublicProfileResume[];
+  experiences: any[];
+  portfolio: any[];
+  skills_data: string[];
   is_private?: boolean;
 }
 

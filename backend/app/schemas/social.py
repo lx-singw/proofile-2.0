@@ -4,6 +4,7 @@ Social interaction schemas for API requests/responses.
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, List
+from uuid import UUID
 
 
 # ============ Follow Schemas ============
@@ -92,6 +93,7 @@ class EndorsementCreate(BaseModel):
     endorsed_user_id: int = Field(..., description="User ID to endorse")
     skill: str = Field(..., max_length=100, description="Skill to endorse")
     comment: Optional[str] = Field(None, max_length=500, description="Optional comment")
+    experience_id: Optional[UUID] = Field(None, description="Optional link to work experience")
 
 
 class EndorsementResponse(BaseModel):
@@ -100,6 +102,9 @@ class EndorsementResponse(BaseModel):
     endorsed_user_id: int
     skill: str
     comment: Optional[str]
+    weight: float
+    is_verified_colleague: bool
+    experience_id: Optional[UUID]
     created_at: datetime
 
     class Config:

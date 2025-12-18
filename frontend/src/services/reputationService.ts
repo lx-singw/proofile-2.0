@@ -7,7 +7,7 @@
  * - Reputation summaries
  */
 
-import { apiClient } from './api';
+import { apiRequest } from '@/lib/api';
 
 // Types
 export interface RatingRequest {
@@ -70,19 +70,11 @@ export async function createRatingRequest(data: {
     role_at_company?: string;
     personal_message?: string;
 }): Promise<RatingRequest> {
-    const response = await fetch('/api/v1/ratings/request', {
+    return apiRequest<RatingRequest>({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data),
+        url: '/api/v1/ratings/request',
+        data,
     });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to create rating request');
-    }
-
-    return response.json();
 }
 
 /**
@@ -97,14 +89,10 @@ export async function getRatingRequest(token: string): Promise<{
     personal_message?: string;
     expires_at: string;
 }> {
-    const response = await fetch(`/api/v1/ratings/request/${token}`);
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Rating request not found');
-    }
-
-    return response.json();
+    return apiRequest<any>({
+        method: 'GET',
+        url: `/api/v1/ratings/request/${token}`,
+    });
 }
 
 /**
@@ -119,48 +107,31 @@ export async function submitRating(data: {
     rater_email?: string;
     rater_name?: string;
 }): Promise<{ success: boolean; rating_id: number; message: string }> {
-    const response = await fetch('/api/v1/ratings/submit', {
+    return apiRequest<any>({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        url: '/api/v1/ratings/submit',
+        data,
     });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to submit rating');
-    }
-
-    return response.json();
 }
 
 /**
  * Get reputation summary for a user
  */
 export async function getReputationSummary(userId: number): Promise<ReputationSummary> {
-    const response = await fetch(`/api/v1/ratings/reputation/${userId}`, {
-        credentials: 'include',
+    return apiRequest<ReputationSummary>({
+        method: 'GET',
+        url: `/api/v1/ratings/reputation/${userId}`,
     });
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch reputation');
-    }
-
-    return response.json();
 }
 
 /**
  * Get current user's reputation
  */
 export async function getMyReputation(): Promise<ReputationSummary> {
-    const response = await fetch('/api/v1/ratings/reputation/me', {
-        credentials: 'include',
+    return apiRequest<ReputationSummary>({
+        method: 'GET',
+        url: '/api/v1/ratings/reputation/me',
     });
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch reputation');
-    }
-
-    return response.json();
 }
 
 /**
@@ -170,17 +141,11 @@ export async function getMyRatingRequests(
     status?: 'pending' | 'completed' | 'expired'
 ): Promise<RatingRequest[]> {
     try {
-        const params = status ? `?status_filter=${status}` : '';
-        const response = await fetch(`/api/v1/ratings/my-requests${params}`, {
-            credentials: 'include',
+        return await apiRequest<RatingRequest[]>({
+            method: 'GET',
+            url: '/api/v1/ratings/my-requests',
+            params: status ? { status_filter: status } : {},
         });
-
-        if (!response.ok) {
-            console.warn('Failed to fetch rating requests:', response.status);
-            return [];
-        }
-
-        return response.json();
     } catch (err) {
         console.warn('Error fetching rating requests:', err);
         return [];
@@ -192,16 +157,10 @@ export async function getMyRatingRequests(
  */
 export async function getMyReviews(): Promise<Review[]> {
     try {
-        const response = await fetch('/api/v1/ratings/my-reviews', {
-            credentials: 'include',
+        return await apiRequest<Review[]>({
+            method: 'GET',
+            url: '/api/v1/ratings/my-reviews',
         });
-
-        if (!response.ok) {
-            console.warn('Failed to fetch reviews:', response.status);
-            return [];
-        }
-
-        return response.json();
     } catch (err) {
         console.warn('Error fetching reviews:', err);
         return [];
@@ -216,16 +175,9 @@ export async function reportReview(data: {
     reason: string;
     details?: string;
 }): Promise<{ success: boolean }> {
-    const response = await fetch('/api/v1/ratings/moderation/report', {
+    return apiRequest<{ success: boolean }>({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(data),
+        url: '/api/v1/ratings/moderation/report',
+        data,
     });
-
-    if (!response.ok) {
-        throw new Error('Failed to submit report');
-    }
-
-    return response.json();
 }

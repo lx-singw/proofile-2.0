@@ -34,3 +34,11 @@ class Profile(Base):
 
     # Bidirectional relationship with User
     user = relationship("User", back_populates="profile")
+
+    @property
+    def experiences(self):
+        return self.user.work_experiences
+
+    @property
+    def portfolio(self):
+        return self.user.portfolio_items

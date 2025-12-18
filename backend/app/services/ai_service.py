@@ -241,3 +241,82 @@ async def parse_resume_to_json(text: str) -> dict:
             content = content.split("```")[1].split("```")[0].strip()
             
         return json.loads(content)
+
+async def generate_cover_letter(user_data: dict, job_data: dict, tone: str = "Professional") -> str:
+    """
+    Generate a tailored cover letter based on user profile and job details.
+    """
+    if not OPENAI_API_KEY:
+        return f"Dear Hiring Manager,\n\nI am excited to apply for the {job_data.get('title', 'position')} role at {job_data.get('company', 'your company')}. My background in {user_data.get('profile', {}).get('headline', 'my field')} makes me a strong fit..."
+
+    prompt = f"""
+    You are an expert career coach. Write a {tone} cover letter.
+    
+    User Profile:
+    {{user_data}}
+    
+    Job Details:
+    {{job_data}}
+    
+    Requirements:
+    - Reference specific matching skills from the profile.
+    - Mention the company name.
+    - Keep it under 300 words.
+    - Output ONLY the letter text.
+    """
+    
+    headers = {{
+        "Authorization": f"Bearer {{OPENAI_API_KEY}}",
+        "Content-Type": "application/json"
+    }}
+    data = {{
+        "model": "gpt-4",
+        "messages": [
+            {{"role": "system", "content": "You are a professional cover letter writer."}},
+            {{"role": "user", "content": prompt}}
+        ],
+        "max_tokens": 1000,
+        "temperature": 0.7
+    }}
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(OPENAI_API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return result['choices'][0]['message']['content'].strip()
+
+async def generate_congrats_message(sender_name: str, recipient_name: str, milestone_type: str) -> str:
+    """
+    Generate a short, professional congratulatory message.
+    """
+    if not OPENAI_API_KEY:
+        return f"Congrats, {{recipient_name}}! Great to see your {{milestone_type}} milestone. - {{sender_name}}"
+
+    prompt = f"""
+    Write a short, friendly congratulatory message from {{sender_name}} to {{recipient_name}} regarding their {{milestone_type}}.
+    
+    Requirements:
+    - Professional yet warm.
+    - Maximum 2 sentences.
+    - Output ONLY the message text.
+    """
+    
+    headers = {{
+        "Authorization": f"Bearer {{OPENAI_API_KEY}}",
+        "Content-Type": "application/json"
+    }}
+    data = {{
+        "model": "gpt-4",
+        "messages": [
+            {{"role": "system", "content": "You are a professional networker."}},
+            {{"role": "user", "content": prompt}}
+        ],
+        "max_tokens": 200,
+        "temperature": 0.8
+    }}
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.post(OPENAI_API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return result['choices'][0]['message']['content'].strip()

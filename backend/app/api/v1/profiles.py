@@ -430,7 +430,7 @@ async def delete_profile(
 # === Public Profile Endpoints ===
 
 from app.models.resume import Resume
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 
 
@@ -440,8 +440,7 @@ class PublicProfileResume(BaseModel):
     template_id: str
     created_at: str
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PublicProfileResponse(BaseModel):
@@ -452,11 +451,13 @@ class PublicProfileResponse(BaseModel):
     persona: Optional[str]
     industry: Optional[str]
     resumes: List[PublicProfileResume]
+    experiences: List[dict]
+    portfolio: List[dict]
+    skills_data: List[str] = [] # Added for Pillar 2
     user_id: int
     is_private: bool = False  # True if profile is private (only visible to owner)
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UsernameCheckResponse(BaseModel):
@@ -522,7 +523,10 @@ async def get_public_profile(
                 created_at=r.created_at.isoformat() if r.created_at else ""
             )
             for r in resumes
-        ]
+        ],
+        experiences=[exp.to_dict() for exp in user.work_experiences],
+        portfolio=[item.to_dict() for item in user.portfolio_items],
+        skills_data=user.profile.skills_data if user.profile else []
     )
 
 

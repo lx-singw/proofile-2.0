@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import DashboardHeader from "@/components/layout/DashboardHeader";
+import MobileNav from "@/components/layout/MobileNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import KeyboardShortcutsModal from "@/components/ui/KeyboardShortcutsModal";
@@ -95,6 +96,9 @@ export default function AppShell({ children }: AppShellProps) {
             <div className="fixed bottom-4 left-4 text-xs text-gray-400 dark:text-gray-600 hidden lg:block">
                 Press <kbd className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded font-mono">?</kbd> for shortcuts
             </div>
+
+            {/* Mobile Navigation */}
+            <MobileNav />
         </div>
     );
 }

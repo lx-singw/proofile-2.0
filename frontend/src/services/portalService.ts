@@ -183,6 +183,20 @@ export const portalService = {
         });
         return response.data;
     },
+    /**
+     * Get hiring companies (derived from recent jobs)
+     */
+    async getHiringCompanies(limit = 5): Promise<{ name: string; jobs_count: number }[]> {
+        const response = await this.searchJobs({ size: 50 });
+        const companyCounts: Record<string, number> = {};
+        response.jobs.forEach(job => {
+            companyCounts[job.company] = (companyCounts[job.company] || 0) + 1;
+        });
+        return Object.entries(companyCounts)
+            .map(([name, count]) => ({ name, jobs_count: count }))
+            .sort((a, b) => b.jobs_count - a.jobs_count)
+            .slice(0, limit);
+    },
 };
 
 export default portalService;

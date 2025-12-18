@@ -62,13 +62,6 @@ export default function RegistrationForm() {
 
   const onSubmit = async (data: FormValues) => {
     // Debug: surface submission attempt in E2E logs
-    if (process.env.NODE_ENV !== "production") {
-      try {
-        console.log("[registration] submit", { hasEmail: Boolean(data.email), hasPassword: Boolean(data.password) });
-      } catch {
-        // ignore logging issues (e.g., console disabled)
-      }
-    }
     try {
       // Redirect to login after registration (user needs to authenticate first)
       await registerUser({ email: data.email, password: data.password, full_name: data.full_name });
@@ -84,9 +77,6 @@ export default function RegistrationForm() {
     } catch (err: unknown) {
       // CRITICAL: Log the full error for debugging
       if (process.env.NODE_ENV !== "production") {
-        console.error("[registration] ERROR:", err);
-        console.error("[registration] ERROR type:", typeof err);
-        console.error("[registration] ERROR keys:", err && typeof err === "object" ? Object.keys(err) : "N/A");
       }
 
       // Normalize backend error shapes (detail or field errors)

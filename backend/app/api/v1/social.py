@@ -44,6 +44,17 @@ async def follow_user(
         db.add(follow)
         await db.commit()
         await db.refresh(follow)
+        
+        # Notify Target User
+        from app.services import notification_service
+        await notification_service.notify_user(
+            db_session=db,
+            user_id=data.following_id,
+            notification_type="new_follower",
+            name=current_user.full_name,
+            link=f"/p/{current_user.username}"
+        )
+        
     except IntegrityError:
         await db.rollback()
         raise HTTPException(status_code=409, detail="Already following this user")
@@ -338,16 +349,59 @@ async def endorse_skill(
     if not target:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # Pillar 2: Weight Calculation Logic
+    weight = 1.0
+    is_verified_colleague = False
+    
+    # 1. Trust-based weight boost
+    # Use sync wrapper for trust calculation as the engine is sync-based (standard Session)
+    # For now, we'll access the current_user's trust_score directly from the model
+    if current_user.trust_score and current_user.trust_score >= 71:
+        weight += 0.5
+    
+    # 2. Colleague-based verification boost
+    if data.experience_id:
+        from app.models.experience import WorkExperience
+        exp = await db.get(WorkExperience, data.experience_id)
+        if exp and exp.user_id == data.endorsed_user_id:
+            # Check if current_user has a verified experience at the same company
+            colleague_check = await db.execute(
+                select(WorkExperience).where(
+                    and_(
+                        WorkExperience.user_id == current_user.id,
+                        WorkExperience.company == exp.company,
+                        WorkExperience.is_verified == True
+                    )
+                )
+            )
+            if colleague_check.scalars().first():
+                is_verified_colleague = True
+                weight += 1.0
+
     endorsement = Endorsement(
         endorser_id=current_user.id,
         endorsed_user_id=data.endorsed_user_id,
         skill=data.skill,
-        comment=data.comment
+        comment=data.comment,
+        experience_id=data.experience_id,
+        weight=weight,
+        is_verified_colleague=is_verified_colleague
     )
     try:
         db.add(endorsement)
         await db.commit()
         await db.refresh(endorsement)
+        
+        # Notify Endorsed User (Pillar 5)
+        from app.services import notification_service
+        await notification_service.notify_user(
+            db_session=db,
+            user_id=data.endorsed_user_id,
+            notification_type="post_reaction", # Re-using reaction for endorsement for now
+            name=current_user.full_name,
+            link="/profile"
+        )
+        
     except IntegrityError:
         await db.rollback()
         raise HTTPException(status_code=409, detail="Already endorsed this skill for this user")

@@ -8,6 +8,7 @@ import { AdvancedSearch } from "@/components/discover/AdvancedSearch";
 import { ProfileCard, ProfileCardData } from "@/components/discover/ProfileCard";
 import { Users, TrendingUp, Shield, Star, Sparkles, Flame, Compass } from "lucide-react";
 import { toast } from "@/lib/toast";
+import { discoveryService } from "@/services/discoveryService";
 import QuickStatsBar from "@/components/ui/QuickStatsBar";
 import { FadeIn } from "@/components/ui/PageTransition";
 import Link from "next/link";
@@ -65,25 +66,43 @@ const SAMPLE_PROFILES: ProfileCardData[] = [
 ];
 
 const TRENDING_CATEGORIES = [
-    { label: "Top Product Managers", icon: TrendingUp, count: 234 },
-    { label: "Rising Engineers", icon: Users, count: 567 },
-    { label: "Verified Leaders", icon: Shield, count: 123 },
-    { label: "Top Rated in Tech", icon: Star, count: 89 },
+    { label: "Top Product Managers", icon: TrendingUp, count: 234, industry: "Product Management" },
+    { label: "Rising Engineers", icon: Users, count: 567, industry: "Engineering" },
+    { label: "Verified Leaders", icon: Shield, count: 123, industry: "Management" },
+    { label: "Top Rated in Tech", icon: Star, count: 89, industry: "Technology" },
 ];
 
 export default function DiscoverPage() {
     const router = useRouter();
     const { user, loading } = useAuth();
-    const [profiles, setProfiles] = useState<ProfileCardData[]>(SAMPLE_PROFILES);
+    const [profiles, setProfiles] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
+
+    const fetchTrending = async (industry?: string) => {
+        try {
+            setInitialLoading(true);
+            const response = await discoveryService.getTrendingProfiles(1, 10, industry);
+            setProfiles(response.profiles);
+        } catch (error) {
+            console.error("Failed to fetch trending profiles:", error);
+            toast.error("Failed to load discovery profiles");
+        } finally {
+            setInitialLoading(false);
+        }
+    };
 
     React.useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login?redirect=/discover');
+        if (!loading) {
+            if (!user) {
+                router.push('/login?redirect=/discover');
+            } else {
+                fetchTrending();
+            }
         }
     }, [user, loading, router]);
 
-    if (loading) {
+    if (loading || initialLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
@@ -95,11 +114,19 @@ export default function DiscoverPage() {
 
     const handleSearch = async (filters: any) => {
         setIsSearching(true);
-        // Simulate API call
-        await new Promise(r => setTimeout(r, 800));
-        // In production, call API with filters
-        setIsSearching(false);
-        toast.success(`Found ${profiles.length} matching profiles`);
+        try {
+            const response = await discoveryService.searchProfiles(filters.query || "", 1, 20, {
+                industry: filters.industry,
+                experience_level: filters.experienceLevel
+            });
+            setProfiles(response.profiles);
+            toast.success(`Found ${response.total} matching profiles`);
+        } catch (error) {
+            console.error("Search failed:", error);
+            toast.error("Search failed. Please try again.");
+        } finally {
+            setIsSearching(false);
+        }
     };
 
     const handleConnect = (id: number) => {
@@ -184,7 +211,19 @@ export default function DiscoverPage() {
                                     {profiles.map(profile => (
                                         <ProfileCard
                                             key={profile.id}
-                                            profile={profile}
+                                            profile={{
+                                                id: profile.id,
+                                                username: profile.username,
+                                                name: profile.full_name || "Anonymous",
+                                                headline: profile.headline,
+                                                avatar_url: profile.avatar_url,
+                                                location: profile.industry, // Mapping industry to location for now as location isn't in DiscoveryProfile
+                                                rating: profile.average_rating,
+                                                rating_count: undefined,
+                                                is_verified: profile.is_verified,
+                                                skills: profile.skills,
+                                                match_score: profile.match_score
+                                            }}
                                             onConnect={handleConnect}
                                             showMatchScore
                                         />
@@ -205,6 +244,7 @@ export default function DiscoverPage() {
                                     {TRENDING_CATEGORIES.map((cat, idx) => (
                                         <button
                                             key={idx}
+                                            onClick={() => fetchTrending(cat.industry)}
                                             className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 hover:scale-[1.02] text-left"
                                         >
                                             <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">

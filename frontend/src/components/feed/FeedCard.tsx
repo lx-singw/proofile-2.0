@@ -13,11 +13,19 @@ import {
     Award,
     FileText,
     CheckCircle,
-    TrendingUp
+    TrendingUp,
+    Star,
+    Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AgentActionBar, AgentAction } from "./agents/AgentActionBar";
+import { DraftMessageModal } from "./agents/DraftMessageModal";
+import { feedService } from "@/services/feedService";
+import { HunterAgent } from "@/agents/HunterAgent";
+import { NetworkAgent } from "@/agents/NetworkAgent";
+import useAuth from "@/hooks/useAuth";
 
-export type FeedItemType = "profile_update" | "job_match" | "skill_verified" | "resume_shared" | "milestone";
+export type FeedItemType = "text" | "milestone" | "job_share" | "poll" | "achievement" | "skill_verified" | "profile_update";
 
 export interface FeedItem {
     id: string;
@@ -45,16 +53,70 @@ interface FeedCardProps {
 }
 
 export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
+    const { user } = useAuth();
+    const [isAgentProcessing, setIsAgentProcessing] = React.useState(false);
+
+    // Calculate Agent Insights
+    const agentInsights = React.useMemo(() => {
+        if (!user) return null;
+
+        // Fallback skills if user has none for demo purposes
+        const userSkills = (user as any).skills || ["React", "TypeScript", "Communication", "Leadership", "Python"];
+
+        if (item.type === "job_share") {
+            return HunterAgent.calculateMatch(item.content, userSkills);
+        }
+
+        if (item.type === "milestone" || item.type === "profile_update") {
+            const context = NetworkAgent.getConnectionContext(user.industry || "Tech", (item.user as any).industry || "Tech");
+            return {
+                score: 0,
+                reasoning: context
+            };
+        }
+
+        return null;
+    }, [user, item]);
+
+    const displayMatchScore = item.metadata?.match_score || agentInsights?.score;
+    const displayMatchReason = item.metadata?.match_reason || agentInsights?.reasoning;
+
+    const [agentDraft, setAgentDraft] = React.useState<string | null>(null);
+    const [showDraftModal, setShowDraftModal] = React.useState(false);
+    const [draftType, setDraftType] = React.useState<"congratulations" | "introduction" | "follow_up" | "thank_you">("congratulations");
+
+    const handleAgentAction = async (action: AgentAction) => {
+        if (action === "draft_cover" || action === "draft_message") {
+            try {
+                setIsAgentProcessing(true);
+                const result = await feedService.executeAgentAction(
+                    parseInt(item.id),
+                    action === "draft_cover" ? "draft_cover" : "draft_message"
+                );
+                setAgentDraft(result.draft);
+                setDraftType(action === "draft_cover" ? "introduction" : "congratulations");
+                setShowDraftModal(true);
+            } catch (error) {
+                console.error("Agent action failed:", error);
+            } finally {
+                setIsAgentProcessing(false);
+            }
+        } else {
+            // Handle other actions like quick apply or research
+        }
+    };
     const getTypeIcon = () => {
         switch (item.type) {
-            case "job_match":
-                return <Briefcase className="w-4 h-4 text-emerald-500" />;
-            case "skill_verified":
-                return <CheckCircle className="w-4 h-4 text-green-500" />;
-            case "resume_shared":
-                return <FileText className="w-4 h-4 text-emerald-500" />;
             case "milestone":
                 return <Award className="w-4 h-4 text-emerald-500" />;
+            case "skill_verified":
+                return <CheckCircle className="w-4 h-4 text-green-500" />;
+            case "text":
+                return <FileText className="w-4 h-4 text-emerald-500" />;
+            case "achievement":
+                return <Star className="w-4 h-4 text-amber-500" />;
+            case "job_share":
+                return <Briefcase className="w-4 h-4 text-emerald-500" />;
             default:
                 return <TrendingUp className="w-4 h-4 text-gray-500" />;
         }
@@ -62,16 +124,29 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
 
     const getTypeLabel = () => {
         switch (item.type) {
-            case "job_match": return "Job Match";
-            case "skill_verified": return "Skill Verified";
-            case "resume_shared": return "Shared Resume";
             case "milestone": return "Milestone";
+            case "skill_verified": return "Skill Verified";
+            case "text": return "Update";
+            case "achievement": return "Achievement";
+            case "job_share": return "Job Opportunity";
+            case "profile_update": return "Profile Update";
             default: return "Update";
         }
     };
 
+    const isMilestone = item.type === "milestone";
+
     return (
-        <article className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+        <article className={`bg-white dark:bg-gray-800 rounded-2xl border ${isMilestone ? 'border-emerald-500/30' : 'border-gray-100 dark:border-gray-700'} shadow-sm hover:shadow-md transition-shadow overflow-hidden relative group`}>
+            {isMilestone && (
+                <div className="absolute top-0 right-0 p-3">
+                    <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-lg">
+                        <Award className="w-3 h-3" />
+                        Verified Milestone
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="p-4 sm:p-5">
                 <div className="flex items-start gap-3">
@@ -82,7 +157,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                                 alt={item.user.name}
                                 width={48}
                                 height={48}
-                                className="rounded-full object-cover"
+                                className="rounded-full object-cover ring-2 ring-transparent group-hover:ring-emerald-500/20 transition-all"
                                 unoptimized
                             />
                         ) : (
@@ -110,7 +185,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                         </p>
                     </div>
 
-                    <Button variant="ghost" size="icon" className="rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <Button variant="ghost" size="icon" className="rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" aria-label="More options">
                         <MoreHorizontal className="w-5 h-5" />
                     </Button>
                 </div>
@@ -121,7 +196,33 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                         {item.content}
                     </p>
                 </div>
+
+                {/* Agent Action Bar (Conditional) */}
+                {(item.type === "job_share" || item.type === "milestone" || item.type === "achievement" || item.type === "skill_verified") && (
+                    <div className="mt-4">
+                        <AgentActionBar
+                            postType={item.type === "job_share" ? "job_match" : "milestone"}
+                            matchScore={displayMatchScore}
+                            matchReason={displayMatchReason}
+                            onAction={handleAgentAction}
+                            isProcessing={isAgentProcessing}
+                        />
+                    </div>
+                )}
             </div>
+
+            {/* Draft Modal */}
+            <DraftMessageModal
+                isOpen={showDraftModal}
+                onClose={() => setShowDraftModal(false)}
+                recipientName={item.user.name}
+                contextType={draftType}
+                contextDetails={item.type === "job_share" ? `Applying for ${item.metadata?.job_title}` : `Congratulating on ${item.type}`}
+                initialDraft={agentDraft || undefined}
+                onSend={async (msg) => {
+                    // In real app, this would call a message service
+                }}
+            />
 
             {/* Actions */}
             <div className="border-t border-gray-100 dark:border-gray-700 px-4 py-2 flex items-center justify-between">
@@ -131,6 +232,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                         size="sm"
                         onClick={() => onLike?.(item.id)}
                         className={`flex items-center gap-1.5 rounded-lg ${item.isLiked ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-gray-400"}`}
+                        aria-label={item.isLiked ? "Unlike post" : "Like post"}
                     >
                         <ThumbsUp className={`w-4 h-4 ${item.isLiked ? "fill-current" : ""}`} />
                         <span className="text-sm font-medium">{item.likes || ""}</span>
@@ -140,6 +242,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                         size="sm"
                         onClick={() => onComment?.(item.id)}
                         className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 rounded-lg"
+                        aria-label="Comment on post"
                     >
                         <MessageCircle className="w-4 h-4" />
                         <span className="text-sm font-medium">{item.comments || ""}</span>

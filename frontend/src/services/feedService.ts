@@ -4,26 +4,7 @@
  * Frontend service for feed API integration.
  * Handles posts, reactions, and comments.
  */
-import axios from "axios";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const api = axios.create({
-    baseURL: `${API_BASE}/api/v1`,
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-    if (typeof window !== "undefined") {
-        const token = localStorage.getItem("access_token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-    }
-    return config;
-});
+import { apiRequest } from '@/lib/api';
 
 // Types
 export interface UserBrief {
@@ -85,7 +66,7 @@ export interface FeedResponse {
 }
 
 export interface PostCreate {
-    type?: "text" | "milestone" | "job_share" | "poll";
+    type?: "text" | "milestone" | "job_share" | "poll" | "achievement";
     content: string;
     visibility?: "public" | "connections" | "private";
     metadata?: Record<string, unknown>;
@@ -105,66 +86,88 @@ export const feedService = {
         following_only?: boolean;
         types?: string;
     }): Promise<FeedResponse> {
-        const response = await api.get("/feed", { params });
-        return response.data;
+        return apiRequest<FeedResponse>({
+            method: 'GET',
+            url: '/api/v1/feed',
+            params,
+        });
     },
 
     /**
      * Create a new post
      */
     async createPost(data: PostCreate): Promise<PostResponse> {
-        const response = await api.post("/feed/posts", data);
-        return response.data;
+        return apiRequest<PostResponse>({
+            method: 'POST',
+            url: '/api/v1/feed/posts',
+            data,
+        });
     },
 
     /**
      * Get a single post
      */
     async getPost(postId: number): Promise<PostResponse> {
-        const response = await api.get(`/feed/posts/${postId}`);
-        return response.data;
+        return apiRequest<PostResponse>({
+            method: 'GET',
+            url: `/api/v1/feed/posts/${postId}`,
+        });
     },
 
     /**
      * Update a post
      */
     async updatePost(postId: number, data: Partial<PostCreate>): Promise<PostResponse> {
-        const response = await api.put(`/feed/posts/${postId}`, data);
-        return response.data;
+        return apiRequest<PostResponse>({
+            method: 'PUT',
+            url: `/api/v1/feed/posts/${postId}`,
+            data,
+        });
     },
 
     /**
      * Delete a post
      */
     async deletePost(postId: number): Promise<void> {
-        await api.delete(`/feed/posts/${postId}`);
+        await apiRequest({
+            method: 'DELETE',
+            url: `/api/v1/feed/posts/${postId}`,
+        });
     },
 
     /**
      * Toggle reaction on a post
      */
     async toggleReaction(postId: number, type: ReactionType): Promise<{ action: string; type: string }> {
-        const response = await api.post(`/feed/posts/${postId}/react`, { type });
-        return response.data;
+        return apiRequest({
+            method: 'POST',
+            url: `/api/v1/feed/posts/${postId}/react`,
+            data: { type },
+        });
     },
 
     /**
      * Get reactions for a post
      */
     async getReactions(postId: number): Promise<ReactionSummary> {
-        const response = await api.get(`/feed/posts/${postId}/reactions`);
-        return response.data;
+        return apiRequest({
+            method: 'GET',
+            url: `/api/v1/feed/posts/${postId}/reactions`,
+        });
     },
 
     /**
      * Add a comment to a post
      */
     async addComment(postId: number, content: string, parentId?: number): Promise<CommentResponse> {
-        const response = await api.post(`/feed/posts/${postId}/comments`, {
-            content,
-            parent_id: parentId,
+        return apiRequest({
+            method: 'POST',
+            url: `/api/v1/feed/posts/${postId}/comments`,
+            data: {
+                content,
+                parent_id: parentId,
+            },
         });
-        return response.data;
     },
 
     /**
@@ -176,10 +179,11 @@ export const feedService = {
         size: number;
         has_more: boolean;
     }> {
-        const response = await api.get(`/feed/posts/${postId}/comments`, {
+        return apiRequest({
+            method: 'GET',
+            url: `/api/v1/feed/posts/${postId}/comments`,
             params: { page, size },
         });
-        return response.data;
     },
 
     /**
@@ -192,10 +196,22 @@ export const feedService = {
         size: number;
         has_more: boolean;
     }> {
-        const response = await api.get(`/feed/users/${userId}/posts`, {
+        return apiRequest({
+            method: 'GET',
+            url: `/api/v1/feed/users/${userId}/posts`,
             params: { page, size },
         });
-        return response.data;
+    },
+
+    /**
+     * Execute an agentic action (e.g. draft cover letter) on a post
+     */
+    async executeAgentAction(postId: number, actionType: string, metadata?: any): Promise<{ draft: string; type: string }> {
+        return apiRequest({
+            method: 'POST',
+            url: `/api/v1/agent-actions/feed/${postId}`,
+            data: { action_type: actionType, metadata },
+        });
     },
 };
 

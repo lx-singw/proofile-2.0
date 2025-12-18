@@ -77,9 +77,6 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const needsOnboarding = currentUser && !hasUsername;
     const finalPath = redirectPath || (needsOnboarding ? "/onboarding" : "/dashboard");
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`[auth] login successful, navigating to ${finalPath}`, { needsOnboarding, hasUsername, username: currentUser?.username });
-    }
 
     setTimeout(() => {
       router.replace(finalPath);
@@ -88,12 +85,7 @@ const AuthState: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const register = async (payload: RegisterPayload, redirectPath: string = "/login") => {
     await authService.register(payload);
-    queryClient.setQueryData(ME_QUERY_KEY, null);
     await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
-
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`[auth] registration successful, navigating to ${redirectPath}`);
-    }
 
     setTimeout(() => {
       router.replace(redirectPath);

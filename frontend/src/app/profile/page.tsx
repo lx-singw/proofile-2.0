@@ -33,14 +33,23 @@ import { AddCollaboratorModal } from "@/components/profile/AddCollaboratorModal"
 import { ProfileStatsBar } from "@/components/ui/QuickStatsBar";
 import { ProfileFAB } from "@/components/ui/FloatingActionButton";
 import { FadeIn } from "@/components/ui/PageTransition";
+import { ShareProfileModal } from "@/components/profile/ShareProfileModal";
+import { ExperienceSection } from "@/components/profile/ExperienceSection";
+import { PortfolioSection } from "@/components/profile/PortfolioSection";
+import { useExperiences } from "@/hooks/useExperience";
+import { usePortfolio } from "@/hooks/usePortfolio";
+import { SkillsSection } from "@/components/profile/SkillsSection";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile({ enabled: Boolean(user) });
   const { invalidateProfile } = useProfileActions();
+  const { experiences, invalidateExperiences } = useExperiences();
+  const { portfolio, invalidatePortfolio } = usePortfolio();
   const [activeTab, setActiveTab] = useState("overview");
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -75,14 +84,8 @@ export default function ProfilePage() {
     }
   };
 
-  const handleShare = async () => {
-    const profileUrl = `${window.location.origin}/p/${user.username}`;
-    try {
-      await navigator.clipboard.writeText(profileUrl);
-      toast.success("Profile URL copied!");
-    } catch (error) {
-      console.error("Share failed:", error);
-    }
+  const handleShare = () => {
+    setIsShareModalOpen(true);
   };
 
   // Calculate profile completeness
@@ -226,43 +229,16 @@ export default function ProfilePage() {
               </div>
 
               {/* Experience Section */}
-              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Briefcase className="w-5 h-5" />
-                    Experience
-                  </h2>
-                  <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
-                    + Add
-                  </button>
-                </div>
-                {profile.experience_data?.length ? (
-                  <div className="space-y-6">
-                    {profile.experience_data.map((exp: any, idx: number) => (
-                      <div key={idx} className="flex gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex-shrink-0 flex items-center justify-center text-emerald-600 font-bold text-sm">
-                          {exp.company?.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 dark:text-white">{exp.title}</h3>
-                          <p className="text-gray-600 dark:text-gray-400">{exp.company}</p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            {exp.start_date || "Start"} - {exp.end_date || "Present"}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Briefcase className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                    <p>No experience added yet</p>
-                    <button className="mt-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
-                      Add your first experience →
-                    </button>
-                  </div>
-                )}
-              </div>
+              <ExperienceSection
+                experiences={experiences}
+                onRefresh={invalidateExperiences}
+              />
+
+              {/* Portfolio Section */}
+              <PortfolioSection
+                items={portfolio}
+                onRefresh={invalidatePortfolio}
+              />
 
               {/* Collaborations Section */}
               {user && (
@@ -284,37 +260,10 @@ export default function ProfilePage() {
               )}
 
               {/* Skills Section */}
-              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Award className="w-5 h-5" />
-                    Skills
-                  </h2>
-                  <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium">
-                    + Add
-                  </button>
-                </div>
-                {profile.skills_data?.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {profile.skills_data.map((skill: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-600"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Award className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                    <p>No skills added yet</p>
-                    <button className="mt-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm">
-                      Add your skills →
-                    </button>
-                  </div>
-                )}
-              </div>
+              <SkillsSection
+                skills={profile.skills_data || []}
+                isOwnProfile={true}
+              />
             </div>
 
             {/* Sidebar */}
@@ -429,6 +378,14 @@ export default function ProfilePage() {
           // We might want to refresh the list here, but list refreshes itself on mount
           // Ideally pass a refresh trigger to list
         }}
+      />
+
+      <ShareProfileModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        username={user.username || ""}
+        fullName={user.full_name || undefined}
+        headline={profile.headline}
       />
 
       {/* Mobile FAB */}

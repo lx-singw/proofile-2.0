@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import enum
+import uuid
 from datetime import datetime, timezone
 from app.models.base import Base
 
@@ -16,6 +18,9 @@ class PeerVerificationRequest(Base):
     id = Column(Integer, primary_key=True, index=True)
     requester_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     verifier_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    
+    # Linked experience (optional)
+    experience_id = Column(UUID(as_uuid=True), ForeignKey("work_experiences.id", ondelete="SET NULL"), nullable=True)
     
     # Context of verification
     company = Column(String(255), nullable=False)

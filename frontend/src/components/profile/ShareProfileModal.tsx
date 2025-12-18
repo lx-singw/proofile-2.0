@@ -38,8 +38,9 @@ export function ShareProfileModal({
 
     if (!isOpen) return null;
 
-    const profileUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://proofile.co'}/p/${username}`;
-    const shortUrl = `proofile.co/p/${username}`;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://proofile.co';
+    const profileUrl = `${baseUrl}/@${username}`;
+    const shortUrl = `proofile.co/@${username}`;
     const shareText = fullName
         ? `Check out ${fullName}'s professional profile on Proofile`
         : `Check out this professional profile on Proofile`;
@@ -156,9 +157,17 @@ export function ShareProfileModal({
                                 <QRCodeSVG
                                     value={profileUrl}
                                     size={180}
-                                    level="M"
+                                    level="H"
                                     includeMargin={false}
-                                    fgColor="#1f2937"
+                                    fgColor="#059669" // Emerald-600
+                                    imageSettings={{
+                                        src: "/favicon.ico",
+                                        x: undefined,
+                                        y: undefined,
+                                        height: 36,
+                                        width: 36,
+                                        excavate: true,
+                                    }}
                                 />
                             </div>
                         </div>
@@ -189,8 +198,8 @@ export function ShareProfileModal({
                             <button
                                 onClick={handleCopyLink}
                                 className={`p-3 rounded-xl font-medium transition-all flex items-center gap-2 ${copied
-                                        ? "bg-green-600 text-white"
-                                        : "bg-emerald-600 text-white hover:bg-emerald-700"
+                                    ? "bg-green-600 text-white"
+                                    : "bg-emerald-600 text-white hover:bg-emerald-700"
                                     }`}
                             >
                                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}

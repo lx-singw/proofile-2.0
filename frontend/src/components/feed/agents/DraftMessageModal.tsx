@@ -19,6 +19,7 @@ interface DraftMessageModalProps {
     recipientName: string;
     contextType: "congratulations" | "introduction" | "follow_up" | "thank_you";
     contextDetails?: string;
+    initialDraft?: string;
 }
 
 const DRAFT_TEMPLATES: Record<string, string[]> = {
@@ -51,16 +52,24 @@ export function DraftMessageModal({
     recipientName,
     contextType,
     contextDetails,
+    initialDraft,
 }: DraftMessageModalProps) {
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState(initialDraft || "");
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [copied, setCopied] = useState(false);
     const [templateIndex, setTemplateIndex] = useState(0);
 
-    // Generate initial draft on open
+    // Update message when initialDraft changes
     useEffect(() => {
-        if (isOpen && !message) {
+        if (initialDraft) {
+            setMessage(initialDraft);
+        }
+    }, [initialDraft]);
+
+    // Generate initial draft on open if no initialDraft provided
+    useEffect(() => {
+        if (isOpen && !message && !initialDraft) {
             generateDraft();
         }
     }, [isOpen]);

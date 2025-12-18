@@ -201,6 +201,9 @@ async def get_user_stats(
     Returns counts for resumes, verifications, ratings, etc.
     """
     from app.models.resume import Resume
+    from app.models.verification import Verification
+    from app.models.rating_request import RatingRequest
+    from app.models.saved_job import SavedJob
     from sqlalchemy import func
     
     try:
@@ -210,11 +213,27 @@ async def get_user_stats(
         )
         resume_count = resume_count_result.scalar() or 0
         
-        # TODO: Add counts for verifications and ratings when those models exist
-        # For now, return 0 for those
-        verification_count = 0
-        rating_count = 0
-        saved_jobs_count = 0
+        # Count verifications (completed/verified)
+        verification_count_result = await db.execute(
+            select(func.count(Verification.id))
+            .where(Verification.user_id == current_user.id)
+            .where(Verification.status == "verified")
+        )
+        verification_count = verification_count_result.scalar() or 0
+        
+        # Count completed rating requests (incoming)
+        rating_count_result = await db.execute(
+            select(func.count(RatingRequest.id))
+            .where(RatingRequest.receiver_id == current_user.id)
+            .where(RatingRequest.status == "completed")
+        )
+        rating_count = rating_count_result.scalar() or 0
+        
+        # Count saved jobs
+        saved_jobs_count_result = await db.execute(
+            select(func.count(SavedJob.id)).where(SavedJob.user_id == current_user.id)
+        )
+        saved_jobs_count = saved_jobs_count_result.scalar() or 0
         
         return {
             "resumes_count": resume_count,

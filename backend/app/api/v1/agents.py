@@ -11,7 +11,7 @@ from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
-from app.database import get_db
+from app.api import deps
 from app.models.user import User
 from app.api.deps import get_current_active_user
 

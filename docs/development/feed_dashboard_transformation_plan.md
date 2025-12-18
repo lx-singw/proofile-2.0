@@ -13,6 +13,14 @@ Transform Proofile into a **feed-first professional platform** where `/feed` bec
 - 🔄 = Partially implemented
 - ❌ = Not yet implemented
 
+### 💡 December 2025 Updates & Friction Points
+> [!IMPORTANT]
+> **Route Alignment**: The community has decided to favor `/home` as the primary entry point for authenticated users, effectively merging the "Feed" and "Dashboard" concepts into a single unified Home experience.
+>
+> **Agent Layer Focus**: Phase 4.5 (Agentic Cards) is now the priority to move the feed from passive consumption to active productivity.
+>
+> **Legacy Sunsetting**: The `/dashboard` route will be preserved as a legacy entry point but will eventually be unified under the modern `/home` architecture.
+
 ### Routes (Pages)
 
 ```
@@ -306,15 +314,18 @@ Login → /feed (THE Dashboard - Feed + Smart Widgets)
 
 ---
 
-## 🎭 Dual-Experience Architecture
+## 🎭 Masterclass: Dual-Experience Strategy
+
+> [!NOTE]
+> The architectural separation between the **Anonymous Job Portal** (Acquisition) and the **Authenticated Smart Feed** (Retention) is a strategic masterclass in handling divergent user intents within a single domain.
 
 ### The Core Insight
-Different user types need different experiences:
+Proofile maximizes value by serving users exactly what they need based on their session state:
 
-| User Type | Primary Need | Best Landing Experience |
-|-----------|--------------|------------------------|
-| **Anonymous** | Find jobs, discover Proofile | Jobs Portal (SEO-friendly, no friction) |
-| **Authenticated** | Apply faster, grow network, track progress | Enhanced Feed (personalized, agentic) |
+| Session State | Primary Driver | Best Landing Experience | Strategic Goal |
+|---------------|----------------|-------------------------|----------------|
+| **Anonymous** | Search & Discovery | **Jobs Portal** | SEO, Low Friction, Acquisition |
+| **Authenticated** | Growth & Productivity | **Smart Feed** | Personalization, Agentic Value, Retention |
 
 ### Architecture Overview
 
@@ -682,7 +693,7 @@ To convert anonymous → authenticated, show value props at key moments:
 
 ---
 
-### Phase 4.5: Agentic Feed Cards (Week 4-5) 🤖
+### Phase 4.5: Agentic Feed Cards (Week 4-5) ✅ 🤖
 
 > **The Future of Feed: Cards That Do Work For You**
 

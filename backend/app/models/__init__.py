@@ -25,3 +25,7 @@ from .document import Document, SkillAttempt
 from .post import Post, PostType, PostVisibility
 from .reaction import Reaction, ReactionType
 from .comment import Comment
+
+# Experience & Portfolio
+from .experience import WorkExperience
+from .portfolio import PortfolioItem

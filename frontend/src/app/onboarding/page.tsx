@@ -40,7 +40,6 @@ export default function OnboardingPage() {
         // If user already has a username, they've completed onboarding - redirect to dashboard
         // Use truthy check to handle both null and empty string
         if (user.username && user.username.trim() !== '') {
-            console.log('[onboarding] User already has username, redirecting to dashboard');
             router.replace('/dashboard');
         }
 

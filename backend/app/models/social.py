@@ -2,7 +2,8 @@
 Social interaction models: Follow, Connection, Endorsement, ProfileStar, Rating
 """
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Boolean, UniqueConstraint, CheckConstraint
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Boolean, UniqueConstraint, CheckConstraint, Float
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from .base import Base, TimestampMixin
 
@@ -73,6 +74,11 @@ class Endorsement(Base, TimestampMixin):
     skill = Column(String(100), nullable=False)  # The skill being endorsed
     comment = Column(Text, nullable=True)  # Optional endorsement comment
     
+    # Pillar 2: Weighted Endorsements
+    weight = Column(Float, default=1.0, nullable=False)  # Influence of this endorsement
+    is_verified_colleague = Column(Boolean, default=False)  # If they worked at the same place
+    experience_id = Column(UUID(as_uuid=True), ForeignKey("work_experiences.id", ondelete="SET NULL"), nullable=True)
+
     # Relationships
     endorser = relationship("User", foreign_keys=[endorser_id], backref="given_endorsements")
     endorsed_user = relationship("User", foreign_keys=[endorsed_user_id], backref="received_endorsements")

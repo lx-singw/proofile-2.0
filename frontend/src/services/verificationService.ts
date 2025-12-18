@@ -1,64 +1,64 @@
-import { apiRequest } from "../lib/api";
+import api from "@/lib/api";
 
-export interface Verification {
+export interface PeerOpportunity {
+  user: {
+    id: number;
+    full_name: string;
+    headline?: string;
+    avatar_url?: string;
+  };
+  company: string;
+  role?: string;
+  period?: string;
+}
+
+export interface PeerVerificationRequest {
   id: number;
-  user_id: number;
-  verification_type: "email" | "phone" | "identity" | "education" | "employment" | "skills";
-  status: "pending" | "verified" | "expired" | "not_started";
-  verification_data?: string; // JSON
-  verified_value?: string;
-  verified_at?: string;
-  trust_level?: "L1" | "L2" | "L3" | "L4" | "L5";
-  trust_points?: number;
-}
-
-export interface VerificationSummary {
-  email_verified: boolean;
-  phone_verified: boolean;
-  identity_verified: boolean;
-  verification_score: number;
-  verifications: Verification[];
-}
-
-export async function getVerificationSummary(): Promise<VerificationSummary> {
-  return apiRequest<VerificationSummary>({
-    method: "get",
-    url: "/api/v1/verifications/summary",
-  });
-}
-
-export async function initiateEmailVerification(email: string): Promise<{ message: string; debug_token?: string }> {
-  return apiRequest({
-    method: "post",
-    url: "/api/v1/verifications/email/initiate",
-    data: { email },
-  });
-}
-
-export async function confirmEmailVerification(token: string): Promise<Verification> {
-  return apiRequest<Verification>({
-    method: "post",
-    url: "/api/v1/verifications/email/confirm",
-    data: { token },
-  });
-}
-
-export async function createVerification(data: {
-  verification_type: string;
-  verification_data: string;
-}): Promise<Verification> {
-  return apiRequest<Verification>({
-    method: "post",
-    url: "/api/v1/verifications",
-    data,
-  });
+  requester_id: number;
+  verifier_id: number;
+  company: string;
+  role?: string;
+  status: "pending" | "verified" | "denied" | "ignored";
+  message?: string;
+  response_note?: string;
+  created_at: string;
+  requester?: {
+    id: number;
+    full_name: string;
+    avatar_url?: string;
+  };
 }
 
 const verificationService = {
-  getVerificationSummary,
-  initiateEmailVerification,
-  confirmEmailVerification,
-  createVerification
+  getOpportunities: async (): Promise<PeerOpportunity[]> => {
+    const response = await api.get("/verifications/peer/opportunities");
+    return response.data;
+  },
+
+  requestVerification: async (data: {
+    verifier_id: number;
+    company: string;
+    experience_id?: string;
+    role?: string;
+    start_date?: string;
+    end_date?: string;
+    message?: string;
+  }): Promise<PeerVerificationRequest> => {
+    const response = await api.post("/verifications/peer/request", data);
+    return response.data;
+  },
+
+  getPendingRequests: async (): Promise<PeerVerificationRequest[]> => {
+    const response = await api.get("/verifications/peer/pending");
+    return response.data;
+  },
+
+  respondToRequest: async (requestId: number, action: "verify" | "deny", note?: string): Promise<{ status: string }> => {
+    const response = await api.post(`/verifications/peer/${requestId}/respond`, null, {
+      params: { action, response_note: note }
+    });
+    return response.data;
+  }
 };
 
 export default verificationService;

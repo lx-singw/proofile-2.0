@@ -84,10 +84,6 @@ export const resumeService = {
                 data: {},
                 responseType: 'blob',
             });
-            console.log('PDF Blob received:', blob);
-            console.log('PDF Blob size:', blob.size);
-            console.log('PDF Blob type:', blob.type);
-
             // Check if we got an error response disguised as a blob
             if (blob.type === 'application/json' || blob.size === 0) {
                 // Try to parse the blob as JSON to get the error message

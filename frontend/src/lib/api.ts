@@ -27,7 +27,6 @@ if (typeof window !== "undefined" && rawEnvUrl && process.env.NODE_ENV === "prod
 
 if (process.env.NODE_ENV !== "production") {
   // Debug log for dev/test environments
-  console.log("[api] baseURL resolved to", API_URL || "(relative proxy)", "rawEnvUrl=", rawEnvUrl);
 }
 
 const ACCESS_TOKEN_STORAGE_KEY = "auth:accessToken";
@@ -161,10 +160,6 @@ api.interceptors.response.use(
         config._retryCount += 1;
         const delay = Math.min(1000 * Math.pow(2, config._retryCount - 1), 3000);
 
-        if (process.env.NODE_ENV !== "production") {
-          console.log(`[apiRequest] Retrying ${config.url} (attempt ${config._retryCount + 1}) after ${delay}ms`);
-        }
-
         await new Promise(resolve => setTimeout(resolve, delay));
         return api(config);
       }
@@ -178,9 +173,6 @@ api.interceptors.response.use(
 // Basic wrapper to return response data and normalize errors
 export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promise<T> {
   try {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("[apiRequest]", config.method?.toUpperCase(), config.url, { baseURL: api.defaults.baseURL });
-    }
     const resp = await api.request<T>(config);
     return resp.data;
   } catch (error) {
@@ -188,14 +180,17 @@ export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promi
     if (process.env.NODE_ENV !== "production") {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
-        // 401/404/409 are expected for auth checks, missing resources, and conflicts
+        // 401/403: common auth failures
+        // 404: resource missing
+        // 405: method not allowed (sometimes during probes)
+        // 409: conflict
         // Also skip logging if status is undefined (network/abort errors)
-        const isExpectedError = !status || status === 401 || status === 404 || status === 409;
+        const isExpectedError = !status || [401, 403, 404, 405, 409].includes(status);
         const isNetworkError = error.message === "Network Error";
 
         // Only log truly unexpected server errors (5xx, 400, 422, etc.)
         if (!isExpectedError && !isNetworkError && status) {
-          console.error("[apiRequest] error:", config.url, {
+          console.error(`[apiRequest] ${config.method?.toUpperCase()} ${config.url} failed with status ${status}:`, {
             status,
             statusText: error.response?.statusText,
             message: error.message,
@@ -211,23 +206,23 @@ export async function apiRequest<T = unknown>(config: AxiosRequestConfig): Promi
     if (axios.isAxiosError(error)) {
       const responseData = error.response?.data;
       const status = error.response?.status;
-      
+
       // If response has data with detail, throw it
       if (responseData && typeof responseData === 'object' && 'detail' in responseData) {
         throw responseData;
       }
-      
+
       // Build a meaningful error object if data is empty or missing
-      const detail = 
+      const detail =
         (typeof responseData === 'string' && responseData) ||
         error.response?.statusText ||
         error.message ||
         'Request failed';
-      
-      throw { 
-        detail, 
+
+      throw {
+        detail,
         status,
-        originalError: error 
+        originalError: error
       };
     }
     throw error;

@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from app.api.deps import get_db, get_current_active_user
 from app.models.user import User
 from app.models.profile import Profile
+from app.models.social import Connection, Rating
 
 router = APIRouter()
 
@@ -75,7 +76,24 @@ async def get_analytics_summary(
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     
-    # Generate sample data (in production, query from analytics tables)
+    # Get real counts
+    from sqlalchemy import and_, or_
+    connections_result = await db.execute(
+        select(func.count(Connection.id)).where(
+            and_(
+                or_(Connection.requester_id == current_user.id, Connection.addressee_id == current_user.id),
+                Connection.status == "accepted"
+            )
+        )
+    )
+    connections_count = connections_result.scalar_one()
+
+    ratings_result = await db.execute(
+        select(func.avg(Rating.score)).where(Rating.rated_user_id == current_user.id)
+    )
+    avg_rating = ratings_result.scalar_one() or 0.0
+    
+    # Generate sample data for trends
     import random
     views_trend = []
     for i in range(days if days <= 7 else 7):
@@ -88,8 +106,8 @@ async def get_analytics_summary(
     return AnalyticsSummary(
         totalViews=random.randint(100, 500),
         searchAppearances=random.randint(50, 200),
-        connections=random.randint(20, 100),
-        avgRating=round(random.uniform(4.0, 5.0), 1),
+        connections=connections_count,
+        avgRating=round(float(avg_rating), 1),
         viewsTrend=views_trend,
         topReferrers=[
             {"source": "LinkedIn", "count": random.randint(20, 80)},
@@ -209,6 +227,26 @@ async def get_metrics(
     """Get key metrics for dashboard cards."""
     import random
     
+    # Get real counts
+    from sqlalchemy import and_, or_
+    connections_result = await db.execute(
+        select(func.count(Connection.id)).where(
+            and_(
+                or_(Connection.requester_id == current_user.id, Connection.addressee_id == current_user.id),
+                Connection.status == "accepted"
+            )
+        )
+    )
+    connections_count = connections_result.scalar_one()
+
+    ratings_result = await db.execute(
+        select(func.avg(Rating.score)).where(Rating.rated_user_id == current_user.id)
+    )
+    avg_rating = ratings_result.scalar_one() or 0.0
+    
+    # Use user ID as seed for trends to provide consistent metrics for the same user
+    random.seed(current_user.id)
+    
     return [
         {
             "label": "Profile Views",
@@ -226,14 +264,14 @@ async def get_metrics(
         },
         {
             "label": "Connections",
-            "value": random.randint(20, 100),
+            "value": connections_count,
             "change": round(random.uniform(2, 10), 1),
             "changeLabel": "new this month",
             "icon": "users"
         },
         {
             "label": "Avg. Rating",
-            "value": round(random.uniform(4.5, 5.0), 1),
+            "value": round(float(avg_rating), 1),
             "change": round(random.uniform(0, 5), 1),
             "changeLabel": "improvement",
             "icon": "star"

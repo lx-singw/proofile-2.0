@@ -104,7 +104,7 @@ export async function getSkillEndorsements(profileId: number): Promise<SkillWith
   try {
     return await apiRequest<SkillWithEndorsements[]>({
       method: "get",
-      url: `${SOCIAL_BASE_PATH}/endorsements/${profileId}`,
+      url: `${SOCIAL_BASE_PATH}/endorsements/user/${profileId}`,
     });
   } catch (error) {
     console.error("Failed to fetch endorsements:", error);
@@ -117,7 +117,7 @@ export async function endorseSkill(profileId: number, skillName: string): Promis
     await apiRequest({
       method: "post",
       url: `${SOCIAL_BASE_PATH}/endorsements`,
-      data: { profileId, skillName },
+      data: { endorsed_user_id: profileId, skill: skillName },
     });
     return true;
   } catch (error) {
@@ -131,7 +131,7 @@ export async function removeEndorsement(profileId: number, skillName: string): P
     await apiRequest({
       method: "delete",
       url: `${SOCIAL_BASE_PATH}/endorsements`,
-      data: { profileId, skillName },
+      params: { endorsed_user_id: profileId, skill: skillName },
     });
     return true;
   } catch (error) {
@@ -145,7 +145,7 @@ export async function starProfile(userId: number): Promise<boolean> {
   try {
     await apiRequest({
       method: "post",
-      url: `${SOCIAL_BASE_PATH}/star`,
+      url: `${SOCIAL_BASE_PATH}/stars`,
       data: { starred_user_id: userId },
     });
     return true;
@@ -159,7 +159,7 @@ export async function unstarProfile(userId: number): Promise<boolean> {
   try {
     await apiRequest({
       method: "delete",
-      url: `${SOCIAL_BASE_PATH}/star/${userId}`,
+      url: `${SOCIAL_BASE_PATH}/stars/${userId}`,
     });
     return true;
   } catch (error) {
@@ -172,7 +172,7 @@ export async function getStarredProfiles(): Promise<any[]> {
   try {
     return await apiRequest<any[]>({
       method: "get",
-      url: `${SOCIAL_BASE_PATH}/starred`,
+      url: `${SOCIAL_BASE_PATH}/stars`,
     });
   } catch (error) {
     console.error("Failed to fetch starred profiles:", error);
@@ -185,7 +185,7 @@ export async function watchProfile(userId: number): Promise<boolean> {
   try {
     await apiRequest({
       method: "post",
-      url: `${SOCIAL_BASE_PATH}/watch`,
+      url: `${SOCIAL_BASE_PATH}/watches`,
       data: { watched_user_id: userId },
     });
     return true;
@@ -199,7 +199,7 @@ export async function unwatchProfile(userId: number): Promise<boolean> {
   try {
     await apiRequest({
       method: "delete",
-      url: `${SOCIAL_BASE_PATH}/watch/${userId}`,
+      url: `${SOCIAL_BASE_PATH}/watches/${userId}`,
     });
     return true;
   } catch (error) {
@@ -213,7 +213,7 @@ export async function getRatingSummary(profileId: number): Promise<RatingSummary
   try {
     return await apiRequest<RatingSummary>({
       method: "get",
-      url: `${SOCIAL_BASE_PATH}/ratings/${profileId}/summary`,
+      url: `${SOCIAL_BASE_PATH}/ratings/user/${profileId}/summary`,
     });
   } catch (error) {
     console.error("Failed to fetch rating summary:", error);
@@ -225,7 +225,7 @@ export async function getReviews(profileId: number, limit: number = 10): Promise
   try {
     return await apiRequest<Rating[]>({
       method: "get",
-      url: `${SOCIAL_BASE_PATH}/ratings/${profileId}`,
+      url: `${SOCIAL_BASE_PATH}/ratings/user/${profileId}`,
       params: { limit },
     });
   } catch (error) {
@@ -239,7 +239,7 @@ export async function submitReview(profileId: number, rating: number, comment?: 
     await apiRequest({
       method: "post",
       url: `${SOCIAL_BASE_PATH}/ratings`,
-      data: { profileId, rating, comment },
+      data: { rated_user_id: profileId, score: rating, review: comment },
     });
     return true;
   } catch (error) {
@@ -253,7 +253,7 @@ export async function getConnectionStatus(userId: number): Promise<ConnectionSta
   try {
     const result = await apiRequest<{ status: ConnectionStatus }>({
       method: "get",
-      url: `${SOCIAL_BASE_PATH}/connections/${userId}/status`,
+      url: `${SOCIAL_BASE_PATH}/stats/${userId}`,
     });
     return result.status;
   } catch (error) {
@@ -266,7 +266,7 @@ export async function requestConnection(userId: number, message?: string): Promi
   try {
     await apiRequest({
       method: "post",
-      url: `${SOCIAL_BASE_PATH}/connections/request`,
+      url: `${SOCIAL_BASE_PATH}/connections`,
       data: { addressee_id: userId, message },
     });
     return true;
@@ -280,8 +280,8 @@ export async function respondToConnectionRequest(requestId: string, accept: bool
   try {
     await apiRequest({
       method: "post",
-      url: `${SOCIAL_BASE_PATH}/connections/respond`,
-      data: { requestId, accept },
+      url: `${SOCIAL_BASE_PATH}/connections/${requestId}`,
+      data: { status: accept ? 'accepted' : 'rejected' },
     });
     return true;
   } catch (error) {

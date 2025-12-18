@@ -23,7 +23,7 @@ from app.models.user import User
 from app.models.social import Rating
 from app.services.anti_gaming import AntiGamingMeasures
 
-router = APIRouter(prefix="/api/v1/ratings", tags=["ratings"])
+router = APIRouter(prefix="/ratings", tags=["ratings"])
 logger = logging.getLogger(__name__)
 
 

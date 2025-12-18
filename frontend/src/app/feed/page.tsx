@@ -98,47 +98,110 @@ const CURRENT_USER = {
     },
 };
 
+import { feedService, PostResponse } from "@/services/feedService";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/lib/toast";
+
 export default function FeedPage() {
-    const [feed, setFeed] = useState<FeedItem[]>(SAMPLE_FEED);
+    const { user: currentUser, loading } = useAuth();
+    const [feed, setFeed] = useState<FeedItem[]>([]);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [activeTab, setActiveTab] = useState<"for-you" | "following">("for-you");
+    const [initialLoading, setInitialLoading] = useState(true);
 
-    const handleLike = (id: string) => {
-        setFeed(prev => prev.map(item =>
-            item.id === id
-                ? { ...item, isLiked: !item.isLiked, likes: item.isLiked ? item.likes - 1 : item.likes + 1 }
-                : item
-        ));
+    const mapPostToFeedItem = (post: PostResponse): FeedItem => ({
+        id: post.id.toString(),
+        type: post.type as any, // Fallback to compatible types
+        user: {
+            id: post.user.id,
+            name: post.user.full_name || "Anonymous",
+            headline: post.user.headline || "",
+            username: post.user.username,
+        },
+        content: post.content,
+        likes: post.likes_count,
+        comments: post.comments_count,
+        created_at: post.created_at,
+        isLiked: post.user_reaction === "like",
+    });
+
+    const fetchFeed = async () => {
+        try {
+            setIsRefreshing(true);
+            const response = await feedService.getFeed({
+                following_only: activeTab === "following",
+                size: 20
+            });
+            setFeed(response.posts.map(mapPostToFeedItem));
+        } catch (error) {
+            console.error("Failed to fetch feed:", error);
+            toast.error("Failed to load feed");
+        } finally {
+            setIsRefreshing(false);
+            setInitialLoading(false);
+        }
     };
 
-    const handleRefresh = async () => {
-        setIsRefreshing(true);
-        // Simulate API call
-        await new Promise(r => setTimeout(r, 1000));
-        setIsRefreshing(false);
+    React.useEffect(() => {
+        if (!loading && currentUser) {
+            fetchFeed();
+        }
+    }, [currentUser, loading, activeTab]);
+
+    if (loading || initialLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+            </div>
+        );
+    }
+
+    const handleLike = async (id: string) => {
+        try {
+            const postId = parseInt(id);
+            await feedService.toggleReaction(postId, "like");
+
+            setFeed(prev => prev.map(item => {
+                if (item.id === id) {
+                    const newIsLiked = !item.isLiked;
+                    return {
+                        ...item,
+                        isLiked: newIsLiked,
+                        likes: newIsLiked ? item.likes + 1 : item.likes - 1
+                    };
+                }
+                return item;
+            }));
+        } catch (error) {
+            toast.error("Failed to update reaction");
+        }
+    };
+
+    const handleRefresh = () => {
+        fetchFeed();
     };
 
     const handlePost = async (content: string, type: PostType, visibility: PostVisibility) => {
-        // Simulate API call
-        await new Promise(r => setTimeout(r, 500));
+        try {
+            const postTypeMap: Record<string, any> = {
+                "text": "text",
+                "milestone": "milestone",
+                "job_share": "job_share",
+                "poll": "poll"
+            };
 
-        const newPost: FeedItem = {
-            id: Date.now().toString(),
-            type: type === "milestone" ? "milestone" : type === "job_share" ? "job_match" : "profile_update",
-            user: {
-                id: 1,
-                name: CURRENT_USER.name,
-                headline: CURRENT_USER.headline,
-                username: CURRENT_USER.username,
-            },
-            content,
-            likes: 0,
-            comments: 0,
-            created_at: new Date().toISOString(),
-            isLiked: false,
-        };
+            const response = await feedService.createPost({
+                content,
+                type: postTypeMap[type] || "text",
+                visibility: visibility as any
+            });
 
-        setFeed(prev => [newPost, ...prev]);
+            const newItem = mapPostToFeedItem(response);
+            setFeed(prev => [newItem, ...prev]);
+            toast.success("Post created successfully!");
+        } catch (error) {
+            toast.error("Failed to create post");
+        }
     };
 
     return (
@@ -212,7 +275,18 @@ export default function FeedPage() {
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Left Sidebar - Profile */}
                         <div className="hidden lg:block">
-                            <FeedLeftSidebar user={CURRENT_USER} />
+                            <FeedLeftSidebar user={{
+                                name: currentUser?.full_name || "User",
+                                headline: (currentUser as any)?.headline || currentUser?.industry || "Professional",
+                                username: currentUser?.username || "user",
+                                trustScore: (currentUser as any)?.trust_score || 0,
+                                profileCompletion: 85,
+                                stats: {
+                                    applications: 0,
+                                    interviews: 0,
+                                    savedJobs: 0,
+                                }
+                            }} />
                         </div>
 
                         {/* Main Feed Column */}
@@ -221,7 +295,7 @@ export default function FeedPage() {
                             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl border-l-4 border-emerald-500 shadow-xl shadow-emerald-500/5 overflow-hidden">
                                 <CreatePostComposer
                                     onPost={handlePost}
-                                    userName={CURRENT_USER.name}
+                                    userName={currentUser?.full_name || "User"}
                                     placeholder="What's happening in your career?"
                                 />
                             </div>

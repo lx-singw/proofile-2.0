@@ -28,8 +28,9 @@ class Verification(Base, TimestampMixin):
     failure_reason = Column(Text, nullable=True)  # Reason for failed verification
     
     # Trust System Fields
-    trust_level = Column(String(20), nullable=True)  # L1, L2, L3
+    trust_level = Column(String(20), nullable=True)  # L1, L2, L3, GOLD
     trust_points = Column(Integer, default=0) # Points contributed to global score
+    is_gold_standard = Column(Boolean, default=False) # Institutionally verified (Gold Badge)
     
     # Request/Token fields (for email/peer verification flows)
     token = Column(String, index=True, nullable=True)

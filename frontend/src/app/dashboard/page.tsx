@@ -29,6 +29,7 @@ import { CompletenessWidget } from "@/components/profile/CompletenessWidget"; //
 import ResumeToolsMenu from "@/components/dashboard/ResumeToolsMenu";
 import VerificationSection from "@/components/dashboard/VerificationSection";
 import CategoryWidgets from "@/components/dashboard/CategoryWidgets";
+import { VerificationRequestsList } from "@/components/profile/VerificationRequestsList";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -203,7 +204,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Next Step Prompt */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto space-y-6">
             <NextStepPrompt
               profileComplete={Boolean(stats?.verifications_count && stats.ratings_count)}
               hasResume={(stats?.resumes_count || 0) > 0}
@@ -211,6 +212,8 @@ export default function DashboardPage() {
               hasRatings={(stats?.ratings_count || 0) > 0}
               userName={user?.full_name?.split(' ')[0]}
             />
+
+            <VerificationRequestsList />
           </div>
 
           {/* Customization Button */}

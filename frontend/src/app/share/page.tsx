@@ -43,8 +43,9 @@ export default function SharePage() {
         );
     }
 
-    const profileUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://proofile.co'}/p/${user.username}`;
-    const shortUrl = `proofile.co/p/${user.username}`;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://proofile.co';
+    const profileUrl = `${baseUrl}/@${user.username}`;
+    const shortUrl = `proofile.co/@${user.username}`;
     const shareText = `Check out ${user.full_name || user.username}'s professional profile on Proofile`;
 
     const handleCopyLink = async () => {
@@ -120,7 +121,7 @@ export default function SharePage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 print:bg-white">
             <div className="print:hidden">
-                
+
             </div>
 
             <main className="max-w-4xl mx-auto px-4 py-8">
@@ -174,7 +175,15 @@ export default function SharePage() {
                                     size={220}
                                     level="H"
                                     includeMargin={false}
-                                    fgColor="#1f2937"
+                                    fgColor="#059669" // Emerald-600
+                                    imageSettings={{
+                                        src: "/favicon.ico",
+                                        x: undefined,
+                                        y: undefined,
+                                        height: 44,
+                                        width: 44,
+                                        excavate: true,
+                                    }}
                                 />
                             </div>
                         </div>
@@ -212,8 +221,8 @@ export default function SharePage() {
                                 <button
                                     onClick={handleCopyLink}
                                     className={`px-4 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${copied
-                                            ? "bg-green-600 text-white"
-                                            : "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25"
+                                        ? "bg-green-600 text-white"
+                                        : "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25"
                                         }`}
                                 >
                                     {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}

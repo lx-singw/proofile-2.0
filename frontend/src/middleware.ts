@@ -5,9 +5,9 @@ import type { NextRequest } from 'next/server';
  * Middleware for route restructuring and auth-aware redirects
  * 
  * Routes:
- * - /dashboard → /feed (redirect for authenticated users)
- * - / → /feed (authenticated) or homepage (anonymous)
- * - /feed → /jobs (if not authenticated, redirect to jobs portal)
+ * - /dashboard → /home (redirect for authenticated users)
+ * - /feed → /home (redirect for authenticated users)
+ * - / → /home (authenticated or anonymous homepage)
  */
 export function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
@@ -19,16 +19,15 @@ export function middleware(request: NextRequest) {
 
     const isAuthenticated = !!authToken;
 
-    // Redirect /dashboard to /feed
+    // Redirect /dashboard to /home
     if (pathname === '/dashboard') {
-        return NextResponse.redirect(new URL('/feed', request.url));
+        return NextResponse.redirect(new URL('/home', request.url));
     }
 
-    // If accessing /feed without auth, redirect to /jobs (public jobs portal)
-    // Note: Comment out if you want /feed to show login prompt instead
-    // if (pathname === '/feed' && !isAuthenticated) {
-    //     return NextResponse.redirect(new URL('/jobs', request.url));
-    // }
+    // Redirect /feed to /home
+    if (pathname === '/feed') {
+        return NextResponse.redirect(new URL('/home', request.url));
+    }
 
     return NextResponse.next();
 }

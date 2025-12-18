@@ -73,36 +73,10 @@ export async function getJobMatches(limit: number = 5): Promise<AIJobMatch[]> {
     }
 }
 
-// AI Chat
-export async function sendChatMessage(message: string, conversationId?: string): Promise<{
-    response: string;
-    conversationId: string;
-}> {
-    return await apiRequest({
-        method: "post",
-        url: `${AI_BASE_PATH}/chat`,
-        data: { message, conversationId },
-    });
-}
-
-export async function getChatHistory(conversationId: string): Promise<ChatMessage[]> {
-    try {
-        return await apiRequest<ChatMessage[]>({
-            method: "get",
-            url: `${AI_BASE_PATH}/chat/${conversationId}`,
-        });
-    } catch (error) {
-        console.error("Failed to fetch chat history:", error);
-        return [];
-    }
-}
-
 const aiService = {
     getProfileSuggestions,
     applyProfileSuggestion,
     getJobMatches,
-    sendChatMessage,
-    getChatHistory,
 };
 
 export default aiService;

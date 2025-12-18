@@ -37,6 +37,10 @@ import {
 } from "@/components/social/SocialActions";
 import { ProfileModeToggle } from "@/components/profile/ProfileModeToggle";
 import { CollaboratorsList } from "@/components/profile/CollaboratorsList";
+import { ShareProfileModal } from "@/components/profile/ShareProfileModal";
+import { ExperienceSection } from "@/components/profile/ExperienceSection";
+import { PortfolioSection } from "@/components/profile/PortfolioSection";
+import { SkillsSection } from "@/components/profile/SkillsSection";
 
 export default function PublicProfilePage() {
     const params = useParams();
@@ -47,6 +51,7 @@ export default function PublicProfilePage() {
     const [profile, setProfile] = useState<PublicProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     useEffect(() => {
         // Handle special case: /p/me redirects to current user's public profile
@@ -80,9 +85,7 @@ export default function PublicProfilePage() {
     }, [username, user, router]);
 
     const handleShare = () => {
-        const url = `${window.location.origin}/p/${username}`;
-        navigator.clipboard.writeText(url);
-        toast.success("Link copied to clipboard!");
+        setIsShareModalOpen(true);
     };
 
     if (loading) {
@@ -289,38 +292,25 @@ export default function PublicProfilePage() {
                 </div>
 
                 {/* Skills Section with Endorsements */}
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                        <Award className="w-6 h-6" />
-                        Skills & Endorsements
-                    </h2>
+                <SkillsSection
+                    skills={profile.skills_data || []}
+                    isOwnProfile={isOwnProfile}
+                    onEndorse={(skillName: string) => {
+                        console.log(`Endorsing skill: ${skillName}`);
+                        // In production, call API
+                    }}
+                />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {skills.map((skill) => (
-                            <div
-                                key={skill.name}
-                                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                                        <CheckCircle className="w-5 h-5 text-green-600" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold text-gray-900 dark:text-white">{skill.name}</h4>
-                                        <p className="text-xs text-gray-500">{skill.endorsements} endorsements</p>
-                                    </div>
-                                </div>
-                                {!isOwnProfile && user && profile && (
-                                    <EndorseSkillButton
-                                        userId={profile.user_id}
-                                        skillName={skill.name}
-                                        isEndorsed={skill.isEndorsed}
-                                        endorsementCount={skill.endorsements}
-                                    />
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                {/* Experience & Portfolio */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <ExperienceSection
+                        experiences={profile.experiences}
+                        readOnly={true}
+                    />
+                    <PortfolioSection
+                        items={profile.portfolio}
+                        readOnly={true}
+                    />
                 </div>
 
                 {/* Verified Work Graph */}
@@ -397,6 +387,14 @@ export default function PublicProfilePage() {
                     </div>
                 )}
             </main>
+
+            <ShareProfileModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                username={username}
+                fullName={profile?.full_name}
+                headline={profile?.industry} // Or actual headline if available in PublicProfile type
+            />
         </div>
     );
 }

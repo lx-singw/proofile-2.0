@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { PersonalizationProvider } from "@/providers/PersonalizationProvider";
 import { Toaster } from "sonner";
 import AppShell from "@/components/layout/AppShell";
+import { GlobalErrorBoundary } from "@/components/ui/GlobalErrorBoundary";
 import "./globals.css";
 
 const inter = Inter({
@@ -43,9 +44,11 @@ export default function RootLayout({
         >
           <AuthProvider>
             <PersonalizationProvider>
-              <AppShell>
-                {children}
-              </AppShell>
+              <GlobalErrorBoundary>
+                <AppShell>
+                  {children}
+                </AppShell>
+              </GlobalErrorBoundary>
               <Toaster position="bottom-right" richColors />
             </PersonalizationProvider>
           </AuthProvider>

@@ -1,5 +1,10 @@
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, and_
+
+from app.core import broadcaster
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +73,38 @@ TRAINING_NOTIFICATION_TEMPLATES = {
     }
 }
 
+# Ecosystem & Social Templates
+ECOSYSTEM_NOTIFICATION_TEMPLATES = {
+    "verification_request": {
+        "title": "🤝 Verification Request",
+        "message": "{name} asked: Did you work together at {company}?"
+    },
+    "verification_success": {
+        "title": "✅ Experience Verified!",
+        "message": "{name} verified your work history at {company}."
+    },
+    "verification_denied": {
+        "title": "❌ Verification Declined",
+        "message": "{name} could not verify your work at {company}."
+    },
+    "network_verified": {
+        "title": "🚀 Network Growth at {company}",
+        "message": "{name} just got verified! Help build the trust graph for {company}."
+    },
+    "post_reaction": {
+        "title": "❤️ {name} reacted to your post",
+        "message": "{name} liked your milestone announcement."
+    },
+    "post_comment": {
+        "title": "💬 New comment from {name}",
+        "message": "{name} commented on your post."
+    },
+    "new_follower": {
+        "title": "👤 New Follower",
+        "message": "{name} is now following you."
+    }
+}
+
 
 def get_notification_template(
     notification_type: str,
@@ -85,6 +122,8 @@ def get_notification_template(
     """
     if opportunity_preference == 'training_skills_programs':
         templates = TRAINING_NOTIFICATION_TEMPLATES
+    elif notification_type in ECOSYSTEM_NOTIFICATION_TEMPLATES:
+        templates = ECOSYSTEM_NOTIFICATION_TEMPLATES
     else:
         templates = JOBS_NOTIFICATION_TEMPLATES
     
@@ -268,5 +307,87 @@ async def send_deadline_notification(
     db_session.add(notification)
     await db_session.commit()
     
-    logger.info(f"Sent deadline notification to user {user_id}")
+async def notify_user(
+    db_session: AsyncSession,
+    user_id: int,
+    notification_type: str,
+    link: Optional[str] = None,
+    opportunity_preference: Optional[str] = None,
+    **kwargs
+):
+    """
+    Unified function to create a DB notification and broadcast it via WebSocket.
+    """
+    from app.models.notification import Notification
+    
+    formatted = format_notification(
+        notification_type,
+        opportunity_preference,
+        **kwargs
+    )
+    
+    notification = Notification(
+        user_id=user_id,
+        type=notification_type,
+        title=formatted["title"],
+        message=formatted["message"],
+        link=link,
+        read=False
+    )
+    
+    db_session.add(notification)
+    await db_session.commit()
+    await db_session.refresh(notification)
+    
+    # Broadcast via WebSocket for real-time UI updates
+    try:
+        await broadcaster.publish(f"user:{user_id}", {
+            "type": "notification",
+            "data": {
+                "id": notification.id,
+                "type": notification.type,
+                "title": notification.title,
+                "message": notification.message,
+                "link": notification.link,
+                "created_at": notification.created_at.isoformat()
+            }
+        })
+    except Exception as e:
+        logger.error(f"Failed to broadcast notification: {e}")
+        
     return notification
+
+
+async def trigger_network_verification_viral(
+    db_session: AsyncSession,
+    company: str,
+    verified_user_name: str,
+    exclude_user_id: int
+):
+    """
+    Viral Engine: Notify colleagues that someone was verified, encouraging them to verify others.
+    """
+    from app.models.profile import Profile
+    from sqlalchemy import cast, String
+    
+    # Find users at the same company
+    term = company.lower().strip()
+    query = select(Profile).where(
+        and_(
+            Profile.user_id != exclude_user_id,
+            cast(Profile.experience_data, String).ilike(f"%{term}%")
+        )
+    ).limit(20)
+    
+    result = await db_session.execute(query)
+    profiles = result.scalars().all()
+    
+    for p in profiles:
+        await notify_user(
+            db_session,
+            user_id=p.user_id,
+            notification_type="network_verified",
+            name=verified_user_name,
+            company=company,
+            link="/verification"
+        )

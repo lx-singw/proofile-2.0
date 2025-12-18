@@ -11,6 +11,9 @@ from app.models.user import User
 from app.models.profile import Profile
 from app.models.peer_verification_request import PeerVerificationRequest, PeerVerificationStatus
 from app.models.notification import Notification
+from app.models.experience import WorkExperience
+from app.models.post import Post, PostType
+from app.services import notification_service
 
 router = APIRouter(prefix="/verifications/peer", tags=["verifications-peer"])
 logger = logging.getLogger(__name__)
@@ -98,6 +101,7 @@ async def get_verification_opportunities(
 async def request_peer_verification(
     verifier_id: int,
     company: str,
+    experience_id: Optional[str] = None,
     role: str = None,
     start_date: datetime = None,
     end_date: datetime = None,
@@ -126,6 +130,7 @@ async def request_peer_verification(
     request = PeerVerificationRequest(
         requester_id=current_user.id,
         verifier_id=verifier_id,
+        experience_id=experience_id,
         company=company,
         role=role,
         start_date=start_date,
@@ -135,16 +140,15 @@ async def request_peer_verification(
     )
     session.add(request)
     
-    # Notify Verifier
-    notification = Notification(
+    # Notify Verifier using real-time service
+    await notification_service.notify_user(
+        db_session=session,
         user_id=verifier_id,
-        type="info",
-        title="Verification Request",
-        message=f"{current_user.full_name} asks: Did you work at {company}?",
-        link="/dashboard/verification", # Placeholder route
-        read=False
+        notification_type="verification_request",
+        name=current_user.full_name,
+        company=company,
+        link="/dashboard"
     )
-    session.add(notification)
     
     await session.commit()
     await session.refresh(request)
@@ -213,15 +217,50 @@ async def respond_to_request(
         
     request.response_note = response_note
     
-    # Notify Requester
-    session.add(Notification(
+    # Notify Requester using real-time service
+    await notification_service.notify_user(
+        db_session=session,
         user_id=request.requester_id,
-        type=notif_type,
-        title=notif_title,
-        message=notif_msg,
-        link="/profile",
-        read=False
-    ))
+        notification_type="verification_success" if action == "verify" else "verification_denied",
+        name=current_user.full_name,
+        company=request.company,
+        link="/profile"
+    )
     
     await session.commit()
+    
+    if action == "verify":
+        # 1. Update WorkExperience if linked
+        if request.experience_id:
+            experience = await session.get(WorkExperience, request.experience_id)
+            if experience:
+                experience.is_verified = True
+                session.add(experience)
+        
+        # 2. Recalculate Trust Score (Pillar 1)
+        # TrustScoreEngine should be used here. For MVP, we'll assume it's triggered by background task or similar
+        # engine = TrustScoreEngine(session)
+        # await engine.update_user_score(request.requester_id)
+        
+        # 3. Create Feed Post (Pillar 2 - Action-heavy feed)
+        post = Post(
+            user_id=request.requester_id,
+            type=PostType.MILESTONE.value,
+            content=f"Verified work experience at {request.company}! Thanks to {current_user.full_name} for the confirmation.",
+            visibility="public"
+        )
+        session.add(post)
+        
+        # 4. Trigger Viral Engine: Notify colleagues (Pillar 5)
+        requester = await session.get(User, request.requester_id)
+        if requester:
+            await notification_service.trigger_network_verification_viral(
+                db_session=session,
+                company=request.company,
+                verified_user_name=requester.full_name,
+                exclude_user_id=request.requester_id
+            )
+        
+        await session.commit()
+
     return {"status": request.status}

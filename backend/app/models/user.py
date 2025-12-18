@@ -93,6 +93,11 @@ class User(Base, TimestampMixin):
     profile_visibility = Column(String, nullable=False, default="public")  # public or private
     
     is_active = Column(Boolean, default=True)
+    
+    # Stripe Integration Fields
+    stripe_account_id = Column(String, unique=True, index=True, nullable=True) # For Connect (P2P Sellers)
+    stripe_customer_id = Column(String, unique=True, index=True, nullable=True) # For Payers
+    is_stripe_onboarded = Column(Boolean, default=False)
 
     # Relationship to Profile
     profile: Mapped["Profile"] = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
@@ -122,6 +127,10 @@ class User(Base, TimestampMixin):
     posts: Mapped[list["app.models.post.Post"]] = relationship("app.models.post.Post", back_populates="user", cascade="all, delete-orphan", order_by="desc(Post.created_at)")
     reactions: Mapped[list["app.models.reaction.Reaction"]] = relationship("app.models.reaction.Reaction", back_populates="user", cascade="all, delete-orphan")
     comments: Mapped[list["app.models.comment.Comment"]] = relationship("app.models.comment.Comment", back_populates="user", cascade="all, delete-orphan")
+
+    # Experience & Portfolio
+    work_experiences: Mapped[list["app.models.experience.WorkExperience"]] = relationship("app.models.experience.WorkExperience", back_populates="user", cascade="all, delete-orphan", order_by="desc(app.models.experience.WorkExperience.start_date)")
+    portfolio_items: Mapped[list["app.models.portfolio.PortfolioItem"]] = relationship("app.models.portfolio.PortfolioItem", back_populates="user", cascade="all, delete-orphan")
 
 
 
@@ -166,6 +175,8 @@ try:
     import app.models.profile_data_source  # noqa: F401
     import app.models.trust_event  # noqa: F401
     import app.models.document  # noqa: F401
+    import app.models.experience  # noqa: F401
+    import app.models.portfolio  # noqa: F401
 except Exception:
     pass
 
