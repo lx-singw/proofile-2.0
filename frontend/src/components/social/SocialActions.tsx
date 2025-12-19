@@ -15,8 +15,8 @@ import {
     Check,
     Loader2
 } from "lucide-react";
-import { toast } from "@/lib/toast";
 import * as socialService from "@/services/socialService";
+import { useAuth } from "@/hooks/useAuth";
 
 interface SocialActionButtonProps {
     icon: React.ReactNode;
@@ -97,16 +97,22 @@ interface StarProfileButtonProps {
     isStarred?: boolean;
     starCount?: number;
     onToggle?: (starred: boolean) => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
     showLabel?: boolean;
 }
 
-export function StarProfileButton({ userId, isStarred = false, starCount, onToggle, size = "md", showLabel = true }: StarProfileButtonProps) {
+export function StarProfileButton({ userId, isStarred = false, starCount, onToggle, onAuthRequired, size = "md", showLabel = true }: StarProfileButtonProps) {
+    const { isAuthenticated } = useAuth();
     const [starred, setStarred] = useState(isStarred);
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(starCount);
 
     const handleClick = useCallback(async () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         setLoading(true);
         try {
             if (starred) {
@@ -148,15 +154,21 @@ interface WatchProfileButtonProps {
     userId: number;
     isWatching?: boolean;
     onToggle?: (watching: boolean) => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
     showLabel?: boolean;
 }
 
-export function WatchProfileButton({ userId, isWatching = false, onToggle, size = "md", showLabel = true }: WatchProfileButtonProps) {
+export function WatchProfileButton({ userId, isWatching = false, onToggle, onAuthRequired, size = "md", showLabel = true }: WatchProfileButtonProps) {
+    const { isAuthenticated } = useAuth();
     const [watching, setWatching] = useState(isWatching);
     const [loading, setLoading] = useState(false);
 
     const handleClick = useCallback(async () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         setLoading(true);
         try {
             if (watching) {
@@ -195,16 +207,22 @@ interface FollowButtonProps {
     isFollowing?: boolean;
     followerCount?: number;
     onToggle?: (following: boolean) => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
     showLabel?: boolean;
 }
 
-export function FollowButton({ userId, isFollowing = false, followerCount, onToggle, size = "md", showLabel = true }: FollowButtonProps) {
+export function FollowButton({ userId, isFollowing = false, followerCount, onToggle, onAuthRequired, size = "md", showLabel = true }: FollowButtonProps) {
+    const { isAuthenticated } = useAuth();
     const [following, setFollowing] = useState(isFollowing);
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(followerCount);
 
     const handleClick = useCallback(async () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         setLoading(true);
         try {
             if (following) {
@@ -249,15 +267,21 @@ interface EndorseSkillButtonProps {
     isEndorsed?: boolean;
     endorsementCount?: number;
     onToggle?: (endorsed: boolean) => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
 }
 
-export function EndorseSkillButton({ userId, skillName, isEndorsed = false, endorsementCount, onToggle, size = "sm" }: EndorseSkillButtonProps) {
+export function EndorseSkillButton({ userId, skillName, isEndorsed = false, endorsementCount, onToggle, onAuthRequired, size = "sm" }: EndorseSkillButtonProps) {
+    const { isAuthenticated } = useAuth();
     const [endorsed, setEndorsed] = useState(isEndorsed);
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(endorsementCount);
 
     const handleClick = useCallback(async () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         setLoading(true);
         try {
             if (endorsed) {
@@ -304,15 +328,21 @@ interface ConnectButtonProps {
     userId: number;
     connectionStatus?: "none" | "pending" | "connected";
     onConnect?: () => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
     showLabel?: boolean;
 }
 
-export function ConnectButton({ userId, connectionStatus = "none", onConnect, size = "md", showLabel = true }: ConnectButtonProps) {
+export function ConnectButton({ userId, connectionStatus = "none", onConnect, onAuthRequired, size = "md", showLabel = true }: ConnectButtonProps) {
+    const { isAuthenticated } = useAuth();
     const [status, setStatus] = useState(connectionStatus);
     const [loading, setLoading] = useState(false);
 
     const handleClick = useCallback(async () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         if (status === "none") {
             setLoading(true);
             try {
@@ -363,12 +393,18 @@ export function ConnectButton({ userId, connectionStatus = "none", onConnect, si
 
 interface CoffeeChatButtonProps {
     onClick?: () => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
     showLabel?: boolean;
 }
 
-export function CoffeeChatButton({ onClick, size = "md", showLabel = true }: CoffeeChatButtonProps) {
+export function CoffeeChatButton({ onClick, onAuthRequired, size = "md", showLabel = true }: CoffeeChatButtonProps) {
+    const { isAuthenticated } = useAuth();
     const handleClick = () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         onClick?.();
         toast.success("Coffee chat request sent!");
     };
@@ -387,12 +423,18 @@ export function CoffeeChatButton({ onClick, size = "md", showLabel = true }: Cof
 
 interface SendMessageButtonProps {
     onClick?: () => void;
+    onAuthRequired?: () => void;
     size?: "sm" | "md" | "lg";
     showLabel?: boolean;
 }
 
-export function SendMessageButton({ onClick, size = "md", showLabel = true }: SendMessageButtonProps) {
+export function SendMessageButton({ onClick, onAuthRequired, size = "md", showLabel = true }: SendMessageButtonProps) {
+    const { isAuthenticated } = useAuth();
     const handleClick = () => {
+        if (!isAuthenticated) {
+            onAuthRequired?.();
+            return;
+        }
         onClick?.();
         // This would typically open a message modal
     };

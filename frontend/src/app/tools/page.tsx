@@ -21,10 +21,12 @@ import {
     Wrench,
     Shield
 } from 'lucide-react';
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 import { resumeService, type Resume } from '@/services/resumeService';
 import { toast } from '@/lib/toast';
 import QuickStatsBar from '@/components/ui/QuickStatsBar';
 import { FadeIn, StaggerChildren } from '@/components/ui/PageTransition';
+import { Footer } from "@/components/layout/Footer";
 
 export default function ToolsPage() {
     const router = useRouter();
@@ -32,11 +34,11 @@ export default function ToolsPage() {
     const [resumes, setResumes] = useState<Resume[]>([]);
     const [loadingResumes, setLoadingResumes] = useState(true);
 
+    const [showAuthGate, setShowAuthGate] = useState(false);
+
     useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login?redirect=/tools');
-        }
-    }, [user, loading, router]);
+        // We'll allow guests to see the landing page, no more hard redirect
+    }, [user, loading]);
 
     useEffect(() => {
         const fetchResumes = async () => {
@@ -86,6 +88,13 @@ export default function ToolsPage() {
         if (diffDays < 7) return `${diffDays} days ago`;
         if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
         return `${Math.floor(diffDays / 30)} months ago`;
+    };
+
+    const handleToolClick = (e: React.MouseEvent, href: string) => {
+        if (!user) {
+            e.preventDefault();
+            setShowAuthGate(true);
+        }
     };
 
     const resumeTools = [
@@ -138,17 +147,14 @@ export default function ToolsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-
-                <div className="flex items-center justify-center py-20">
-                    <div className="animate-spin w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full" />
-                </div>
+            <div className="flex items-center justify-center py-20">
+                <div className="animate-spin w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <>
             {/* Quick Stats Bar */}
             <QuickStatsBar
                 stats={[
@@ -175,6 +181,7 @@ export default function ToolsPage() {
                         <div className="flex items-center gap-3">
                             <Link
                                 href="/resume"
+                                onClick={(e) => handleToolClick(e, "/resume")}
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <FileText className="w-4 h-4" />
@@ -182,6 +189,7 @@ export default function ToolsPage() {
                             </Link>
                             <Link
                                 href="/verification"
+                                onClick={(e) => handleToolClick(e, "/verification")}
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Shield className="w-4 h-4" />
@@ -189,6 +197,7 @@ export default function ToolsPage() {
                             </Link>
                             <Link
                                 href="/resume/ai-build"
+                                onClick={(e) => handleToolClick(e, "/resume/ai-build")}
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <Sparkles className="w-4 h-4" />
@@ -208,6 +217,7 @@ export default function ToolsPage() {
                                 <Link
                                     key={index}
                                     href={tool.href}
+                                    onClick={(e) => handleToolClick(e, tool.href)}
                                     className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-lg transition-all group"
                                 >
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${tool.color}-100 dark:bg-${tool.color}-900/30`}>
@@ -235,6 +245,7 @@ export default function ToolsPage() {
                             </h2>
                             <Link
                                 href="/resume"
+                                onClick={(e) => handleToolClick(e, "/resume")}
                                 className="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
                             >
                                 Manage All <ArrowRight className="w-4 h-4" />
@@ -252,6 +263,7 @@ export default function ToolsPage() {
                                     <p className="text-gray-500 dark:text-gray-400 mb-4">No resumes yet</p>
                                     <Link
                                         href="/resume/build"
+                                        onClick={(e) => handleToolClick(e, "/resume/build")}
                                         className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-lg font-medium transition-all duration-200 hover:scale-[1.02]"
                                     >
                                         Create Your First Resume
@@ -313,6 +325,7 @@ export default function ToolsPage() {
                                 <Link
                                     key={index}
                                     href={tool.href}
+                                    onClick={(e) => handleToolClick(e, tool.href)}
                                     className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-700 hover:shadow-lg transition-all group"
                                 >
                                     <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-gray-100 dark:bg-gray-700">
@@ -333,6 +346,16 @@ export default function ToolsPage() {
                     </section>
                 </FadeIn>
             </main>
-        </div>
+
+            <AuthGateModal
+                isOpen={showAuthGate}
+                onClose={() => setShowAuthGate(false)}
+                actionType="generic"
+                title="Unlock AI Career Tools"
+                description="Join Proofile to use our AI resume builder, skill analyzer, and personalized career matching."
+            />
+
+            <Footer />
+        </>
     );
 }

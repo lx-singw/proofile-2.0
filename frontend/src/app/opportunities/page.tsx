@@ -18,6 +18,8 @@ import { JobsFAB } from '@/components/ui/FloatingActionButton';
 import { FadeIn } from '@/components/ui/PageTransition';
 import HelpTooltip, { HELP_CONTENT } from '@/components/ui/HelpTooltip';
 import axios from 'axios';
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
+import { Footer } from "@/components/layout/Footer";
 
 // Category tab type
 type CategoryTab = 'all' | 'jobs' | 'training_skills_programs';
@@ -48,11 +50,13 @@ export default function OpportunitiesPage() {
         { name: 'negotiator' as const, status: 'paused' as const, message: 'Premium feature' },
     ]);
 
-    // Redirect to login if not authenticated
+    const [showAuthGate, setShowAuthGate] = useState(false);
+
+    // Redirect to login if not authenticated - Disabled for Preview-to-Premium flow
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/login?redirect=/opportunities');
-        }
+        // if (!authLoading && !user) {
+        //     router.push('/login?redirect=/opportunities');
+        // }
     }, [user, authLoading, router]);
 
     useEffect(() => {
@@ -105,7 +109,7 @@ export default function OpportunitiesPage() {
     // Show loading spinner while checking auth
     if (authLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+            <div className="flex items-center justify-center py-32">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
         );
@@ -115,7 +119,7 @@ export default function OpportunitiesPage() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <>
             {/* Quick Stats Bar */}
             <JobsStatsBar
                 matchesToday={filteredRecommendations.length}
@@ -278,22 +282,22 @@ export default function OpportunitiesPage() {
                                                 </div>
 
                                                 <div className="flex flex-wrap gap-3 my-4">
-                                                    {job.job_type && (
+                                                    {opportunity.job_type && (
                                                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
                                                             <Clock className="w-3 h-3" />
-                                                            {job.job_type}
+                                                            {opportunity.job_type}
                                                         </span>
                                                     )}
-                                                    {job.salary_range && (
+                                                    {opportunity.salary_range && (
                                                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-xs font-medium">
                                                             <DollarSign className="w-3 h-3" />
-                                                            {job.salary_range}
+                                                            {opportunity.salary_range}
                                                         </span>
                                                     )}
-                                                    {job.industry && (
+                                                    {opportunity.industry && (
                                                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium">
                                                             <Briefcase className="w-3 h-3" />
-                                                            {job.industry}
+                                                            {opportunity.industry}
                                                         </span>
                                                     )}
                                                 </div>
@@ -343,18 +347,30 @@ export default function OpportunitiesPage() {
 
                                             <div className="flex md:flex-col gap-2 mt-4 md:mt-0 md:min-w-[140px]">
                                                 <button
-                                                    onClick={() => setQuickApplyOpportunity({
-                                                        id: opportunity.id,
-                                                        title: opportunity.title,
-                                                        company: opportunity.company_name,
-                                                        score: match_score
-                                                    })}
+                                                    onClick={() => {
+                                                        if (!user) {
+                                                            setShowAuthGate(true);
+                                                            return;
+                                                        }
+                                                        setQuickApplyOpportunity({
+                                                            id: opportunity.id,
+                                                            title: opportunity.title,
+                                                            company: opportunity.company_name,
+                                                            score: match_score
+                                                        });
+                                                    }}
                                                     className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                                                 >
                                                     Quick Apply
                                                 </button>
                                                 <Link
                                                     href={`/opportunities/${opportunity.id}/gap-analysis`}
+                                                    onClick={(e) => {
+                                                        if (!user) {
+                                                            e.preventDefault();
+                                                            setShowAuthGate(true);
+                                                        }
+                                                    }}
                                                     className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
                                                 >
                                                     Gap Analysis
@@ -388,6 +404,17 @@ export default function OpportunitiesPage() {
 
             {/* Mobile FAB */}
             <JobsFAB onQuickApply={() => quickApplyOpportunity && setQuickApplyOpportunity(null)} />
-        </div>
+
+            {/* Auth Gate Modal */}
+            <AuthGateModal
+                isOpen={showAuthGate}
+                onClose={() => setShowAuthGate(false)}
+                actionType="apply"
+                title="Apply to Your Top Matches"
+                description="Sign up to use our AI Quick Apply and stand out with your verified Proofile identity."
+            />
+
+            <Footer />
+        </>
     );
 }

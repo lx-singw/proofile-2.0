@@ -165,8 +165,14 @@ class FeedService:
         fetch_limit = min((page) * size * 3, 200)  # Fetch 3x for ranking, max 200
         raw_posts = query.order_by(desc(Post.created_at)).limit(fetch_limit).all()
         
+        # Get user preference for boost
+        user_pref = None
+        current_user = self.db.query(User).filter(User.id == user_id).first()
+        if current_user:
+            user_pref = current_user.opportunity_preference
+
         # Apply smart ranking
-        ranked_posts = self._rank_posts(raw_posts, user_id, all_network_ids)
+        ranked_posts = self._rank_posts(raw_posts, user_id, all_network_ids, user_pref)
         
         # Paginate
         offset = (page - 1) * size
@@ -179,7 +185,8 @@ class FeedService:
         self,
         posts: List[Post],
         user_id: int,
-        network_ids: set
+        network_ids: set,
+        user_pref: Optional[str] = None
     ) -> List[Post]:
         """
         Rank posts using engagement and personalization signals.
@@ -236,6 +243,17 @@ class FeedService:
             diversity_penalty = math.pow(0.7, author_count)  # 30% penalty per duplicate
             author_counts[post.user_id] = author_count + 1
             
+            # 7. Preference Boost (Matching user's career path)
+            pref_boost = 1.0
+            if user_pref and post.type == PostType.JOB_SHARE.value:
+                try:
+                    # Use eval to match current format (str representation of dict)
+                    meta = eval(post.post_metadata) if post.post_metadata else {}
+                    if meta.get("opportunity_category") == user_pref:
+                        pref_boost = 1.6  # 60% boost for matching preference
+                except:
+                    pass
+            
             # Calculate final score
             score = (
                 engagement_score *
@@ -243,7 +261,8 @@ class FeedService:
                 trust_boost *
                 network_boost *
                 type_boost *
-                diversity_penalty
+                diversity_penalty *
+                pref_boost
             )
             
             scored_posts.append((score, post))

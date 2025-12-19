@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import DashboardHeader from "@/components/layout/DashboardHeader";
+import HomeHeader from "@/components/home/HomeHeader";
 import MobileNav from "@/components/layout/MobileNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -72,17 +72,28 @@ export default function AppShell({ children }: AppShellProps) {
     const isAuthenticated = !!user || loading;
 
     if (!showHeader || !isAuthenticated) {
-        return <>{children}</>;
+        const isAuthPage = pathname === "/login" || pathname === "/register" || pathname === "/onboarding";
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-emerald-950/20 dark:to-cyan-950/30 transition-colors duration-500 flex flex-col">
+                {!showHeader && !isAuthPage && <HomeHeader />}
+                <main className="flex-1">
+                    {children}
+                </main>
+                <MobileNav />
+            </div>
+        );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <DashboardHeader />
-            <main>
-                {/* Breadcrumb Navigation */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-                    <Breadcrumbs />
-                </div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-emerald-950/20 dark:to-cyan-950/30 transition-colors duration-500">
+            <HomeHeader />
+            <main className="flex-1">
+                {/* Breadcrumb Navigation - only show on non-public routes */}
+                {showHeader && isAuthenticated && (
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                        <Breadcrumbs />
+                    </div>
+                )}
                 {children}
             </main>
 

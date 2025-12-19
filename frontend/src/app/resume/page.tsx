@@ -5,14 +5,18 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { resumeService, type Resume } from '@/services/resumeService';
 import ResumeCard from '@/components/dashboard/ResumeCard';
+import { Footer } from '@/components/layout/Footer';
 
 import { FileText, Plus, Sparkles, Lock } from 'lucide-react';
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 export default function ResumeListPage() {
     const router = useRouter();
     const { user, loading } = useAuth();
     const [resumes, setResumes] = useState<Resume[]>([]);
     const [resumesLoading, setResumesLoading] = useState(true);
+
+    const [showAuthGate, setShowAuthGate] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -22,7 +26,7 @@ export default function ResumeListPage() {
                 .finally(() => setResumesLoading(false));
         } else if (!loading) {
             setResumesLoading(false);
-            router.push('/login?redirect=/resume');
+            // router.push('/login?redirect=/resume');
         }
     }, [user, loading, router]);
 
@@ -57,47 +61,16 @@ export default function ResumeListPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-8">
-                <p>Loading...</p>
+            <div className="flex items-center justify-center py-32">
+                <p className="animate-pulse">Loading...</p>
             </div>
         );
     }
 
-    if (!user) {
-        return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-8">
-                <div className="max-w-md w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 shadow-xl p-8 text-center">
-                    <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Lock className="w-8 h-8 text-green-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        Sign In Required
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-6">
-                        Create a free account to manage your resumes and access all features.
-                    </p>
-                    <div className="space-y-3">
-                        <button
-                            onClick={() => router.push('/register')}
-                            className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-semibold shadow-lg transition-all"
-                        >
-                            Create Free Account
-                        </button>
-                        <button
-                            onClick={() => router.push('/login')}
-                            className="w-full py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition-all"
-                        >
-                            Sign In
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            
+        <>
+
             <main className="container mx-auto px-6 py-8">
                 <div className="flex items-center justify-between mb-8">
                     <div>
@@ -106,14 +79,26 @@ export default function ResumeListPage() {
                     </div>
                     <div className="flex gap-3">
                         <button
-                            onClick={() => router.push('/resume/ai-build')}
+                            onClick={() => {
+                                if (!user) {
+                                    setShowAuthGate(true);
+                                    return;
+                                }
+                                router.push('/resume/ai-build');
+                            }}
                             className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 text-white rounded-lg transition-all duration-200 hover:scale-[1.02] font-medium shadow-sm hover:shadow-md"
                         >
                             <Sparkles className="w-5 h-5" />
                             <span>AI Build</span>
                         </button>
                         <button
-                            onClick={() => router.push('/resume/build')}
+                            onClick={() => {
+                                if (!user) {
+                                    setShowAuthGate(true);
+                                    return;
+                                }
+                                router.push('/resume/build');
+                            }}
                             className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-all duration-200 hover:scale-[1.02] font-medium"
                         >
                             <Plus className="w-5 h-5" />
@@ -154,6 +139,15 @@ export default function ResumeListPage() {
                     </>
                 )}
             </main>
-        </div>
+            <AuthGateModal
+                isOpen={showAuthGate}
+                onClose={() => setShowAuthGate(false)}
+                actionType="generic"
+                title="Build a Premium Resume"
+                description="Sign up to use our AI resume builder, export to PDF, and share your verified profile with top employers."
+            />
+
+            <Footer />
+        </>
     );
 }

@@ -13,9 +13,10 @@ import {
     Sparkles,
 } from "lucide-react";
 import portalService, { PortalJobCard } from "@/services/portalService";
+import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
 
 // Mock data for fallback when API is unavailable
-const MOCK_JOBS: PortalJobCard[] = [
+const MOCK_OPPORTUNITIES: PortalJobCard[] = [
     {
         id: 1,
         slug: "senior-frontend-engineer-takealot",
@@ -66,26 +67,25 @@ const MOCK_JOBS: PortalJobCard[] = [
     },
 ];
 
-interface JobSearchSectionProps {
-    maxJobs?: number;
+interface OpportunitySearchSectionProps {
+    maxItems?: number;
     showFilters?: boolean;
     className?: string;
-    // Opportunity type filters
     opportunityCategory?: "jobs" | "training_skills_programs" | null;
     opportunityTypes?: string[];
 }
 
-export default function JobSearchSection({
-    maxJobs = 12,
+export default function OpportunitySearchSection({
+    maxItems = 12,
     showFilters = true,
     className = "",
     opportunityCategory = null,
     opportunityTypes = []
-}: JobSearchSectionProps) {
+}: OpportunitySearchSectionProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [location, setLocation] = useState("");
-    const [jobs, setJobs] = useState<PortalJobCard[]>([]);
-    const [totalJobs, setTotalJobs] = useState(0);
+    const [items, setItems] = useState<PortalJobCard[]>([]);
+    const [totalItems, setTotalItems] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [hasMore, setHasMore] = useState(false);
     const [filters, setFilters] = useState({
@@ -94,6 +94,8 @@ export default function JobSearchSection({
         job_type: "",
         category: ""
     });
+    const [selectedCategory, setSelectedCategory] = useState<OpportunityCategory>(opportunityCategory);
+    const [selectedTypes, setSelectedTypes] = useState<OpportunityType[]>((opportunityTypes as OpportunityType[]) || []);
 
     const formatTimeAgo = (dateString?: string) => {
         if (!dateString) return "Recently";
@@ -106,7 +108,7 @@ export default function JobSearchSection({
         return `${Math.floor(days / 7)} weeks ago`;
     };
 
-    const fetchJobs = useCallback(async () => {
+    const fetchItems = useCallback(async () => {
         setIsLoading(true);
         try {
             const response = await portalService.searchJobs({
@@ -116,40 +118,41 @@ export default function JobSearchSection({
                 experience_level: filters.experience_level || undefined,
                 job_type: filters.job_type || undefined,
                 category: filters.category || undefined,
-                // Add opportunity type filters
-                opportunity_category: opportunityCategory || undefined,
-                opportunity_types: opportunityTypes.length > 0 ? opportunityTypes : undefined,
+                opportunity_category: selectedCategory || undefined,
+                opportunity_types: selectedTypes.length > 0 ? selectedTypes : undefined,
                 page: 1,
-                size: maxJobs,
+                size: maxItems,
                 sort_by: "posted_at",
                 sort_order: "desc"
             });
-            setJobs(response.jobs);
-            setTotalJobs(response.total);
+            setItems(response.jobs);
+            setTotalItems(response.total);
             setHasMore(response.has_next);
         } catch (error) {
-            console.error("Failed to fetch jobs:", error);
-            // Filter mock jobs based on opportunity type for demo
-            let filteredMockJobs = MOCK_JOBS;
-            if (opportunityCategory || opportunityTypes.length > 0) {
-                // In real implementation, mock jobs would have opportunity_type field
-                // For now, just show subset to demonstrate filtering works
-                filteredMockJobs = MOCK_JOBS.slice(0, Math.max(1, MOCK_JOBS.length - opportunityTypes.length));
+            console.error("Failed to fetch opportunities:", error);
+            let filteredMock = MOCK_OPPORTUNITIES;
+            if (selectedCategory || selectedTypes.length > 0) {
+                filteredMock = MOCK_OPPORTUNITIES.slice(0, Math.max(1, MOCK_OPPORTUNITIES.length - selectedTypes.length));
             }
-            setJobs(filteredMockJobs.slice(0, maxJobs));
-            setTotalJobs(filteredMockJobs.length);
+            setItems(filteredMock.slice(0, maxItems));
+            setTotalItems(filteredMock.length);
             setHasMore(false);
         } finally {
             setIsLoading(false);
         }
-    }, [searchQuery, location, filters, maxJobs, opportunityCategory, opportunityTypes]);
+    }, [searchQuery, location, filters, maxItems, selectedCategory, selectedTypes]);
 
     useEffect(() => {
-        fetchJobs();
+        fetchItems();
+    }, [selectedCategory, selectedTypes]);
+
+    useEffect(() => {
+        if (opportunityCategory !== undefined) setSelectedCategory(opportunityCategory);
+        if (opportunityTypes !== undefined) setSelectedTypes(opportunityTypes as OpportunityType[]);
     }, [opportunityCategory, opportunityTypes]);
 
     const handleSearch = () => {
-        fetchJobs();
+        fetchItems();
     };
 
     return (
@@ -158,22 +161,19 @@ export default function JobSearchSection({
             <div className="max-w-3xl mx-auto px-4 mb-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-2 shadow-lg border border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col sm:flex-row gap-2">
-                        {/* Input Fields Row */}
                         <div className="flex flex-col sm:flex-row gap-2 flex-1">
-                            {/* Job Search */}
                             <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg min-w-0">
                                 <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    placeholder="Job title, skills, or company"
+                                    placeholder="Opportunity title, skills, or company"
                                     className="flex-1 bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none min-w-0"
                                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                 />
                             </div>
 
-                            {/* Location */}
                             <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg min-w-0">
                                 <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                 <input
@@ -187,7 +187,6 @@ export default function JobSearchSection({
                             </div>
                         </div>
 
-                        {/* Search Button */}
                         <Button
                             onClick={handleSearch}
                             disabled={isLoading}
@@ -198,9 +197,8 @@ export default function JobSearchSection({
                     </div>
                 </div>
 
-                {/* Quick Links */}
                 <div className="flex flex-wrap justify-center gap-2 mt-3">
-                    {["Remote", "Entry Level", "Tech", "Finance"].map((tag) => (
+                    {["Remote", "Entry Level", "Tech Hub", "Finance"].map((tag) => (
                         <button
                             key={tag}
                             className="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300 transition-colors"
@@ -209,16 +207,28 @@ export default function JobSearchSection({
                         </button>
                     ))}
                 </div>
+
+                {showFilters && (
+                    <div className="mt-6 flex justify-center">
+                        <OpportunityTypeFilter
+                            selectedCategory={selectedCategory}
+                            selectedTypes={selectedTypes}
+                            onCategoryChange={setSelectedCategory}
+                            onTypeChange={setSelectedTypes}
+                            className="max-w-2xl w-full"
+                        />
+                    </div>
+                )}
             </div>
 
-            {/* Jobs Grid */}
+            {/* Opportunities Grid */}
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex items-center justify-between mb-6">
                     <p className="text-gray-600 dark:text-gray-400">
-                        Showing <span className="font-semibold text-gray-900 dark:text-white">{jobs.length}</span> of {totalJobs} jobs
+                        Showing <span className="font-semibold text-gray-900 dark:text-white">{items.length}</span> of {totalItems} opportunities
                     </p>
                     <Link href="/portal" className="text-green-600 hover:text-green-700 font-medium text-sm flex items-center gap-1">
-                        View all jobs →
+                        View all opportunities →
                     </Link>
                 </div>
 
@@ -228,34 +238,32 @@ export default function JobSearchSection({
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
-                        {jobs.map((job) => (
+                        {items.map((item) => (
                             <Link
-                                key={job.id}
-                                href={`/portal/${job.slug || job.id}`}
+                                key={item.id}
+                                href={`/portal/${item.slug || item.id}`}
                                 className="block bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg hover:border-green-300 dark:hover:border-green-700 transition-all group"
                             >
                                 <div className="flex items-start gap-4">
-                                    {/* Company Logo */}
                                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center flex-shrink-0">
-                                        {job.company_logo_url ? (
-                                            <img src={job.company_logo_url} alt={job.company} className="w-8 h-8 object-contain" />
+                                        {item.company_logo_url ? (
+                                            <img src={item.company_logo_url} alt={item.company} className="w-8 h-8 object-contain" />
                                         ) : (
                                             <Building2 className="w-6 h-6 text-green-600 dark:text-green-400" />
                                         )}
                                     </div>
 
-                                    {/* Job Info */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-4">
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
-                                                    {job.title}
+                                                    {item.title}
                                                 </h3>
-                                                <p className="text-gray-600 dark:text-gray-400">{job.company}</p>
+                                                <p className="text-gray-600 dark:text-gray-400">{item.company}</p>
                                             </div>
-                                            {job.salary_display && (
+                                            {item.salary_display && (
                                                 <span className="text-sm font-medium text-green-600 dark:text-green-400 whitespace-nowrap">
-                                                    {job.salary_display}
+                                                    {item.salary_display}
                                                 </span>
                                             )}
                                         </div>
@@ -263,17 +271,16 @@ export default function JobSearchSection({
                                         <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
                                             <span className="flex items-center gap-1">
                                                 <MapPin className="w-4 h-4" />
-                                                {job.location?.split(",")[0] || "South Africa"}
+                                                {item.location?.split(",")[0] || "South Africa"}
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <Clock className="w-4 h-4" />
-                                                {formatTimeAgo(job.posted_at)}
+                                                {formatTimeAgo(item.posted_at)}
                                             </span>
                                         </div>
 
-                                        {/* Skills */}
                                         <div className="flex flex-wrap gap-2 mt-3">
-                                            {job.skills?.slice(0, 4).map((skill) => (
+                                            {item.skills?.slice(0, 4).map((skill) => (
                                                 <span
                                                     key={skill}
                                                     className="px-2.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium rounded-full"
@@ -289,13 +296,12 @@ export default function JobSearchSection({
                     </div>
                 )}
 
-                {/* View More */}
                 {hasMore && (
                     <div className="mt-8 text-center">
                         <Link href="/portal">
                             <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl">
                                 <Sparkles className="w-5 h-5 mr-2" />
-                                Browse All {totalJobs} Jobs
+                                Browse All {totalItems} Opportunities
                             </Button>
                         </Link>
                     </div>

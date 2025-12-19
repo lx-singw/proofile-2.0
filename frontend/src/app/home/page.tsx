@@ -6,13 +6,13 @@ import { useState, useEffect, useCallback } from "react";
 import useAuth from "@/hooks/useAuth";
 
 // Components
-import { HomeHeader } from "@/components/home/HomeHeader";
+import FeaturedSections from "@/components/portal/FeaturedSections";
+import { Footer } from "@/components/layout/Footer";
 import { FeedView } from "@/components/home/FeedView";
 import { UserProfileCard } from "@/components/home/UserProfileCard";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
-import JobSearchSection from "@/components/portal/JobSearchSection";
-import FeaturedSections from "@/components/portal/FeaturedSections";
+import OpportunitySearchSection from "@/components/portal/OpportunitySearchSection";
 import FilterSidebar from "@/components/portal/FilterSidebar";
 import portalService from "@/services/portalService";
 import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
@@ -92,12 +92,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-emerald-950/20 dark:to-cyan-950/30">
-      {/* Session-Aware Header */}
-      <HomeHeader />
-
-      {/* Inclusive Banner - Both Views */}
-      <section className="relative overflow-hidden py-3 border-b border-emerald-600/20">
+    <>
+      {/* Hero Section (Gradient Banner) */}
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-700 dark:from-emerald-700 dark:via-teal-800 dark:to-green-900 text-white py-2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 dark:from-emerald-600 dark:via-teal-600 dark:to-cyan-600 animate-gradient-x" />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -105,13 +102,13 @@ export default function HomePage() {
             For <span className="font-bold">students</span>, <span className="font-bold">graduates</span>, <span className="font-bold">professionals</span>, <span className="font-bold">job seekers</span>, <span className="font-bold">freelancers</span>, and <span className="font-bold">everyone</span> building their future — Proofile is your platform.
           </p>
         </div>
-      </section>
+      </div>
 
       {/* ========================================= */}
       {/* LOGGED-IN VIEW: Professional Feed */}
       {/* ========================================= */}
       {isLoggedIn ? (
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Sidebar - User Profile + Tools */}
             <div className="hidden lg:block flex-shrink-0 w-72 space-y-4">
@@ -138,7 +135,7 @@ export default function HomePage() {
           <div className="xl:hidden mt-6">
             <HomeRightSidebar />
           </div>
-        </main>
+        </div>
       ) : (
         /* ========================================= */
         /* GUEST VIEW: Hero + Job Portal */
@@ -162,7 +159,7 @@ export default function HomePage() {
                     <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">Opportunity</span>
                   </h1>
                   <p className="text-lg text-gray-600 dark:text-gray-300 max-w-xl">
-                    Browse thousands of verified job listings from South Africa's top employers. Build your verified profile for faster applications.
+                    Browse thousands of verified opportunities from South Africa's top employers. Build your verified profile for faster applications.
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -207,7 +204,7 @@ export default function HomePage() {
           </section>
 
           {/* Job Portal Content */}
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Left Sidebar - Filters */}
               <div className="hidden lg:block flex-shrink-0 w-72 space-y-6">
@@ -246,8 +243,8 @@ export default function HomePage() {
 
                 <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/10 border border-emerald-200/50 dark:border-emerald-800/30 overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-                  <JobSearchSection
-                    maxJobs={12}
+                  <OpportunitySearchSection
+                    maxItems={12}
                     showFilters={true}
                     className="py-4"
                     opportunityCategory={selectedCategory}
@@ -273,53 +270,102 @@ export default function HomePage() {
             <div className="lg:hidden mt-6">
               <HomeRightSidebar />
             </div>
-          </main>
+          </div>
+
+          {/* Verification Value Prop Section */}
+          <section id="verification" className="relative py-20 bg-white dark:bg-gray-900 overflow-hidden">
+            <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/5 blur-[120px] rounded-full translate-x-1/2" />
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col lg:flex-row items-center gap-12">
+                <div className="flex-1 space-y-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 rounded-full text-emerald-600 dark:text-emerald-400 font-semibold text-sm border border-emerald-500/20">
+                    <CheckCircle className="w-4 h-4" />
+                    Multi-Layer Verification
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                    Beyond the Resume. <br />
+                    <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Proven Identity.</span>
+                  </h2>
+                  <p className="text-lg text-gray-600 dark:text-gray-400">
+                    Proofile verifies your core professional credentials at the source. From email and phone to employment history and certifications, we build a trust layer that employers can rely on instantly.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                    {[
+                      { title: "Direct Verification", desc: "Automated checks with institutions" },
+                      { title: "Immutable Record", desc: "Tamper-proof professional history" },
+                      { title: "Trust Score", desc: "Dynamic score based on verified data" },
+                      { title: "Enhanced Visibility", desc: "Verified users get 3x more views" }
+                    ].map((item, i) => (
+                      <div key={i} className="flex gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50">
+                        <div className="flex-shrink-0 w-5 h-5 mt-1 rounded-full bg-emerald-500 flex items-center justify-center">
+                          <CheckCircle className="w-3 h-3 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 dark:text-white text-sm">{item.title}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-1 relative">
+                  <div className="aspect-square max-w-md mx-auto rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 p-8 shadow-2xl relative overflow-hidden flex flex-col justify-center items-center text-center text-white">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent opacity-50" />
+                    <CheckCircle className="w-24 h-24 mb-6 animate-pulse" />
+                    <h3 className="text-2xl font-bold mb-2 uppercase tracking-widest">Verified</h3>
+                    <p className="text-emerald-50 font-medium">98.5% Trust Accuracy Score</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Ratings Value Prop Section */}
+          <section id="ratings" className="relative py-20 bg-slate-50 dark:bg-gray-800/50 overflow-hidden border-y border-gray-200/50 dark:border-gray-700/50">
+            <div className="absolute bottom-0 left-0 w-1/2 h-full bg-teal-500/5 blur-[120px] rounded-full -translate-x-1/2" />
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col lg:flex-row-reverse items-center gap-12">
+                <div className="flex-1 space-y-6 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-teal-500/10 rounded-full text-teal-600 dark:text-teal-400 font-semibold text-sm border border-teal-500/20">
+                    <Star className="w-4 h-4 fill-current" />
+                    Professional Reputation
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                    Peer Endorsements That <br />
+                    <span className="bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent">Actually Matter.</span>
+                  </h2>
+                  <p className="text-lg text-gray-600 dark:text-gray-400">
+                    Static skills lists are a thing of the past. Proofile allows your managers, colleagues, and clients to provide verified ratings and endorsements on your specific contributions.
+                  </p>
+                  <Link href="/start" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-xl hover:scale-105 transition-all">
+                    Start Building Reputation
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
+                <div className="flex-1 grid grid-cols-2 gap-4">
+                  {[
+                    { label: "Technical Proficiency", score: 4.8 },
+                    { label: "Collaboration", score: 4.9 },
+                    { label: "Problem Solving", score: 4.7 },
+                    { label: "Reliability", score: 5.0 }
+                  ].map((item, i) => (
+                    <div key={i} className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col items-center justify-center text-center">
+                      <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-3">
+                        <Star className={`w-6 h-6 text-teal-500 ${i % 2 === 0 ? 'fill-teal-500' : ''}`} />
+                      </div>
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-tighter mb-1">{item.label}</p>
+                      <p className="text-2xl font-black text-gray-900 dark:text-white">{item.score}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
         </>
       )}
 
       {/* Footer */}
-      <footer className="relative bg-gradient-to-b from-gray-900 via-gray-900 to-black text-gray-400 py-12 mt-8 overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Product</h3>
-              <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-all">Features</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Security</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4 bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">Company</h3>
-              <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-all">About</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Careers</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Resources</h3>
-              <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-all">Blog</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Help Center</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Community</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Legal</h3>
-              <ul className="space-y-2">
-                <li><Link href="#" className="hover:text-white transition-all">Privacy</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Terms</Link></li>
-                <li><Link href="#" className="hover:text-white transition-all">Security</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            © 2024 Proofile. All rights reserved.
-          </div>
-        </div>
-      </footer>
-    </div>
+      <Footer />
+    </>
   );
 }

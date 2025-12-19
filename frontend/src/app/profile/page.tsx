@@ -39,6 +39,7 @@ import { PortfolioSection } from "@/components/profile/PortfolioSection";
 import { useExperiences } from "@/hooks/useExperience";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { SkillsSection } from "@/components/profile/SkillsSection";
+import { Footer } from "@/components/layout/Footer";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -53,13 +54,13 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.replace("/login");
+      router.replace("/login?redirect=/profile");
     }
   }, [loading, user, router]);
 
   if (loading || profileLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="flex items-center justify-center py-32">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-gray-500 font-medium animate-pulse">Loading profile...</p>
@@ -92,7 +93,7 @@ export default function ProfilePage() {
   const completenessScore = profile.completeness_score || 30;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <>
       {/* Quick Stats Bar */}
       <ProfileStatsBar
         completeness={profile?.completeness_score || 30}
@@ -390,6 +391,8 @@ export default function ProfilePage() {
 
       {/* Mobile FAB */}
       <ProfileFAB onShare={handleShare} />
-    </div>
+
+      <Footer />
+    </>
   );
 }

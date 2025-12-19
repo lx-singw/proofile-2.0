@@ -21,6 +21,8 @@ import {
     Loader2
 } from "lucide-react";
 import portalService, { PortalJobCard, PortalSearchResponse } from "@/services/portalService";
+import { Footer } from "@/components/layout/Footer";
+import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
 
 // Mock data for fallback when API is unavailable
 const MOCK_JOBS: PortalJobCard[] = [
@@ -103,6 +105,8 @@ export default function PortalPage() {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
     const [sortBy, setSortBy] = useState<"posted_at" | "salary_max" | "views_count">("posted_at");
+    const [selectedCategory, setSelectedCategory] = useState<OpportunityCategory>(null);
+    const [selectedTypes, setSelectedTypes] = useState<OpportunityType[]>([]);
     const [filters, setFilters] = useState({
         location_type: "",
         experience_level: "",
@@ -131,6 +135,8 @@ export default function PortalPage() {
                 experience_level: filters.experience_level || undefined,
                 job_type: filters.job_type || undefined,
                 category: filters.category || undefined,
+                opportunity_category: selectedCategory || undefined,
+                opportunity_types: selectedTypes.length > 0 ? selectedTypes : undefined,
                 page: resetPage ? 1 : page,
                 size: 20,
                 sort_by: sortBy,
@@ -154,12 +160,12 @@ export default function PortalPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [searchQuery, location, filters, page, sortBy]);
+    }, [searchQuery, location, filters, page, sortBy, selectedCategory, selectedTypes]);
 
-    // Initial fetch on mount
+    // Initial fetch on mount or when category/types change
     useEffect(() => {
         fetchJobs(true);
-    }, []);
+    }, [selectedCategory, selectedTypes, sortBy]);
 
     const handleSearch = () => {
         fetchJobs(true);
@@ -171,16 +177,16 @@ export default function PortalPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <>
             {/* Hero Section */}
             <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-green-700 text-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Find Your Dream Job in South Africa
+                            Discover Your Next Opportunity
                         </h1>
                         <p className="text-xl text-emerald-100 max-w-2xl mx-auto">
-                            Browse {jobs.length.toLocaleString()}+ opportunities from top companies. No signup required.
+                            Browse {totalJobs.toLocaleString() || '1,000'}+ verified listings from across South Africa.
                         </p>
                     </div>
 
@@ -217,13 +223,13 @@ export default function PortalPage() {
                                 disabled={isLoading}
                                 className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-3 rounded-xl font-semibold"
                             >
-                                {isLoading ? "Searching..." : "Search Jobs"}
+                                {isLoading ? "Searching..." : "Search Opportunities"}
                             </Button>
                         </div>
 
                         {/* Quick Links */}
                         <div className="flex flex-wrap justify-center gap-3 mt-6">
-                            {["Remote Jobs", "Entry Level", "Tech Jobs", "Finance"].map((tag) => (
+                            {["Remote Opportunities", "Entry Level", "Tech Hub", "Finance"].map((tag) => (
                                 <button
                                     key={tag}
                                     className="px-4 py-1.5 bg-white/20 hover:bg-white/30 rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
@@ -242,54 +248,28 @@ export default function PortalPage() {
                     {/* Filters Sidebar */}
                     <aside className="w-full lg:w-72 space-y-6">
                         <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/5 border border-gray-100 dark:border-gray-700 p-5">
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center justify-between mb-6">
                                 <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                     <Filter className="w-5 h-5 text-emerald-500" />
-                                    Filters
+                                    Filter Search
                                 </h3>
-                                <button className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">
+                                <button
+                                    onClick={() => {
+                                        setSelectedCategory(null);
+                                        setSelectedTypes([]);
+                                    }}
+                                    className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
+                                >
                                     Clear all
                                 </button>
                             </div>
 
-                            {/* Work Type */}
-                            <div className="mb-6">
-                                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Work Type</h4>
-                                <div className="space-y-2">
-                                    {["Remote", "Hybrid", "On-site"].map((type) => (
-                                        <label key={type} className="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" className="rounded text-emerald-600" />
-                                            <span className="text-sm text-gray-600 dark:text-gray-400">{type}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Experience Level */}
-                            <div className="mb-6">
-                                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Experience</h4>
-                                <div className="space-y-2">
-                                    {["Entry Level", "Mid Level", "Senior", "Lead/Manager"].map((level) => (
-                                        <label key={level} className="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" className="rounded text-emerald-600" />
-                                            <span className="text-sm text-gray-600 dark:text-gray-400">{level}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Category */}
-                            <div>
-                                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Category</h4>
-                                <div className="space-y-2">
-                                    {CATEGORIES.slice(0, 5).map((cat) => (
-                                        <label key={cat} className="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" className="rounded text-emerald-600" />
-                                            <span className="text-sm text-gray-600 dark:text-gray-400">{cat}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
+                            <OpportunityTypeFilter
+                                selectedCategory={selectedCategory}
+                                selectedTypes={selectedTypes}
+                                onCategoryChange={setSelectedCategory}
+                                onTypeChange={setSelectedTypes}
+                            />
                         </div>
 
                         {/* Signup CTA */}
@@ -415,7 +395,7 @@ export default function PortalPage() {
                         {/* Load More */}
                         <div className="mt-8 text-center">
                             <Button variant="outline" className="rounded-xl px-8">
-                                Load More Jobs
+                                Load More Opportunities
                             </Button>
                         </div>
                     </main>
@@ -444,6 +424,7 @@ export default function PortalPage() {
                     </div>
                 </div>
             </div>
-        </div>
+            <Footer />
+        </>
     );
 }

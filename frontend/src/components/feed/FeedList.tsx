@@ -167,7 +167,6 @@ export function FeedList({ initialPosts = [], userId, followingOnly = false }: F
                         )}
                     </>
                 )}
-            )}
             </div>
         </div>
     );

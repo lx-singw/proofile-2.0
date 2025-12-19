@@ -37,6 +37,19 @@ class CachedUser:
     experience_level: str | None
     primary_goal: str | None
     industry: str | None
+    opportunity_preference: str | None
+    years_experience: int | None
+    province: str | None
+    city: str | None
+    willing_to_relocate: bool
+    career_intent: str | None
+    available_from: str | None
+    notice_period_weeks: int | None
+    salary_expectation_min: int | None
+    salary_expectation_max: int | None
+    salary_negotiable: bool
+    work_mode_preference: str | None
+    max_commute_minutes: int | None
     is_active: bool
     created_at: datetime | None
 
@@ -152,6 +165,19 @@ async def get_current_user(
                 experience_level=user.experience_level,
                 primary_goal=user.primary_goal,
                 industry=user.industry,
+                opportunity_preference=user.opportunity_preference,
+                years_experience=user.years_experience,
+                province=user.province,
+                city=user.city,
+                willing_to_relocate=user.willing_to_relocate,
+                career_intent=user.career_intent,
+                available_from=user.available_from,
+                notice_period_weeks=user.notice_period_weeks,
+                salary_expectation_min=user.salary_expectation_min,
+                salary_expectation_max=user.salary_expectation_max,
+                salary_negotiable=user.salary_negotiable,
+                work_mode_preference=user.work_mode_preference,
+                max_commute_minutes=user.max_commute_minutes,
                 is_active=user.is_active,
                 created_at=user.created_at,
             )
@@ -232,6 +258,19 @@ async def get_current_user_optional(
             experience_level=user.experience_level,
             primary_goal=user.primary_goal,
             industry=user.industry,
+            opportunity_preference=user.opportunity_preference,
+            years_experience=user.years_experience,
+            province=user.province,
+            city=user.city,
+            willing_to_relocate=user.willing_to_relocate,
+            career_intent=user.career_intent,
+            available_from=user.available_from,
+            notice_period_weeks=user.notice_period_weeks,
+            salary_expectation_min=user.salary_expectation_min,
+            salary_expectation_max=user.salary_expectation_max,
+            salary_negotiable=user.salary_negotiable,
+            work_mode_preference=user.work_mode_preference,
+            max_commute_minutes=user.max_commute_minutes,
             is_active=user.is_active,
             created_at=user.created_at,
         )

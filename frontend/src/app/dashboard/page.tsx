@@ -17,7 +17,7 @@ import FloatingActionButton from "@/components/dashboard/FloatingActionButton";
 import OnboardingTour from "@/components/dashboard/OnboardingTour";
 import { statsService, type UserStats } from "@/services/statsService";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
-import JobRecommendations from "@/components/dashboard/JobRecommendations";
+import OpportunityRecommendations from "@/components/dashboard/OpportunityRecommendations";
 import CustomizationModal from "@/components/dashboard/CustomizationModal";
 import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
 import { Settings2 } from "lucide-react";
@@ -30,6 +30,7 @@ import ResumeToolsMenu from "@/components/dashboard/ResumeToolsMenu";
 import VerificationSection from "@/components/dashboard/VerificationSection";
 import CategoryWidgets from "@/components/dashboard/CategoryWidgets";
 import { VerificationRequestsList } from "@/components/profile/VerificationRequestsList";
+import { Footer } from "@/components/layout/Footer";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -67,6 +68,7 @@ export default function DashboardPage() {
   const isOnboarded = Boolean(
     user?.experience_level &&
     user?.primary_goal &&
+    user?.opportunity_preference &&
     (user?.industry || user?.persona === 'recruiter')
   );
 
@@ -143,14 +145,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.replace('/login');
+      router.replace('/login?redirect=/dashboard');
     }
   }, [loading, user, router]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8">
-        <p className="text-lg" aria-live="polite">
+      <div className="flex items-center justify-center py-32">
+        <p className="text-lg animate-pulse" aria-live="polite">
           Loading your dashboard...
         </p>
       </div>
@@ -183,7 +185,7 @@ export default function DashboardPage() {
     : (showWelcome ? 'Welcome!' : 'Welcome back!');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-emerald-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
+    <>
 
       <main className="flex-1" role="main">
         <div className="w-full px-6 py-8 space-y-8">
@@ -300,7 +302,7 @@ export default function DashboardPage() {
               {/* ... Job discovery buttons ... */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* ... buttons ... */}
-                <JobRecommendations />
+                <OpportunityRecommendations />
               </div>
             </div>
           )}
@@ -391,6 +393,8 @@ export default function DashboardPage() {
         preferences={preferences}
         onToggleSection={toggleSection}
       />
-    </div>
+
+      <Footer />
+    </>
   );
 }

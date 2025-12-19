@@ -84,4 +84,3 @@ def generate_id_token(user: User, client_id: str, private_key: str):
         "is_gold_standard": is_gold
     }
     return jwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "proofile-default-key-id"})
- Aurora

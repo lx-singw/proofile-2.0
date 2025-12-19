@@ -123,12 +123,13 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
     };
 
     const getTypeLabel = () => {
+        const isTraining = item.metadata?.opportunity_category === "training_skills_programs";
         switch (item.type) {
             case "milestone": return "Milestone";
             case "skill_verified": return "Skill Verified";
             case "text": return "Update";
             case "achievement": return "Achievement";
-            case "job_share": return "Job Opportunity";
+            case "job_share": return isTraining ? "Training Opportunity" : "Job Opportunity";
             case "profile_update": return "Profile Update";
             default: return "Update";
         }
@@ -143,6 +144,15 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                     <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-lg">
                         <Award className="w-3 h-3" />
                         Verified Milestone
+                    </div>
+                </div>
+            )}
+
+            {item.type === "job_share" && user && (item.metadata?.opportunity_category === (user as any).opportunity_preference) && (
+                <div className="absolute top-0 right-0 p-3 pointer-events-none">
+                    <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/10 px-2 py-1 rounded-lg border border-blue-100 dark:border-blue-800/20 animate-pulse">
+                        <Sparkles className="w-3 h-3" />
+                        Recommended for your path
                     </div>
                 </div>
             )}

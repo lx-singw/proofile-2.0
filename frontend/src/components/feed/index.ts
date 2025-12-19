@@ -20,3 +20,7 @@ export type { Comment } from "./CommentSection";
 export { AgentActionBar, DraftMessageModal } from "./agents";
 export type { AgentAction } from "./agents";
 
+// Stories and Status
+export { StoriesBar } from "./StoriesBar";
+export { StatusIndicator, StatusBadgeRing, StatusSelector } from "./StatusIndicator";
+export type { UserStatus } from "./StatusIndicator";

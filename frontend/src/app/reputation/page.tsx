@@ -9,6 +9,7 @@ import { useReputationScores } from "@/hooks/useReputationScores";
 import { RateProfessionalModal } from "@/components/social/RateProfessionalModal";
 import { RequestRatingModal } from "@/components/ratings/RequestRatingModal";
 import RadarChart from "@/components/reputation/visuals/RadarChart";
+import ReputationConstellation from "@/components/reputation/visuals/ReputationConstellation";
 import ReviewCard from "@/components/reputation/feed/ReviewCard";
 import ScoreBadge from "@/components/reputation/visuals/ScoreBadge";
 import TrendLine from "@/components/reputation/visuals/TrendLine";
@@ -86,24 +87,7 @@ export default function ReputationPage() {
         date: new Date(r.created_at).toLocaleDateString(),
         dimensions: Object.entries(r.dimensions || {}).map(([label, score]) => ({ label, score: score as number })),
         isStaked: false,
-    })) : [
-        {
-            author: { name: "Sarah Johnson", role: "Former Manager @ TechCorp", isVerified: true },
-            rating: 5,
-            text: "John is an exceptional PM. Delivered our product 2 weeks ahead of schedule and increased engagement by 40%.",
-            date: "1 week ago",
-            dimensions: [{ label: "Reliability", score: 5.0 }, { label: "Communication", score: 5.0 }],
-            isStaked: true,
-            stakedPoints: 50,
-        },
-        {
-            author: { name: "Mike Chen", role: "Colleague @ TechCorp", isVerified: true },
-            rating: 5,
-            text: "Great collaborator and always brings creative solutions to the table.",
-            date: "2 weeks ago",
-            dimensions: [{ label: "Teamwork", score: 4.8 }],
-        },
-    ];
+    })) : [];
 
     return (
         // 1. GRADIENT BACKGROUND - Soft emerald gradient
@@ -170,8 +154,15 @@ export default function ReputationPage() {
                             </div>
 
                             {/* Radar Chart */}
-                            <div className="flex-1 flex justify-center">
+                            <div className="flex-1 flex flex-col items-center gap-4">
+                                <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400">Skill Breakdown</h4>
                                 <RadarChart data={ratings.breakdown} size={220} />
+                            </div>
+
+                            {/* Constellation Visual */}
+                            <div className="flex-1 flex flex-col items-center gap-4">
+                                <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400">Social Gravity</h4>
+                                <ReputationConstellation globalScore={ratings.overall} />
                             </div>
                         </div>
                     </div>
@@ -182,25 +173,73 @@ export default function ReputationPage() {
                             <MessageSquare className="w-5 h-5 text-emerald-500" />
                             Recent Reviews
                         </h2>
-                        <div className="space-y-5">
-                            {recentReviews.map((review, idx) => (
-                                <div
-                                    key={idx}
-                                    className="transform hover:scale-[1.01] hover:-translate-y-1 transition-all duration-200"
-                                >
-                                    <ReviewCard
-                                        author={review.author}
-                                        rating={review.rating}
-                                        text={review.text}
-                                        date={review.date}
-                                        dimensions={review.dimensions}
-                                        isStaked={review.isStaked}
-                                        stakedPoints={review.stakedPoints}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                        {recentReviews.length > 0 ? (
+                            <div className="space-y-5">
+                                {recentReviews.map((review, idx) => (
+                                    <div
+                                        key={idx}
+                                        className="transform hover:scale-[1.01] hover:-translate-y-1 transition-all duration-200"
+                                    >
+                                        <ReviewCard
+                                            author={review.author}
+                                            rating={review.rating}
+                                            text={review.text}
+                                            date={review.date}
+                                            dimensions={review.dimensions}
+                                            isStaked={review.isStaked}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-white/50 dark:bg-gray-800/50 rounded-2xl p-12 text-center border border-dashed border-gray-200 dark:border-gray-700">
+                                <MessageSquare className="w-10 h-10 text-gray-300 mx-auto mb-4" />
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">No reviews yet</h3>
+                                <p className="text-gray-500 max-w-xs mx-auto mt-1">
+                                    Request ratings from your connections to start building your professional trust.
+                                </p>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Pending Requests Section */}
+                    {pendingRequests.length > 0 && (
+                        <div className="mb-10">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-emerald-500" />
+                                Request History
+                            </h2>
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {pendingRequests.map((req) => (
+                                    <div key={req.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 font-bold">
+                                                {req.invitee_name?.charAt(0) || req.invitee_email.charAt(0)}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-gray-900 dark:text-white truncate">{req.invitee_name || req.invitee_email}</h4>
+                                                <p className="text-xs text-gray-500 truncate">{req.relationship_type} at {req.company}</p>
+                                            </div>
+                                        </div>
+                                        <div className="mt-3 flex items-center justify-between">
+                                            <span className="text-[10px] uppercase tracking-wider font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/10 px-2 py-0.5 rounded">Pending</span>
+                                            <button
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(req.share_url);
+                                                    // toast.success("Link copied!");
+                                                }}
+                                                className="text-xs text-emerald-600 font-bold flex items-center gap-1 hover:text-emerald-700"
+                                            >
+                                                <Share2 className="w-3 h-3" />
+                                                Copy Link
+                                            </button>
+                                        </div>
+                                        <div className="absolute top-0 bottom-0 right-0 w-1 bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Career Insights - wrapped with hover effect */}
                     <div className="mb-10 transform hover:scale-[1.005] transition-all duration-200">

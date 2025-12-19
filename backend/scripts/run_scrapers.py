@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import datetime
 from app.core.database import SyncSessionLocal
-from app.models.portal_job import PortalJob
+from app.models import PortalJob
 
 
 def save_jobs_to_db(db, jobs, source):

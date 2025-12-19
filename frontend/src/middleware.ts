@@ -29,6 +29,12 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/home', request.url));
     }
 
+    // Redirect legacy /jobs routes to /opportunities
+    if (pathname.startsWith('/jobs')) {
+        const newPath = pathname.replace('/jobs', '/opportunities');
+        return NextResponse.redirect(new URL(newPath, request.url));
+    }
+
     return NextResponse.next();
 }
 

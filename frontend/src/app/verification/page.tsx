@@ -34,6 +34,7 @@ import PeerVerificationHub from "@/components/verification/PeerVerificationHub";
 import { VerificationStatsBar } from "@/components/ui/QuickStatsBar";
 import { FadeIn } from "@/components/ui/PageTransition";
 import HelpTooltip, { HELP_CONTENT } from "@/components/ui/HelpTooltip";
+import { Footer } from "@/components/layout/Footer";
 
 export default function VerificationPage() {
     const router = useRouter();
@@ -58,6 +59,12 @@ export default function VerificationPage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push("/login?redirect=/verification");
+        }
+    }, [user, authLoading, router]);
 
     useEffect(() => {
         if (user) {
@@ -85,14 +92,14 @@ export default function VerificationPage() {
 
     if (authLoading || (loading && !summary)) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+            <div className="flex items-center justify-center py-32">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+        <>
             {/* Quick Stats Bar */}
             <VerificationStatsBar
                 verifiedPercent={summary?.verification_score || 0}
@@ -266,6 +273,7 @@ export default function VerificationPage() {
                 onClose={() => setEmploymentModalOpen(false)}
                 onSuccess={handleSuccess}
             />
-        </div>
+            <Footer />
+        </>
     );
 }

@@ -89,6 +89,40 @@ export default function PersonalizationSettings() {
 
     return (
         <div className="space-y-8">
+            {/* Career Path Section */}
+            <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+                        <Briefcase className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">Career Path Preference</h3>
+                        <p className="text-sm text-gray-500">What is your primary focus right now?</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                        { id: "jobs", label: "Jobs & Careers", desc: "Professional employment and contract work", icon: "💼" },
+                        { id: "training_skills_programs", label: "Training & Skills", desc: "Internships, learnerships, and upskilling", icon: "📚" },
+                        { id: "both", label: "Both", desc: "Show me all opportunities", icon: "✨" }
+                    ].map((opt) => (
+                        <button
+                            key={opt.id}
+                            onClick={() => handleChange("opportunity_preference", opt.id)}
+                            className={`flex flex-col items-center text-center p-4 rounded-xl border-2 transition-all ${getValue("opportunity_preference") === opt.id
+                                    ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 ring-4 ring-indigo-500/10"
+                                    : "border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 hover:border-gray-200 dark:hover:border-gray-600"
+                                }`}
+                        >
+                            <span className="text-2xl mb-2">{opt.icon}</span>
+                            <span className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{opt.label}</span>
+                            <span className="text-xs text-gray-500 leading-tight">{opt.desc}</span>
+                        </button>
+                    ))}
+                </div>
+            </section>
+
             {/* Location Section */}
             <section className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-6">

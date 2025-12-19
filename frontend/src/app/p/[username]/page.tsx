@@ -41,6 +41,7 @@ import { ShareProfileModal } from "@/components/profile/ShareProfileModal";
 import { ExperienceSection } from "@/components/profile/ExperienceSection";
 import { PortfolioSection } from "@/components/profile/PortfolioSection";
 import { SkillsSection } from "@/components/profile/SkillsSection";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 export default function PublicProfilePage() {
     const params = useParams();
@@ -52,6 +53,7 @@ export default function PublicProfilePage() {
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [showAuthGate, setShowAuthGate] = useState(false);
 
     useEffect(() => {
         // Handle special case: /p/me redirects to current user's public profile
@@ -278,15 +280,33 @@ export default function PublicProfilePage() {
                         </div>
                     </div>
 
-                    {/* Social Actions Bar */}
-                    {!isOwnProfile && user && profile && (
+                    {/* Social Actions Bar - Now visible to guests */}
+                    {!isOwnProfile && profile && (
                         <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <FollowButton userId={profile.user_id} followerCount={profileStats.followerCount} />
-                            <StarProfileButton userId={profile.user_id} starCount={profileStats.starCount} />
-                            <WatchProfileButton userId={profile.user_id} />
-                            <ConnectButton userId={profile.user_id} />
-                            <CoffeeChatButton />
-                            <SendMessageButton />
+                            <FollowButton
+                                userId={profile.user_id}
+                                followerCount={profileStats.followerCount}
+                                onAuthRequired={() => setShowAuthGate(true)}
+                            />
+                            <StarProfileButton
+                                userId={profile.user_id}
+                                starCount={profileStats.starCount}
+                                onAuthRequired={() => setShowAuthGate(true)}
+                            />
+                            <WatchProfileButton
+                                userId={profile.user_id}
+                                onAuthRequired={() => setShowAuthGate(true)}
+                            />
+                            <ConnectButton
+                                userId={profile.user_id}
+                                onAuthRequired={() => setShowAuthGate(true)}
+                            />
+                            <CoffeeChatButton
+                                onAuthRequired={() => setShowAuthGate(true)}
+                            />
+                            <SendMessageButton
+                                onAuthRequired={() => setShowAuthGate(true)}
+                            />
                         </div>
                     )}
                 </div>
@@ -299,6 +319,7 @@ export default function PublicProfilePage() {
                         console.log(`Endorsing skill: ${skillName}`);
                         // In production, call API
                     }}
+                    onAuthRequired={() => setShowAuthGate(true)}
                 />
 
                 {/* Experience & Portfolio */}
@@ -394,6 +415,13 @@ export default function PublicProfilePage() {
                 username={username}
                 fullName={profile?.full_name}
                 headline={profile?.industry} // Or actual headline if available in PublicProfile type
+            />
+
+            <AuthGateModal
+                isOpen={showAuthGate}
+                onClose={() => setShowAuthGate(false)}
+                actionType="social"
+                title={`Connect with ${profile?.full_name || profile?.username}`}
             />
         </div>
     );

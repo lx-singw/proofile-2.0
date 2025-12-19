@@ -48,6 +48,47 @@ const nextConfig: NextConfig = {
         destination: "/verification",
         permanent: true,
       },
+      // Jobs to Opportunities transformation redirects (SEO)
+      {
+        source: "/jobs",
+        destination: "/opportunities",
+        permanent: true,
+      },
+      {
+        source: "/jobs/saved",
+        destination: "/opportunities/saved",
+        permanent: true,
+      },
+      {
+        source: "/jobs/agents",
+        destination: "/opportunities/agents",
+        permanent: true,
+      },
+      {
+        source: "/jobs/agents/:path*",
+        destination: "/opportunities/agents/:path*",
+        permanent: true,
+      },
+      {
+        source: "/jobs/market",
+        destination: "/opportunities/market",
+        permanent: true,
+      },
+      {
+        source: "/jobs/:id",
+        destination: "/opportunities/:id",
+        permanent: true,
+      },
+      {
+        source: "/jobs/:id/apply",
+        destination: "/opportunities/:id/apply",
+        permanent: true,
+      },
+      {
+        source: "/jobs/:id/gap-analysis",
+        destination: "/opportunities/:id/gap-analysis",
+        permanent: true,
+      },
     ];
   },
 

@@ -4,7 +4,7 @@ Portal API Endpoints
 Public routes for jobs portal.
 Most endpoints do NOT require authentication (SEO-friendly).
 """
-from typing import Optional
+from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 
@@ -36,6 +36,8 @@ async def search_jobs(
     salary_max: Optional[int] = Query(None),
     source: Optional[str] = Query(None),
     posted_within_days: Optional[int] = Query(None),
+    opportunity_category: Optional[str] = Query(None, description="jobs, training_skills_programs"),
+    opportunity_types: Optional[List[str]] = Query(None, description="List of opportunity types"),
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     sort_by: str = Query("posted_at"),
@@ -67,6 +69,8 @@ async def search_jobs(
         salary_max=salary_max,
         source=source,
         posted_within_days=posted_within_days,
+        opportunity_category=opportunity_category,
+        opportunity_types=opportunity_types,
         page=page,
         size=size,
         sort_by=sort_by,

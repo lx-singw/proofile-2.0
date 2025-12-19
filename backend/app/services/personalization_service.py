@@ -83,6 +83,7 @@ class PersonalizationUpdate(BaseModel):
     work_mode_preference: Optional[str] = None
     max_commute_minutes: Optional[int] = None
     years_experience: Optional[int] = None
+    opportunity_preference: Optional[str] = None  # jobs, training_skills_programs, both
 
 
 # =============================================================================
@@ -169,6 +170,73 @@ class PersonalizationService:
             # Dimension 11: Engagement (placeholder - would need activity tracking)
             engagement_pattern="new_user"
         )
+    
+    async def get_ai_search_context(self, user_id: int) -> str:
+        """
+        Generates a consolidated search context string for AI matching.
+        This helps LLMs understand the user's specific constraints and goals.
+        """
+        ctx = await self.get_context(user_id)
+        
+        parts = []
+        if ctx.opportunity_preference:
+            parts.append(f"Looking for: {ctx.opportunity_preference}")
+        
+        if ctx.experience_level:
+            parts.append(f"Level: {ctx.experience_level} ({ctx.years_experience or 0} years)")
+            
+        if ctx.primary_industry:
+            parts.append(f"Industry: {ctx.primary_industry}")
+            
+        if ctx.skills:
+            parts.append(f"Key Skills: {', '.join(ctx.skills)}")
+            
+        if ctx.career_intent:
+            parts.append(f"Intent: {ctx.career_intent}")
+            
+        location = []
+        if ctx.city: location.append(ctx.city)
+        if ctx.province: location.append(ctx.province)
+        if location:
+            parts.append(f"Location: {', '.join(location)}")
+            if ctx.willing_to_relocate:
+                parts.append("(Willing to relocate)")
+
+        if ctx.salary_expectation_min:
+            salary = f"Salary Expectation: R{ctx.salary_expectation_min}"
+            if ctx.salary_expectation_max:
+                salary += f" - R{ctx.salary_expectation_max}"
+            if ctx.salary_negotiable:
+                salary += " (Negotiable)"
+            parts.append(salary)
+            
+        if ctx.work_mode_preference:
+            parts.append(f"Work Mode: {ctx.work_mode_preference}")
+            
+        return " | ".join(parts)
+
+    async def get_coaching_context(self, user_id: int) -> Dict[str, Any]:
+        """
+        Provides specific context for the AI Career Coach.
+        Focuses on gaps, intent, and growth areas.
+        """
+        ctx = await self.get_context(user_id)
+        
+        # Identify "Weaknesses" for coaching focus
+        coaching_focus = []
+        if not ctx.skills:
+            coaching_focus.append("Missing skill profile")
+        if ctx.verification_level == "unverified":
+            coaching_focus.append("Zero trust/reputation")
+        if ctx.career_intent == "career_changer":
+            coaching_focus.append("Translating skills to new industry")
+            
+        return {
+            "current_state": ctx.model_dump(),
+            "coaching_focus_areas": coaching_focus,
+            "can_recommend_training": ctx.opportunity_preference in ["training_skills_programs", "both"],
+            "can_recommend_jobs": ctx.opportunity_preference in ["jobs", "both"]
+        }
     
     async def update_preferences(
         self, 

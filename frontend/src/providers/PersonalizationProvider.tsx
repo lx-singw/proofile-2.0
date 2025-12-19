@@ -71,6 +71,7 @@ export interface PersonalizationUpdate {
     work_mode_preference?: string;
     max_commute_minutes?: number;
     years_experience?: number;
+    opportunity_preference?: "jobs" | "training_skills_programs" | "both";
 }
 
 interface PersonalizationContextType {

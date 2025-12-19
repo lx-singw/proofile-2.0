@@ -12,6 +12,7 @@ from app.core.security import validate_password_strength
 
 # Opportunity Preference type for validation
 OpportunityPreferenceType = Literal['jobs', 'training_skills_programs', 'both']
+UserStatusType = Literal['open_to_work', 'hiring', 'learning', 'exploring']
 
 # --- Base Schema ---
 # Shared properties for all user-related schemas.
@@ -21,10 +22,23 @@ class UserBase(BaseModel):
     username: Optional[str] = None
     role: UserRole = UserRole.APPRENTICE
     persona: Optional[UserPersona] = None
+    status: Optional[UserStatusType] = None
     experience_level: Optional[str] = None
     primary_goal: Optional[str] = None
     industry: Optional[str] = None
     opportunity_preference: Optional[OpportunityPreferenceType] = None
+    years_experience: Optional[int] = None
+    province: Optional[str] = None
+    city: Optional[str] = None
+    willing_to_relocate: Optional[bool] = None
+    career_intent: Optional[str] = None
+    available_from: Optional[str] = None
+    notice_period_weeks: Optional[int] = None
+    salary_expectation_min: Optional[int] = None
+    salary_expectation_max: Optional[int] = None
+    salary_negotiable: Optional[bool] = None
+    work_mode_preference: Optional[str] = None
+    max_commute_minutes: Optional[int] = None
 
 # --- Create Schema ---
 # Properties to receive via API on creation.
@@ -47,6 +61,7 @@ class UserRead(UserBase):
     id: int
     is_active: bool
     created_at: Optional[datetime] = None
+    status: Optional[UserStatusType] = None
     opportunity_preference: Optional[OpportunityPreferenceType] = None
     model_config = ConfigDict(from_attributes=True)
 
@@ -64,9 +79,22 @@ class UserUpdate(BaseModel):
     industry: Optional[str] = None
     username: Optional[str] = None
     profile_visibility: Optional[str] = None
+    status: Optional[UserStatusType] = None
     bio: Optional[str] = None
     profile_photo_url: Optional[str] = None
     opportunity_preference: Optional[OpportunityPreferenceType] = None
+    years_experience: Optional[int] = None
+    province: Optional[str] = None
+    city: Optional[str] = None
+    willing_to_relocate: Optional[bool] = None
+    career_intent: Optional[str] = None
+    available_from: Optional[str] = None
+    notice_period_weeks: Optional[int] = None
+    salary_expectation_min: Optional[int] = None
+    salary_expectation_max: Optional[int] = None
+    salary_negotiable: Optional[bool] = None
+    work_mode_preference: Optional[str] = None
+    max_commute_minutes: Optional[int] = None
 
 # --- Settings Update Schema ---
 # For user to update their own account settings (requires current password verification)

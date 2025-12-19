@@ -58,6 +58,7 @@ import verificationService, { VerificationSummary } from "@/services/verificatio
 import QuickStatsBar from "@/components/ui/QuickStatsBar";
 import { FadeIn } from "@/components/ui/PageTransition";
 import PersonalizationSettings from "@/components/settings/PersonalizationSettings";
+import { Footer } from "@/components/layout/Footer";
 
 // Schema for account settings
 const accountSchema = z.object({
@@ -140,7 +141,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.replace("/login");
+      router.replace("/login?redirect=/settings");
     }
   }, [loading, user, router]);
 
@@ -223,7 +224,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="flex items-center justify-center py-32">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
       </div>
     );
@@ -234,7 +235,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <>
       {/* Quick Stats Bar */}
       <QuickStatsBar
         stats={[
@@ -984,7 +985,8 @@ export default function SettingsPage() {
         onSuccess={handleVerificationSuccess}
         initialValue={verificationModalState.type === 'email' ? user?.email : ''}
       />
-    </div>
+      <Footer />
+    </>
   );
 }
 

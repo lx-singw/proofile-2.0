@@ -13,8 +13,11 @@ import {
     Send,
     Globe,
     Lock,
-    Users
+    Users,
+    Hash,
+    Sparkles
 } from "lucide-react";
+import useAuth from "@/hooks/useAuth";
 
 export type PostType = "text" | "milestone" | "job_share" | "poll" | "achievement";
 export type PostVisibility = "public" | "connections" | "private";
@@ -45,12 +48,29 @@ export function CreatePostComposer({
     userName = "User",
     userAvatar,
 }: CreatePostComposerProps) {
+    const { user } = useAuth();
     const [isExpanded, setIsExpanded] = useState(false);
     const [content, setContent] = useState("");
     const [postType, setPostType] = useState<PostType>("text");
     const [visibility, setVisibility] = useState<PostVisibility>("public");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Smart Suggestions based on industry
+    const industrySuggestions: Record<string, string[]> = {
+        "Tech": ["#coding", "#typescript", "#buildinpublic", "#careerintech"],
+        "Finance": ["#fintech", "#banking", "#markets", "#careerinvesting"],
+        "Healthcare": ["#medtech", "#wellness", "#nursing", "#healthcareer"],
+        "Education": ["#edtech", "#learning", "#teaching", "#upskilling"],
+    };
+
+    const suggestions = user?.industry ? industrySuggestions[user.industry] || ["#professional", "#career", "#networking"] : ["#professional", "#career", "#networking"];
+
+    const addTag = (tag: string) => {
+        if (!content.includes(tag)) {
+            setContent(prev => prev + (prev.endsWith(" ") || prev === "" ? "" : " ") + tag + " ");
+        }
+    };
 
     const handleFocus = () => {
         setIsExpanded(true);
@@ -157,6 +177,26 @@ export function CreatePostComposer({
                                             >
                                                 <option.icon className="w-3 h-3" />
                                                 {option.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Smart Suggestions */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                        <Sparkles className="w-3 h-3 text-emerald-500" />
+                                        Suggested for your {user?.industry || "Profile"}
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {suggestions.map(tag => (
+                                            <button
+                                                key={tag}
+                                                onClick={() => addTag(tag)}
+                                                className="flex items-center gap-1 px-2.5 py-1 bg-gray-50 dark:bg-gray-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-300 rounded-full border border-gray-100 dark:border-gray-600 transition-all"
+                                            >
+                                                <Hash className="w-3 h-3" />
+                                                {tag.replace("#", "")}
                                             </button>
                                         ))}
                                     </div>

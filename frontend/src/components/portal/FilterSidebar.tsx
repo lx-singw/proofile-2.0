@@ -218,9 +218,9 @@ export default function FilterSidebar({
                         )}
                     />
 
-                    {/* Job Type */}
+                    {/* Opportunity Type */}
                     <FilterSection
-                        title="Job Type"
+                        title="Opportunity Type"
                         icon={Building2}
                         items={facets?.job_types || []}
                         selectedValue={selectedFilters.job_type}

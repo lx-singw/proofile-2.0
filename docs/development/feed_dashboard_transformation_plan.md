@@ -250,7 +250,7 @@ CREATE TABLE portal_jobs (
             │                                       │
      ┌──────┴──────┐                         ┌──────┴──────┐
      │             │                         │             │
-  Homepage     /portal                    /feed        /jobs
+  Homepage     /portal                    /feed (changed)        /jobs
   (Landing)    (Browse)               (Smart Feed)   (Matches)
      │             │                         │             │
      └──────┬──────┘                         └──────┬──────┘

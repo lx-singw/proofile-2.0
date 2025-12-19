@@ -31,6 +31,13 @@ class OpportunityPreference(str, enum.Enum):
     BOTH = "both"  # Interested in all opportunities
 
 
+class UserStatus(str, enum.Enum):
+    OPEN_TO_WORK = "open_to_work"
+    HIRING = "hiring"
+    LEARNING = "learning"
+    EXPLORING = "exploring"
+
+
 class User(Base, TimestampMixin):
     __tablename__ = "users"
     
@@ -38,6 +45,8 @@ class User(Base, TimestampMixin):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     full_name = Column(String, index=True)
+    # Professional status badge (Dimension 6 Extension)
+    status = Column(String, nullable=True) # open_to_work, hiring, learning, exploring, or None
     # Role stored as plain string in the DB. Application-level enum `UserRole`
     # is kept for validation/logic, but the DB column is a `String` so Alembic
     # and runtime SQLAlchemy won't attempt to create/alter Postgres enum types.

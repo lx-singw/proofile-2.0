@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import OpportunityBadge from "@/components/portal/OpportunityBadge";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 interface PortalJob {
     id: number;
@@ -39,6 +41,16 @@ interface PortalJobCardProps {
 }
 
 export default function PortalJobCard({ job, variant = "default" }: PortalJobCardProps) {
+    const { isAuthenticated } = useAuth();
+    const [showAuthGate, setShowAuthGate] = React.useState(false);
+
+    const handleApplyClick = (e: React.MouseEvent) => {
+        if (!isAuthenticated) {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowAuthGate(true);
+        }
+    };
     const formatTimeAgo = (dateString?: string) => {
         if (!dateString) return "Recently";
         const date = new Date(dateString);
@@ -114,6 +126,7 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
                         <Button
                             variant="outline"
                             size="sm"
+                            onClick={handleApplyClick}
                             className="rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                         >
                             Apply
@@ -174,6 +187,12 @@ export default function PortalJobCard({ job, variant = "default" }: PortalJobCar
                     </div>
                 </div>
             </div>
+            <AuthGateModal
+                isOpen={showAuthGate}
+                onClose={() => setShowAuthGate(false)}
+                actionType="apply"
+                title={`Apply for ${job.title}`}
+            />
         </Link>
     );
 }

@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import portalService, { PortalJobDetail } from "@/services/portalService";
 import {
     ArrowLeft,
     MapPin,
@@ -12,118 +14,50 @@ import {
     DollarSign,
     Briefcase,
     ExternalLink,
-    Share2,
-    Bookmark,
     CheckCircle,
     Sparkles,
     Zap,
     GraduationCap,
-    Calendar
+    Calendar,
+    Loader2
 } from "lucide-react";
-
-// Types
-interface PortalJobDetail {
-    id: number;
-    slug?: string;
-    title: string;
-    company: string;
-    company_logo_url?: string;
-    location?: string;
-    location_type?: string;
-    salary_display?: string;
-    skills?: string[];
-    experience_level?: string;
-    category?: string;
-    job_type?: string;
-    is_remote: boolean;
-    posted_at?: string;
-    source: string;
-    description?: string;
-    source_url?: string;
-    education_requirement?: string;
-    years_experience_min?: number;
-    years_experience_max?: number;
-    expires_at?: string;
-    views_count: number;
-    applies_count: number;
-    related_jobs: {
-        id: number;
-        title: string;
-        company: string;
-        location?: string;
-    }[];
-}
-
-// Mock data
-const MOCK_JOB: PortalJobDetail = {
-    id: 1,
-    slug: "senior-frontend-engineer-takealot",
-    title: "Senior Frontend Engineer",
-    company: "Takealot",
-    location: "Cape Town, South Africa",
-    location_type: "hybrid",
-    salary_display: "ZAR 60,000 - 90,000 per month",
-    skills: ["React", "TypeScript", "Next.js", "Node.js", "GraphQL"],
-    experience_level: "senior",
-    category: "technology",
-    job_type: "full-time",
-    is_remote: false,
-    posted_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    source: "careers24",
-    description: `
-## About the Role
-
-We're looking for a Senior Frontend Engineer to join our growing team. You'll be working on our customer-facing e-commerce platform, building features used by millions of South Africans.
-
-## Responsibilities
-
-- Design and implement new frontend features using React and TypeScript
-- Collaborate with product managers and designers to create exceptional user experiences
-- Mentor junior developers and conduct code reviews
-- Optimize application performance for mobile and web
-- Write comprehensive tests and documentation
-
-## Requirements
-
-- 5+ years of experience in frontend development
-- Strong proficiency in React, TypeScript, and modern JavaScript
-- Experience with Next.js or similar frameworks
-- Understanding of web performance optimization
-- Excellent communication and collaboration skills
-
-## Nice to Have
-
-- Experience with GraphQL
-- Knowledge of e-commerce platforms
-- Contributions to open-source projects
-
-## Benefits
-
-- Competitive salary
-- Medical aid contribution
-- Flexible working hours
-- Learning and development budget
-- Employee discounts
-    `,
-    source_url: "https://careers24.com/job/12345",
-    education_requirement: "Bachelor's degree in Computer Science or related field",
-    years_experience_min: 5,
-    years_experience_max: 10,
-    views_count: 1234,
-    applies_count: 45,
-    related_jobs: [
-        { id: 2, title: "Frontend Developer", company: "Superbalist", location: "Cape Town" },
-        { id: 3, title: "React Engineer", company: "Yoco", location: "Cape Town" },
-        { id: 4, title: "Full Stack Developer", company: "Luno", location: "Cape Town" },
-    ]
-};
+import { AuthGateModal } from "@/components/auth/AuthGateModal";
 
 export default function PortalJobPage() {
     const params = useParams();
     const router = useRouter();
-    const [job, setJob] = useState<PortalJobDetail | null>(MOCK_JOB);
-    const [isLoading, setIsLoading] = useState(false);
-    const [showApplyModal, setShowApplyModal] = useState(false);
+    const { user, isAuthenticated } = useAuth();
+
+    const [job, setJob] = useState<PortalJobDetail | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showAuthGate, setShowAuthGate] = useState(false);
+    const [isApplying, setIsApplying] = useState(false);
+
+    useEffect(() => {
+        const fetchJob = async () => {
+            if (!params?.id) return;
+
+            setIsLoading(true);
+            try {
+                const idParam = params.id as string;
+                let data: PortalJobDetail;
+
+                // Check if param is numeric ID or Slug
+                if (/^\d+$/.test(idParam)) {
+                    data = await portalService.getJobById(parseInt(idParam));
+                } else {
+                    data = await portalService.getJobBySlug(idParam);
+                }
+                setJob(data);
+            } catch (error) {
+                console.error("Failed to fetch job details:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchJob();
+    }, [params?.id]);
 
     const formatTimeAgo = (dateString?: string) => {
         if (!dateString) return "Recently";
@@ -136,10 +70,45 @@ export default function PortalJobPage() {
         return `${Math.floor(days / 7)} weeks ago`;
     };
 
-    if (!job) {
+    const handleApply = async () => {
+        if (!job) return;
+
+        if (!isAuthenticated) {
+            setShowAuthGate(true);
+            return;
+        }
+
+        setIsApplying(true);
+        try {
+            // Record the click
+            await portalService.recordApplyClick(job.id, "external");
+
+            // Redirect to source
+            if (job.source_url) {
+                window.open(job.source_url, '_blank');
+            }
+        } catch (error) {
+            console.error("Error applying:", error);
+        } finally {
+            setIsApplying(false);
+        }
+    };
+
+    if (isLoading) {
         return (
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-                <p className="text-gray-500">Job not found</p>
+                <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+            </div>
+        );
+    }
+
+    if (!job) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center gap-4">
+                <p className="text-gray-500 text-lg">Job not found</p>
+                <Button onClick={() => router.push('/portal')} variant="outline">
+                    Back to Jobs
+                </Button>
             </div>
         );
     }
@@ -230,11 +199,16 @@ export default function PortalJobPage() {
                             {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <Button
-                                    onClick={() => setShowApplyModal(true)}
+                                    onClick={handleApply}
+                                    disabled={isApplying}
                                     className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3"
                                 >
-                                    <Zap className="w-5 h-5 mr-2" />
-                                    Apply with Proofile
+                                    {isApplying ? (
+                                        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                                    ) : (
+                                        <Zap className="w-5 h-5 mr-2" />
+                                    )}
+                                    {isAuthenticated ? 'Apply Now' : 'Apply with Proofile'}
                                 </Button>
                                 {job.source_url && (
                                     <a
@@ -245,7 +219,7 @@ export default function PortalJobPage() {
                                     >
                                         <Button variant="outline" className="w-full rounded-xl py-3">
                                             <ExternalLink className="w-5 h-5 mr-2" />
-                                            Apply on {job.source}
+                                            View Source
                                         </Button>
                                     </a>
                                 )}
@@ -256,16 +230,20 @@ export default function PortalJobPage() {
                         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 mb-6">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Job Description</h2>
                             <div className="prose dark:prose-invert max-w-none">
-                                {job.description?.split('\n').map((line, i) => {
-                                    if (line.startsWith('## ')) {
-                                        return <h3 key={i} className="text-lg font-semibold mt-6 mb-2">{line.replace('## ', '')}</h3>;
-                                    } else if (line.startsWith('- ')) {
-                                        return <li key={i} className="text-gray-600 dark:text-gray-400">{line.replace('- ', '')}</li>;
-                                    } else if (line.trim()) {
-                                        return <p key={i} className="text-gray-600 dark:text-gray-400">{line}</p>;
-                                    }
-                                    return null;
-                                })}
+                                {job.description_html ? (
+                                    <div dangerouslySetInnerHTML={{ __html: job.description_html }} />
+                                ) : (
+                                    job.description?.split('\n').map((line, i) => {
+                                        if (line.startsWith('## ')) {
+                                            return <h3 key={i} className="text-lg font-semibold mt-6 mb-2">{line.replace('## ', '')}</h3>;
+                                        } else if (line.startsWith('- ')) {
+                                            return <li key={i} className="text-gray-600 dark:text-gray-400">{line.replace('- ', '')}</li>;
+                                        } else if (line.trim()) {
+                                            return <p key={i} className="text-gray-600 dark:text-gray-400">{line}</p>;
+                                        }
+                                        return null;
+                                    })
+                                )}
                             </div>
                         </div>
 
@@ -289,32 +267,34 @@ export default function PortalJobPage() {
 
                     {/* Right Column - Sidebar */}
                     <aside className="w-full lg:w-80 space-y-6">
-                        {/* Quick Apply CTA */}
-                        <div className="bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-2xl p-6 text-white">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Sparkles className="w-6 h-6" />
-                                <h3 className="font-bold text-lg">Quick Apply with Proofile</h3>
+                        {/* Quick Apply CTA - Only show if not authenticated */}
+                        {!isAuthenticated && (
+                            <div className="bg-gradient-to-br from-emerald-600 to-emerald-600 rounded-2xl p-6 text-white">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <Sparkles className="w-6 h-6" />
+                                    <h3 className="font-bold text-lg">Quick Apply with Proofile</h3>
+                                </div>
+                                <ul className="space-y-2 mb-4 text-sm text-emerald-100">
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle className="w-4 h-4" />
+                                        One-click application
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle className="w-4 h-4" />
+                                        Verified profile stands out
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle className="w-4 h-4" />
+                                        Track your applications
+                                    </li>
+                                </ul>
+                                <Link href="/register">
+                                    <Button className="w-full bg-white text-emerald-600 hover:bg-emerald-50 rounded-xl">
+                                        Create Free Account
+                                    </Button>
+                                </Link>
                             </div>
-                            <ul className="space-y-2 mb-4 text-sm text-emerald-100">
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4" />
-                                    One-click application
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4" />
-                                    Verified profile stands out
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <CheckCircle className="w-4 h-4" />
-                                    Track your applications
-                                </li>
-                            </ul>
-                            <Link href="/register">
-                                <Button className="w-full bg-white text-emerald-600 hover:bg-emerald-50 rounded-xl">
-                                    Create Free Account
-                                </Button>
-                            </Link>
-                        </div>
+                        )}
 
                         {/* Job Info */}
                         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6">
@@ -362,7 +342,7 @@ export default function PortalJobPage() {
                                     {job.related_jobs.map((related) => (
                                         <Link
                                             key={related.id}
-                                            href={`/portal/${related.id}`}
+                                            href={`/portal/${related.slug || related.id}`}
                                             className="block p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                         >
                                             <p className="font-medium text-gray-900 dark:text-white text-sm">
@@ -380,36 +360,13 @@ export default function PortalJobPage() {
                 </div>
             </div>
 
-            {/* Apply Modal */}
-            {showApplyModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Apply for {job.title}</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            Create a free Proofile account to apply with your verified profile.
-                        </p>
-                        <div className="space-y-3">
-                            <Link href="/register">
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3">
-                                    <Sparkles className="w-5 h-5 mr-2" />
-                                    Create Account & Apply
-                                </Button>
-                            </Link>
-                            <Link href="/login">
-                                <Button variant="outline" className="w-full rounded-xl py-3">
-                                    Sign In
-                                </Button>
-                            </Link>
-                            <button
-                                onClick={() => setShowApplyModal(false)}
-                                className="w-full text-gray-500 dark:text-gray-400 text-sm hover:underline"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Auth Gate Modal */}
+            <AuthGateModal
+                isOpen={showAuthGate}
+                onClose={() => setShowAuthGate(false)}
+                actionType="apply"
+                title={`Apply for ${job.title}`}
+            />
         </div>
     );
 }

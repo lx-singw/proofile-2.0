@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, JSON, Float, Boolean, Table
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, JSON, Float, Boolean, Table, DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime
 from .base import Base, TimestampMixin
 
 class Guild(Base, TimestampMixin):
@@ -38,7 +39,7 @@ class GuildMembership(Base, TimestampMixin):
     guild_id = Column(Integer, ForeignKey("guilds.id", ondelete="CASCADE"), nullable=False)
     
     role = Column(String(50), default="member") # founder, moderator, member
-    joined_at = Column(TimestampMixin.created_at)
+    joined_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
     user = relationship("User", backref="guild_memberships")
