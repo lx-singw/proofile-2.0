@@ -43,7 +43,7 @@ export default function GuildCard({ guild, onJoin, onView, isJoining }: GuildCar
                             {guild.icon_url ? (
                                 <img src={guild.icon_url} alt={guild.name} className="w-8 h-8 object-contain" />
                             ) : (
-                                guild.name.charAt(0)
+                                guild.name?.charAt(0) ?? '?'
                             )}
                         </div>
                         <div>

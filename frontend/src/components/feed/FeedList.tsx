@@ -6,6 +6,8 @@ import { FeedCard, FeedItem } from "@/components/feed/FeedCard";
 import { Loader2, Sparkles, TrendingUp, RefreshCw } from "lucide-react";
 import { FeedSkeletonList } from "@/components/ui/FeedSkeleton";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import useWorkerEvents from "@/hooks/useWorkerEvents";
+import useAuth from "@/hooks/useAuth";
 
 interface FeedListProps {
     initialPosts?: PostResponse[];
@@ -14,10 +16,60 @@ interface FeedListProps {
 }
 
 export function FeedList({ initialPosts = [], userId, followingOnly = false }: FeedListProps) {
+    const { user } = useAuth();
     const [posts, setPosts] = useState<PostResponse[]>(initialPosts);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+
+    // Listen for real-time events
+    const { lastEvent } = useWorkerEvents(user?.id);
+
+    useEffect(() => {
+        if (!lastEvent) return;
+
+        switch (lastEvent.event) {
+            case "FEED_UPDATE":
+                if (lastEvent.type === "new_post" && lastEvent.data) {
+                    setPosts(prev => {
+                        // Avoid duplicates
+                        if (prev.some(p => p.id === lastEvent.data.id)) return prev;
+                        return [lastEvent.data, ...prev];
+                    });
+                }
+                break;
+            case "REACTION_UPDATE":
+                setPosts(prev => prev.map(p => {
+                    if (p.id === lastEvent.post_id) {
+                        return {
+                            ...p,
+                            likes_count: lastEvent.likes_count,
+                            // If the reaction was by the current user, update their state
+                            user_reaction: lastEvent.user_id === user?.id
+                                ? (lastEvent.action === "removed" ? undefined : lastEvent.type)
+                                : p.user_reaction
+                        };
+                    }
+                    return p;
+                }));
+                break;
+            case "COMMENT_UPDATE":
+                setPosts(prev => prev.map(p => {
+                    if (p.id === lastEvent.post_id) {
+                        return {
+                            ...p,
+                            comments_count: lastEvent.comments_count,
+                            // Optionally add the new comment to top_comments if it's not a reply
+                            top_comments: (!lastEvent.comment.parent_id && p.top_comments.length < 3)
+                                ? [lastEvent.comment, ...p.top_comments].slice(0, 3)
+                                : p.top_comments
+                        };
+                    }
+                    return p;
+                }));
+                break;
+        }
+    }, [lastEvent, user?.id]);
 
     const fetchPosts = useCallback(async (pageNum: number) => {
         if (loading || (!hasMore && pageNum > 1)) return;

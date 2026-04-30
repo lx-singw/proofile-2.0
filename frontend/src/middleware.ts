@@ -2,22 +2,15 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Middleware for route restructuring and auth-aware redirects
+ * Middleware for route restructuring and legacy redirects
  * 
  * Routes:
- * - /dashboard → /home (redirect for authenticated users)
- * - /feed → /home (redirect for authenticated users)
- * - / → /home (authenticated or anonymous homepage)
+ * - /dashboard → /home (redirect)
+ * - /feed → /home (redirect)
+ * - /jobs/* → /opportunities/* (legacy redirect)
  */
 export function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
-
-    // Check for auth token (simplified - in production, validate properly)
-    const authToken = request.cookies.get('auth_token')?.value ||
-        request.cookies.get('next-auth.session-token')?.value ||
-        request.cookies.get('access_token')?.value;
-
-    const isAuthenticated = !!authToken;
 
     // Redirect /dashboard to /home
     if (pathname === '/dashboard') {

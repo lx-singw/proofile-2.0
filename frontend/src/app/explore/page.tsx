@@ -29,7 +29,7 @@ import * as discoveryService from "@/services/discoveryService";
 import * as socialService from "@/services/socialService";
 import type { DiscoveryProfile } from "@/services/discoveryService";
 import { toast } from "@/lib/toast";
-import QuickStatsBar from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 
 interface ProfileCardProps {
@@ -259,16 +259,6 @@ export default function ExplorePage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            {/* Quick Stats Bar */}
-            <QuickStatsBar
-                stats={[
-                    { label: "Trending", value: trendingProfiles.length },
-                    { label: "Rising", value: risingTalent.length },
-                    { label: "Top Rated", value: topRated.length },
-                    { label: "Results", value: searchResults.length || "-" },
-                ]}
-            />
-
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <FadeIn>
                     {/* Header - Jobs Style */}

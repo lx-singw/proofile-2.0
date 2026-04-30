@@ -24,7 +24,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_CACHE_TTL_SECONDS = 0.0
+_CACHE_TTL_SECONDS = 30.0  # Cache user lookups for 30s to reduce DB load
 
 @dataclass(frozen=True)
 class CachedUser:

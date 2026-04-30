@@ -94,4 +94,4 @@ async def stripe_webhook(
         await service.handle_webhook_event(payload, sig_header)
         return {"status": "success"}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        raise HTTPException(status_code=400, detail=str(e))

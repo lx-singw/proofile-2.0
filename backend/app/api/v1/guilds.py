@@ -60,9 +60,8 @@ async def list_guilds(
     current_user: User = Depends(get_current_user)
 ):
     service = GuildService(db)
-    # Seed guilds if empty (helper for development)
-    await service.create_initial_guilds()
-    
+    # NOTE: guild seeding should be done via a startup hook or one-time data migration,
+    # not on every request. See guild_service.create_initial_guilds() for seed data.
     guilds = await service.get_all_guilds()
     user_guild_ids = {g.id for g in await service.get_user_guilds(current_user.id)}
     

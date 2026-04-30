@@ -24,7 +24,7 @@ import {
 import { AuthGateModal } from "@/components/auth/AuthGateModal";
 import { resumeService, type Resume } from '@/services/resumeService';
 import { toast } from '@/lib/toast';
-import QuickStatsBar from '@/components/ui/QuickStatsBar';
+
 import { FadeIn, StaggerChildren } from '@/components/ui/PageTransition';
 import { Footer } from "@/components/layout/Footer";
 
@@ -155,15 +155,6 @@ export default function ToolsPage() {
 
     return (
         <>
-            {/* Quick Stats Bar */}
-            <QuickStatsBar
-                stats={[
-                    { label: "Resumes", value: resumes.length, href: "/resume" },
-                    { label: "Resume Tools", value: resumeTools.length },
-                    { label: "Career Tools", value: careerTools.length },
-                ]}
-            />
-
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <FadeIn>
                     {/* Header - Jobs Style */}

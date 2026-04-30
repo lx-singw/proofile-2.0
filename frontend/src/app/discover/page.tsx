@@ -9,7 +9,7 @@ import { ProfileCard, ProfileCardData } from "@/components/discover/ProfileCard"
 import { Users, TrendingUp, Shield, Star, Sparkles, Flame, Compass } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { discoveryService } from "@/services/discoveryService";
-import QuickStatsBar from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 import Link from "next/link";
 
@@ -135,14 +135,6 @@ export default function DiscoverPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            {/* Quick Stats Bar */}
-            <QuickStatsBar
-                stats={[
-                    { label: "Profiles", value: profiles.length },
-                    { label: "Categories", value: TRENDING_CATEGORIES.length },
-                ]}
-            />
-
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <FadeIn>
                     {/* Header - Jobs Style */}

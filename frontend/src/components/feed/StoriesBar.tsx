@@ -12,7 +12,7 @@ interface Story {
         name: string;
         avatar_url?: string;
     };
-    type: "milestone" | "profile_view" | "verification" | "job_match" | "anniversary";
+    type: "milestone" | "profile_view" | "verification" | "job_match" | "anniversary" | "skill_badge" | "guild_join" | "certification" | "event_host";
     content: string;
     timestamp: string;
     viewed: boolean;
@@ -44,26 +44,34 @@ const MOCK_STORIES: Story[] = [
     {
         id: "3",
         user: { id: 3, name: "Emily Wang", avatar_url: undefined },
-        type: "profile_view",
-        content: "234 profile views this week!",
-        timestamp: "6h ago",
-        viewed: true,
+        type: "skill_badge",
+        content: "Earned Python Master Badge! 🐍",
+        timestamp: "5h ago",
+        viewed: false,
     },
     {
         id: "4",
         user: { id: 4, name: "Alex Rodriguez", avatar_url: undefined },
-        type: "milestone",
-        content: "Celebrating 5 years at TechCorp",
-        timestamp: "1d ago",
+        type: "guild_join",
+        content: "Joined the Hangar3 Guild",
+        timestamp: "12h ago",
         viewed: true,
     },
     {
         id: "5",
         user: { id: 5, name: "Jordan Kim", avatar_url: undefined },
-        type: "anniversary",
-        content: "1 year on Proofile 🎉",
+        type: "certification",
+        content: "AWS Cloud Practitioner Certified!",
         timestamp: "1d ago",
         viewed: false,
+    },
+    {
+        id: "6",
+        user: { id: 6, name: "Elena Petrova", avatar_url: undefined },
+        type: "event_host",
+        content: "Hosting 'Future of AI' workshop",
+        timestamp: "2d ago",
+        viewed: true,
     },
 ];
 
@@ -74,6 +82,10 @@ const getStoryIcon = (type: Story["type"]) => {
         case "profile_view": return <Eye className="w-3 h-3 text-purple-500" />;
         case "milestone": return <GraduationCap className="w-3 h-3 text-amber-500" />;
         case "anniversary": return <Award className="w-3 h-3 text-rose-500" />;
+        case "skill_badge": return <Award className="w-3 h-3 text-cyan-500" />;
+        case "guild_join": return <Plus className="w-3 h-3 text-indigo-500" />;
+        case "certification": return <Award className="w-3 h-3 text-orange-500" />;
+        case "event_host": return <Plus className="w-3 h-3 text-violet-500" />;
         default: return null;
     }
 };
@@ -155,8 +167,8 @@ export function StoriesBar({ stories = MOCK_STORIES, onCreateStory }: StoriesBar
                             className="flex flex-col items-center gap-2 flex-shrink-0 group"
                         >
                             <div className={`relative p-0.5 rounded-full ${story.viewed
-                                    ? "bg-gray-300 dark:bg-gray-600"
-                                    : "bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500"
+                                ? "bg-gray-300 dark:bg-gray-600"
+                                : "bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500"
                                 }`}>
                                 <div className="w-16 h-16 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden">
                                     {story.user.avatar_url ? (
@@ -170,7 +182,7 @@ export function StoriesBar({ stories = MOCK_STORIES, onCreateStory }: StoriesBar
                                         />
                                     ) : (
                                         <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xl">
-                                            {story.user.name.charAt(0)}
+                                            {story.user.name?.charAt(0) ?? '?'}
                                         </div>
                                     )}
                                 </div>
@@ -200,7 +212,7 @@ export function StoriesBar({ stories = MOCK_STORIES, onCreateStory }: StoriesBar
                         {/* Story Header */}
                         <div className="p-4 flex items-center gap-3 border-b border-gray-700">
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
-                                {selectedStory.user.name.charAt(0)}
+                                {selectedStory.user.name?.charAt(0) ?? '?'}
                             </div>
                             <div className="flex-1">
                                 <h4 className="font-bold text-white">{selectedStory.user.name}</h4>

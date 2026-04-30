@@ -156,3 +156,71 @@ function getMockGraph(): ReputationGraph {
         connections: 12,
     };
 }
+
+/**
+ * Get the count of the current user's reviewers who have worked at a given company.
+ * Used to populate "X of your reviewers worked here" in MatchCard verified context.
+ *
+ * Returns 0 gracefully when the endpoint is not yet available (backend Phase D).
+ */
+export async function getReviewerConnectionsForCompany(
+    companyName: string,
+): Promise<number> {
+    if (!companyName) return 0;
+    try {
+        const encoded = encodeURIComponent(companyName);
+        const response = await fetch(
+            `/api/v1/ratings/graph/company-connections?company=${encoded}`,
+            { credentials: 'include' },
+        );
+        if (!response.ok) return 0;
+        const data: { count: number } = await response.json();
+        return typeof data?.count === 'number' ? data.count : 0;
+    } catch {
+        return 0;
+    }
+}
+
+/**
+ * Batch lookup: given a list of company names, returns a map of
+ * companyName → reviewerCount. Falls back gracefully if any lookup fails.
+ *
+ * Uses a single bulk endpoint when available; falls back to individual
+ * fetches with a 5-request concurrency cap.
+ */
+export async function batchReviewerConnections(
+    companyNames: string[],
+): Promise<Record<string, number>> {
+    if (companyNames.length === 0) return {};
+
+    // Try bulk endpoint first
+    try {
+        const response = await fetch('/api/v1/ratings/graph/company-connections/batch', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ companies: companyNames }),
+        });
+        if (response.ok) {
+            const data: Record<string, number> = await response.json();
+            return data;
+        }
+    } catch {
+        // fall through to individual fetches
+    }
+
+    // Fallback: individual fetches with concurrency cap
+    const result: Record<string, number> = {};
+    const unique = [...new Set(companyNames)];
+    const CONCURRENCY = 5;
+
+    for (let i = 0; i < unique.length; i += CONCURRENCY) {
+        const batch = unique.slice(i, i + CONCURRENCY);
+        const counts = await Promise.all(batch.map((name) => getReviewerConnectionsForCompany(name)));
+        batch.forEach((name, idx) => {
+            result[name] = counts[idx];
+        });
+    }
+
+    return result;
+}

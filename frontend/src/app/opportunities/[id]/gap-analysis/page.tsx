@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, AlertTriangle, CheckCircle, BookOpen, Plus, TrendingUp, Target } from 'lucide-react';
 
-import GapAnalysisBadge from '@/components/jobs/visualization/GapAnalysisBadge';
+import GapAnalysisBadge from '@/components/opportunities/visualization/GapAnalysisBadge';
 
 export default function GapAnalysisPage() {
     const params = useParams();

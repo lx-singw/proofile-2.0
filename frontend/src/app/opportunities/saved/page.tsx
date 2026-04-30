@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { jobService, type Job } from '@/services/jobService';
+import { jobService, type Job } from '@/services/opportunityService';
 import { Bookmark, Building2, MapPin, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 

@@ -58,6 +58,7 @@ const persistToken = (token: string | null) => {
 export const api = axios.create({
   baseURL: API_URL || "",
   withCredentials: true,
+  timeout: 8000,
   headers: {
     "Content-Type": "application/json",
   },

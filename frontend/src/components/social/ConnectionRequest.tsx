@@ -120,7 +120,7 @@ export function ConnectionRequestCard({ request, onAccept, onReject }: Connectio
                     />
                 ) : (
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold">
-                        {request.user.name.charAt(0)}
+                        {request.user.name?.charAt(0) ?? '?'}
                     </div>
                 )}
 

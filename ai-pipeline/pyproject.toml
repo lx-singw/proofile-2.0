@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "sa-search-engine-ai-pipeline"
+version = "0.1.0"
+description = "AI processing, verification, and personalization engine for SA Search Engine"
+authors = ["Opportunity Radar Team"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openai = "^1.7.2"
+google-generativeai = "^0.8.3"
+groq = "^0.11.0"
+langchain = "^0.1.0"
+pydantic = "^2.5.3"
+sqlalchemy = "^2.0.25"
+psycopg2-binary = "^2.9.9"
+redis = "^5.0.1"
+pika = "^1.3.2"  # RabbitMQ
+httpx = "^0.26.0"
+numpy = "^1.26.2"
+scikit-learn = "^1.4.0"
+fuzzywuzzy = "^0.18.0"
+python-Levenshtein = "^0.24.0"
+nltk = "^3.8.1"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.4"
+pytest-asyncio = "^0.23.3"
+black = "^23.12.1"
+ruff = "^0.1.9"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = []

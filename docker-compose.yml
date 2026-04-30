@@ -1,7 +1,6 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: proofile-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-proofile_dev}
       POSTGRES_USER: ${POSTGRES_USER:-proofile_user}
@@ -24,7 +23,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: proofile-redis
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
@@ -45,7 +43,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: development
-    container_name: proofile-backend
     ports:
       - "${BACKEND_PORT:-8001}:8000"
     volumes:
@@ -77,7 +74,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       target: development
-    container_name: proofile-frontend
     user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
@@ -110,7 +106,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: development
-    container_name: proofile-worker
     env_file: .env
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -134,7 +129,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: development
-    container_name: proofile-beat
     env_file: .env
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
@@ -153,19 +147,57 @@ services:
     restart: unless-stopped
     command: celery -A app.celery_app.celery_app beat --loglevel=info
 
+  scraping-engine:
+    build:
+      context: ./scraping-engine
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+      - REDIS_QUEUE_NAME=raw_opportunities
+      - LOG_LEVEL=INFO
+      - SCRAPE_INTERVAL_HOURS=${SCRAPE_INTERVAL_HOURS:-12}
+    volumes:
+      - ./scraping-engine:/app
+    working_dir: /app
+    networks:
+      - proofile-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    command: poetry run python scheduler.py
+
+  ai-pipeline:
+    build:
+      context: ./ai-pipeline
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+      - BACKEND_API_URL=http://backend:8000/api/v1
+      - INTERNAL_API_SECRET=${INTERNAL_API_SECRET:-dev-secret-change-in-production}
+    volumes:
+      - ./ai-pipeline:/app
+    working_dir: /app
+    networks:
+      - proofile-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    command: poetry run python -m queue_consumers.raw_data_consumer
+
 networks:
   proofile-network:
     driver: bridge
-    name: proofile-network
 
 volumes:
   postgres_data:
-    name: proofile-postgres-data
   redis_data:
-    name: proofile-redis-data
   backend_cache:
-    name: proofile-backend-cache
-  frontend_cache:
-    name: proofile-frontend-cache
   frontend_node_modules:
-    name: proofile-frontend-node-modules

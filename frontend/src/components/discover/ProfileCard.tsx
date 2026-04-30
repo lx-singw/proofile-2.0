@@ -43,7 +43,7 @@ export function ProfileCard({ profile, onConnect, showMatchScore }: ProfileCardP
                         />
                     ) : (
                         <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-xl group-hover:scale-105 transition-transform">
-                            {profile.name.charAt(0)}
+                            {profile.name?.charAt(0) ?? '?'}
                         </div>
                     )}
                 </Link>

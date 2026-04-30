@@ -57,7 +57,7 @@ export default function TopCompaniesWidget() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className={`w-8 h-8 bg-gradient-to-br ${getRandomColor(index)} rounded-lg flex items-center justify-center text-white font-bold text-xs`}>
-                                    {company.name.charAt(0)}
+                                    {company.name?.charAt(0) ?? '?'}
                                 </div>
                                 <div className="min-w-0">
                                     <p className="font-bold text-gray-900 dark:text-white text-sm truncate">{company.name}</p>

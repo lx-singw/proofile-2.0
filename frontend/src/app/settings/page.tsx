@@ -55,7 +55,7 @@ import {
 } from "lucide-react";
 import { VerificationModal } from "@/components/verification/VerificationModal";
 import verificationService, { VerificationSummary } from "@/services/verificationService";
-import QuickStatsBar from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 import PersonalizationSettings from "@/components/settings/PersonalizationSettings";
 import { Footer } from "@/components/layout/Footer";
@@ -236,15 +236,6 @@ export default function SettingsPage() {
 
   return (
     <>
-      {/* Quick Stats Bar */}
-      <QuickStatsBar
-        stats={[
-          { label: "Verification", value: `${verificationSummary?.verification_score || 0}%`, trend: (verificationSummary?.verification_score || 0) >= 50 ? "up" : "neutral" },
-          { label: "Settings", value: tabs.length },
-          { label: "Status", value: user.profile_visibility === "public" ? "Public" : "Private" },
-        ]}
-      />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <FadeIn>
           {/* Page Header - Jobs Style */}
@@ -395,7 +386,7 @@ export default function SettingsPage() {
                     {/* Profile Photo */}
                     <div className="flex items-center gap-6">
                       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold">
-                        {user.full_name?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
+                        {user.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'}
                       </div>
                       <div>
                         <Button type="button" variant="outline" className="flex items-center gap-2">

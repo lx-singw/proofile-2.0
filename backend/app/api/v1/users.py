@@ -25,29 +25,6 @@ def _is_admin(role) -> bool:
         return role.lower() == UserRole.ADMIN.value
     return False
 
-async def create_user(
-    *,
-    db: AsyncSession = Depends(deps.get_db),
-    user_in: schemas.UserCreate,
-):
-    """
-    Create a new user.
-    """
-    try:
-        # Sanitize incoming data: do not allow clients to set the role at registration.
-        user_data = user_in.model_dump()
-        user_data.pop("role", None)
-        sanitized = schemas.UserCreate(**user_data)
-        
-        user = await user_service.create_user(db=db, user_in=sanitized)
-        return user
-    except IntegrityError:
-        # This will be caught if the email already exists due to the unique constraint.
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A user with this email already exists.",
-        )
 
 @router.post("", response_model=schemas.UserRead, status_code=status.HTTP_201_CREATED)
 async def create_user_endpoint(
@@ -77,12 +54,9 @@ async def create_user_endpoint(
     except Exception as e:
         logging.getLogger(__name__).exception("User creation failed: %s", e)
         await db.rollback()
-        # Return full traceback in response temporarily for debugging
-        import traceback
-        tb = traceback.format_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"DEBUG: {repr(e)}\n{tb}",
+            detail="User creation failed. Please try again.",
         )
 
 @router.get("/me", response_model=schemas.UserRead)
@@ -140,9 +114,10 @@ async def update_current_user(
                 detail="User not found"
             )
         
-        print(f"[DEBUG] Updating user {db_user.id} with data: {user_in.model_dump(exclude_unset=True)}")
+        logger = logging.getLogger(__name__)
+        logger.debug("Updating user %s with data: %s", db_user.id, user_in.model_dump(exclude_unset=True))
         updated_user = await user_service.update_user(db, user=db_user, user_in=user_in)
-        print(f"[DEBUG] User updated successfully: {updated_user.id}")
+        logger.debug("User updated successfully: %s", updated_user.id)
         return updated_user
     except HTTPException:
         raise
@@ -161,9 +136,6 @@ async def update_current_user(
             detail="This value is already in use. Please try a different one."
         ) from e
     except Exception as e:
-        import traceback
-        error_detail = f"User self-update failed: {str(e)}\n{traceback.format_exc()}"
-        print(error_detail)
         logging.getLogger(__name__).exception("User self-update failed: %s", e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -216,7 +188,7 @@ async def get_user_stats(
     from app.models.resume import Resume
     from app.models.verification import Verification
     from app.models.rating_request import RatingRequest
-    from app.models.saved_job import SavedJob
+    from app.models.saved_opportunity import SavedOpportunity as SavedJob
     from sqlalchemy import func
     
     try:

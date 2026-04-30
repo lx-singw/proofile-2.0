@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, update
 from typing import List, Optional, Dict, Any
 from app.models.guild import Guild, GuildMembership
 from app.models.user import User
@@ -44,8 +44,12 @@ class GuildService:
         )
         self.db.add(membership)
         
-        # Update member count
-        guild.member_count += 1
+        # Atomically increment member count to avoid read-modify-write races
+        self.db.execute(
+            update(Guild).where(Guild.id == guild.id).values(
+                member_count=Guild.member_count + 1
+            )
+        )
         
         self.db.commit()
         self.db.refresh(membership)
@@ -63,7 +67,12 @@ class GuildService:
 
         if membership:
             self.db.delete(membership)
-            guild.member_count = max(0, guild.member_count - 1)
+            # Atomically decrement, flooring at 0
+            self.db.execute(
+                update(Guild).where(Guild.id == guild.id).values(
+                    member_count=func.greatest(0, Guild.member_count - 1)
+                )
+            )
             self.db.commit()
 
     async def get_user_guilds(self, user_id: int) -> List[Guild]:

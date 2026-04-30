@@ -31,7 +31,7 @@ import { useProfile } from "@/hooks/useProfile";
 import AssetWallet from "@/components/verification/AssetWallet";
 import TrustScoreRing from "@/components/verification/dashboard/TrustScoreRing";
 import PeerVerificationHub from "@/components/verification/PeerVerificationHub";
-import { VerificationStatsBar } from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 import HelpTooltip, { HELP_CONTENT } from "@/components/ui/HelpTooltip";
 import { Footer } from "@/components/layout/Footer";
@@ -100,12 +100,6 @@ export default function VerificationPage() {
 
     return (
         <>
-            {/* Quick Stats Bar */}
-            <VerificationStatsBar
-                verifiedPercent={summary?.verification_score || 0}
-                pending={summary?.pending_count || 0}
-            />
-
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <FadeIn>
                     {/* Header */}

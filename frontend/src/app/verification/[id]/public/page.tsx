@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { Shield, CheckCircle, ExternalLink, Copy, Calendar } from "lucide-react";
 
 interface PublicProofPageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 // This would be fetched from API based on ID
@@ -26,10 +26,11 @@ const mockVerification = {
 };
 
 export default function PublicProofPage({ params }: PublicProofPageProps) {
+    const resolvedParams = use(params);
     const [copied, setCopied] = React.useState(false);
     const shareUrl = typeof window !== "undefined"
         ? window.location.href
-        : `https://proofile.com/verification/${params.id}/public`;
+        : `https://proofile.com/verification/${resolvedParams.id}/public`;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(shareUrl);

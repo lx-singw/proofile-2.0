@@ -131,7 +131,7 @@ export function FeedRightSidebar({
                                     />
                                 ) : (
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">
-                                        {profile.name.charAt(0)}
+                                        {profile.name?.charAt(0) ?? '?'}
                                     </div>
                                 )}
                                 <div className="flex-1 min-w-0">

@@ -96,7 +96,7 @@ export function SkillsSection({ skills, isOwnProfile, onEndorse }: SkillsSection
                                                 {endorser.avatar_url ? (
                                                     <img src={endorser.avatar_url} alt={endorser.name} className="h-full w-full object-cover" />
                                                 ) : (
-                                                    endorser.name.charAt(0)
+                                                    endorser.name?.charAt(0) ?? '?'
                                                 )}
                                             </div>
                                         ))}

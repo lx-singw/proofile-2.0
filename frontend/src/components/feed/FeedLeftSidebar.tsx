@@ -67,7 +67,7 @@ export function FeedLeftSidebar({ user }: FeedLeftSidebarProps) {
                             />
                         ) : (
                             <div className="w-16 h-16 rounded-full border-4 border-white dark:border-gray-800 bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-xl font-bold">
-                                {userData.name.charAt(0).toUpperCase()}
+                                {userData.name?.charAt(0)?.toUpperCase() ?? '?'}
                             </div>
                         )}
                     </Link>

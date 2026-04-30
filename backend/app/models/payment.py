@@ -6,7 +6,7 @@ import enum
 
 class PaymentStatus(str, enum.Enum):
     PENDING = "pending"
-    SENSING = "processing"
+    PROCESSING = "processing"
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"

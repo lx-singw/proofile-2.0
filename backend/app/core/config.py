@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://proofile_user:proofile_password@postgres:5432/proofile_dev"
     REDIS_URL: str = "redis://redis:6379/0"
     SECRET_KEY: str = "your-secret-key-change-in-production"
+    INTERNAL_API_SECRET: str = "dev-secret-change-in-production"
     JWT_AUDIENCE: str = "proofile:auth"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
@@ -44,13 +45,19 @@ class Settings(BaseSettings):
     CSRF_COOKIE_NAME: str = "XSRF-TOKEN"
     CSRF_HEADER_NAME: str = "X-XSRF-TOKEN"
     COOKIE_SAMESITE: str = "lax"  # 'lax' | 'strict' | 'none'
-    COOKIE_SECURE: bool = False  # set True in production behind HTTPS
+    COOKIE_SECURE: bool = True  # Only set False explicitly in development
     REFRESH_COOKIE_NAME: str = "refresh_token"
     # CSRF settings: disable in test/development environment for easier testing
     # In production, always enable CSRF. In development/test, can disable for testing convenience.
     CSRF_ENABLED: bool = True
     # Allow enabling test-only routes (disabled by default)
     ENABLE_TEST_ROUTES: bool = False
+    # External service credentials (read from env; default to empty so startup doesn't fail
+    # when optional integrations are absent — matches pattern for other optional services)
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
 
 try:
     settings = Settings()
@@ -71,6 +78,12 @@ try:
 
     if settings.ENVIRONMENT == "production" and settings.SECRET_KEY == "your-secret-key-change-in-production":
         raise ValueError("SECRET_KEY must be changed in production environment")
+
+    # Default COOKIE_SECURE to False only in development/test if not explicitly set
+    cookie_user_override = "COOKIE_SECURE" in settings.model_fields_set or os.getenv("COOKIE_SECURE") is not None
+    if not cookie_user_override and settings.ENVIRONMENT in ("development", "test"):
+        settings.COOKIE_SECURE = False
+
     logger.info("Configuration loaded successfully")
     logger.info(f"CSRF validation: {'ENABLED' if settings.CSRF_ENABLED else 'DISABLED'} (Environment: {settings.ENVIRONMENT})")
 except ValidationError as e:

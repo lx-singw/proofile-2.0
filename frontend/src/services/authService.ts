@@ -86,16 +86,11 @@ export async function refresh() {
 }
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
-  // Try a few likely endpoints to fetch a current user/session.
-  for (const path of USERS_ME_PATHS) {
-    try {
-      const data = await apiRequest<CurrentUser>({ method: "get", url: path });
-      return data;
-    } catch {
-      // try next
-    }
+  try {
+    return await apiRequest<CurrentUser>({ method: "get", url: "/api/v1/users/me" });
+  } catch {
+    return null;
   }
-  return null;
 }
 
 export async function updateCurrentUser(updates: Partial<CurrentUser>): Promise<CurrentUser> {

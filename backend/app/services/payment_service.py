@@ -1,27 +1,34 @@
-import stripe
-import os
+import logging
 from typing import Optional, Dict, Any
-from sqlalchemy.orm import Session
+
+import stripe
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 from app.models.user import User
 from app.models.payment import Payment, PaymentStatus, PaymentType
 from app.core.config import settings
 
-# Initialize Stripe
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+logger = logging.getLogger(__name__)
+
+# Initialize Stripe from centralised settings
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 class PaymentService:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
     async def create_onboarding_link(self, user: User, return_url: str, refresh_url: str) -> str:
         """
         Create a Stripe Connect onboarding link for a user (Recruiter/Seller).
+        Stripe SDK calls are synchronous so we await the DB operations separately.
         """
         if not user.stripe_account_id:
             # Create a new Express account for the user
             account = stripe.Account.create(
                 type="express",
-                country="ZA", # Defaulting to South Africa as per codebase context
+                country="ZA",  # Defaulting to South Africa as per codebase context
                 email=user.email,
                 capabilities={
                     "card_payments": {"requested": True},
@@ -30,7 +37,7 @@ class PaymentService:
             )
             user.stripe_account_id = account.id
             self.db.add(user)
-            self.db.commit()
+            await self.db.commit()
 
         # Create the account link
         account_link = stripe.AccountLink.create(
@@ -54,7 +61,7 @@ class PaymentService:
         if is_onboarded != user.is_stripe_onboarded:
             user.is_stripe_onboarded = is_onboarded
             self.db.add(user)
-            self.db.commit()
+            await self.db.commit()
             
         return is_onboarded
 
@@ -75,7 +82,7 @@ class PaymentService:
 
         # Calculate fees (20% platform fee)
         platform_fee_percent = 0.20
-        platform_fee_amount = int(amount * platform_fee_percent * 100) # Stripe uses cents
+        platform_fee_amount = int(amount * platform_fee_percent * 100)  # Stripe uses cents
         recipient_amount = int(amount * 100) - platform_fee_amount
 
         # Create Stripe Checkout Session
@@ -98,8 +105,8 @@ class PaymentService:
                     "destination": recipient.stripe_account_id,
                 },
                 "metadata": {
-                    "sender_id": sender.id,
-                    "recipient_id": recipient.id,
+                    "sender_id": str(sender.id),
+                    "recipient_id": str(recipient.id),
                     "payment_type": PaymentType.PAID_INBOX.value,
                 }
             },
@@ -107,8 +114,8 @@ class PaymentService:
             success_url=success_url,
             cancel_url=cancel_url,
             metadata={
-                "sender_id": sender.id,
-                "recipient_id": recipient.id,
+                "sender_id": str(sender.id),
+                "recipient_id": str(recipient.id),
                 **message_metadata
             }
         )
@@ -127,7 +134,7 @@ class PaymentService:
             metadata_json=message_metadata
         )
         self.db.add(payment)
-        self.db.commit()
+        await self.db.commit()
 
         return session.url
 
@@ -135,7 +142,7 @@ class PaymentService:
         """
         Handle Stripe webhooks for payment updates.
         """
-        endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
         event = None
 
         try:
@@ -152,10 +159,14 @@ class PaymentService:
         return True
 
     async def _finalize_payment(self, session_id: str):
-        payment = self.db.query(Payment).filter(Payment.stripe_session_id == session_id).first()
+        result = await self.db.execute(
+            select(Payment).where(Payment.stripe_session_id == session_id)
+        )
+        payment = result.scalars().first()
         if payment:
             payment.status = PaymentStatus.COMPLETED.value
             self.db.add(payment)
-            self.db.commit()
+            await self.db.commit()
             
             # TODO: Trigger notification or unlock message here
+            logger.info("Payment %s finalized for session %s", payment.id, session_id)

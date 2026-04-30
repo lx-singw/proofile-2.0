@@ -1,29 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle, Star, ArrowRight, Briefcase } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { CheckCircle, Star, ArrowRight } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useAuth from "@/hooks/useAuth";
+import { useReputationScores } from "@/hooks/useReputationScores";
 
 // Components
 import FeaturedSections from "@/components/portal/FeaturedSections";
 import { Footer } from "@/components/layout/Footer";
-import { FeedView } from "@/components/home/FeedView";
 import { UserProfileCard } from "@/components/home/UserProfileCard";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
-import OpportunitySearchSection from "@/components/portal/OpportunitySearchSection";
 import FilterSidebar from "@/components/portal/FilterSidebar";
 import portalService from "@/services/portalService";
 import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
+import { OpportunityFeed } from "@/components/home/OpportunityFeed";
+import { UpgradePrompt, UpgradePromptVariant } from "@/components/home/feed/UpgradePrompt";
+import { ProofileScoreBadge } from "@/components/home/feed/ProofileScoreBadge";
+import type { UserFeedState, OpportunityFeedCard } from "@/types/feedCard";
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
   const isLoggedIn = !!user;
 
+  // Reputation for userFeedState derivation (safe to call always — hook guards internally)
+  const { reputation } = useReputationScores();
+  const userFeedState: UserFeedState = !isLoggedIn
+    ? 'anonymous'
+    : (reputation?.total_reviews ?? 0) > 0
+    ? 'verified'
+    : 'profile';
+
   // Opportunity filter state (for guest view)
   const [selectedCategory, setSelectedCategory] = useState<OpportunityCategory>(null);
   const [selectedTypes, setSelectedTypes] = useState<OpportunityType[]>([]);
+
+  // Upgrade prompt state (Phase C)
+  const [upgradePrompt, setUpgradePrompt] = useState<UpgradePromptVariant | null>(null);
+  const handleAnonymousSave = useCallback((_card: OpportunityFeedCard) => {
+    setUpgradePrompt('save_prompt');
+  }, []);
+  const handleUnverifiedInterest = useCallback((_card: OpportunityFeedCard) => {
+    setUpgradePrompt('interest_prompt');
+  }, []);
+  const handleNetworkPrompt = useCallback(() => {
+    setUpgradePrompt('network_prompt');
+  }, []);
+
+  // Session signal persistence — when user logs in, pass stored signals as
+  // sessionSeed to the feed so ranking can use them. Clear after merge.
+  const [sessionSeed, setSessionSeed] = useState<import('@/types/feedCard').InferredProfile | undefined>(undefined);
+  const prevLoggedInUserId = useRef<string | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    const userId = String(user.id ?? '');
+    // Only run once per login event
+    if (prevLoggedInUserId.current === userId) return;
+    prevLoggedInUserId.current = userId;
+
+    // Read accumulated anonymous signals and derive a seed profile
+    try {
+      const rawSignals = localStorage.getItem('pf_session_signals');
+      const rawMeta = localStorage.getItem('pf_session_card_meta');
+      if (rawSignals && rawMeta) {
+        const signals: import('@/types/feedCard').SignalEvent[] = JSON.parse(rawSignals);
+        const meta: Record<string, { roleTitle: string; location: string; skills: string[] }> = JSON.parse(rawMeta);
+        const engaged = signals.filter((s) => s.signalType === 'dwell_3s' || s.signalType === 'dwell_10s');
+        if (engaged.length >= 3) {
+          const first = meta[engaged[0].cardId];
+          if (first) {
+            setSessionSeed({
+              role: first.roleTitle,
+              location: first.location,
+              industry: '',
+              salaryMin: 0,
+              salaryMax: 0,
+              salaryCurrency: 'ZAR',
+              skills: first.skills ?? [],
+              confirmedByUser: false,
+            });
+          }
+        }
+        // Clear anonymous data after merging
+        localStorage.removeItem('pf_session_signals');
+        localStorage.removeItem('pf_session_card_meta');
+        sessionStorage.removeItem('pf_session_id');
+      }
+    } catch {
+      // ignore localStorage errors
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // Sidebar filter state
   const [sidebarFilters, setSidebarFilters] = useState<{
@@ -81,8 +149,7 @@ export default function HomePage() {
   const combinedOpportunityTypes = selectedTypes.length > 0
     ? selectedTypes
     : (sidebarFilters.opportunity_types || []) as OpportunityType[];
-
-  // Show loading state while checking auth
+  void combinedOpportunityTypes; // kept for future portal/filter integration
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-emerald-950/20 dark:to-cyan-950/30 flex items-center justify-center">
@@ -93,6 +160,15 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Upgrade prompts — portal over the entire page */}
+      {upgradePrompt && (
+        <UpgradePrompt
+          variant={upgradePrompt}
+          currentScore={reputation?.global_score ?? 50}
+          onDismiss={() => setUpgradePrompt(null)}
+        />
+      )}
+
       {/* Hero Section (Gradient Banner) */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-700 dark:from-emerald-700 dark:via-teal-800 dark:to-green-900 text-white py-2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 dark:from-emerald-600 dark:via-teal-600 dark:to-cyan-600 animate-gradient-x" />
@@ -116,9 +192,32 @@ export default function HomePage() {
               <HomeLeftSidebar />
             </div>
 
-            {/* Center Column - Professional Feed */}
-            <div className="flex-1 min-w-0">
-              <FeedView />
+            {/* Center Column — unified opportunity feed */}
+            <div className="flex-1 min-w-0 space-y-4">
+              {/* Proofile Score badge — shown for logged-in users with any reputation data */}
+              {reputation && (
+                <ProofileScoreBadge
+                  score={reputation.global_score}
+                  totalReviews={reputation.total_reviews}
+                />
+              )}
+              <OpportunityTypeFilter
+                selectedCategory={selectedCategory}
+                selectedTypes={selectedTypes}
+                onCategoryChange={setSelectedCategory}
+                onTypeChange={setSelectedTypes}
+              />
+              <OpportunityFeed
+                userFeedState={userFeedState}
+                userId={user?.id ? String(user.id) : null}
+                sessionSeed={sessionSeed}
+                onUnverifiedInterest={handleUnverifiedInterest}
+                onNetworkPrompt={handleNetworkPrompt}
+                sidebarFilters={{
+                  location: sidebarFilters.location,
+                  industry: sidebarFilters.category,
+                }}
+              />
             </div>
 
             {/* Right Sidebar - Network Suggestions & Insights */}
@@ -218,39 +317,23 @@ export default function HomePage() {
                 <HomeLeftSidebar />
               </div>
 
-              {/* Center Column - Job Listings */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/30">
-                      <Briefcase className="w-5 h-5 text-white" />
-                    </div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-gray-900 via-emerald-800 to-teal-800 dark:from-white dark:via-emerald-200 dark:to-teal-200 bg-clip-text text-transparent">Latest Opportunities</h2>
-                  </div>
-                  <Link href="/portal" className="group inline-flex items-center gap-1 px-3 py-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all">
-                    View all
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-
+              {/* Center Column — unified opportunity feed */}
+              <div className="flex-1 min-w-0 space-y-4">
                 <OpportunityTypeFilter
                   selectedCategory={selectedCategory}
                   selectedTypes={selectedTypes}
                   onCategoryChange={setSelectedCategory}
                   onTypeChange={setSelectedTypes}
-                  className="mb-4"
                 />
-
-                <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-500/10 border border-emerald-200/50 dark:border-emerald-800/30 overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-                  <OpportunitySearchSection
-                    maxItems={12}
-                    showFilters={true}
-                    className="py-4"
-                    opportunityCategory={selectedCategory}
-                    opportunityTypes={combinedOpportunityTypes}
-                  />
-                </div>
+                <OpportunityFeed
+                  userFeedState="anonymous"
+                  sidebarFilters={{
+                    location: sidebarFilters.location,
+                    industry: sidebarFilters.category,
+                  }}
+                  onAnonymousSave={handleAnonymousSave}
+                  onNetworkPrompt={handleNetworkPrompt}
+                />
               </div>
 
               {/* Right Sidebar */}

@@ -14,7 +14,7 @@ import ReviewCard from "@/components/reputation/feed/ReviewCard";
 import ScoreBadge from "@/components/reputation/visuals/ScoreBadge";
 import TrendLine from "@/components/reputation/visuals/TrendLine";
 import CareerInsightsCard from "@/components/reputation/analytics/CareerInsightsCard";
-import { ReputationStatsBar } from "@/components/ui/QuickStatsBar";
+
 import { ReputationFAB } from "@/components/ui/FloatingActionButton";
 import { FadeIn } from "@/components/ui/PageTransition";
 import HelpTooltip, { HELP_CONTENT } from "@/components/ui/HelpTooltip";
@@ -92,13 +92,6 @@ export default function ReputationPage() {
     return (
         // 1. GRADIENT BACKGROUND - Soft emerald gradient
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/50 dark:from-gray-900 dark:via-emerald-950/20 dark:to-teal-950/30">
-            {/* Quick Stats Bar */}
-            <ReputationStatsBar
-                avgRating={ratings.overall}
-                totalReviews={reviews?.length || 0}
-                percentile={ratings.overall >= 4.5 ? 15 : ratings.overall >= 4 ? 30 : 50}
-            />
-
             {/* 7. IMPROVED SPACING - Increased padding */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <FadeIn>
@@ -214,7 +207,7 @@ export default function ReputationPage() {
                                     <div key={req.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 font-bold">
-                                                {req.invitee_name?.charAt(0) || req.invitee_email.charAt(0)}
+                                                {req.invitee_name?.charAt(0) || req.invitee_email?.charAt(0) || '?'}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-bold text-gray-900 dark:text-white truncate">{req.invitee_name || req.invitee_email}</h4>

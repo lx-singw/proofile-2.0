@@ -5,6 +5,8 @@ export class HunterAgent {
         const jobLower = jobDescription.toLowerCase();
         const matchedSkills = userSkills.filter(skill => jobLower.includes(skill.toLowerCase()));
 
+        // Denominator is floored at 5 to prevent single-skill matches inflating scores
+        // for users with sparse profiles. Adjust this constant for scoring recalibration.
         const score = Math.min(Math.round((matchedSkills.length / Math.max(userSkills.length, 5)) * 100), 95);
 
         return {

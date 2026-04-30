@@ -22,6 +22,7 @@ from contextlib import asynccontextmanager
 from app.core import config, database
 from app.api.v1.api import api_router
 from app.core.http_client import close_client
+from app.services.ai_service import close_client as close_ai_client
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:     %(message)s')
@@ -53,7 +54,6 @@ async def lifespan(app: FastAPI):
         parsed_url = urlparse(config.settings.DATABASE_URL)
         safe_url = parsed_url._replace(netloc=f"****:****@{parsed_url.hostname}:{parsed_url.port}").geturl()
         logger.info(f"Database URL: {safe_url}")
-        print(f"DEBUG: Full DATABASE_URL: {config.settings.DATABASE_URL}", flush=True)
     else:
         logger.error("DATABASE_URL is not set!")
 
@@ -110,7 +110,13 @@ async def lifespan(app: FastAPI):
         await close_client()
         logger.info("HTTP client closed.")
     except Exception as e:
-        logger.warning(f"Error closing HTTP client: {e}")
+        logger.error(f"Error closing HTTP client: {e}")
+        
+    try:
+        await close_ai_client()
+        logger.info("AI HTTP client closed.")
+    except Exception as e:
+        logger.error(f"Error closing AI HTTP client: {e}")
 
 # Security headers middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -139,6 +145,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers.setdefault("X-XSS-Protection", "1; mode=block")
         response.headers.setdefault("Referrer-Policy", "no-referrer")
         response.headers.setdefault("Permissions-Policy", "geolocation=()")
+        # Content Security Policy — permissive default for SPA; tighten in production
+        response.headers.setdefault(
+            "Content-Security-Policy",
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+            "style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "connect-src 'self' https://api.openai.com https://api.stripe.com"
+        )
         # Simple server-timing for visibility
         response.headers.setdefault("Server-Timing", f"app;dur={(time.time()-start)*1000:.1f}")
         return response
@@ -200,7 +214,7 @@ RATE_LIMIT_CONFIG = {
 app.add_middleware(SecurityHeadersMiddleware)
 
 # Add rate limiting if Redis is available and not running tests
-if False:  # DISABLED: Rate limiting middleware is broken, causing all API requests to timeout
+if config.settings.ENVIRONMENT not in ("test", "development"):
     try:
         import redis.asyncio as redis
         app.add_middleware(
@@ -262,17 +276,44 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     return JSONResponse(status_code=status_code, content={"detail": errors})
 
 
-# Temporary global exception handler for debugging (remove before production)
 @app.exception_handler(Exception)
 async def all_exception_handler(request: Request, exc: Exception):
-    import traceback
-    tb = traceback.format_exc()
     logger.exception("Unhandled exception: %s", exc)
-    return JSONResponse(status_code=500, content={"detail": f"TRACE:\n{tb}"})
+    if config.settings.ENVIRONMENT in ("development", "test"):
+        import traceback
+        tb = traceback.format_exc()
+        return JSONResponse(status_code=500, content={"detail": f"Internal server error: {tb}"})
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 @app.get("/health", tags=["health"])  # Lightweight readiness/liveness probe
-def health_check():
+async def health_check(request: Request):
     """
-    Simple health check endpoint to confirm the API is running.
+    Health check endpoint that verifies database and Redis connectivity.
     """
-    return {"status": "ok", "project_name": config.settings.PROJECT_NAME}
+    health = {"status": "ok", "project_name": config.settings.PROJECT_NAME}
+
+    # Check database connectivity
+    try:
+        from app.core.database import AsyncSessionLocal
+        from sqlalchemy import text
+        async with AsyncSessionLocal() as session:
+            await session.execute(text("SELECT 1"))
+        health["database"] = "connected"
+    except Exception as e:
+        health["status"] = "degraded"
+        health["database"] = f"error: {type(e).__name__}"
+
+    # Check Redis connectivity
+    redis_client = getattr(request.app.state, "redis", None)
+    if redis_client:
+        try:
+            await redis_client.ping()
+            health["redis"] = "connected"
+        except Exception as e:
+            health["status"] = "degraded"
+            health["redis"] = f"error: {type(e).__name__}"
+    else:
+        health["redis"] = "not configured"
+
+    status_code = 200 if health["status"] == "ok" else 503
+    return JSONResponse(content=health, status_code=status_code)

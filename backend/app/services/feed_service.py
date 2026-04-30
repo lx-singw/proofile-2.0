@@ -22,6 +22,8 @@ from app.schemas.feed import (
 )
 
 
+from app.core import broadcaster
+
 class FeedService:
     """Service for feed operations"""
     
@@ -30,7 +32,7 @@ class FeedService:
     
     # ==================== Post Operations ====================
     
-    def create_post(self, user_id: int, data: PostCreate) -> Post:
+    async def create_post(self, user_id: int, data: PostCreate) -> Post:
         """Create a new post"""
         post = Post(
             user_id=user_id,
@@ -43,6 +45,16 @@ class FeedService:
         self.db.add(post)
         self.db.commit()
         self.db.refresh(post)
+        
+        # Broadcast the new post
+        # We enrichment is needed for the frontend to render it properly
+        enriched = self.enrich_post(post)
+        await broadcaster.publish("global_feed", {
+            "event": "FEED_UPDATE",
+            "type": "new_post",
+            "data": enriched.model_dump(mode='json')
+        })
+        
         return post
     
     def get_post(self, post_id: int, current_user_id: Optional[int] = None) -> Optional[Post]:
@@ -344,7 +356,7 @@ class FeedService:
     
     # ==================== Reaction Operations ====================
     
-    def toggle_reaction(self, post_id: int, user_id: int, reaction_type: ReactionType) -> Optional[str]:
+    async def toggle_reaction(self, post_id: int, user_id: int, reaction_type: ReactionType) -> Optional[str]:
         """Toggle or change reaction on a post. Returns 'added', 'changed', 'removed', or None on error."""
         existing = self.db.query(Reaction).filter(
             Reaction.post_id == post_id,
@@ -355,18 +367,19 @@ class FeedService:
         if not post:
             return None
         
+        action = None
         if existing:
             if existing.type == reaction_type.value:
                 # Remove reaction
                 self.db.delete(existing)
                 post.likes_count = max(0, post.likes_count - 1)
                 self.db.commit()
-                return "removed"
+                action = "removed"
             else:
                 # Change reaction type
                 existing.type = reaction_type.value
                 self.db.commit()
-                return "changed"
+                action = "changed"
         else:
             # Add new reaction
             reaction = Reaction(
@@ -377,7 +390,20 @@ class FeedService:
             self.db.add(reaction)
             post.likes_count += 1
             self.db.commit()
-            return "added"
+            action = "added"
+        
+        if action:
+            # Broadcast reaction update
+            await broadcaster.publish("global_feed", {
+                "event": "REACTION_UPDATE",
+                "post_id": post_id,
+                "action": action,
+                "type": reaction_type.value,
+                "likes_count": post.likes_count,
+                "user_id": user_id
+            })
+            
+        return action
     
     def _get_reaction_summary(self, post_id: int) -> ReactionSummary:
         """Get aggregated reaction counts for a post"""
@@ -399,7 +425,7 @@ class FeedService:
     
     # ==================== Comment Operations ====================
     
-    def add_comment(self, post_id: int, user_id: int, data: CommentCreate) -> Comment:
+    async def add_comment(self, post_id: int, user_id: int, data: CommentCreate) -> Comment:
         """Add a comment to a post"""
         comment = Comment(
             post_id=post_id,
@@ -416,6 +442,16 @@ class FeedService:
         
         self.db.commit()
         self.db.refresh(comment)
+        
+        # Broadcast comment update
+        enriched = self._enrich_comment(comment, user_id)
+        await broadcaster.publish("global_feed", {
+            "event": "COMMENT_UPDATE",
+            "post_id": post_id,
+            "comment": enriched.model_dump(mode='json'),
+            "comments_count": post.comments_count if post else 0
+        })
+        
         return comment
     
     def get_comments(

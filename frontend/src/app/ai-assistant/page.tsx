@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import * as aiChatService from "@/services/aiChatService";
 import type { ProfileAnalysis, ProfileInsight } from "@/services/aiChatService";
-import QuickStatsBar from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 
 interface QuickWin {
@@ -230,16 +230,6 @@ export default function AIAssistantPage() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            {/* Quick Stats Bar */}
-            <QuickStatsBar
-                stats={[
-                    { label: "Profile", value: `${profileCompleteness}%`, trend: profileCompleteness >= 80 ? "up" : "neutral" },
-                    { label: "Quick Wins", value: quickWins.length },
-                    { label: "Opportunities", value: careerOpportunities.length },
-                    { label: "Skill Gaps", value: profileAnalysis?.skill_gaps?.length || 0 },
-                ]}
-            />
-
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <FadeIn>
                     {/* Header - Jobs Style */}

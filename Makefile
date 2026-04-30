@@ -1,4 +1,4 @@
-.PHONY: setup-dev start-dev stop-dev migrate test-backend test-frontend lint security-scan security-full security-secrets security-deps security-containers security-infra security-fix
+.PHONY: setup-dev start-dev stop-dev migrate smoke-pass scrape-now scrape-spider test-backend test-frontend lint security-scan security-full security-secrets security-deps security-containers security-infra security-fix
 
 # Development commands
 setup-dev:
@@ -16,6 +16,19 @@ stop-dev:
 migrate:
 	@echo "Running database migrations..."
 	docker compose exec backend alembic upgrade head
+
+smoke-pass:
+	@echo "Running smoke pass (API, DB, Celery, frontend routes)..."
+	bash ./scripts/smoke_pass.sh
+
+scrape-now:
+	@echo "Running scheduled scraper cycle once..."
+	docker compose exec scraping-engine poetry run python scheduler.py --once
+
+scrape-spider:
+	@test -n "$(s)" || (echo "Usage: make scrape-spider s=careers24" && exit 1)
+	@echo "Running spider: $(s)"
+	docker compose exec scraping-engine poetry run scrapy crawl $(s)
 
 # Testing commands
 test-backend:
@@ -164,6 +177,9 @@ help:
 	@echo "    start-dev       - Start development services"
 	@echo "    stop-dev        - Stop development services"
 	@echo "    migrate         - Run database migrations"
+	@echo "    smoke-pass      - Run API/DB/Celery/frontend smoke checks"
+	@echo "    scrape-now      - Run one scheduled scraping cycle"
+	@echo "    scrape-spider   - Run one spider (set s=<name>)"
 	@echo "  Testing:"
 	@echo "    test-backend    - Run backend tests"
 	@echo "    test-frontend   - Run frontend tests"

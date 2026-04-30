@@ -7,7 +7,7 @@ import analyticsService, { type AnalyticsSummary, type CareerInsight } from "@/s
 
 import { BarChart3, TrendingUp, Users, Briefcase, Eye, Search, Building2, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import QuickStatsBar from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
@@ -70,15 +70,6 @@ export default function AnalyticsPage() {
     return (
         <DashboardLayout>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-12">
-                {/* Quick Stats Bar */}
-                <QuickStatsBar
-                    stats={[
-                        { label: "Profile Views", value: summary?.totalViews || 0, trend: "up" },
-                        { label: "Search App.", value: summary?.searchAppearances || 0 },
-                        { label: "Rating", value: summary?.avgRating || 0 },
-                    ]}
-                />
-
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <FadeIn>
                         {/* Header */}

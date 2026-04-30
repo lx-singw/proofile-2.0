@@ -54,3 +54,18 @@ backend/uploads/
 
 # Temporary test files
 *.tmp
+
+# Windows Zone.Identifier NTFS metadata files
+*Zone.Identifier
+
+# Virtual environments inside subprojects
+scraping-engine/venv/
+
+# Junk/stray files (clean up and prevent re-addition)
+/1
+/2
+/=
+/Let
+/cookies.txt
+/openapi.txt
+/snyk_code_scan

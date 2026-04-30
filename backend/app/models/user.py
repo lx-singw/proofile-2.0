@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Boolean, event, Text
 from sqlalchemy.orm import relationship, Mapped
 from typing import Dict, Tuple
@@ -143,7 +143,9 @@ class User(Base, TimestampMixin):
 
 
 
-# Track latest status changes (id, updated_at, is_active) keyed by email
+# WARNING: This is a process-local dict. With multiple Uvicorn workers, each
+# worker has its own cache, leading to potentially stale data. For single-worker
+# deployments this is fine. For multi-worker, consider using Redis instead.
 USER_STATUS_CACHE: Dict[str, Tuple[int, datetime, bool]] = {}
 
 
@@ -153,7 +155,7 @@ def _user_after_insert(mapper, connection, target: User) -> None:
         if target.email:
             USER_STATUS_CACHE[target.email.lower()] = (
                 target.id,
-                target.updated_at or datetime.utcnow(),
+                target.updated_at or datetime.now(timezone.utc),
                 target.is_active,
             )
     except (AttributeError, TypeError) as e:
@@ -168,7 +170,7 @@ def _user_after_update(mapper, connection, target: User) -> None:
         if target.email:
             USER_STATUS_CACHE[target.email.lower()] = (
                 target.id,
-                target.updated_at or datetime.utcnow(),
+                target.updated_at or datetime.now(timezone.utc),
                 target.is_active,
             )
     except (AttributeError, TypeError) as e:

@@ -13,6 +13,13 @@ from app.api.deps import get_db, get_current_active_user
 from app.models.user import User
 from app.models.profile import Profile
 from app.core.config import settings
+from app.services.ai_service import (
+    optimize_bullet_streaming,
+    analyse_skill_gap,
+    generate_interview_questions,
+    score_profile_completeness,
+    optimise_for_ats,
+)
 
 router = APIRouter()
 
@@ -42,22 +49,22 @@ class JobMatch(BaseModel):
     is_featured: bool = False
 
 
-# ============ Optimize Bullet (existing) ============
+# ============ Optimize Bullet (streaming via ai_service) ============
+
+class OptimizeBulletPayload(BaseModel):
+    text: str
+    context: Optional[str] = ""
 
 @router.post("/optimize-bullet")
-async def optimize_bullet(request: Request, db = Depends(get_db), current_user = Depends(get_current_active_user)):
-    body = await request.json()
-    text = body.get("text", "")
-    context = body.get("context", "")
-
-    async def streamer():
-        # Placeholder: in production stream tokens from an LLM
-        chunked = [f"Improved: {text} (context: {context})\n"]
-        for c in chunked:
-            await asyncio.sleep(0.05)
-            yield c.encode("utf-8")
-
-    return StreamingResponse(streamer(), media_type="text/plain")
+async def optimize_bullet(
+    payload: OptimizeBulletPayload,
+    current_user = Depends(get_current_active_user)
+):
+    """Stream an AI-improved version of a resume bullet point."""
+    return StreamingResponse(
+        optimize_bullet_streaming(payload.text, payload.context or ""),
+        media_type="text/plain",
+    )
 
 
 # ============ Profile Suggestions ============
@@ -201,3 +208,106 @@ async def get_job_matches(
     ]
     
     return sample_jobs[:limit]
+
+
+# ============ Skill Gap Analysis ============
+
+class SkillGapPayload(BaseModel):
+    user_skills: List[str]
+    job_description: str
+    target_role: Optional[str] = None
+
+@router.post("/skill-gap")
+async def skill_gap_analysis(
+    payload: SkillGapPayload,
+    current_user = Depends(get_current_active_user),
+):
+    """Analyse the gap between a user's skills and a job description."""
+    try:
+        return await analyse_skill_gap(
+            user_skills=payload.user_skills,
+            job_description=payload.job_description,
+            target_role=payload.target_role,
+        )
+    except RuntimeError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
+
+
+# ============ Interview Question Generator ============
+
+class InterviewQuestionsPayload(BaseModel):
+    job_description: str
+    question_types: Optional[List[str]] = None  # e.g. ['behavioural', 'technical']
+    count: int = 10
+
+@router.post("/interview-questions")
+async def interview_questions(
+    payload: InterviewQuestionsPayload,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user),
+):
+    """Generate tailored interview questions for a job description."""
+    # Enrich with the user's actual profile for more targeted questions
+    result = await db.execute(select(Profile).where(Profile.user_id == current_user.id))
+    profile = result.scalar_one_or_none()
+    user_profile = {
+        "skills": getattr(profile, "skills_data", []),
+        "headline": getattr(profile, "headline", ""),
+        "experience_years": getattr(current_user, "years_experience", None),
+    }
+    try:
+        return await generate_interview_questions(
+            job_description=payload.job_description,
+            user_profile=user_profile,
+            question_types=payload.question_types,
+            count=payload.count,
+        )
+    except RuntimeError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
+
+
+# ============ Profile Completeness Score ============
+
+@router.get("/profile-score")
+async def profile_score(
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_active_user),
+):
+    """Score the authenticated user's profile on completeness and quality."""
+    result = await db.execute(select(Profile).where(Profile.user_id == current_user.id))
+    profile = result.scalar_one_or_none()
+
+    profile_dict = {
+        "headline": getattr(profile, "headline", None),
+        "summary": getattr(profile, "summary", None),
+        "skills": getattr(profile, "skills_data", []),
+        "avatar_url": getattr(profile, "avatar_url", None),
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "location": getattr(current_user, "city", None),
+    }
+    try:
+        return await score_profile_completeness(profile_dict)
+    except RuntimeError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
+
+
+# ============ ATS Keyword Optimiser ============
+
+class ATSOptimisePayload(BaseModel):
+    resume_text: str
+    job_description: str
+
+@router.post("/ats-optimise")
+async def ats_optimise(
+    payload: ATSOptimisePayload,
+    current_user = Depends(get_current_active_user),
+):
+    """Identify missing ATS keywords and suggest targeted edits."""
+    try:
+        return await optimise_for_ats(
+            resume_text=payload.resume_text,
+            job_description=payload.job_description,
+        )
+    except RuntimeError as e:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))

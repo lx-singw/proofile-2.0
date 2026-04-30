@@ -1,0 +1,432 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Opportunity Feed Service
+//
+// Calls the dedicated /api/v1/feed/opportunities backend endpoint (Sprint 4+)
+// and maps results into the FeedCard discriminated union, injecting non-job
+// insight cards at the correct ratios from the feed plan.
+//
+// Fallback: if the dedicated endpoint is unavailable it falls back to the
+// legacy /api/v1/opportunities/ endpoint so the UI is never broken.
+// ─────────────────────────────────────────────────────────────────────────────
+
+import { opportunityService, Opportunity } from '@/services/opportunityService';
+import { apiRequest } from '@/lib/api';
+import {
+  FeedCard,
+  FeedPage,
+  FeedPageParams,
+  OpportunityFeedCard,
+  InsightFeedCard,
+  AnonymousMatchContext,
+  ProfileMatchContext,
+  VerifiedMatchContext,
+} from '@/types/feedCard';
+
+// ── Static insight card pools ─────────────────────────────────────────────────
+// In Phase 0 these are curated. Phase 1+ will pull from real data.
+
+const TRUST_INSIGHT_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+  {
+    type: 'trust_insight',
+    headline: 'Your profile puts you in a strong position',
+    body: 'Professionals with verified skills on Proofile are contacted by recruiters 3× more often than unverified applicants.',
+    ctaLabel: 'Get verified →',
+    ctaHref: '/profile#reviews',
+    iconKey: 'star',
+  },
+  {
+    type: 'trust_insight',
+    headline: 'Node.js ranks in the top 15% of SA developer skills',
+    body: 'Roles requiring Node.js in South Africa pay an average of R68,000/month. Your verified profile could unlock those opportunities.',
+    ctaLabel: 'See matching roles',
+    iconKey: 'chart',
+  },
+];
+
+const MARKET_INTELLIGENCE_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+  {
+    type: 'market_intelligence',
+    headline: 'SA remote-friendly companies hiring this month',
+    body: '47 South African companies are actively hiring for remote or hybrid roles this month — up 12% from last month.',
+    ctaLabel: 'Browse remote roles',
+    iconKey: 'market',
+  },
+  {
+    type: 'market_intelligence',
+    headline: 'Average time-to-offer for SA tech roles: 18 days',
+    body: 'Senior developer roles in Johannesburg move fast. Verified Proofile profiles get through initial screening 3× faster.',
+    iconKey: 'market',
+  },
+];
+
+const COMMUNITY_PROOF_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+  {
+    type: 'community_proof',
+    headline: 'A developer in Johannesburg moved from R52k to R78k',
+    body: 'A backend developer with 6 verified Proofile reviews recently landed a senior role — no degree, just proof.',
+    iconKey: 'community',
+  },
+  {
+    type: 'community_proof',
+    headline: '34 SA professionals expressed interest this week',
+    body: 'This week, 34 professionals matched verified Proofile signals to real opportunities — and recruiters reached out first.',
+    iconKey: 'community',
+  },
+];
+
+const GRAPH_DISCOVERY_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+  {
+    type: 'graph_discovery',
+    headline: 'Your network is already inside these companies',
+    body: 'Proofile users with your profile type have connections at some of the companies currently hiring. Sign in to see who.',
+    ctaLabel: 'Sign in to see your network',
+    ctaHref: '/login',
+    iconKey: 'network',
+  },
+];
+
+// Cycle through insight types: trust → market → community → graph
+const INSIGHT_POOL: Omit<InsightFeedCard, 'id'>[][] = [
+  TRUST_INSIGHT_CARDS,
+  MARKET_INTELLIGENCE_CARDS,
+  COMMUNITY_PROOF_CARDS,
+  GRAPH_DISCOVERY_CARDS,
+];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function parseRemoteType(opp: Opportunity): OpportunityFeedCard['remoteType'] {
+  const t = (opp.job_type || opp.opportunity_type || '').toLowerCase();
+  if (t.includes('remote')) return 'remote';
+  if (t.includes('hybrid')) return 'hybrid';
+  if (t.includes('flexible')) return 'flexible';
+  return 'onsite';
+}
+
+function parseSalaryRange(salaryRange?: string | null): { min?: number; max?: number } {
+  if (!salaryRange) return {};
+  // e.g. "R45,000 – R65,000" or "45000-65000"
+  const digits = salaryRange.replace(/[^0-9\-–]/g, ' ').trim().split(/[\s\-–]+/).filter(Boolean);
+  if (digits.length >= 2) return { min: parseInt(digits[0]), max: parseInt(digits[1]) };
+  if (digits.length === 1) return { min: parseInt(digits[0]) };
+  return {};
+}
+
+function buildMatchContext(
+  opp: Opportunity,
+  params: FeedPageParams,
+): AnonymousMatchContext | ProfileMatchContext | VerifiedMatchContext {
+  const skills = opp.required_skills ?? [];
+
+  if (params.userFeedState === 'verified') {
+    return {
+      state: 'verified',
+      verifiedSkills: skills.slice(0, 3),
+      reviewerConnections: 0, // Phase D: wire graphService
+      matchStrengthPercent: 72,
+      proofileScorePercentile: 65,
+    } satisfies VerifiedMatchContext;
+  }
+
+  if (params.userFeedState === 'profile') {
+    return {
+      state: 'profile',
+      matchedSkills: skills.slice(0, 2),
+      unmatchedSkills: skills.slice(2, 4),
+      matchStrengthPercent: 55,
+    } satisfies ProfileMatchContext;
+  }
+
+  // anonymous
+  const inferred = params.inferredProfile;
+  const reasons: string[] = [];
+  if (inferred?.role) reasons.push(`Matches your apparent interest in ${inferred.role} roles`);
+  if (inferred?.location) reasons.push(`Located near your inferred area (${inferred.location})`);
+  if (inferred?.salaryMin && opp.salary_range) reasons.push('Salary range aligns with what you\'ve engaged with');
+  if (reasons.length === 0) reasons.push('Trending opportunity in South Africa right now');
+
+  return {
+    state: 'anonymous',
+    behavioural: reasons,
+  } satisfies AnonymousMatchContext;
+}
+
+function oppToFeedCard(opp: Opportunity, params: FeedPageParams, backendCard?: BackendOpportunityCard): OpportunityFeedCard {
+  const { min: salaryMin, max: salaryMax } = parseSalaryRange(opp.salary_range);
+
+  // ── Undervalue detection ───────────────────────────────────────────────────
+  // A role is flagged as undervalue when its midpoint salary is meaningfully
+  // below either:
+  //  a) The user's inferred salary expectations (from session signals), OR
+  //  b) A static market-average threshold for the role type (Phase 0 heuristic)
+  let isUndervalue = false;
+  let undervalueInsight: string | undefined;
+
+  const midpoint = salaryMin && salaryMax ? Math.round((salaryMin + salaryMax) / 2) : salaryMin;
+
+  if (midpoint) {
+    // (a) User expectation-based check
+    const userMin = params.inferredProfile?.salaryMin;
+    if (userMin && midpoint < userMin * 0.85) {
+      isUndervalue = true;
+      undervalueInsight = `This role pays ~R${Math.round(midpoint / 1000)}k/month — your profile typically commands R${Math.round(userMin / 1000)}k+.`;
+    }
+
+    // (b) Market-average heuristic (Phase 0: simple title-keyword matching)
+    if (!isUndervalue) {
+      const title = (opp.title ?? '').toLowerCase();
+      const marketFloors: Array<{ keywords: string[]; floor: number; label: string }> = [
+        { keywords: ['senior', 'lead', 'principal'], floor: 65_000, label: 'senior-level' },
+        { keywords: ['fullstack', 'full-stack', 'full stack'], floor: 55_000, label: 'full-stack' },
+        { keywords: ['backend', 'back-end'], floor: 50_000, label: 'backend' },
+        { keywords: ['frontend', 'front-end'], floor: 48_000, label: 'frontend' },
+        { keywords: ['data scientist', 'ml engineer', 'machine learning'], floor: 60_000, label: 'data/ML' },
+        { keywords: ['devops', 'platform engineer', 'sre'], floor: 60_000, label: 'DevOps/SRE' },
+        { keywords: ['product manager', 'product owner'], floor: 70_000, label: 'product management' },
+      ];
+
+      for (const { keywords, floor, label } of marketFloors) {
+        if (keywords.some((kw) => title.includes(kw)) && midpoint < floor * 0.85) {
+          isUndervalue = true;
+          undervalueInsight = `Market average for ${label} roles in SA is ~R${Math.round(floor / 1000)}k/month. This listing is below that — you may have negotiating room.`;
+          break;
+        }
+      }
+    }
+  }
+
+  return {
+    type: 'opportunity',
+    id: String(opp.id),
+    companyName: opp.company_name,
+    roleTitle: opp.title,
+    location: opp.location,
+    remoteType: parseRemoteType(opp),
+    salaryMin,
+    salaryMax,
+    salaryCurrency: 'ZAR',
+    salaryVisible: !!opp.salary_range,
+    requiredSkills: opp.required_skills ?? [],
+    postedAt: opp.created_at,
+    source: 'aggregated',
+    qualityScore: 0.8,
+    engagementRate: 0,
+    matchContext: buildMatchContext(opp, params),
+    avgSalaryForRole: salaryMin ? Math.round((salaryMin + (salaryMax ?? salaryMin)) / 2) : undefined,
+    interestedCount: backendCard?.interested_count ?? 0,
+    savedCount: backendCard?.saved_count ?? 0,
+    viewerIsInterested: backendCard?.viewer_is_interested ?? false,
+    viewerHasSaved: backendCard?.viewer_has_saved ?? false,
+    isUndervalue: isUndervalue || undefined,
+    undervalueInsight,
+  };
+}
+
+function makeInsightCard(cycleIndex: number, slotIndex: number): InsightFeedCard {
+  const pool = INSIGHT_POOL[cycleIndex % INSIGHT_POOL.length];
+  const template = pool[slotIndex % pool.length];
+  return {
+    ...template,
+    id: `insight-${cycleIndex}-${slotIndex}-${Date.now()}`,
+  } as InsightFeedCard;
+}
+
+/**
+ * Mix opportunity cards with non-job cards at the ratios from the feed plan:
+ *   60% opportunities, 15% trust insights, 10% graph, 10% market, 5% community
+ *
+ * Implementation: insert 1 insight card after every 4th opportunity card,
+ * cycling through types.
+ */
+function mixCards(oppCards: OpportunityFeedCard[]): FeedCard[] {
+  const result: FeedCard[] = [];
+  let insightCycle = 0;
+  for (let i = 0; i < oppCards.length; i++) {
+    result.push(oppCards[i]);
+    if ((i + 1) % 4 === 0) {
+      result.push(makeInsightCard(insightCycle, 0));
+      insightCycle++;
+    }
+  }
+  return result;
+}
+
+// ── Dedicated feed API response types ────────────────────────────────────────
+
+interface BackendOpportunityCard {
+  id: number;
+  title: string;
+  company_name: string;
+  location?: string | null;
+  remote_type?: string | null;
+  opportunity_type?: string | null;
+  salary_min?: number | null;
+  salary_max?: number | null;
+  salary_range?: string | null;
+  salary_visible?: boolean;
+  required_skills?: string | null;
+  experience_level?: string | null;
+  industry?: string | null;
+  source?: string | null;
+  is_direct?: boolean;
+  quality_score: number;
+  posted_at?: string | null;
+  expires_at?: string | null;
+  // Social proof fields
+  interested_count?: number;
+  saved_count?: number;
+  viewer_is_interested?: boolean;
+  viewer_has_saved?: boolean;
+}
+
+interface BackendFeedPage {
+  items: BackendOpportunityCard[];
+  next_cursor: number | null;
+  has_more: boolean;
+}
+
+function backendCardToOpportunity(card: BackendOpportunityCard): Opportunity {
+  let skills: string[] = [];
+  try {
+    skills = card.required_skills ? JSON.parse(card.required_skills) : [];
+  } catch {
+    skills = [];
+  }
+  return {
+    id: card.id,
+    title: card.title,
+    company_name: card.company_name,
+    location: card.location ?? '',
+    description: '',
+    created_at: card.posted_at ?? new Date().toISOString(),
+    opportunity_type: card.opportunity_type ?? undefined,
+    required_skills: skills,
+    experience_level: card.experience_level ?? undefined,
+    industry: card.industry ?? undefined,
+    salary_range: card.salary_range ?? undefined,
+    // feed-specific fields passed through as extra props
+    ...(card.salary_min ? { salary_min: card.salary_min } : {}),
+    ...(card.salary_max ? { salary_max: card.salary_max } : {}),
+    ...(card.remote_type ? { remote_type: card.remote_type } : {}),
+    ...(card.is_direct !== undefined ? { is_direct: card.is_direct } : {}),
+  } as Opportunity;
+}
+
+// ── Cursor helpers ────────────────────────────────────────────────────────────
+// Phase 0 cursor is simply the "skip" offset encoded as a base64 string.
+// Backend cursor is a numeric opportunity ID.
+
+function encodeCursor(value: number): string {
+  return Buffer.from(String(value)).toString('base64');
+}
+
+function decodeCursor(cursor: string): number {
+  try {
+    return parseInt(Buffer.from(cursor, 'base64').toString('utf8'), 10);
+  } catch {
+    return 0;
+  }
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
+
+export async function getOpportunityFeedPage(params: FeedPageParams): Promise<FeedPage> {
+  // ── Try the dedicated backend feed API first ────────────────────────────
+  try {
+    const cursorId = params.cursor ? decodeCursor(params.cursor) : undefined;
+    const queryParams: Record<string, string | number> = {};
+    if (cursorId) queryParams['cursor'] = cursorId;
+    if (params.inferredProfile?.location) queryParams['location'] = params.inferredProfile.location;
+    if (params.sidebarFilters?.location) queryParams['location'] = params.sidebarFilters.location;
+
+    const backendPage = await apiRequest<BackendFeedPage>({
+      method: 'get',
+      url: '/api/v1/feed/opportunities',
+      params: queryParams,
+    });
+
+    const oppCards = backendPage.items.map((bc) => oppToFeedCard(backendCardToOpportunity(bc), params, bc));
+    const mixed = mixCards(oppCards);
+
+    return {
+      cards: mixed,
+      nextCursor: backendPage.next_cursor !== null ? encodeCursor(backendPage.next_cursor) : null,
+      hasMore: backendPage.has_more,
+    };
+  } catch {
+    // ── Fallback to legacy endpoint ─────────────────────────────────────
+  }
+
+  const skip = params.cursor ? decodeCursor(params.cursor) : 0;
+
+  const opportunities = await opportunityService.getOpportunities({
+    skip,
+    limit: PAGE_SIZE,
+    category: 'jobs',
+  });
+
+  const oppCards = opportunities.map((opp) => oppToFeedCard(opp, params));
+  const mixed = mixCards(oppCards);
+
+  const hasMore = opportunities.length === PAGE_SIZE;
+  const nextSkip = skip + PAGE_SIZE;
+
+  return {
+    cards: mixed,
+    nextCursor: hasMore ? encodeCursor(nextSkip) : null,
+    hasMore,
+  };
+}
+
+// ── Interest toggle ───────────────────────────────────────────────────────────
+
+export interface InterestToggleResult {
+  opportunityId: number;
+  isInterested: boolean;
+  interestedCount: number;
+}
+
+export async function expressInterest(opportunityId: number): Promise<InterestToggleResult> {
+  const result = await apiRequest<{ opportunity_id: number; is_interested: boolean; interested_count: number }>({
+    method: 'post',
+    url: `/api/v1/feed/opportunities/${opportunityId}/interest`,
+  });
+  return {
+    opportunityId: result.opportunity_id,
+    isInterested: result.is_interested,
+    interestedCount: result.interested_count,
+  };
+}
+
+// ── Opportunity activity ──────────────────────────────────────────────────────
+
+export interface OppActivityResult {
+  items: Array<{
+    userId?: number;
+    activityType: string;
+    createdAt: string;
+  }>;
+  totalInterested: number;
+  totalSaved: number;
+}
+
+export async function getOpportunityActivity(opportunityId: number, limit = 10): Promise<OppActivityResult> {
+  const result = await apiRequest<{
+    items: Array<{ user_id?: number; activity_type: string; created_at: string }>;
+    total_interested: number;
+    total_saved: number;
+  }>({
+    method: 'get',
+    url: `/api/v1/feed/opportunities/${opportunityId}/activity`,
+    params: { limit },
+  });
+  return {
+    items: result.items.map((i) => ({
+      userId: i.user_id,
+      activityType: i.activity_type,
+      createdAt: i.created_at,
+    })),
+    totalInterested: result.total_interested,
+    totalSaved: result.total_saved,
+  };
+}

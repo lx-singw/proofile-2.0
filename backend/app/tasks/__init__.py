@@ -17,15 +17,14 @@ from app.tasks.ratings import (
     moderate_rating_content
 )
 
-from app.tasks.portal_scraper import (
-    scrape_careers24,
-    scrape_pnet,
-    scrape_indeed,
-    scrape_portal_jobs,
-    scrape_all_sources,
-    cleanup_expired_jobs,
-    update_job_stats
-)
+# Portal scraper tasks are optional and currently disabled in MVP.
+scrape_careers24 = None
+scrape_pnet = None
+scrape_indeed = None
+scrape_portal_jobs = None
+scrape_all_sources = None
+cleanup_expired_jobs = None
+update_job_stats = None
 
 __all__ = [
     # Verification tasks

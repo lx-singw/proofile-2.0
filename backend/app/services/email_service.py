@@ -155,7 +155,7 @@ class EmailService:
                 </div>
                 <p>If you didn't request this code, you can safely ignore this email.</p>
                 <div class="footer">
-                    © 2024 Proofile · Building verified professional identities
+                    © 2026 Proofile · Building verified professional identities
                 </div>
             </div>
         </body>
@@ -241,7 +241,7 @@ If you didn't request this code, you can safely ignore this email.
                 <p style="font-size: 13px; color: #9ca3af;">This link expires in 7 days. If you don't recognize this request, you can safely ignore it.</p>
                 
                 <div class="footer">
-                    © 2024 Proofile · Building verified professional identities
+                    © 2026 Proofile · Building verified professional identities
                 </div>
             </div>
         </body>

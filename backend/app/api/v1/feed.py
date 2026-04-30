@@ -78,7 +78,7 @@ async def create_post(
 ):
     """Create a new post"""
     service = FeedService(db)
-    post = service.create_post(current_user.id, data)
+    post = await service.create_post(current_user.id, data)
     return service.enrich_post(post, current_user.id)
 
 
@@ -154,7 +154,7 @@ async def toggle_reaction(
     - If different reaction exists, changes it.
     """
     service = FeedService(db)
-    result = service.toggle_reaction(post_id, current_user.id, data.type)
+    result = await service.toggle_reaction(post_id, current_user.id, data.type)
     
     if not result:
         raise HTTPException(
@@ -196,7 +196,7 @@ async def add_comment(
             detail="Post not found"
         )
     
-    comment = service.add_comment(post_id, current_user.id, data)
+    comment = await service.add_comment(post_id, current_user.id, data)
     return service._enrich_comment(comment, current_user.id)
 
 

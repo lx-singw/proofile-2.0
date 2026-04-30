@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { CollaboratorsList } from "@/components/profile/CollaboratorsList";
 import { AddCollaboratorModal } from "@/components/profile/AddCollaboratorModal";
-import { ProfileStatsBar } from "@/components/ui/QuickStatsBar";
+
 import { ProfileFAB } from "@/components/ui/FloatingActionButton";
 import { FadeIn } from "@/components/ui/PageTransition";
 import { ShareProfileModal } from "@/components/profile/ShareProfileModal";
@@ -94,13 +94,6 @@ export default function ProfilePage() {
 
   return (
     <>
-      {/* Quick Stats Bar */}
-      <ProfileStatsBar
-        completeness={profile?.completeness_score || 30}
-        viewsToday={0}
-        connections={0}
-      />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <FadeIn>
           {/* Header - Jobs Style */}
@@ -150,7 +143,7 @@ export default function ProfilePage() {
               {/* Avatar */}
               <div className="relative group">
                 <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                  {user.full_name?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase()}
+                  {user.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'}
                 </div>
                 <button
                   onClick={() => router.push("/settings?tab=profile")}

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.api.v1 import users, auth, profiles, jobs, opportunities, ws, ai, resumes, activities, notifications, resume, agents, experience, portfolio
 from app.api.v1 import social, ai_chat, verifications, discovery, analytics, personalization, agent_actions, payments, institutional, identity, guilds
+from app.api.v1 import opportunity_feed, ingest
 from app.routers import ratings, rating_requests, collaborators, verifications_peer
 from app.core.config import settings
 
@@ -23,10 +24,10 @@ api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(profiles.router, prefix="/profiles", tags=["profiles"])
 api_router.include_router(experience.router, prefix="/experience", tags=["experience"])
 api_router.include_router(portfolio.router, prefix="/portfolio", tags=["portfolio"])
+# Disabled for MVP — uncomment when ready:
 # api_router.include_router(payments.router, tags=["payments"])
 # api_router.include_router(institutional.router, tags=["institutional"])
 # api_router.include_router(identity.router, prefix="/.well-known", tags=["identity"])
-# api_router.include_router(identity.identity_router, tags=["identity"])
 # api_router.include_router(guilds.router, tags=["community"])
 
 # AI Agents
@@ -36,6 +37,10 @@ api_router.include_router(agent_actions.router, tags=["agent-actions"])
 # Opportunities (new primary route) and Jobs (legacy alias for backward compatibility)
 api_router.include_router(opportunities.router, prefix="/opportunities", tags=["opportunities"])
 api_router.include_router(jobs.router, prefix="/jobs", tags=["jobs"])  # Keep for backward compatibility
+
+# Opportunity Feed (anonymous-first, ranked, cursor-based)
+api_router.include_router(opportunity_feed.router)
+api_router.include_router(ingest.router)
 
 api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
 api_router.include_router(resumes.router, prefix="/resumes", tags=["resumes"])
@@ -55,12 +60,7 @@ api_router.include_router(ratings.router, tags=["ratings"])
 # Rating Requests: invitation-based rating flow
 api_router.include_router(rating_requests.router, tags=["rating-requests"])
 
-# Ratings v2: New reputation system with TrustRank
-try:
-    from app.api.v1 import ratings as ratings_v2
-    api_router.include_router(ratings_v2.router, tags=["ratings-v2"])
-except ImportError:
-    pass
+
 
 # Project Collaborators: Verified Work Graph
 api_router.include_router(collaborators.router, tags=["collaborators"])

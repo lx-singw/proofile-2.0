@@ -9,7 +9,7 @@
  * - Public reviews (respecting anonymity)
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { use, useState, useEffect } from 'react';
 import {
     Star, Shield, Users, TrendingUp, Award, Share2,
     ChevronDown, Filter, Loader2
@@ -51,26 +51,27 @@ interface ReputationData {
 export default function PublicReputationPage({
     params
 }: {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }) {
+    const resolvedParams = use(params);
     const [data, setData] = useState<ReputationData | null>(null);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'manager' | 'peer'>('all');
 
     useEffect(() => {
         fetchReputation();
-    }, [params.id]);
+    }, [resolvedParams.id]);
 
     const fetchReputation = async () => {
         try {
-            const response = await fetch(`/api/v1/ratings/reputation/${params.id}`);
+            const response = await fetch(`/api/v1/ratings/reputation/${resolvedParams.id}`);
             if (!response.ok) throw new Error('Failed to fetch');
             const result = await response.json();
 
             // Transform API response to component format
             setData({
                 user: {
-                    id: parseInt(params.id),
+                    id: parseInt(resolvedParams.id),
                     name: result.user_name || 'Professional',
                     title: result.user_title || '',
                     avatarUrl: result.avatar_url,
@@ -124,7 +125,7 @@ export default function PublicReputationPage({
                             {data.user.avatarUrl ? (
                                 <img src={data.user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
                             ) : (
-                                data.user.name.charAt(0)
+                                data.user.name?.charAt(0) ?? '?'
                             )}
                         </div>
                         <div>

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 from app.api.deps import get_db, get_current_user
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.services.institutional_service import InstitutionalService
 from pydantic import BaseModel
 
@@ -25,7 +25,7 @@ async def verify_institutional_claim(
     to verify a user's claim and issue a Gold Badge.
     """
     # In production, this would check if current_user has 'institutional_partner' role
-    if current_user.role != "admin": # Simple check for now
+    if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Only institutional partners can verify claims")
         
     service = InstitutionalService(db)
@@ -52,7 +52,11 @@ async def sync_hris_data(
     """
     Initiate a synchronization with a simulated HRIS source (e.g. Workday).
     For the MVP, this immediately issues gold badges based on mock sync.
+    Admin-only until real HRIS integration is in place.
     """
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Admin access required")
+
     service = InstitutionalService(db)
     
     # We use background tasks for a real sync, but here we await for confirmation

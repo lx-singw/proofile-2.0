@@ -8,7 +8,7 @@ import { CreatePostComposer, PostType, PostVisibility } from "@/components/feed/
 import { FeedLeftSidebar } from "@/components/feed/FeedLeftSidebar";
 import { FeedRightSidebar } from "@/components/feed/FeedRightSidebar";
 import { Button } from "@/components/ui/button";
-import QuickStatsBar from "@/components/ui/QuickStatsBar";
+
 import { FadeIn } from "@/components/ui/PageTransition";
 import {
     Sparkles,
@@ -207,15 +207,6 @@ export default function FeedPage() {
     return (
         // 1. GRADIENT BACKGROUND
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/50 dark:from-gray-900 dark:via-emerald-950/20 dark:to-teal-950/30">
-            {/* Quick Stats Bar */}
-            <QuickStatsBar
-                stats={[
-                    { label: "Feed Posts", value: feed.length },
-                    { label: "Connections", value: 247 },
-                    { label: "Job Matches", value: 12 },
-                ]}
-            />
-
             {/* 7. IMPROVED SPACING */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <FadeIn>

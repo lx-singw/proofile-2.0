@@ -161,7 +161,7 @@ function CommentItem({ comment, onLike, onReply, isReply }: CommentItemProps) {
                     />
                 ) : (
                     <div className={`rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold ${isReply ? "w-6 h-6 text-xs" : "w-8 h-8 text-sm"}`}>
-                        {comment.user.name.charAt(0)}
+                        {comment.user.name?.charAt(0) ?? '?'}
                     </div>
                 )}
             </Link>

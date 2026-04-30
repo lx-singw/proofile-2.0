@@ -25,7 +25,7 @@ import { HunterAgent } from "@/agents/HunterAgent";
 import { NetworkAgent } from "@/agents/NetworkAgent";
 import useAuth from "@/hooks/useAuth";
 
-export type FeedItemType = "text" | "milestone" | "job_share" | "poll" | "achievement" | "skill_verified" | "profile_update";
+export type FeedItemType = "text" | "milestone" | "job_share" | "job_match" | "poll" | "achievement" | "skill_verified" | "profile_update";
 
 export interface FeedItem {
     id: string;
@@ -172,7 +172,7 @@ export function FeedCard({ item, onLike, onComment, onShare }: FeedCardProps) {
                             />
                         ) : (
                             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center text-white font-bold text-lg">
-                                {item.user.name.charAt(0)}
+                                {item.user.name?.charAt(0) ?? '?'}
                             </div>
                         )}
                     </Link>

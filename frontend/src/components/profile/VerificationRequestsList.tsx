@@ -87,7 +87,7 @@ export function VerificationRequestsList() {
                                     {request.requester?.avatar_url ? (
                                         <img src={request.requester.avatar_url} alt={request.requester.full_name} className="w-full h-full object-cover" />
                                     ) : (
-                                        request.requester?.full_name.charAt(0)
+                                        request.requester?.full_name?.charAt(0) ?? '?'
                                     )}
                                 </div>
                                 <div>

@@ -1,10 +1,11 @@
-from sqlalchemy.orm import Session
+import json
+import uuid
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
+from sqlalchemy.orm import Session
 from app.models.user import User
 from app.models.verification import Verification
 from app.models.trust_event import TrustEvent
-import uuid
 
 class InstitutionalService:
     def __init__(self, db: Session):
@@ -41,7 +42,7 @@ class InstitutionalService:
             trust_level="GOLD",
             trust_points=50, # Massive trust boost for gold source
             verification_reference=f"GOLD-{uuid.uuid4().hex[:8].upper()}",
-            verification_data=str(metadata) if metadata else None
+            verification_data=json.dumps(metadata) if metadata else None
         )
         
         self.db.add(verification)

@@ -31,21 +31,13 @@ async def get_oidc_config(request: Request):
 @router.get("/jwks")
 async def get_jwks():
     """
-    JSON Web Key Set for verifying ID tokens
+    JSON Web Key Set for verifying ID tokens.
+    Returns 501 until RSA public key material is provisioned.
     """
-    # In production, this would return real public keys
-    return {
-        "keys": [
-            {
-                "kty": "RSA",
-                "alg": "RS256",
-                "use": "sig",
-                "kid": "proofile-default-key-id",
-                "n": "...", # Base64 encoded modulus
-                "e": "AQAB"
-            }
-        ]
-    }
+    raise HTTPException(
+        status_code=501,
+        detail="JWKS not yet configured. Provision an RSA key pair and expose the public key here."
+    )
 
 identity_router = APIRouter(prefix="/identity", tags=["identity"])
 

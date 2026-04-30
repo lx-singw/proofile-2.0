@@ -130,7 +130,7 @@ export function PeerVerificationModal({
                                             {opt.user.avatar_url ? (
                                                 <img src={opt.user.avatar_url} alt={opt.user.full_name} className="w-full h-full object-cover" />
                                             ) : (
-                                                opt.user.full_name.charAt(0)
+                                                opt.user.full_name?.charAt(0) ?? '?'
                                             )}
                                         </div>
                                         <div className="flex-1">

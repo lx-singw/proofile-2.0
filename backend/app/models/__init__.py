@@ -3,7 +3,7 @@ from .user import User
 from .profile import Profile
 
 # Opportunities (renamed from Jobs)
-from .opportunity import Opportunity, Job  # Job is alias for backward compatibility
+from .opportunity import Opportunity, Job, FeedSignal, UserFeedState, OpportunityActivity  # Job is alias for backward compatibility
 from .saved_opportunity import SavedOpportunity, SavedJob  # SavedJob is alias
 from .portal_opportunity import PortalOpportunity, PortalJob  # PortalJob is alias
 

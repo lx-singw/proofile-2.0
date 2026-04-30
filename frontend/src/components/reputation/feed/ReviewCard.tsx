@@ -68,7 +68,7 @@ export default function ReviewCard({
                     {author.avatarUrl ? (
                         <img src={author.avatarUrl} alt={author.name} className="w-full h-full rounded-full object-cover" />
                     ) : (
-                        author.name.charAt(0)
+                        author.name?.charAt(0) ?? '?'
                     )}
                 </div>
                 <div className="flex-1">

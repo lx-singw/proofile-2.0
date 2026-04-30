@@ -305,40 +305,50 @@ async def update_user_settings(
     from sqlalchemy import select
     from app.models.user import User
     
+    # Fetch the actual SQLAlchemy User object (CachedUser is frozen/immutable)
+    result = await db.execute(select(User).where(User.id == current_user.id))
+    db_user = result.scalar_one_or_none()
+    
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    
     # Verify current password
-    if not security.verify_password(payload.current_password, current_user.hashed_password):
+    if not security.verify_password(payload.current_password, db_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Current password is incorrect",
         )
     
     # Update fields
-    if payload.email and payload.email.lower() != current_user.email:
+    if payload.email and payload.email.lower() != db_user.email:
         # Check if new email already exists
-        result = await db.execute(
-            select(User).where(User.email == payload.email.lower()).where(User.id != current_user.id)
+        existing = await db.execute(
+            select(User).where(User.email == payload.email.lower()).where(User.id != db_user.id)
         )
-        if result.scalars().first():
+        if existing.scalars().first():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already in use",
             )
-        current_user.email = payload.email.lower()
+        db_user.email = payload.email.lower()
     
     if payload.full_name is not None:
-        current_user.full_name = payload.full_name
+        db_user.full_name = payload.full_name
     
     if payload.new_password:
         try:
-            current_user.hashed_password = security.get_password_hash(payload.new_password)
+            db_user.hashed_password = security.get_password_hash(payload.new_password)
         except ValueError as exc:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=str(exc),
             ) from exc
     
-    db.add(current_user)
+    db.add(db_user)
     await db.commit()
-    await db.refresh(current_user)
+    await db.refresh(db_user)
     
-    return current_user
+    return db_user
