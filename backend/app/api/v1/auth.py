@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import deps
@@ -22,10 +23,13 @@ def _validate_csrf(request: Request) -> None:
     Validate CSRF token if enabled.
     In test environment, CSRF validation is disabled for programmatic API testing.
     """
-    if not config.settings.CSRF_ENABLED and "PYTEST_CURRENT_TEST" not in os.environ:
-        # CSRF validation disabled in test environment
+    if not config.settings.CSRF_ENABLED:
         return
-    
+
+    # Also skip in automated tests (CSRF cookies are not set by test clients)
+    if "PYTEST_CURRENT_TEST" in os.environ:
+        return
+
     csrf_cookie = request.cookies.get(config.settings.CSRF_COOKIE_NAME)
     csrf_header = request.headers.get(config.settings.CSRF_HEADER_NAME)
     if not csrf_cookie or not csrf_header or csrf_cookie != csrf_header:
@@ -161,6 +165,12 @@ async def login_for_access_token(
 
     except HTTPException:
         raise
+    except SQLAlchemyError:
+        logger.exception("DB error during login for user '%s'", form_data.username)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An internal error occurred. Please try again later.",
+        )
     except Exception as e:
         logger.exception("Login failed for user '%s': %s", form_data.username, str(e))
         raise HTTPException(

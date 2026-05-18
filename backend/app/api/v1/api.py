@@ -1,8 +1,10 @@
 from fastapi import APIRouter
-from app.api.v1 import users, auth, profiles, jobs, opportunities, ws, ai, resumes, activities, notifications, resume, agents, experience, portfolio
+from app.api.v1 import users, auth, profiles, jobs, opportunities, ws, ai, activities, notifications, agents, experience, portfolio
 from app.api.v1 import social, ai_chat, verifications, discovery, analytics, personalization, agent_actions, payments, institutional, identity, guilds
 from app.api.v1 import opportunity_feed, ingest
+from app.api.v1 import reviews as verified_reviews
 from app.routers import ratings, rating_requests, collaborators, verifications_peer
+from app.api.v1.ratings import router as ratings_v2_router
 from app.core.config import settings
 
 # Verification v2 routes (L1-L3 trust system)
@@ -24,6 +26,9 @@ api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(profiles.router, prefix="/profiles", tags=["profiles"])
 api_router.include_router(experience.router, prefix="/experience", tags=["experience"])
 api_router.include_router(portfolio.router, prefix="/portfolio", tags=["portfolio"])
+
+# Verified Reviews: the core Proofile trust graph system
+api_router.include_router(verified_reviews.router, prefix="/reviews", tags=["verified-reviews"])
 # Disabled for MVP — uncomment when ready:
 # api_router.include_router(payments.router, tags=["payments"])
 # api_router.include_router(institutional.router, tags=["institutional"])
@@ -43,18 +48,16 @@ api_router.include_router(opportunity_feed.router)
 api_router.include_router(ingest.router)
 
 api_router.include_router(ai.router, prefix="/ai", tags=["ai"])
-api_router.include_router(resumes.router, prefix="/resumes", tags=["resumes"])
-api_router.include_router(resume.upload_router, prefix="/resume", tags=["resume-upload"])
-api_router.include_router(resume.analysis_router, prefix="/resume", tags=["resume-analysis"])
-api_router.include_router(resume.refine_router, prefix="/resume", tags=["resume-refine"])
-api_router.include_router(resume.build_router, prefix="/resume", tags=["resume-build"])
 api_router.include_router(activities.router, prefix="/activities", tags=["activities"])
 api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 
 # Social features: follow, connect, star, endorse, rate
 api_router.include_router(social.router, prefix="/social", tags=["social"])
 
-# Ratings: professional ratings with anti-gaming measures
+# Ratings v2 (my-reviews, my-requests, reputation, insights) — must be before v1 to avoid /{rating_id} wildcard matching
+api_router.include_router(ratings_v2_router)
+
+# Ratings v1: professional ratings with anti-gaming measures
 api_router.include_router(ratings.router, tags=["ratings"])
 
 # Rating Requests: invitation-based rating flow
@@ -96,13 +99,6 @@ api_router.include_router(personalization.router, prefix="/personalization", tag
 try:
     from app.api.v1 import feed
     api_router.include_router(feed.router, tags=["feed"])
-except ImportError:
-    pass
-
-# Portal: public jobs portal (no auth required)
-try:
-    from app.api.v1 import portal
-    api_router.include_router(portal.router, tags=["portal"])
 except ImportError:
     pass
 

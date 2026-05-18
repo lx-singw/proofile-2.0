@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const backendInternalUrl =
+  process.env.NODE_ENV !== "production"
+    ? process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_INTERNAL_URL || "http://localhost:8000"
+    : process.env.BACKEND_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 const nextConfig: NextConfig = {
   // Image optimization
   images: {
@@ -101,7 +106,7 @@ const nextConfig: NextConfig = {
         // backend routes like /api/v1/* continue to work unchanged.
         // e.g., /api/v1/users -> http://backend:8000/api/v1/users
         source: "/api/:path*",
-        destination: `${process.env.BACKEND_INTERNAL_URL || "http://backend:8000"}/api/:path*`,
+        destination: `${backendInternalUrl}/api/:path*`,
       },
       {
         source: "/@:username",

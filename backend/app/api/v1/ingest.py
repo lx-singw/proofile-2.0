@@ -44,6 +44,7 @@ class IngestOpportunityPayload(BaseModel):
 
     type: str = Field(..., min_length=1, max_length=100)
     title: str = Field(..., min_length=1, max_length=255)
+    slug: str | None = Field(default=None, max_length=500)
     description: str = Field(..., min_length=1)
     requirements: list[str] = Field(default_factory=list)
     location: LocationPayload = Field(default_factory=LocationPayload)
@@ -255,6 +256,7 @@ async def ingest_opportunity(
 
     opportunity = Opportunity(
         title=payload.title,
+        slug=payload.slug,
         description=payload.description,
         company_name=_resolve_company_name(payload),
         location=_format_location(payload.location),

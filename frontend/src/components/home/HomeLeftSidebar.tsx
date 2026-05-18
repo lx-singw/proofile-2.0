@@ -7,9 +7,6 @@ import {
     CheckCircle,
     Star,
     Award,
-    FileText,
-    Upload,
-    Sparkles,
     RefreshCw,
     Wrench,
     Users
@@ -28,7 +25,13 @@ export default function HomeLeftSidebar() {
                 const response = await feedService.getFeed({ size: 6, types: "milestone,skill_verified,achievement" });
                 setActivities(response.posts);
             } catch (error) {
-                console.error("Failed to fetch live activity:", error);
+                // Gracefully handle auth errors for guest users
+                if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
+                    // Guest user - no activities to show
+                    setActivities([]);
+                } else {
+                    console.error("Failed to fetch live activity:", error);
+                }
             } finally {
                 setLoading(false);
             }
@@ -47,40 +50,6 @@ export default function HomeLeftSidebar() {
 
     return (
         <aside className="w-full lg:w-72 space-y-4">
-            {/* Resume Tools Widget */}
-            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-emerald-200/50 dark:border-emerald-800/30 p-4 overflow-hidden shadow-lg shadow-emerald-500/5">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-                <div className="flex items-center justify-between mb-3 pt-1">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                            <FileText className="w-4 h-4 text-white" />
-                        </div>
-                        <h3 className="font-bold text-gray-900 dark:text-white text-sm">Resume Tools</h3>
-                    </div>
-                </div>
-                <div className="space-y-2 mb-3">
-                    <Link href="/resume/build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
-                        <RefreshCw className="w-4 h-4 text-emerald-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Generate from Profile</span>
-                    </Link>
-                    <Link href="/resume/upload" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
-                        <Upload className="w-4 h-4 text-green-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Upload & Analyze</span>
-                    </Link>
-                    <Link href="/resume/ai-build" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
-                        <Sparkles className="w-4 h-4 text-emerald-500" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">AI Build Resume</span>
-                    </Link>
-                </div>
-                <Link
-                    href="/portal"
-                    className="flex items-center justify-center gap-1 w-full px-3 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors text-xs"
-                >
-                    <Wrench className="w-3 h-3" />
-                    View All Tools
-                </Link>
-            </div>
-
             {/* Live Platform Activity */}
             <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-green-200/50 dark:border-green-800/30 overflow-hidden shadow-lg shadow-green-500/5">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500" />
@@ -146,7 +115,7 @@ export default function HomeLeftSidebar() {
                     </li>
                 </ul>
                 <Link
-                    href="/portal"
+                    href="/opportunities"
                     className="block w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center text-xs"
                 >
                     Find Opportunities

@@ -48,6 +48,19 @@ async def lifespan(app: FastAPI):
     """
 
     logger.info("--- Application Startup ---")
+
+    # Eagerly validate all SQLAlchemy mappers at startup.
+    # This catches missing model files or broken relationships immediately,
+    # rather than on the first query (where they'd silently become 500/401 errors).
+    try:
+        from app import models as _models  # noqa: F401 — ensures all models are imported
+        from sqlalchemy.orm import configure_mappers
+        configure_mappers()
+        logger.info("SQLAlchemy mappers configured successfully.")
+    except Exception as e:
+        logger.critical("SQLAlchemy mapper configuration failed: %s", e)
+        raise
+
     # Log environment and a redacted DB URL to verify config
     logger.info(f"Environment: {config.settings.ENVIRONMENT}")
     if config.settings.DATABASE_URL:
@@ -57,18 +70,7 @@ async def lifespan(app: FastAPI):
     else:
         logger.error("DATABASE_URL is not set!")
 
-    # --- Run Alembic migrations at startup using Alembic API ---
-    try:
-        from alembic.config import Config
-        from alembic import command
-        logger.info("Running Alembic migrations at startup using Alembic API...")
-        alembic_cfg = Config(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../alembic.ini'))
-        import asyncio
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, lambda: command.upgrade(alembic_cfg, "head"))
-        logger.info("Alembic migrations applied successfully.")
-    except Exception as e:
-        logger.error(f"Error running Alembic migrations: {e}")
+    # Migrations are handled by entrypoint.sh before uvicorn starts; no need to re-run here.
 
     RedisError = Exception  # Fallback when redis client is unavailable
     try:

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, X, Bell, User as UserIcon, LogOut, Settings, LayoutDashboard, Compass, Briefcase, Zap, Info, ShieldCheck, Star, Building2, Search, Users, Trophy, BarChart3, Bot, Rocket, UserPlus, Share2, Sparkles, FileText, PenSquare, Upload, ClipboardCheck } from "lucide-react";
+import { ChevronDown, Menu, X, Bell, User as UserIcon, LogOut, Settings, LayoutDashboard, Compass, Briefcase, Zap, Info, ShieldCheck, Star, Building2, Search, Users, Trophy, BarChart3, Bot, Rocket, UserPlus, Share2, Sparkles, ClipboardCheck } from "lucide-react";
 import ProofileLogo from "@/components/branding/ProofileLogo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import useAuth from "@/hooks/useAuth";
@@ -123,9 +123,8 @@ export function HomeHeader() {
 
     // Map current pathname to which top-nav section is "active"
     const activeSection = (() => {
-        if (['/opportunities', '/portal', '/verification', '/reputation', '/verification/history'].some(p => pathname.startsWith(p))) return 'career';
+        if (['/opportunities', '/verification', '/reputation', '/verification/history'].some(p => pathname.startsWith(p))) return 'career';
         if (['/explore', '/discover', '/companies', '/network', '/guilds', '/showcase'].some(p => pathname.startsWith(p))) return 'discover';
-        if (pathname.startsWith('/resume')) return 'resume';
         if (['/home', '/tools', '/analytics', '/ai-assistant'].some(p => pathname.startsWith(p))) return 'workspace';
         if (['/start', '/register', '/onboarding', '/share', '/about'].some(p => pathname.startsWith(p))) return 'getting-started';
         return null;
@@ -189,7 +188,6 @@ export function HomeHeader() {
                                                 {openMobileSection === 'career' && (
                                                     <div className="ml-2 mb-1">
                                                         <Link href="/opportunities" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Briefcase className="w-4 h-4" />Opportunities</Link>
-                                                        <Link href="/portal" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Search className="w-4 h-4" />Job Portal</Link>
                                                         <Link href="/verification" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><ShieldCheck className="w-4 h-4" />Verification</Link>
                                                         <Link href="/reputation" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Star className="w-4 h-4" />Ratings</Link>
                                                     </div>
@@ -214,25 +212,6 @@ export function HomeHeader() {
                                                         <Link href="/network" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Users className="w-4 h-4" />Network</Link>
                                                         <Link href="/guilds" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Users className="w-4 h-4" />Guilds</Link>
                                                         <Link href="/showcase" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Trophy className="w-4 h-4" />Showcase</Link>
-                                                    </div>
-                                                )}
-
-                                                <div className="my-1 h-px bg-gray-100 dark:bg-gray-700" />
-                                                {/* Resume */}
-                                                <button
-                                                    onClick={() => setOpenMobileSection(s => s === 'resume' ? null : 'resume')}
-                                                    className={`w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold uppercase tracking-[0.18em] rounded-lg ${
-                                                        activeSection === 'resume' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500 dark:text-gray-400'
-                                                    } hover:bg-gray-50 dark:hover:bg-gray-700/50`}
-                                                >
-                                                    Resume
-                                                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openMobileSection === 'resume' ? 'rotate-180' : ''}`} />
-                                                </button>
-                                                {openMobileSection === 'resume' && (
-                                                    <div className="ml-2 mb-1">
-                                                        <Link href="/resume" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><FileText className="w-4 h-4" />Resume Hub</Link>
-                                                        <Link href="/resume/build" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><PenSquare className="w-4 h-4" />Resume Builder</Link>
-                                                        <Link href="/resume/upload" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Upload className="w-4 h-4" />Upload Resume</Link>
                                                     </div>
                                                 )}
 
@@ -287,7 +266,7 @@ export function HomeHeader() {
                                 <ProofileLogo size={32} showWordmark={true} />
                                 {!isAccountUser && (
                                     <span className="hidden sm:block text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 ml-10">
-                                        Beyond resumes. Proven digital professional identities.
+                                        Proven digital professional identities.
                                     </span>
                                 )}
                             </Link>
@@ -320,7 +299,7 @@ export function HomeHeader() {
                                         )}
                                     </div>
 
-                                    <Link href="/portal" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-1.5">
+                                    <Link href="/opportunities" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-all duration-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-1.5">
                                         <Briefcase className="w-4 h-4" />
                                         Opportunities
                                     </Link>
@@ -340,7 +319,6 @@ export function HomeHeader() {
                                             <div className="absolute top-full left-0 mt-1 w-56 rounded-2xl border border-gray-200 bg-white py-2 shadow-2xl dark:border-gray-700 dark:bg-gray-800 z-[60] animate-in fade-in slide-in-from-top-2 duration-200" onMouseEnter={() => openNav('career')} onMouseLeave={closeNavWithDelay}>
                                                 <div className="p-1.5">
                                                     <Link href="/opportunities" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-gray-800 hover:bg-emerald-50 dark:text-gray-200 dark:hover:bg-emerald-900/20"><Briefcase className="w-4 h-4" />Opportunities</Link>
-                                                    <Link href="/portal" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Search className="w-4 h-4" />Job Portal</Link>
                                                     <Link href="/verification" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><ShieldCheck className="w-4 h-4" />Verification</Link>
                                                     <Link href="/reputation" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Star className="w-4 h-4" />Ratings</Link>
                                                 </div>
@@ -362,22 +340,6 @@ export function HomeHeader() {
                                                     <Link href="/network" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Users className="w-4 h-4" />Network</Link>
                                                     <Link href="/guilds" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Users className="w-4 h-4" />Guilds</Link>
                                                     <Link href="/showcase" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Trophy className="w-4 h-4" />Showcase</Link>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="relative" onMouseEnter={() => openNav('resume')} onMouseLeave={closeNavWithDelay}>
-                                        <button className={navBtnClass('resume')}>
-                                            Resume
-                                            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-                                        </button>
-                                        {activeNav === 'resume' && (
-                                            <div className="absolute top-full left-0 mt-1 w-56 rounded-2xl border border-gray-200 bg-white py-2 shadow-2xl dark:border-gray-700 dark:bg-gray-800 z-[60] animate-in fade-in slide-in-from-top-2 duration-200" onMouseEnter={() => openNav('resume')} onMouseLeave={closeNavWithDelay}>
-                                                <div className="p-1.5">
-                                                    <Link href="/resume" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><FileText className="w-4 h-4" />Resume Hub</Link>
-                                                    <Link href="/resume/build" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><PenSquare className="w-4 h-4" />Resume Builder</Link>
-                                                    <Link href="/resume/upload" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Upload className="w-4 h-4" />Upload Resume</Link>
                                                 </div>
                                             </div>
                                         )}
@@ -539,7 +501,7 @@ export function HomeHeader() {
                                 </>
                             ) : (
                                 <>
-                                    <Link href="/portal" className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+                                    <Link href="/opportunities" className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
                                         Opportunities
                                     </Link>
                                     <Link href="/companies" className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">

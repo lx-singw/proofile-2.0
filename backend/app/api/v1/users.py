@@ -183,21 +183,14 @@ async def get_user_stats(
 ):
     """
     Get dashboard statistics for the current user.
-    Returns counts for resumes, verifications, ratings, etc.
+    Returns counts for verifications, ratings, etc.
     """
-    from app.models.resume import Resume
     from app.models.verification import Verification
     from app.models.rating_request import RatingRequest
     from app.models.saved_opportunity import SavedOpportunity as SavedJob
     from sqlalchemy import func
     
     try:
-        # Count resumes
-        resume_count_result = await db.execute(
-            select(func.count(Resume.id)).where(Resume.user_id == current_user.id)
-        )
-        resume_count = resume_count_result.scalar() or 0
-        
         # Count verifications (completed/verified)
         verification_count_result = await db.execute(
             select(func.count(Verification.id))
@@ -221,7 +214,7 @@ async def get_user_stats(
         saved_jobs_count = saved_jobs_count_result.scalar() or 0
         
         return {
-            "resumes_count": resume_count,
+            "resumes_count": 0,  # Resume functionality has been removed
             "verifications_count": verification_count,
             "ratings_count": rating_count,
             "saved_jobs_count": saved_jobs_count,

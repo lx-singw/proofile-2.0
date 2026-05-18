@@ -123,8 +123,10 @@ class ParallelSpiderRunner:
                 
                 duration = (datetime.now() - start_time).total_seconds()
                 
-                # Parse items from output
-                items = self._parse_items_from_output(stdout.decode())
+                # Scrapy writes stats to stderr; merge both streams for item counting
+                items = self._parse_items_from_output(
+                    stdout.decode() + stderr.decode()
+                )
                 
                 if process.returncode == 0:
                     logger.info(f"Spider {spider} completed: {items} items in {duration:.1f}s")

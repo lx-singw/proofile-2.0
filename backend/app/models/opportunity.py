@@ -7,6 +7,7 @@ class Opportunity(Base, TimestampMixin):
     __tablename__ = "opportunities"
 
     id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(500), nullable=True, unique=True, index=True)
     title = Column(String(255), nullable=False, index=True)
     description = Column(Text, nullable=False)
     company_name = Column(String(255), nullable=False)
@@ -38,6 +39,12 @@ class Opportunity(Base, TimestampMixin):
     contact_phone = Column(String(50), nullable=True)
     application_url = Column(Text, nullable=True)
     is_direct = Column(Boolean, default=False)  # employer posted directly vs aggregated
+    is_active = Column(Boolean, default=True)  # feed eligibility (quality scored + not expired)
+    is_duplicate_of = Column(Integer, ForeignKey("opportunities.id"), nullable=True)  # merged duplicate tracking
+
+    # Structured location fields (extracted from raw location string)
+    city = Column(String(100), nullable=True)
+    province = Column(String(100), nullable=True)
 
     # Opportunity category: 'jobs' or 'training_skills_programs'
     category = Column(String(50), default='jobs')

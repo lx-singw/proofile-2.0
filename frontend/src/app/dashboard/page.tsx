@@ -7,7 +7,7 @@ import { useProfile } from "@/hooks/useProfile"; // New import
 import {
   Upload, PenTool, Download, Share2, ChevronRight, Sparkles,
   Shield, Star, Zap, Flame, TrendingUp, Trophy, Building2,
-  DollarSign, FileText, Briefcase, Target, Award
+  DollarSign, Briefcase, Target, Award
 } from "lucide-react";
 import PersonaSelector from "@/components/dashboard/PersonaSelector";
 import OnboardingWizard, { type OnboardingData } from "@/components/dashboard/OnboardingWizard";
@@ -21,12 +21,9 @@ import OpportunityRecommendations from "@/components/dashboard/OpportunityRecomm
 import CustomizationModal from "@/components/dashboard/CustomizationModal";
 import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
 import { Settings2 } from "lucide-react";
-import ResumeCard from "@/components/dashboard/ResumeCard";
-import { resumeService, type Resume } from "@/services/resumeService";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 import NextStepPrompt from "@/components/dashboard/NextStepPrompt";
 import { CompletenessWidget } from "@/components/profile/CompletenessWidget"; // New import
-import ResumeToolsMenu from "@/components/dashboard/ResumeToolsMenu";
 import VerificationSection from "@/components/dashboard/VerificationSection";
 import CategoryWidgets from "@/components/dashboard/CategoryWidgets";
 import { VerificationRequestsList } from "@/components/profile/VerificationRequestsList";
@@ -50,8 +47,6 @@ export default function DashboardPage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
-  const [resumes, setResumes] = useState<Resume[]>([]);
-  const [resumesLoading, setResumesLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -99,47 +94,6 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error("Failed to complete onboarding:", error);
-    }
-  };
-
-  // Fetch resumes
-  useEffect(() => {
-    if (user && isOnboarded) {
-      resumeService.list()
-        .then(setResumes)
-        .catch(err => console.error('Failed to fetch resumes:', err))
-        .finally(() => setResumesLoading(false));
-    }
-  }, [user, isOnboarded]);
-
-  // Handle resume export
-  const handleResumeExport = async (id: string) => {
-    try {
-      const blob = await resumeService.exportPDF(id);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `resume_${id}_${new Date().toISOString().split('T')[0]}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Export error:', error);
-      alert(`Failed to export: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
-
-  // Handle resume delete
-  const handleResumeDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this resume?')) return;
-
-    try {
-      await resumeService.delete(id);
-      setResumes(resumes.filter(r => r.id !== id));
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert(`Failed to delete: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -209,7 +163,6 @@ export default function DashboardPage() {
           <div className="max-w-2xl mx-auto space-y-6">
             <NextStepPrompt
               profileComplete={Boolean(stats?.verifications_count && stats.ratings_count)}
-              hasResume={(stats?.resumes_count || 0) > 0}
               isVerified={(stats?.verifications_count || 0) > 0}
               hasRatings={(stats?.ratings_count || 0) > 0}
               userName={user?.full_name?.split(' ')[0]}
@@ -231,13 +184,6 @@ export default function DashboardPage() {
 
           {/* Category-Specific Widgets */}
           <CategoryWidgets opportunityPreference={user?.opportunity_preference as 'jobs' | 'training_skills_programs' | 'both' | null} />
-
-          {/* Resume Tools - Collapsed by default */}
-          {preferences.visibleSections.resumeTools && (
-            <div data-tour="resume-tools">
-              <ResumeToolsMenu />
-            </div>
-          )}
 
           {/* Profile & Verification */}
           {preferences.visibleSections.profileVerification && (

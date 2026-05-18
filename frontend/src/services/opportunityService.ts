@@ -36,6 +36,47 @@ export interface KnowledgeRequirements {
   ideal?: string[] | null;
 }
 
+// ── Spider/Scraper Metadata Types ────────────────────────────────────────────
+
+export interface SpiderEligibility {
+  age_min?: number;
+  age_max?: number;
+  citizenship?: string;
+  employment_status?: string;
+  disability_friendly?: boolean;
+}
+
+export interface SpiderContacts {
+  emails?: string[];
+  phones?: string[];
+}
+
+export interface ExperienceYears {
+  min?: number;
+  max?: number;
+}
+
+export interface ExtraMetadata {
+  spider_eligibility?: SpiderEligibility;
+  spider_contacts?: SpiderContacts;
+  application_method?: string | string[];
+  application_warnings?: string[];
+  deadline_type?: "ongoing" | "asap" | "fixed" | "unknown";
+  salary_string?: string;
+  positions_count?: number;
+  published_date?: string;
+  reference_number?: string;
+  sector?: string;
+  category?: string;
+  education_level?: string;
+  experience_years?: ExperienceYears;
+  work_arrangement?: string;
+  structured_qualifications?: any;
+  structured_experience?: any;
+  structured_skills?: any;
+  structured_knowledge?: any;
+}
+
 // ── Primary Opportunity type ──────────────────────────────────────────────────
 
 // Primary types - Opportunity
@@ -65,7 +106,13 @@ export interface Opportunity {
   contact_email?: string | null;
   contact_phone?: string | null;
   contact_website?: string | null;
+  contact_address?: string | null;
+  contact_whatsapp?: string | null;
+  contact_fax?: string | null;
+  canonical_link?: string | null;
   is_direct?: boolean;
+  is_direct_company_link?: boolean;
+  link_quality?: string | null;
   // Dates
   posted_at?: string | null;
   expires_at?: string | null;
@@ -96,6 +143,18 @@ export interface Opportunity {
   skills_structured?: StructuredSkill[] | null;
   knowledge_requirements?: KnowledgeRequirements | null;
   conditions_of_employment?: string[] | null;
+  // Social proof and engagement
+  views?: number;
+  views_count?: number;
+  saves?: number;
+  vouch_positive?: number;
+  vouch_negative?: number;
+  vouches?: number;
+  is_verified?: boolean;
+  cipc_verified?: boolean;
+  // Spider/scraper metadata
+  extra_metadata?: ExtraMetadata;
+  application_method?: string | string[];
 }
 
 export interface OpportunityRecommendation {

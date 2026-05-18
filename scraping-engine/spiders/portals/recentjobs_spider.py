@@ -54,6 +54,11 @@ class RecentJobsSpider(scrapy.Spider):
     max_pages = 50
     pages_crawled = 0
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'max_pages' in kwargs:
+            self.max_pages = int(kwargs['max_pages'])
+    
     # Regex patterns for closing date extraction
     CLOSING_DATE_PATTERNS = [
         r'closing\s*date[:\s]+(\d{1,2})\s*(january|february|march|april|may|june|july|august|september|october|november|december)\s*(\d{4})',
@@ -189,6 +194,11 @@ class RecentJobsSpider(scrapy.Spider):
             education_level = self._extract_education_level(text_clean)
             experience_years = self._extract_experience_years(text_clean)
             application_method = self._extract_application_method(text_clean, has_url=bool(external_url))
+            expiry_signals = self._extract_expiry_signals(
+                response,
+                text_clean.lower(),
+                closing_date['parsed'] if closing_date else None
+            )
             
             # Set original_url to application link if found (standard practice)
             # But keep tracking source
@@ -211,6 +221,17 @@ class RecentJobsSpider(scrapy.Spider):
             item['is_direct_company_link'] = is_company_link
             item['link_quality'] = link_quality
             item['original_url'] = item['canonical_link']  # For backwards compatibility
+            if closing_date:
+                item['closing_date'] = closing_date['parsed']
+                item['application_deadline'] = closing_date['parsed']
+            if salary:
+                item['salary'] = salary
+            if contacts.get('emails'):
+                item['contact_email'] = contacts['emails'][0]
+            if contacts.get('phones'):
+                item['contact_phone'] = contacts['phones'][0]
+            if application_method:
+                item['application_method'] = application_method.get('method') if isinstance(application_method, dict) else application_method
             
             # Build Raw Data for AI Pipeline
             raw_data = {
@@ -236,6 +257,7 @@ class RecentJobsSpider(scrapy.Spider):
                 'education_level': education_level,
                 'experience_years': experience_years,
                 'application_method': application_method,
+                'expiry_signals': expiry_signals,
                 # Quality signals for AI confidence scoring
                 'quality_signals': {
                     'has_closing_date': bool(closing_date),
@@ -371,6 +393,13 @@ class RecentJobsSpider(scrapy.Spider):
 
     def _extract_location(self, content):
         content = content.lower()
+        # Check specific pattern first to prefer city/suburb over broad province mentions
+        match = re.search(r'location[:\s]+([A-Za-z\s,]+?)(?:\.|$|\n)', content, re.IGNORECASE)
+        if match:
+            extracted = match.group(1).strip().title()
+            if extracted:
+                return extracted
+
         # Check Provinces first
         for prov in self.SA_PROVINCES:
             if prov in content: return prov.title()
@@ -378,11 +407,6 @@ class RecentJobsSpider(scrapy.Spider):
         # Check Cities
         for city in self.SA_CITIES:
             if city in content: return city.title()
-            
-        # Check specific pattern
-        match = re.search(r'location[:\s]+([A-Za-z\s,]+?)(?:\.|$|\n)', content, re.IGNORECASE)
-        if match:
-            return match.group(1).strip().title()
 
         return "South Africa"
 
@@ -397,12 +421,12 @@ class RecentJobsSpider(scrapy.Spider):
                 try:
                     if len(groups) == 3:
                         day, month_str, year = groups
-                        month = self.MONTH_MAP.get(month_str.lower(), 1)
+                        month = int(month_str) if month_str.isdigit() else self.MONTH_MAP.get(month_str.lower(), 1)
                         return {
                             'raw': match.group(0),
                             'parsed': f"{int(year):04d}-{month:02d}-{int(day):02d}"
                         }
-                except:
+                except (TypeError, ValueError):
                     continue
         return None
 

@@ -5,7 +5,6 @@ import { ArrowRight, Upload, Shield, Star, Briefcase, CheckCircle } from "lucide
 
 interface NextStepPromptProps {
     profileComplete: boolean;
-    hasResume: boolean;
     isVerified: boolean;
     hasRatings: boolean;
     userName?: string;
@@ -22,7 +21,6 @@ interface NextStepPromptProps {
  */
 export default function NextStepPrompt({
     profileComplete,
-    hasResume,
     isVerified,
     hasRatings,
     userName = "there",
@@ -31,23 +29,6 @@ export default function NextStepPrompt({
 
     // Determine the next step based on user's progress
     const getNextStep = () => {
-        if (!hasResume) {
-            return {
-                icon: Upload,
-                iconColor: "text-green-600 bg-green-100 dark:bg-green-900/30",
-                title: "Create your first resume",
-                description: "Upload or build a professional resume in 2 minutes",
-                time: "2 min",
-                action: "Create Resume",
-                href: "/start",
-                nextSteps: [
-                    "Get verified credentials",
-                    "Start getting matched to jobs",
-                ],
-                priority: "high",
-            };
-        }
-
         if (!isVerified) {
             return {
                 icon: Shield,
@@ -100,7 +81,7 @@ export default function NextStepPrompt({
     const Icon = step.icon;
 
     // Calculate completion percentage
-    const completionSteps = [hasResume, isVerified, hasRatings];
+    const completionSteps = [isVerified, hasRatings];
     const completedCount = completionSteps.filter(Boolean).length;
     const completionPercent = Math.round((completedCount / completionSteps.length) * 100);
 
@@ -196,12 +177,6 @@ export default function NextStepPrompt({
                         Completed
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {hasResume && (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
-                                <CheckCircle className="w-3 h-3" />
-                                Resume
-                            </span>
-                        )}
                         {isVerified && (
                             <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-1 rounded-full">
                                 <CheckCircle className="w-3 h-3" />

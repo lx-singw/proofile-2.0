@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useCallback, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Inbox } from 'lucide-react';
 import {
   FeedCard,
   OpportunityFeedCard,
@@ -17,7 +17,7 @@ import { useFeedSignals } from '@/hooks/useFeedSignals';
 import { useSessionFeed } from '@/hooks/useSessionFeed';
 import { storeCardMeta } from '@/hooks/useSessionFeed';
 import { useReviewerConnections } from '@/hooks/useReviewerConnections';
-import { expressInterest } from '@/services/opportunityFeedService';
+import { expressInterest, recordApplyClick, recordShare, toggleSave } from '@/services/opportunityFeedService';
 import { MatchCard } from './feed/MatchCard';
 import { InsightCard } from './feed/InsightCard';
 import { LearningTriggerCard } from './feed/LearningTriggerCard';
@@ -36,6 +36,7 @@ interface OpportunityFeedProps {
     salaryMin?: number;
     salaryMax?: number;
     skills?: string[];
+    opportunityTypes?: string[];
   };
   /** Callback when anonymous user taps Save — parent handles upgrade prompt */
   onAnonymousSave?: (card: OpportunityFeedCard) => void;
@@ -233,7 +234,6 @@ export function OpportunityFeed({
   // ── Signal tracking ───────────────────────────────────────────────────────
   const { onCardVisible, fireSignal } = useFeedSignals({
     userId: userId ?? null,
-    isLoggedIn: userFeedState !== 'anonymous',
   });
 
   // ── Session inference ─────────────────────────────────────────────────────
@@ -282,8 +282,7 @@ export function OpportunityFeed({
         sessionInferred,
         learningShownRef,
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cards, userFeedState, isLearning, sessionInferred],
+    [cards, userFeedState, isLearning, sessionInferred, learningShownRef],
   );
 
   // ── Virtual windowing ─────────────────────────────────────────────────────
@@ -335,12 +334,25 @@ export function OpportunityFeed({
   }
 
   if (mixedCards.length === 0) {
+    const hasActiveFilters =
+      sidebarFilters &&
+      Object.values(sidebarFilters).some((v) =>
+        Array.isArray(v) ? v.length > 0 : Boolean(v),
+      );
     return (
-      <div className="rounded-2xl border border-gray-200/50 dark:border-gray-700/30 bg-white/60 dark:bg-gray-800/60 p-10 text-center">
-        <p className="text-gray-500 dark:text-gray-400 text-sm">No opportunities found right now.</p>
+      <div className="rounded-2xl border border-gray-200/50 dark:border-gray-700/30 bg-white/60 dark:bg-gray-800/60 p-10 text-center space-y-3">
+        <Inbox className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto" />
+        <p className="text-gray-600 dark:text-gray-300 font-semibold">
+          {hasActiveFilters ? 'No opportunities match your filters' : 'No opportunities right now'}
+        </p>
+        <p className="text-sm text-gray-400 dark:text-gray-500">
+          {hasActiveFilters
+            ? 'Try removing some filters to see more results.'
+            : 'Check back soon — new listings are added daily.'}
+        </p>
         <Link
           href="/opportunities"
-          className="mt-3 inline-block text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+          className="mt-1 inline-block text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
         >
           Browse all opportunities →
         </Link>
@@ -351,7 +363,7 @@ export function OpportunityFeed({
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-4" ref={containerRef}>
+    <div className="space-y-4 max-h-[calc(100vh-16rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500/60 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/60 dark:scrollbar-track-gray-800 pr-2" ref={containerRef}>
       {mixedCards.map((card, i) => {
         // Virtual windowing: hide cards far outside the viewport
         const isInWindow = i >= visibleRange.start && i <= visibleRange.end;
@@ -374,7 +386,7 @@ export function OpportunityFeed({
                 }
                 onView={() => fireSignal(card.id, i, card.type, 'view')}
                 onDwell={() => fireSignal(card.id, i, card.type, 'dwell_3s')}
-                onExpand={() => fireSignal(card.id, i, card.type, 'interest')}
+                onExpand={() => fireSignal(card.id, i, card.type, 'expand')}
                 onInterest={
                   userFeedState === 'profile' && onUnverifiedInterest
                     ? (c) => {
@@ -398,8 +410,25 @@ export function OpportunityFeed({
                         fireSignal(card.id, i, card.type, 'save');
                         onAnonymousSave(c);
                       }
+                    : userFeedState !== 'anonymous'
+                      ? async () => {
+                          fireSignal(card.id, i, card.type, 'save');
+                          await toggleSave(Number(card.id));
+                        }
                     : undefined
                 }
+                onShare={async () => {
+                  fireSignal(card.id, i, card.type, 'share');
+                  if (userFeedState !== 'anonymous') {
+                    await recordShare(Number(card.id));
+                  }
+                }}
+                onApplyClick={async () => {
+                  fireSignal(card.id, i, card.type, 'apply_click');
+                  if (userFeedState !== 'anonymous') {
+                    await recordApplyClick(Number(card.id));
+                  }
+                }}
                 onDismiss={() => fireSignal(card.id, i, card.type, 'dismiss')}
                 onNetworkPrompt={userFeedState === 'anonymous' ? onNetworkPrompt : undefined}
               />

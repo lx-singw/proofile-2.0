@@ -45,10 +45,16 @@ COOKIES_ENABLED = False
 
 # Enable or disable downloader middlewares
 DOWNLOADER_MIDDLEWARES = {
+    "middlewares.rate_limiter.SmartRateLimiterMiddleware": 100,  # Smart rate limiting first
     "middlewares.proxy_middleware.ProxyMiddleware": 400,
     "middlewares.user_agent_middleware.RandomUserAgentMiddleware": 500,
     "scrapy.downloadermiddlewares.retry.RetryMiddleware": 550,
 }
+
+# Smart rate limiting configuration
+RATE_LIMIT_BASE_DELAY = float(os.getenv("RATE_LIMIT_BASE_DELAY", "2.0"))
+RATE_LIMIT_MAX_DELAY = float(os.getenv("RATE_LIMIT_MAX_DELAY", "60.0"))
+RATE_LIMIT_CIRCUIT_THRESHOLD = int(os.getenv("RATE_LIMIT_CIRCUIT_THRESHOLD", "5"))
 
 # ============================================================================
 # PROXY CONFIGURATION (Required for Indeed)

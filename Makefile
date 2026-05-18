@@ -1,4 +1,4 @@
-.PHONY: setup-dev start-dev stop-dev migrate smoke-pass scrape-now scrape-spider test-backend test-frontend lint security-scan security-full security-secrets security-deps security-containers security-infra security-fix
+.PHONY: setup-dev start-dev stop-dev migrate seed-dev smoke-pass scrape-now scrape-spider test-backend test-frontend lint security-scan security-full security-secrets security-deps security-containers security-infra security-fix
 
 # Development commands
 setup-dev:
@@ -16,6 +16,10 @@ stop-dev:
 migrate:
 	@echo "Running database migrations..."
 	docker compose exec backend alembic upgrade head
+
+seed-dev:
+	@echo "Seeding dev user (dev@example.com / DevPass1!)..."
+	docker compose exec backend poetry run python scripts/seed_dev_user.py
 
 smoke-pass:
 	@echo "Running smoke pass (API, DB, Celery, frontend routes)..."

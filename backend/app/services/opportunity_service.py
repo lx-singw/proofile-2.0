@@ -321,6 +321,12 @@ async def get_opportunity_by_id(db: AsyncSession, opportunity_id: int) -> Opport
     return result.scalar_one_or_none()
 
 
+async def get_opportunity_by_slug(db: AsyncSession, slug: str) -> Opportunity | None:
+    """Get an opportunity by slug."""
+    result = await db.execute(select(Opportunity).where(Opportunity.slug == slug))
+    return result.scalar_one_or_none()
+
+
 async def save_opportunity(db: AsyncSession, user_id: int, opportunity_id: int, notes: str = None):
     """Save an opportunity for later review."""
     from app.models.saved_opportunity import SavedOpportunity

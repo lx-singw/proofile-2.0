@@ -1,7 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.user import User
-from app.models.resume import Resume
 from typing import Dict, Any, List
 
 class DataAggregator:
@@ -39,36 +38,13 @@ class DataAggregator:
             "phone": "+1 (555) 000-0000"
         }
 
-    async def _fetch_uploaded_resumes_data(self) -> List[Dict[str, Any]]:
+    async def _fetch_uploaded_resumes_data(self) -> Dict[str, Any]:
         """
         Fetches data from previously uploaded/analyzed resumes.
+        Note: Resume functionality has been removed.
         """
-        result = await self.db.execute(
-            select(Resume)
-            .where(Resume.user_id == self.user_id)
-            .order_by(Resume.updated_at.desc())
-            .limit(3)
-        )
-        resumes = result.scalars().all()
-        
-        aggregated_work = []
-        aggregated_education = []
-        aggregated_skills = []
-        
-        for resume in resumes:
-            # Assuming resume.analysis_results contains parsed data
-            # If not, we'd need to parse the file_path here
-            if resume.analysis_results:
-                data = resume.analysis_results
-                if "work_experience" in data:
-                    aggregated_work.extend(data["work_experience"])
-                if "education" in data:
-                    aggregated_education.extend(data["education"])
-                if "skills" in data:
-                    aggregated_skills.extend(data["skills"])
-                    
         return {
-            "work_experience": aggregated_work,
-            "education": aggregated_education,
-            "skills": list(set(aggregated_skills)) # Deduplicate simple strings
+            "work_experience": [],
+            "education": [],
+            "skills": []
         }

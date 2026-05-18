@@ -7,13 +7,10 @@ import useAuth from "@/hooks/useAuth";
 import { useReputationScores } from "@/hooks/useReputationScores";
 
 // Components
-import FeaturedSections from "@/components/portal/FeaturedSections";
 import { Footer } from "@/components/layout/Footer";
 import { UserProfileCard } from "@/components/home/UserProfileCard";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
-import FilterSidebar from "@/components/portal/FilterSidebar";
-import portalService from "@/services/portalService";
 import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
 import { OpportunityFeed } from "@/components/home/OpportunityFeed";
 import { UpgradePrompt, UpgradePromptVariant } from "@/components/home/feed/UpgradePrompt";
@@ -103,53 +100,9 @@ export default function HomePage() {
     opportunity_types?: string[];
   }>({});
 
-  // Facets from API
-  const [facets, setFacets] = useState<any>(null);
-  const [facetsLoading, setFacetsLoading] = useState(true);
-
-  // Fetch facets on mount (for guest job portal)
-  useEffect(() => {
-    if (isLoggedIn) return; // Don't fetch for logged-in users
-
-    const fetchFacets = async () => {
-      try {
-        setFacetsLoading(true);
-        const response = await portalService.searchJobs({
-          page: 1,
-          size: 1
-        });
-        if (response?.facets) {
-          setFacets(response.facets);
-        }
-      } catch (error) {
-        console.error("Error fetching facets:", error);
-      } finally {
-        setFacetsLoading(false);
-      }
-    };
-    fetchFacets();
-  }, [isLoggedIn]);
-
-  const handleFilterChange = useCallback((filterName: string, value: string | string[]) => {
-    setSidebarFilters(prev => ({
-      ...prev,
-      [filterName]: value
-    }));
-    if (filterName === "opportunity_types" && Array.isArray(value)) {
-      setSelectedTypes(value as OpportunityType[]);
-    }
-  }, []);
-
-  const handleClearFilters = useCallback(() => {
-    setSidebarFilters({});
-    setSelectedCategory(null);
-    setSelectedTypes([]);
-  }, []);
-
   const combinedOpportunityTypes = selectedTypes.length > 0
     ? selectedTypes
     : (sidebarFilters.opportunity_types || []) as OpportunityType[];
-  void combinedOpportunityTypes; // kept for future portal/filter integration
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-emerald-950/20 dark:to-cyan-950/30 flex items-center justify-center">
@@ -160,7 +113,7 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Upgrade prompts — portal over the entire page */}
+      {/* Upgrade prompts */}
       {upgradePrompt && (
         <UpgradePrompt
           variant={upgradePrompt}
@@ -185,9 +138,9 @@ export default function HomePage() {
       {/* ========================================= */}
       {isLoggedIn ? (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-6 lg:h-[calc(100vh-12rem)]">
             {/* Left Sidebar - User Profile + Tools */}
-            <div className="hidden lg:block flex-shrink-0 w-72 space-y-4">
+            <div className="hidden lg:block flex-shrink-0 w-72 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
               <UserProfileCard />
               <HomeLeftSidebar />
             </div>
@@ -216,12 +169,13 @@ export default function HomePage() {
                 sidebarFilters={{
                   location: sidebarFilters.location,
                   industry: sidebarFilters.category,
+                  opportunityTypes: combinedOpportunityTypes,
                 }}
               />
             </div>
 
             {/* Right Sidebar - Network Suggestions & Insights */}
-            <div className="hidden xl:block flex-shrink-0 w-80 space-y-4">
+            <div className="hidden xl:block flex-shrink-0 w-80 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
               <HomeRightSidebar />
             </div>
           </div>
@@ -237,7 +191,7 @@ export default function HomePage() {
         </div>
       ) : (
         /* ========================================= */
-        /* GUEST VIEW: Hero + Job Portal */
+        /* GUEST VIEW: Hero + Opportunities */
         /* ========================================= */
         <>
           {/* Hero Section */}
@@ -302,18 +256,11 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Job Portal Content */}
+          {/* Opportunities Content */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex flex-col lg:flex-row gap-6">
-              {/* Left Sidebar - Filters */}
+              {/* Left Sidebar */}
               <div className="hidden lg:block flex-shrink-0 w-72 space-y-6">
-                <FilterSidebar
-                  facets={facets}
-                  selectedFilters={sidebarFilters}
-                  onFilterChange={handleFilterChange}
-                  onClearFilters={handleClearFilters}
-                  isLoading={facetsLoading}
-                />
                 <HomeLeftSidebar />
               </div>
 
@@ -330,6 +277,7 @@ export default function HomePage() {
                   sidebarFilters={{
                     location: sidebarFilters.location,
                     industry: sidebarFilters.category,
+                    opportunityTypes: combinedOpportunityTypes,
                   }}
                   onAnonymousSave={handleAnonymousSave}
                   onNetworkPrompt={handleNetworkPrompt}
@@ -338,7 +286,6 @@ export default function HomePage() {
 
               {/* Right Sidebar */}
               <div className="hidden xl:block flex-shrink-0 w-80 space-y-6">
-                <FeaturedSections />
                 <HomeRightSidebar />
               </div>
             </div>

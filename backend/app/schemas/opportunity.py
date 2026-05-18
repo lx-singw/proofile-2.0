@@ -4,6 +4,7 @@ Pydantic schemas for Opportunity objects.
 from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import date, datetime
 import json
+import re
 from typing import Optional, List, Any
 
 # --- Base Schema ---
@@ -29,7 +30,8 @@ class OpportunityBase(BaseModel):
             try:
                 return json.loads(v)
             except Exception:
-                return []
+                parts = [part.strip() for part in re.split(r'[,|\n]+', v) if part.strip()]
+                return parts or []
         return v
 
 # --- Schemas for API Operations ---
@@ -61,6 +63,7 @@ class OpportunityRead(OpportunityBase):
     """Schema for reading an opportunity from the API."""
     model_config = ConfigDict(from_attributes=True)
     id: int
+    slug: str | None = None
     employer_id: int | None
     source: str | None = None
     source_id: str | None = None
@@ -83,8 +86,8 @@ class OpportunityRead(OpportunityBase):
     application_url: str | None = None
     contact_website: str | None = None
     is_direct: bool = False
-    created_at: datetime
-    updated_at: datetime
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     # Rich AI-extracted fields — returned as parsed objects
     benefits: list[str] | None = None
@@ -110,7 +113,12 @@ class OpportunityRead(OpportunityBase):
         result = _parse_json_field(v)
         if result is None:
             return None
-        return result if isinstance(result, list) else None
+        if isinstance(result, list):
+            return result
+        if isinstance(result, str):
+            parts = [part.strip() for part in re.split(r'[,|\n]+', result) if part.strip()]
+            return parts or None
+        return None
 
     @field_validator(
         'qualification_requirements', 'experience_requirements', 'knowledge_requirements',
@@ -122,95 +130,6 @@ class OpportunityRead(OpportunityBase):
         if result is None:
             return None
         return result if isinstance(result, dict) else None
-
-class OpportunityRecommendationRead(BaseModel):
-    """Opportunity with match score and breakdown."""
-    opportunity: OpportunityRead
-    match_score: int
-    score_breakdown: dict[str, int]
-    model_config = ConfigDict(from_attributes=True)
-
-class OpportunityDetailRead(BaseModel):
-    """Detailed opportunity information with save status and related opportunities."""
-    opportunity: OpportunityRead
-    is_saved: bool
-    related_opportunities: list[OpportunityRead]
-    model_config = ConfigDict(from_attributes=True)
-
-
-# Backward compatibility aliases
-JobBase = OpportunityBase
-JobCreate = OpportunityCreate
-JobUpdate = OpportunityUpdate
-JobRead = OpportunityRead
-JobRecommendationRead = OpportunityRecommendationRead
-JobDetailRead = OpportunityDetailRead
-
-# --- Base Schema ---
-class OpportunityBase(BaseModel):
-    """Shared attributes for an opportunity."""
-    title: str
-    description: str
-    company_name: str
-    location: str | None = None
-    opportunity_type: str | None = None  # full-time, part-time, contract, internship, learnership, etc.
-    category: str = 'jobs'  # 'jobs' or 'training_skills_programs'
-    required_skills: list[str] | None = None
-    experience_level: str | None = None
-    industry: str | None = None
-    salary_range: str | None = None
-    requires_verification_level: int = 0  # 0=none, 1=L1 (skill), 2=L2 (employment), 3=L3 (identity)
-    verified_candidates_only: bool = False
-    
-    @field_validator('required_skills', mode='before')
-    @classmethod
-    def parse_skills(cls, v):
-        if isinstance(v, str):
-            try:
-                return json.loads(v)
-            except:
-                return []
-        return v
-
-# --- Schemas for API Operations ---
-class OpportunityCreate(OpportunityBase):
-    """Schema for creating a new opportunity."""
-    pass
-
-class OpportunityUpdate(OpportunityBase):
-    """Schema for updating an existing opportunity. All fields are optional."""
-    title: str | None = None
-    description: str | None = None
-    company_name: str | None = None
-    category: str | None = None
-
-class OpportunityRead(OpportunityBase):
-    """Schema for reading an opportunity from the API."""
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    employer_id: int | None
-    source: str | None = None
-    source_id: str | None = None
-    source_url: str | None = None
-    source_platform: str | None = None
-    remote_type: str | None = None
-    salary_min: int | None = None
-    salary_max: int | None = None
-    salary_visible: bool = True
-    quality_score: float | None = None
-    trust_score: float | None = None
-    engagement_rate: float | None = None
-    ai_status: str | None = None
-    ai_confidence_score: float | None = None
-    posted_at: datetime | None = None
-    expires_at: datetime | None = None
-    application_deadline_date: date | None = None
-    contact_email: str | None = None
-    contact_phone: str | None = None
-    application_url: str | None = None
-    is_direct: bool = False
-    created_at: datetime
-    updated_at: datetime
 
 class OpportunityRecommendationRead(BaseModel):
     """Opportunity with match score and breakdown."""

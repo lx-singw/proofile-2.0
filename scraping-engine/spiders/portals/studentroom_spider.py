@@ -325,6 +325,10 @@ class StudentRoomSpider(scrapy.Spider):
         salary = self._extract_salary(item.get('description_full', ''))
         contacts = self._extract_contacts(item.get('description_full', ''))
         sector = self._detect_sector(item.get('description_full', ''))
+        application_method = self._extract_application_method(
+            item.get('description_full', ''),
+            has_url=bool(external_url)
+        )
         
         fingerprint = self._generate_fingerprint(item.get('title', ''), item.get('company', ''))
         is_pdf = external_url.lower().endswith('.pdf') if external_url else False
@@ -338,8 +342,31 @@ class StudentRoomSpider(scrapy.Spider):
         
         # If we found a better URL in structured extraction, update canonical_link
         if structured_req.get('application_url') and structured_req.get('application_url') != external_url:
-            item['canonical_link'] = structured_req.get('application_url')
+            structured_application_url = structured_req.get('application_url')
+            structured_is_company_link = is_canonical_link(structured_application_url)
+            item['canonical_link'] = structured_application_url if structured_is_company_link else studentroom_url
+            item['is_direct_company_link'] = structured_is_company_link
+            item['link_quality'] = 'structured_apply_link' if structured_is_company_link else link_quality
+            best_application_url = structured_application_url if structured_is_company_link else None
             self.logger.info(f"Using structured requirement application URL: {structured_req.get('application_url')}")
+
+        if closing_date:
+            item['closing_date'] = closing_date['parsed']
+            item['application_deadline'] = closing_date['parsed']
+        if salary:
+            item['salary'] = salary
+        if contacts.get('emails'):
+            item['contact_email'] = contacts['emails'][0]
+        if contacts.get('phones'):
+            item['contact_phone'] = contacts['phones'][0]
+        if application_method:
+            item['application_method'] = application_method.get('method') if isinstance(application_method, dict) else application_method
+
+        expiry_signals = self._extract_expiry_signals(
+            response,
+            item.get('description_full', '').lower(),
+            closing_date.get('parsed') if closing_date else None
+        )
         
         # Build comprehensive raw_data for AI pipeline processing
         raw_data = item.get('raw_data', '{}')
@@ -358,6 +385,8 @@ class StudentRoomSpider(scrapy.Spider):
             'salary': salary,
             'contacts': contacts,
             'sector': sector,
+            'application_method': application_method,
+            'expiry_signals': expiry_signals,
             'dedup_fingerprint': fingerprint,
             'is_pdf_application': is_pdf,
             'scraped_at': datetime.utcnow().isoformat(),
@@ -383,7 +412,10 @@ class StudentRoomSpider(scrapy.Spider):
             f"Closing: {closing_date.get('parsed') if closing_date else 'Not found'}"
         )
         
-        yield item
+        if self._validate_item(item):
+            yield item
+        else:
+            self.logger.warning(f"Skipping invalid item: {item.get('title', 'NO_TITLE')}")
 
     def _find_next_page(self, response):
         """Find the next page URL for pagination."""
@@ -410,6 +442,33 @@ class StudentRoomSpider(scrapy.Spider):
         # Remove common unwanted patterns
         cleaned = re.sub(r'\s+', ' ', cleaned)
         return cleaned
+
+    def _validate_item(self, item):
+        """
+        Validate that an item has the minimum required feed/queue fields.
+        """
+        required_fields = ['title', 'original_url', 'source_platform']
+        for field in required_fields:
+            if not item.get(field):
+                self.logger.error(f"Missing required field '{field}' in item: {item.get('title', 'UNKNOWN')}")
+                return False
+
+        title = item.get('title', '')
+        if len(title) < 10 or len(title) > 500:
+            self.logger.warning(f"Invalid title length ({len(title)}): {title[:50]}...")
+            return False
+
+        url = item.get('original_url', '')
+        if not url.startswith('http'):
+            self.logger.error(f"Invalid URL format: {url}")
+            return False
+
+        description = item.get('description_full', '')
+        if len(description) < 100:
+            self.logger.warning(f"Description too short ({len(description)}): {title[:50]}...")
+            return False
+
+        return True
 
     def _detect_type(self, text):
         """
@@ -687,6 +746,56 @@ class StudentRoomSpider(scrapy.Spider):
         if match:
              return match.group(1).strip()
              
+        return None
+
+    def _extract_application_method(self, text, has_url=False):
+        """
+        Detect how to apply: email, online, in-person, or post.
+        """
+        if not text:
+            return None
+
+        text_lower = text.lower()
+        methods = []
+        instructions = None
+
+        how_to_apply_match = re.search(
+            r'(how\s+to\s+apply[:\s]*)([^\n]{0,500})',
+            text,
+            re.IGNORECASE
+        )
+        if how_to_apply_match:
+            instructions = how_to_apply_match.group(2).strip()
+
+        if 'email' in text_lower or '@' in text or 'send your cv' in text_lower:
+            methods.append('email')
+
+        if (has_url or
+            'online' in text_lower or
+            'portal' in text_lower or
+            'website' in text_lower or
+            'click here' in text_lower or
+            'apply here' in text_lower or
+            'apply now' in text_lower or
+            'application form' in text_lower or
+            'workday' in text_lower or
+            'successfactors' in text_lower or
+            'smartrecruiters' in text_lower):
+            methods.append('online')
+
+        if 'hand deliver' in text_lower or 'in person' in text_lower or 'walk-in' in text_lower:
+            methods.append('in_person')
+
+        if 'post' in text_lower or 'courier' in text_lower or 'p.o. box' in text_lower or 'postal' in text_lower:
+            methods.append('post')
+
+        if 'online' in methods:
+            return {'method': 'online', 'instructions': instructions}
+        if 'email' in methods:
+            return {'method': 'email', 'instructions': instructions}
+        if methods:
+            return {'method': methods[0], 'instructions': instructions}
+
         return None
 
     def _detect_sector(self, text):

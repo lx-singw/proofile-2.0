@@ -1,11 +1,17 @@
-import httpx
-import os
-import json
-import redis.asyncio as aioredis
+from __future__ import annotations
+
 import asyncio
+import json
 import logging
+import os
 import re
-from datetime import datetime, timedelta
+import sys
+from datetime import datetime
+from typing import Any
+
+import aiohttp
+import httpx
+import redis.asyncio as aioredis
 from models.llm.opportunity_parser import LLMExtractor
 from utils.ai_enhancements import (
     EnhancedOpportunityProcessor,
@@ -20,6 +26,7 @@ from utils.ai_enhancements import (
     ApplicationMethodAnalyzer,
     FuzzyDeduplicator
 )
+from deduplication.fuzzy_dedup import EnhancedDeduplicator, generate_fingerprint
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,6 +56,10 @@ MAX_RETRIES = 3
 CONCURRENT_TASKS = 5
 MAX_TEXT_LENGTH = 8000  # Truncate raw text to stay within context limits
 DUPLICATE_TTL = 604800 # 7 days in seconds
+
+# Quality gating - opportunities below this threshold are quarantined
+MIN_QUALITY_SCORE = float(os.getenv("MIN_QUALITY_SCORE", "0.3"))
+METRICS_QUARANTINED = 'stats:opportunities:quarantined'
 
 # Redis Keys
 QUEUE_NAME = 'raw_opportunities'
@@ -101,7 +112,7 @@ class RawDataConsumer:
         opp_type = type_mapping.get(spider_type, 'job')
         
         # === ENHANCED LOCATION PARSING ===
-        loc_str = llm_data.get('location') or raw_item.get('location', '')
+        loc_str = raw_item.get('location') or llm_data.get('location') or ''
         location_result = LocationParser.parse(loc_str)
         location = {
             'city': location_result.city,
@@ -129,7 +140,7 @@ class RawDataConsumer:
         company_name = raw_item.get('company') or llm_data.get('company', '')
         scam_analysis = ScamDetector.analyze(
             description_text, 
-            llm_data.get('contact_email'),
+            raw_item.get('contact_email') or llm_data.get('contact_email'),
             company_name
         )
         # Use enhanced scam score if higher than LLM's
@@ -157,10 +168,10 @@ class RawDataConsumer:
             'location': location,
             'description': description_text,
             'salary_min': salary.get('min') if salary else None,
-            'deadline': llm_data.get('application_deadline'),
-            'contact_email': llm_data.get('contact_email'),
-            'requirements': llm_data.get('skills_required', []),
-            'required_documents': llm_data.get('required_documents', []),
+            'deadline': raw_item.get('application_deadline') or raw_item.get('closing_date') or llm_data.get('application_deadline'),
+            'contact_email': raw_item.get('contact_email') or llm_data.get('contact_email'),
+            'requirements': extracted_skills or llm_data.get('skills_required', []),
+            'required_documents': spider_raw.get('required_documents', []) or llm_data.get('required_documents', []),
         }
         quality_result = QualityScorer.score(quality_input)
         
@@ -170,15 +181,15 @@ class RawDataConsumer:
         # === ENHANCED APPLICATION METHOD ===
         app_method = ApplicationMethodAnalyzer.analyze(
             description_text,
-            llm_data.get('contact_email'),
-            llm_data.get('application_url')
+            raw_item.get('contact_email') or llm_data.get('contact_email'),
+            spider_raw.get('application_url') or llm_data.get('application_url')
         )
         
         # === ENHANCED DEDUPLICATION KEY ===
         dedup_key = f"{FuzzyDeduplicator.normalize_company(company_name)}_{title.lower()[:50]}"
         
         # Determine opportunity status (active/expired/pending)
-        deadline_str = spider_raw.get('closing_date_parsed') or llm_data.get('application_deadline')
+        deadline_str = raw_item.get('application_deadline') or raw_item.get('closing_date') or spider_raw.get('closing_date_parsed') or llm_data.get('application_deadline')
         status_result = self._determine_status(deadline_str, description_text, spider_raw)
         
         # If confidence is below threshold, mark as pending for review
@@ -193,8 +204,8 @@ class RawDataConsumer:
             status_result["reason"] = f"High scam risk: {', '.join(scam_analysis.red_flags[:3])}"
         
         # Validate application URL - filter out source portal URLs
-        application_url = llm_data.get('application_url') or spider_raw.get('application_url')
-        source_url = raw_item.get('original_url', '')
+        application_url = spider_raw.get('application_url') or llm_data.get('application_url') or raw_item.get('canonical_link')
+        source_url = raw_item.get('source_url') or raw_item.get('original_url', '')
         application_url = self._validate_application_url(application_url, source_url)
         
         # Get company website for fallback
@@ -213,11 +224,15 @@ class RawDataConsumer:
                 'conditions_of_employment': llm_data.get('conditions_of_employment', [])
             }
         
+        title = raw_item.get('title') or llm_data.get('title', 'Untitled Opportunity')
+        slug = self._generate_slug(title, company_name)
+        
         return {
             'type': opp_type,
-            'title': raw_item.get('title') or llm_data.get('title', 'Untitled Opportunity'),
+            'title': title,
+            'slug': slug,
             'description': description_text,
-            'requirements': llm_data.get('skills_required', []),
+            'requirements': extracted_skills or llm_data.get('skills_required', []),
             'location': location,
             'salary': salary,
             'source_platform': raw_item.get('source_platform', 'studentroom'),
@@ -228,27 +243,36 @@ class RawDataConsumer:
             'status_reason': status_result["reason"],
             
             'contact': {
-                'email': llm_data.get('contact_email') or (spider_raw.get('contacts', {}).get('emails', [])[0] if spider_raw.get('contacts', {}).get('emails') else None),
-                'phone': llm_data.get('contact_phone') or (spider_raw.get('contacts', {}).get('phones', [])[0] if spider_raw.get('contacts', {}).get('phones') else None),
+                'email': raw_item.get('contact_email') or llm_data.get('contact_email') or (spider_raw.get('contacts', {}).get('emails', [])[0] if spider_raw.get('contacts', {}).get('emails') else None),
+                'phone': raw_item.get('contact_phone') or llm_data.get('contact_phone') or (spider_raw.get('contacts', {}).get('phones', [])[0] if spider_raw.get('contacts', {}).get('phones') else None),
                 'website': company_website,
                 'application_url': application_url,
             },
             'canonical_link': raw_item.get('canonical_link') or application_url or company_website,
             'source_url': raw_item.get('source_url') or raw_item.get('original_url'),  # Where we discovered it
-            'source_links': [raw_item.get('original_url')] if raw_item.get('original_url') else [],
+            'source_links': [url for url in [raw_item.get('source_url'), raw_item.get('original_url'), raw_item.get('canonical_link')] if url],
             
             # Link quality tracking (scraping refactor Phase 1)
             'is_direct_company_link': raw_item.get('is_direct_company_link', False),
             'link_quality': raw_item.get('link_quality', 'unknown'),
             
-            'ai_confidence_score': 0.8,
-            'application_deadline': llm_data.get('application_deadline'),
+            'ai_confidence_score': max(0.1, min(1.0, (raw_item.get('confidence_score') or int(quality_result.overall_score * 100)) / 100)),
+            'application_deadline': deadline_str,
             
             'extra_metadata': {
+                'company': company_name,
+                'company_name': company_name,
                 'sector': company_info.industry or spider_raw.get('sector', 'general'),
                 'category': spider_raw.get('category', 'general'),
                 'dedup_fingerprint': spider_raw.get('dedup_fingerprint'),
                 'dedup_key': dedup_key,
+                'source_confidence_score': raw_item.get('confidence_score'),
+                'source_quality_tier': raw_item.get('quality_tier'),
+                'source_link_quality': raw_item.get('link_quality'),
+                'source_application_method': raw_item.get('application_method'),
+                'source_expiry_signals': spider_raw.get('expiry_signals', []),
+                'source_article_url': raw_item.get('source_url'),
+                'source_canonical_link': raw_item.get('canonical_link'),
                 'is_pdf_application': spider_raw.get('is_pdf_application', False),
                 'salary_string': spider_raw.get('salary'),
                 'spider_contacts': spider_raw.get('contacts'),
@@ -318,6 +342,33 @@ class RawDataConsumer:
             unique_docs[normalized] = normalized 
         return list(unique_docs.values())
 
+    @staticmethod
+    def _generate_slug(title: str, company: str) -> str:
+        """Generate URL-friendly slug from title and company name."""
+        # Combine title and company
+        text = f"{title}-{company}"
+        
+        # Convert to lowercase
+        text = text.lower()
+        
+        # Remove special characters, keep alphanumeric and spaces
+        text = re.sub(r'[^a-z0-9\s-]', '', text)
+        
+        # Replace spaces with hyphens
+        text = re.sub(r'\s+', '-', text)
+        
+        # Remove consecutive hyphens
+        text = re.sub(r'-+', '-', text)
+        
+        # Trim hyphens from start/end
+        text = text.strip('-')
+        
+        # Limit length to 200 chars for reasonable URLs
+        if len(text) > 200:
+            text = text[:200].rsplit('-', 1)[0]
+        
+        return text
+    
     @staticmethod
     def _normalize_document_name(doc_name: str) -> str:
         """Normalize document names to canonical codes used by frontend."""
@@ -448,15 +499,20 @@ class RawDataConsumer:
         
         async with self.semaphore:
             try:
-                # 1. Pre-LLM Deduplication
-                if source_url:
-                    if await self.redis.sismember(SEEN_URLS_KEY, source_url):
-                        logger.info(f"[{request_id}] Skipping duplicate URL: {source_url}")
-                        await self.redis.incr(METRICS_DUPLICATES)
-                        return
-                    # Mark as seen immediately to prevent race conditions (MVP level)
-                    await self.redis.sadd(SEEN_URLS_KEY, source_url)
-                    await self.redis.expire(SEEN_URLS_KEY, DUPLICATE_TTL)
+                # 1. Enhanced Pre-LLM Deduplication (URL + Title + Company fingerprint)
+                title = raw_item.get('title', '')
+                company = raw_item.get('company', '')
+                
+                dedup = EnhancedDeduplicator(self.redis)
+                is_dup, dup_reason = await dedup.is_duplicate(source_url, title, company, check_fuzzy=True)
+                
+                if is_dup:
+                    logger.info(f"[{request_id}] Skipping duplicate ({dup_reason}): {title[:50]}")
+                    await self.redis.incr(METRICS_DUPLICATES)
+                    return
+                
+                # Mark as seen immediately to prevent race conditions
+                await dedup.mark_seen(source_url, title, company)
 
                 logger.info(f"[{request_id}] AI Extracting: {raw_item.get('title')}")
                 
@@ -473,7 +529,15 @@ class RawDataConsumer:
                 # 3. Map to backend format
                 final_payload = self._map_to_backend_format(raw_item, llm_data)
                 
-                # 4. POST to Backend API
+                # 4. Quality Gating - filter low-quality opportunities
+                quality_score = final_payload.get('extra_metadata', {}).get('quality_score', 0.5)
+                if quality_score < MIN_QUALITY_SCORE:
+                    logger.warning(f"[{request_id}] Quality too low ({quality_score:.2f} < {MIN_QUALITY_SCORE}), quarantining")
+                    final_payload['status'] = 'quarantine'
+                    final_payload['extra_metadata']['quarantine_reason'] = f'Low quality score: {quality_score:.2f}'
+                    await self.redis.incr(METRICS_QUARANTINED)
+                
+                # 5. POST to Backend API
                 async with httpx.AsyncClient(follow_redirects=True, timeout=30.0) as client:
                     resp = await client.post(
                         f"{self.backend_url}/ingest/opportunity",
@@ -506,26 +570,82 @@ class RawDataConsumer:
             await self.redis.lpush(DLQ_NAME, json.dumps(raw_item))
             await self.redis.incr(METRICS_FAILED)
 
-    async def start_consuming(self):
+    async def start_consuming(self, shutdown_event: asyncio.Event = None):
         logger.info(f"Starting production raw data consumer (concurrency={CONCURRENT_TASKS})...")
+        active_tasks = set()
+        
         while True:
+            # Check for shutdown
+            if shutdown_event and shutdown_event.is_set():
+                logger.info("Shutdown requested, waiting for active tasks to complete...")
+                if active_tasks:
+                    await asyncio.gather(*active_tasks, return_exceptions=True)
+                logger.info("All tasks completed, shutting down")
+                break
+            
             try:
                 # Pop from list (blocking async)
                 result = await self.redis.brpop(QUEUE_NAME, timeout=5)
                 if not result:
+                    # Clean up completed tasks
+                    active_tasks = {t for t in active_tasks if not t.done()}
                     continue
                     
                 _, data = result
                 raw_item = json.loads(data)
                 
-                # Spawn concurrent task
-                asyncio.create_task(self.process_item(raw_item))
+                # Spawn concurrent task and track it
+                task = asyncio.create_task(self.process_item(raw_item))
+                active_tasks.add(task)
+                
+                # Clean up completed tasks periodically
+                active_tasks = {t for t in active_tasks if not t.done()}
 
             except Exception as e:
                 logger.error(f"Error in consumer main loop: {e}", exc_info=True)
                 await asyncio.sleep(1)
 
-if __name__ == "__main__":
+
+# Graceful shutdown handling
+_shutdown_event = None
+
+def _handle_shutdown(signum, frame):
+    """Handle shutdown signals gracefully."""
+    import signal as sig_module
+    sig_name = sig_module.Signals(signum).name
+    logger.info(f"Received {sig_name}, initiating graceful shutdown...")
+    if _shutdown_event:
+        _shutdown_event.set()
+
+
+async def main():
+    global _shutdown_event
+    import signal
+    
+    # Start health server in background
+    try:
+        from health import start_health_server
+        start_health_server()
+    except ImportError:
+        logger.warning("Health server not available")
+    
+    # Setup graceful shutdown
+    _shutdown_event = asyncio.Event()
+    
+    # Register signal handlers
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, _handle_shutdown)
+    
     redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/1")
     consumer = RawDataConsumer(redis_url)
-    asyncio.run(consumer.start_consuming())
+    
+    try:
+        await consumer.start_consuming(shutdown_event=_shutdown_event)
+    except asyncio.CancelledError:
+        logger.info("Consumer cancelled")
+    finally:
+        logger.info("Consumer shutdown complete")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

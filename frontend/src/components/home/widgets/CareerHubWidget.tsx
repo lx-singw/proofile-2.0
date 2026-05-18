@@ -17,7 +17,7 @@ export default function CareerHubWidget() {
                 </div>
             </div>
             <div className="space-y-2 mb-3">
-                <Link href="/portal" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
+                <Link href="/opportunities" className="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors group">
                     <Briefcase className="w-4 h-4 text-emerald-500" />
                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Job Matching</span>
                 </Link>
@@ -27,10 +27,10 @@ export default function CareerHubWidget() {
                 </Link>
             </div>
             <Link
-                href="/portal"
+                href="/opportunities"
                 className="flex items-center justify-center gap-1 w-full px-3 py-2 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors text-xs"
             >
-                Explore Portal
+                Explore Opportunities
             </Link>
         </div>
     );

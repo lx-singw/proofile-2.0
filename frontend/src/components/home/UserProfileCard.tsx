@@ -179,13 +179,6 @@ export function UserProfileCard() {
                             <User className="w-3 h-3" />
                             View Profile
                         </Link>
-                        <Link
-                            href="/resume/build"
-                            className="flex-1 flex items-center justify-center gap-1 px-3 py-2 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs font-bold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
-                        >
-                            <FileText className="w-3 h-3" />
-                            Resumes
-                        </Link>
                     </div>
 
                     {/*                     {!stats.isGold && (

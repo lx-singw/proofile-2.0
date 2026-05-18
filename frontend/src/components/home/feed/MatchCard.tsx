@@ -20,8 +20,11 @@ import {
   Layers,
   Heart,
   HeartHandshake,
+  ExternalLink,
+  Share2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   OpportunityFeedCard,
   AnonymousMatchContext,
@@ -46,6 +49,8 @@ interface MatchCardProps {
   onInterestToggle?: (opportunityId: number, isInterested: boolean) => Promise<void>;
   onDismiss?: (cardId: string) => void;
   onSave?: (card: OpportunityFeedCard) => void;
+  onShare?: (card: OpportunityFeedCard) => void;
+  onApplyClick?: (card: OpportunityFeedCard) => void;
   /** Called when a guest taps on network/social content requiring an account */
   onNetworkPrompt?: () => void;
 }
@@ -59,6 +64,137 @@ function formatSalary(min?: number, max?: number, currency = 'ZAR', visible = tr
     currency === 'ZAR' ? `R${(n / 1000).toFixed(0)}k` : `$${(n / 1000).toFixed(0)}k`;
   if (max && max !== min) return `${fmt(min)} – ${fmt(max)}/month`;
   return `${fmt(min)}/month`;
+}
+
+// ── Date formatting ───────────────────────────────────────────────────────────
+
+function formatPostedDate(postedAt: string): string {
+  const posted = new Date(postedAt);
+  const now = new Date();
+  const diffMs = now.getTime() - posted.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+  return `${Math.floor(diffDays / 365)} years ago`;
+}
+
+// ── Deadline formatting and urgency ───────────────────────────────────────────
+
+type DeadlineState = {
+  text: string;
+  barColor: string;
+  bgColor: string;
+  textColor: string;
+  progress: number; // 0-100 for progress bar
+};
+
+function getDeadlineState(closesAt?: string): DeadlineState {
+  if (!closesAt) {
+    return {
+      text: 'Not listed',
+      barColor: 'bg-gray-300 dark:bg-gray-600',
+      bgColor: 'bg-gray-50 dark:bg-gray-800',
+      textColor: 'text-gray-500 dark:text-gray-400',
+      progress: 0,
+    };
+  }
+  
+  const deadline = new Date(closesAt);
+  const now = new Date();
+  const diffMs = deadline.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  
+  // Expired
+  if (diffDays < 0) {
+    return {
+      text: 'Closed',
+      barColor: 'bg-gray-400 dark:bg-gray-600',
+      bgColor: 'bg-gray-50 dark:bg-gray-800',
+      textColor: 'text-gray-500 dark:text-gray-400',
+      progress: 100,
+    };
+  }
+  
+  // Today
+  if (diffDays === 0) {
+    return {
+      text: 'Closes today',
+      barColor: 'bg-red-500',
+      bgColor: 'bg-red-50 dark:bg-red-900/20',
+      textColor: 'text-red-700 dark:text-red-400',
+      progress: 95,
+    };
+  }
+  
+  // Tomorrow
+  if (diffDays === 1) {
+    return {
+      text: 'Tomorrow',
+      barColor: 'bg-red-500',
+      bgColor: 'bg-red-50 dark:bg-red-900/20',
+      textColor: 'text-red-700 dark:text-red-400',
+      progress: 90,
+    };
+  }
+  
+  // Urgent (2-3 days)
+  if (diffDays <= 3) {
+    return {
+      text: `${diffDays} days left`,
+      barColor: 'bg-red-500',
+      bgColor: 'bg-red-50 dark:bg-red-900/20',
+      textColor: 'text-red-700 dark:text-red-400',
+      progress: 75,
+    };
+  }
+  
+  // Active (normal)
+  if (diffDays <= 30) {
+    return {
+      text: `${diffDays} days left`,
+      barColor: 'bg-emerald-500',
+      bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
+      textColor: 'text-emerald-700 dark:text-emerald-400',
+      progress: Math.max(20, 100 - (diffDays * 2)),
+    };
+  }
+  
+  // Long runway
+  return {
+    text: `${diffDays} days left`,
+    barColor: 'bg-emerald-500',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
+    textColor: 'text-emerald-700 dark:text-emerald-400',
+    progress: 20,
+  };
+}
+
+// ── Source platform badge ─────────────────────────────────────────────────────
+
+const SOURCE_LABELS: Record<string, string> = {
+  careers24: 'Careers24',
+  recentjobs: 'RecentJobs',
+  studentroom: 'StudentRoom',
+  zabursaries: 'ZaBursaries',
+  puffandpass: 'PuffAndPass',
+  dpsa: 'DPSA',
+  linkedin: 'LinkedIn',
+  indeed: 'Indeed',
+  pnet: 'PNet',
+  offerzen: 'OfferZen',
+};
+
+function SourceBadge({ platform }: { platform: string }) {
+  const label = SOURCE_LABELS[platform.toLowerCase()] ?? platform;
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 border border-gray-200/60 dark:border-gray-600/30">
+      {label}
+    </span>
+  );
 }
 
 // ── Remote type badge ─────────────────────────────────────────────────────────
@@ -76,6 +212,74 @@ function RemoteBadge({ type }: { type: OpportunityFeedCard['remoteType'] }) {
       <Icon className="w-3 h-3" />
       {label}
     </span>
+  );
+}
+
+// ── Metadata row with deadline urgency ───────────────────────────────────────
+
+function MetadataRow({ card }: { card: OpportunityFeedCard }) {
+  const deadlineState = getDeadlineState(card.closesAt);
+  const postedText = formatPostedDate(card.postedAt);
+  
+  // Type: use opportunityType if available, else fall back to remoteType
+  const typeDisplay = card.opportunityType || (
+    card.remoteType === 'remote' ? 'Remote' :
+    card.remoteType === 'hybrid' ? 'Hybrid' :
+    card.remoteType === 'flexible' ? 'Flexible' : 'On-site'
+  );
+  
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl border border-gray-200/40 dark:border-gray-700/30">
+      {/* Location */}
+      <div className="space-y-1">
+        <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-1">
+          <MapPin className="w-3 h-3" />
+          Location
+        </div>
+        <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+          {card.location}
+        </div>
+      </div>
+      
+      {/* Type */}
+      <div className="space-y-1">
+        <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-1">
+          <Layers className="w-3 h-3" />
+          Type
+        </div>
+        <div className="text-sm font-medium text-gray-900 dark:text-white truncate capitalize">
+          {typeDisplay}
+        </div>
+      </div>
+      
+      {/* Posted */}
+      <div className="space-y-1">
+        <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          Posted
+        </div>
+        <div className="text-sm font-medium text-gray-900 dark:text-white">
+          {postedText}
+        </div>
+      </div>
+      
+      {/* Deadline with urgency bar */}
+      <div className="space-y-1">
+        <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          Deadline
+        </div>
+        <div className={`text-sm font-semibold ${deadlineState.textColor} px-2 py-0.5 rounded ${deadlineState.bgColor}`}>
+          {deadlineState.text}
+        </div>
+        <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div 
+            className={`h-full ${deadlineState.barColor} transition-all duration-300`}
+            style={{ width: `${deadlineState.progress}%` }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -358,15 +562,19 @@ export function MatchCard({
   onInterestToggle,
   onDismiss,
   onSave,
+  onShare,
+  onApplyClick,
   onExpand,
   onNetworkPrompt,
 }: MatchCardProps) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [saved, setSaved] = useState(card.viewerHasSaved);
   const [dismissed, setDismissed] = useState(false);
   const [interested, setInterested] = useState(card.viewerIsInterested);
   const [localInterestedCount, setLocalInterestedCount] = useState(card.interestedCount);
   const [localSavedCount, setLocalSavedCount] = useState(card.savedCount);
+  const detailsHref = `/opportunities/${card.slug || card.id}`;
 
   const handleExpand = useCallback(() => {
     setExpanded((v) => !v);
@@ -379,6 +587,26 @@ export function MatchCard({
     setLocalSavedCount((c) => c + (next ? 1 : -1));
     onSave?.(card);
   }, [card, saved, onSave]);
+
+  const handleShare = useCallback(async () => {
+    onShare?.(card);
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: card.roleTitle,
+          text: `${card.roleTitle} at ${card.companyName}`,
+          url: card.applyUrl ?? `${window.location.origin}${detailsHref}`,
+        });
+      } catch {
+        // ignore cancelled share sheets
+      }
+    }
+  }, [card, detailsHref, onShare]);
+
+  const handleApplyClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.stopPropagation();
+    onApplyClick?.(card);
+  }, [card, onApplyClick]);
 
   const handleDismiss = useCallback(() => {
     setDismissed(true);
@@ -400,6 +628,36 @@ export function MatchCard({
     }
   }, [card, interested, onInterest, onInterestToggle]);
 
+  const handleCardNavigate = useCallback(() => {
+    router.push(detailsHref);
+  }, [router, detailsHref]);
+
+  const handleCardClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      const target = event.target as HTMLElement;
+      if (target.closest('button, a, input, textarea, select, [role="button"]')) {
+        return;
+      }
+      handleCardNavigate();
+    },
+    [handleCardNavigate],
+  );
+
+  const handleCardKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLElement>) => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      const target = event.target as HTMLElement;
+      if (target.closest('button, a, input, textarea, select, [role="button"]')) {
+        return;
+      }
+      event.preventDefault();
+      handleCardNavigate();
+    },
+    [handleCardNavigate],
+  );
+
   if (dismissed) return null;
 
   const isTopApplicant =
@@ -409,9 +667,13 @@ export function MatchCard({
 
   return (
     <article
-      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-emerald-200/40 dark:border-emerald-800/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-emerald-200/40 dark:border-emerald-800/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
       data-card-id={card.id}
       data-feed-position={feedPosition}
+      role="link"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
     >
       {/* Top accent bar */}
       <div className="h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
@@ -434,7 +696,10 @@ export function MatchCard({
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate">
                 {card.companyName}
               </span>
-              {card.source === 'direct' && (
+              {card.sourcePlatform && (
+                <SourceBadge platform={card.sourcePlatform} />
+              )}
+              {card.source === 'direct' && !card.sourcePlatform && (
                 <span className="text-xs px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded font-medium">
                   Direct
                 </span>
@@ -455,36 +720,43 @@ export function MatchCard({
             <button
               onClick={handleSave}
               aria-label={saved ? 'Unsave' : 'Save opportunity'}
-              className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:shadow-sm hover:shadow-emerald-500/10 transition-all"
             >
               {saved ? (
                 <BookmarkCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <Bookmark className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                <Bookmark className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-emerald-600" />
               )}
             </button>
             <button
               onClick={handleDismiss}
               aria-label="Not for me"
-              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-sm transition-all"
             >
               <X className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-red-500" />
+            </button>
+            <button
+              onClick={handleShare}
+              aria-label="Share opportunity"
+              className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:shadow-sm hover:shadow-emerald-500/10 transition-all"
+            >
+              <Share2 className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-emerald-600" />
             </button>
           </div>
         </div>
 
-        {/* Location + remote + salary */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-gray-600 dark:text-gray-300">
-          <span className="flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-gray-400" />
-            {card.location}
-          </span>
-          <RemoteBadge type={card.remoteType} />
-          <span className="flex items-center gap-1 font-semibold text-gray-800 dark:text-gray-200">
-            <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
-            {formatSalary(card.salaryMin, card.salaryMax, card.salaryCurrency, card.salaryVisible)}
-          </span>
-        </div>
+        {/* Metadata row with deadline urgency */}
+        <MetadataRow card={card} />
+        
+        {/* Salary highlight */}
+        {card.salaryVisible && card.salaryMin && (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200/60 dark:border-emerald-700/30">
+            <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+              {formatSalary(card.salaryMin, card.salaryMax, card.salaryCurrency, card.salaryVisible)}
+            </span>
+          </div>
+        )}
 
         {/* Undervalue callout — shown before WhyYouSeeThis when flagged */}
         {card.isUndervalue && card.undervalueInsight && (
@@ -534,42 +806,53 @@ export function MatchCard({
 
         {/* Expanded content */}
         {expanded && (
-          <div className="pt-2 border-t border-gray-100 dark:border-gray-700/50 space-y-3">
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-              This is a great opportunity for professionals with your background. Apply directly or
-              express interest to let this company know you&apos;re open.
-            </p>
+          <div className="pt-2 border-t border-gray-100 dark:border-gray-700/50 space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
+            {card.description ? (
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                {card.description}
+              </p>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                No description available for this listing.
+              </p>
+            )}
             <OppActivityFeed items={card.recentActivityItems ?? []} />
+            
+            {/* Apply Now button in expanded section */}
+            {card.applyUrl && (
+              <div className="pt-2 border-t border-gray-100 dark:border-gray-700/50">
+                <a
+                  href={card.applyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleApplyClick}
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 text-sm font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 transition-all active:scale-[0.98]"
+                >
+                  Apply Now <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            )}
           </div>
         )}
 
         {/* Action buttons */}
         <div className="flex gap-2.5 pt-1">
           <button
-            onClick={handleInterest}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all active:scale-[0.98] ${
-              interested
-                ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/25 hover:bg-emerald-600'
-                : 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white hover:shadow-md hover:shadow-emerald-500/25'
-            }`}
-            aria-pressed={interested}
-          >
-            {interested ? (
-              <><HeartHandshake className="w-4 h-4" /> Interested</>
-            ) : (
-              <><Heart className="w-4 h-4" /> Express Interest</>
-            )}
-          </button>
-          <button
             onClick={handleExpand}
-            className="flex items-center gap-1.5 py-2.5 px-4 text-sm font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-700/30 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all active:scale-[0.98] bg-emerald-600 dark:bg-emerald-700 text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 hover:shadow-md hover:shadow-emerald-500/25"
           >
             {expanded ? (
-              <>Less <ChevronUp className="w-4 h-4" /></>
+              <><ChevronUp className="w-4 h-4" /> Close Preview</>
             ) : (
-              <>Tell me more <ChevronDown className="w-4 h-4" /></>
+              <><ChevronDown className="w-4 h-4" /> QUICK PREVIEW</>
             )}
           </button>
+          <a
+            href={detailsHref}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all active:scale-[0.98] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white hover:shadow-md hover:shadow-emerald-500/25 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600"
+          >
+            <ExternalLink className="w-4 h-4" /> FULL DETAILS
+          </a>
         </div>
       </div>
     </article>

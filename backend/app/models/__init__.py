@@ -5,13 +5,9 @@ from .profile import Profile
 # Opportunities (renamed from Jobs)
 from .opportunity import Opportunity, Job, FeedSignal, UserFeedState, OpportunityActivity  # Job is alias for backward compatibility
 from .saved_opportunity import SavedOpportunity, SavedJob  # SavedJob is alias
-from .portal_opportunity import PortalOpportunity, PortalJob  # PortalJob is alias
 
 from .activity import Activity
 from .notification import Notification
-from .resume import Resume
-from .resume_version import ResumeVersion
-from .resume_template import ResumeTemplate
 from .social import Follow, Connection, ProfileStar, Endorsement, Rating, ProfileWatch
 from .ai_chat import ChatSession, ChatMessage
 from .verification import Verification
@@ -29,3 +25,9 @@ from .comment import Comment
 # Experience & Portfolio
 from .experience import WorkExperience
 from .portfolio import PortfolioItem
+
+# Verified Reviews (Proofile trust graph edges)
+from .verified_review import VerifiedReview
+
+# Resumes
+from .resume import Resume, ResumeVersion

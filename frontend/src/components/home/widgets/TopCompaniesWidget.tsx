@@ -2,27 +2,15 @@
 
 import React from "react";
 import Link from "next/link";
-import { Building2, ArrowRight, Loader2 } from "lucide-react";
-import { portalService } from "@/services/portalService";
+import { Building2, ArrowRight } from "lucide-react";
 
 export default function TopCompaniesWidget() {
-    const [hiringCompanies, setHiringCompanies] = React.useState<{ name: string; jobs_count: number }[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        async function fetchData() {
-            try {
-                setLoading(true);
-                const companiesRes = await portalService.getHiringCompanies(4);
-                setHiringCompanies(companiesRes);
-            } catch (error) {
-                console.error("Failed to fetch top companies:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchData();
-    }, []);
+    const hiringCompanies = [
+        { name: "Standard Bank", jobs_count: 12 },
+        { name: "Nedbank", jobs_count: 9 },
+        { name: "Discovery", jobs_count: 7 },
+        { name: "MTN", jobs_count: 5 },
+    ];
 
     const getRandomColor = (index: number) => {
         const colors = [
@@ -46,11 +34,9 @@ export default function TopCompaniesWidget() {
                 </div>
             </div>
             <div className="space-y-2">
-                {loading ? (
-                    <div className="p-4 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-purple-500" /></div>
-                ) : hiringCompanies.map((company, index) => (
+                {hiringCompanies.map((company, index) => (
                     <Link
-                        href={`/portal?q=${encodeURIComponent(company.name)}`}
+                        href={`/opportunities?search=${encodeURIComponent(company.name)}`}
                         key={company.name}
                         className="block bg-white dark:bg-gray-800 rounded-xl p-3 border border-gray-100 dark:border-gray-700 hover:border-emerald-400 transition-all group"
                     >

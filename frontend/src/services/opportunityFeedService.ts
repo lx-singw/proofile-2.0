@@ -22,6 +22,8 @@ import {
   VerifiedMatchContext,
 } from '@/types/feedCard';
 
+const PAGE_SIZE = 24;
+
 // ── Static insight card pools ─────────────────────────────────────────────────
 // In Phase 0 these are curated. Phase 1+ will pull from real data.
 
@@ -198,17 +200,23 @@ function oppToFeedCard(opp: Opportunity, params: FeedPageParams, backendCard?: B
   return {
     type: 'opportunity',
     id: String(opp.id),
+    slug: (opp as Opportunity & { slug?: string }).slug ?? undefined,
     companyName: opp.company_name,
     roleTitle: opp.title,
     location: opp.location,
     remoteType: parseRemoteType(opp),
+    opportunityType: opp.opportunity_type ?? backendCard?.opportunity_type ?? undefined,
     salaryMin,
     salaryMax,
     salaryCurrency: 'ZAR',
     salaryVisible: !!opp.salary_range,
     requiredSkills: opp.required_skills ?? [],
     postedAt: opp.created_at,
-    source: 'aggregated',
+    closesAt: backendCard?.expires_at ?? undefined,
+    source: (opp as Opportunity & { is_direct?: boolean }).is_direct ? 'direct' : 'aggregated',
+    sourcePlatform: (opp as Opportunity & { source_platform?: string }).source_platform ?? undefined,
+    applyUrl: (opp as Opportunity & { application_url?: string; source_url?: string }).application_url ?? (opp as Opportunity & { source_url?: string }).source_url ?? undefined,
+    description: (opp as Opportunity & { description?: string }).description || undefined,
     qualityScore: 0.8,
     engagementRate: 0,
     matchContext: buildMatchContext(opp, params),
@@ -257,6 +265,7 @@ interface BackendOpportunityCard {
   id: number;
   title: string;
   company_name: string;
+  description?: string | null;
   location?: string | null;
   remote_type?: string | null;
   opportunity_type?: string | null;
@@ -268,6 +277,9 @@ interface BackendOpportunityCard {
   experience_level?: string | null;
   industry?: string | null;
   source?: string | null;
+  source_platform?: string | null;
+  source_url?: string | null;
+  application_url?: string | null;
   is_direct?: boolean;
   quality_score: number;
   posted_at?: string | null;
@@ -285,6 +297,20 @@ interface BackendFeedPage {
   has_more: boolean;
 }
 
+/**
+ * Some scrapers (e.g. careers24) put a deadline string like "57 Days left"
+ * in the location field instead of a real location. Strip those so the UI
+ * doesn't show nonsense.
+ */
+function sanitizeLocation(raw?: string | null): string {
+  if (!raw) return 'South Africa';
+  // Reject strings that look like deadlines or durations
+  if (/\d+\s+days?\s+(left|ago|remaining)/i.test(raw)) return 'South Africa';
+  if (/^\d+\s+day/i.test(raw)) return 'South Africa';
+  if (/closing|deadline|expires?/i.test(raw)) return 'South Africa';
+  return raw.trim() || 'South Africa';
+}
+
 function backendCardToOpportunity(card: BackendOpportunityCard): Opportunity {
   let skills: string[] = [];
   try {
@@ -296,8 +322,8 @@ function backendCardToOpportunity(card: BackendOpportunityCard): Opportunity {
     id: card.id,
     title: card.title,
     company_name: card.company_name,
-    location: card.location ?? '',
-    description: '',
+    location: sanitizeLocation(card.location),
+    description: card.description ?? '',
     created_at: card.posted_at ?? new Date().toISOString(),
     opportunity_type: card.opportunity_type ?? undefined,
     required_skills: skills,
@@ -309,6 +335,9 @@ function backendCardToOpportunity(card: BackendOpportunityCard): Opportunity {
     ...(card.salary_max ? { salary_max: card.salary_max } : {}),
     ...(card.remote_type ? { remote_type: card.remote_type } : {}),
     ...(card.is_direct !== undefined ? { is_direct: card.is_direct } : {}),
+    ...(card.source_platform ? { source_platform: card.source_platform } : {}),
+    ...(card.source_url ? { source_url: card.source_url } : {}),
+    ...(card.application_url ? { application_url: card.application_url } : {}),
   } as Opportunity;
 }
 
@@ -338,6 +367,9 @@ export async function getOpportunityFeedPage(params: FeedPageParams): Promise<Fe
     if (cursorId) queryParams['cursor'] = cursorId;
     if (params.inferredProfile?.location) queryParams['location'] = params.inferredProfile.location;
     if (params.sidebarFilters?.location) queryParams['location'] = params.sidebarFilters.location;
+    if (params.sidebarFilters?.opportunityTypes?.length) {
+      queryParams['opportunity_type'] = params.sidebarFilters.opportunityTypes.join(',');
+    }
 
     const backendPage = await apiRequest<BackendFeedPage>({
       method: 'get',
@@ -386,6 +418,13 @@ export interface InterestToggleResult {
   interestedCount: number;
 }
 
+export interface ActivityActionResult {
+  opportunityId: number;
+  activityType: string;
+  isActive: boolean;
+  count: number;
+}
+
 export async function expressInterest(opportunityId: number): Promise<InterestToggleResult> {
   const result = await apiRequest<{ opportunity_id: number; is_interested: boolean; interested_count: number }>({
     method: 'post',
@@ -396,6 +435,31 @@ export async function expressInterest(opportunityId: number): Promise<InterestTo
     isInterested: result.is_interested,
     interestedCount: result.interested_count,
   };
+}
+
+async function recordActivityAction(opportunityId: number, action: 'save' | 'share' | 'apply-click'): Promise<ActivityActionResult> {
+  const result = await apiRequest<{ opportunity_id: number; activity_type: string; is_active: boolean; count: number }>({
+    method: 'post',
+    url: `/api/v1/feed/opportunities/${opportunityId}/${action}`,
+  });
+  return {
+    opportunityId: result.opportunity_id,
+    activityType: result.activity_type,
+    isActive: result.is_active,
+    count: result.count,
+  };
+}
+
+export async function toggleSave(opportunityId: number): Promise<ActivityActionResult> {
+  return recordActivityAction(opportunityId, 'save');
+}
+
+export async function recordShare(opportunityId: number): Promise<ActivityActionResult> {
+  return recordActivityAction(opportunityId, 'share');
+}
+
+export async function recordApplyClick(opportunityId: number): Promise<ActivityActionResult> {
+  return recordActivityAction(opportunityId, 'apply-click');
 }
 
 // ── Opportunity activity ──────────────────────────────────────────────────────

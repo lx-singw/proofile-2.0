@@ -121,23 +121,40 @@ async def get_saved_opportunities(
     opportunities = await opportunity_service.get_saved_opportunities(db, user_id=current_user.id)
     return opportunities
 
-@router.get("/{opportunity_id}", response_model=OpportunityDetailRead)
+@router.get("/{opportunity_identifier}", response_model=OpportunityDetailRead)
 async def get_opportunity_details(
-    opportunity_id: int,
+    opportunity_identifier: str,
     db: AsyncSession = Depends(deps.get_db),
-    current_user = Depends(deps.get_current_active_user),
+    current_user = Depends(deps.get_current_user_optional),
 ):
     """
     Get detailed opportunity information including save status and related opportunities.
+    Works for both authenticated and guest users.
+    Accepts either numeric ID or slug.
     """
-    opportunity = await opportunity_service.get_opportunity_by_id(db, opportunity_id)
+    # Try to parse as integer ID first, otherwise treat as slug
+    opportunity = None
+    opportunity_id = None
+    
+    if opportunity_identifier.isdigit():
+        # Legacy numeric ID
+        opportunity_id = int(opportunity_identifier)
+        opportunity = await opportunity_service.get_opportunity_by_id(db, opportunity_id)
+    else:
+        # Slug-based lookup
+        opportunity = await opportunity_service.get_opportunity_by_slug(db, opportunity_identifier)
+        if opportunity:
+            opportunity_id = opportunity.id
+    
     if not opportunity:
         raise HTTPException(status_code=404, detail="Opportunity not found")
     
-    # Check if user has saved this opportunity
-    is_saved = await opportunity_service.is_opportunity_saved(
-        db, user_id=current_user.id, opportunity_id=opportunity_id
-    )
+    # Check if user has saved this opportunity (guest users always return False)
+    is_saved = False
+    if current_user:
+        is_saved = await opportunity_service.is_opportunity_saved(
+            db, user_id=current_user.id, opportunity_id=opportunity_id
+        )
     
     # Get related opportunities
     related_opportunities = await opportunity_service.get_related_opportunities(

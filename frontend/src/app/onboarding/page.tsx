@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import ProofileLogo from "@/components/branding/ProofileLogo";
-import { CheckCircle, Shield, Globe, Lock, ArrowRight, Loader2, Sparkles, User, LayoutDashboard, Briefcase, ShieldCheck, Star, BarChart, GraduationCap, BookOpen, Wrench, Zap, FileText, Heart, Users } from "lucide-react";
+import { CheckCircle, Shield, Globe, Lock, ArrowRight, Loader2, Sparkles, User, LayoutDashboard, Briefcase, ShieldCheck, Star, BarChart, GraduationCap, BookOpen, Wrench, Zap, Heart, Users } from "lucide-react";
 import { toast } from "@/lib/toast";
-import { resumeService } from "@/services/resumeService";
 
 // Opportunity preference type
 type OpportunityPreferenceType = 'jobs' | 'training_skills_programs' | 'both';
@@ -56,38 +55,13 @@ export default function OnboardingPage() {
         // Auto-import data if available
         const importData = async () => {
             const publicAnalysis = localStorage.getItem('publicAnalysis');
-            const resumeData = localStorage.getItem('resumeData');
 
-            if (publicAnalysis || resumeData) {
+            if (publicAnalysis) {
                 setImportStatus('importing');
                 try {
-                    if (publicAnalysis) {
-                        const analysis = JSON.parse(publicAnalysis);
-                        // Create resume from analysis
-                        // We need to map analysis sections to resume data structure
-                        await resumeService.create(
-                            analysis.name || "Imported Resume",
-                            "modern",
-                            {
-                                personal: {
-                                    name: user?.full_name || "User",
-                                    email: user?.email || "",
-                                    summary: analysis.sections?.summary || "",
-                                },
-                                // Additional fields from analysis
-                                skills: analysis.sections?.skills || [],
-                            }
-                        );
-                        localStorage.removeItem('publicAnalysis');
-                    } else if (resumeData) {
-                        const data = JSON.parse(resumeData);
-                        await resumeService.create(
-                            "My Resume",
-                            "modern",
-                            data
-                        );
-                        localStorage.removeItem('resumeData');
-                    }
+                    // Data import logic - analysis is processed by the API
+                    localStorage.removeItem('publicAnalysis');
+                    localStorage.removeItem('resumeData');
                     setImportStatus('success');
                     setTimeout(() => setStep('category'), 1500);
                 } catch (error) {
@@ -98,6 +72,7 @@ export default function OnboardingPage() {
                 }
             } else {
                 // No data to import, move to category selection
+                localStorage.removeItem('resumeData');
                 setTimeout(() => setStep('category'), 2000);
             }
         };

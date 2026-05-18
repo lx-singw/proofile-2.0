@@ -33,11 +33,9 @@ export default function ToolsLayout({
 
                     {/* Info links */}
                     <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-                        <p>Build professional resumes and unlock career opportunities with AI.</p>
+                        <p>Unlock career opportunities with Proofile.</p>
                         <p className="mt-1">
                             <a href="/privacy" className="underline hover:text-emerald-600">Privacy Policy</a>
-                            {" · "}
-                            <a href="/resume" className="underline hover:text-emerald-600">Resume Manager</a>
                         </p>
                     </div>
                 </div>

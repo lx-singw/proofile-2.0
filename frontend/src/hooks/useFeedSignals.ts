@@ -11,8 +11,9 @@
  *                 we log to console so the shape is visible during dev
  */
 
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback } from 'react';
 import { SignalEvent, SignalType, FeedCardType } from '@/types/feedCard';
+import { apiRequest } from '@/lib/api';
 
 // ── Session ID ────────────────────────────────────────────────────────────────
 
@@ -67,7 +68,6 @@ export { readStoredSignals };
 
 interface UseFeedSignalsOptions {
   userId: string | null;
-  isLoggedIn: boolean;
 }
 
 interface CardSignalAttachment {
@@ -87,7 +87,7 @@ interface CardSignalAttachment {
   ) => void;
 }
 
-export function useFeedSignals({ userId, isLoggedIn }: UseFeedSignalsOptions): CardSignalAttachment {
+export function useFeedSignals({ userId }: UseFeedSignalsOptions): CardSignalAttachment {
   const sessionId = useRef<string>(getOrCreateSessionId());
   const mountTime = useRef<number>(Date.now());
 
@@ -109,13 +109,10 @@ export function useFeedSignals({ userId, isLoggedIn }: UseFeedSignalsOptions): C
         session_duration_ms: signal.sessionDurationAtSignal,
       };
 
-      fetch('/api/v1/feed/signals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        credentials: 'include',
-        // keepalive allows the request to outlive a page navigation
-        keepalive: true,
+      apiRequest<void>({
+        method: 'post',
+        url: '/api/v1/feed/signals',
+        data: body,
       }).catch(() => {
         // Signal delivery is best-effort — silently ignore network errors
       });

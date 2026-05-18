@@ -271,5 +271,149 @@ If you don't recognize this request, you can safely ignore this email.
         )
 
 
+    def send_review_request_email(
+        self,
+        to_email: str,
+        reviewee_name: str,
+        reviewer_name: str,
+        company: str,
+        role_title: str,
+        review_link: str,
+        personal_message: str = None,
+        is_reminder: bool = False,
+    ) -> Dict[str, Any]:
+        """
+        Send the review request email — the most important email in Proofile.
+
+        This email must feel personal, not automated. It must be mobile-optimised.
+        It must take less than 3 minutes to complete — shown clearly.
+
+        Args:
+            to_email: Reviewer's email
+            reviewee_name: Name of the person being reviewed
+            reviewer_name: Name of the reviewer (may be "there" if unknown)
+            company: Company where they worked together
+            role_title: The role being reviewed
+            review_link: Unique link to the review form
+            personal_message: Optional message from the requester
+            is_reminder: Whether this is a reminder email
+        """
+        reminder_prefix = "Reminder: " if is_reminder else ""
+        subject = f"{reminder_prefix}{reviewee_name} is asking you to verify their work at {company}"
+
+        message_block = ""
+        if personal_message:
+            message_block = f"""
+                <div style="background: #f0f9ff; border-left: 3px solid #4F46E5; padding: 16px; border-radius: 0 8px 8px 0; margin: 20px 0; font-style: italic; color: #374151;">
+                    "{personal_message}"
+                    <div style="margin-top: 8px; font-style: normal; font-size: 13px; color: #6b7280;">— {reviewee_name}</div>
+                </div>
+            """
+
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; margin: 0; padding: 20px; }}
+                .container {{ max-width: 520px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }}
+                .hero {{ background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%); padding: 32px 32px 28px; text-align: center; }}
+                .hero h1 {{ color: white; font-size: 22px; margin: 0 0 8px; font-weight: 700; }}
+                .hero p {{ color: #c7d2fe; font-size: 14px; margin: 0; }}
+                .logo {{ font-size: 28px; font-weight: 800; color: white; margin-bottom: 16px; letter-spacing: -0.5px; }}
+                .body {{ padding: 32px; }}
+                .body p {{ color: #374151; line-height: 1.7; margin: 0 0 16px; font-size: 15px; }}
+                .context {{ background: #fafafa; border: 1px solid #e5e7eb; padding: 16px 20px; border-radius: 12px; margin: 20px 0; }}
+                .context-row {{ display: flex; justify-content: space-between; margin-bottom: 8px; }}
+                .context-label {{ color: #6b7280; font-size: 13px; }}
+                .context-value {{ color: #111827; font-weight: 600; font-size: 14px; }}
+                .cta {{ text-align: center; margin: 28px 0; }}
+                .cta a {{ display: inline-block; background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white !important; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 16px; letter-spacing: 0.3px; }}
+                .time {{ text-align: center; color: #6b7280; font-size: 13px; margin: 0 0 24px; }}
+                .time strong {{ color: #374151; }}
+                .footer {{ text-align: center; padding: 20px 32px 24px; border-top: 1px solid #f3f4f6; }}
+                .footer p {{ font-size: 12px; color: #9ca3af; margin: 0 0 4px; }}
+                .what-is {{ background: #f8fafc; padding: 20px; margin: 0; }}
+                .what-is p {{ font-size: 13px; color: #6b7280; margin: 0; line-height: 1.6; }}
+                .what-is strong {{ color: #374151; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="hero">
+                    <div class="logo">proofile</div>
+                    <h1>Review Request</h1>
+                    <p>{reviewee_name} would value your honest feedback</p>
+                </div>
+
+                <div class="body">
+                    <p>Hi {reviewer_name},</p>
+
+                    <p><strong>{reviewee_name}</strong> has listed you as someone who can verify their professional work. Your name and review will appear publicly on their Proofile — this is a signal of trust, not a casual endorsement.</p>
+
+                    {message_block}
+
+                    <div class="context">
+                        <div class="context-row">
+                            <span class="context-label">Role</span>
+                            <span class="context-value">{role_title}</span>
+                        </div>
+                        <div class="context-row">
+                            <span class="context-label">Company</span>
+                            <span class="context-value">{company}</span>
+                        </div>
+                        <div class="context-row" style="margin-bottom: 0;">
+                            <span class="context-label">Your relationship</span>
+                            <span class="context-value">You'll confirm this</span>
+                        </div>
+                    </div>
+
+                    <div class="cta">
+                        <a href="{review_link}">Leave {reviewee_name} a review</a>
+                    </div>
+
+                    <p class="time">⏱ This takes about <strong>2 minutes</strong></p>
+                </div>
+
+                <div class="what-is">
+                    <p><strong>What is Proofile?</strong> A verified professional profile where real colleagues, managers, and clients leave public reviews. Unlike LinkedIn endorsements, every review is tied to a real person and a real working relationship. Your review helps build a more honest professional world.</p>
+                </div>
+
+                <div class="footer">
+                    <p>© 2026 Proofile · Building verified professional identities</p>
+                    <p>If you don't recognise this request, you can safely ignore it.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        body = f"""
+Hi {reviewer_name},
+
+{reviewee_name} is asking you to verify their work at {company} as {role_title}.
+
+Your name and review will appear publicly on their Proofile.
+
+Leave your review here (takes about 2 minutes):
+{review_link}
+
+What is Proofile? A verified professional profile where real colleagues leave public reviews. Your review helps build a more honest professional world.
+
+If you don't recognise this request, you can safely ignore it.
+
+— The Proofile Team
+        """
+
+        return self.send_email(
+            to_email=to_email,
+            subject=subject,
+            body=body.strip(),
+            html_content=html_content,
+        )
+
+
 # Create singleton instance
 email_service = EmailService()

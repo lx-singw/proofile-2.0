@@ -8,6 +8,18 @@ import type {
   KnowledgeRequirements,
 } from "@/services/opportunityService";
 import { motion } from "framer-motion";
+import { ShareModal } from "@/components/opportunities/ShareModal";
+import { ApplicationMethodCard } from "@/components/opportunities/ApplicationMethodCard";
+import { ContactSection } from "@/components/opportunities/ContactSection";
+import { EligibilityBadges } from "@/components/opportunities/EligibilityBadges";
+import { RequiredDocuments } from "@/components/opportunities/RequiredDocuments";
+import { SafetyTips } from "@/components/opportunities/SafetyTips";
+import { SocialProof } from "@/components/opportunities/SocialProof";
+import { VouchSection } from "@/components/opportunities/VouchSection";
+import { QuickActions } from "@/components/opportunities/QuickActions";
+import { MobileCTA } from "@/components/opportunities/MobileCTA";
+import { timeAgo } from "@/lib/helpers";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import {
   AlertCircle,
   AlertTriangle,
@@ -33,11 +45,13 @@ import {
   Mail,
   MapPin,
   Phone,
+  Share2,
   Shield,
   ShieldCheck,
   Sparkles,
   Star,
   Tag,
+  Users,
   Wifi,
   Zap,
 } from "lucide-react";
@@ -96,6 +110,155 @@ function benefitIcon(benefit: string) {
   if (l.includes("train") || l.includes("study") || l.includes("bursary")) return <BookOpen className="w-4 h-4" />;
   if (l.includes("remote") || l.includes("work from home")) return <Wifi className="w-4 h-4" />;
   return <Sparkles className="w-4 h-4" />;
+}
+
+function QuickOverviewCard({
+  opp,
+  deadline,
+  deadlineDays,
+  salary,
+  startDate,
+}: {
+  opp: JobDetail["opportunity"];
+  deadline: string | null;
+  deadlineDays: number | null;
+  salary: string | null;
+  startDate: string | null;
+}) {
+  const facts = [
+    opp.opportunity_type && { icon: <Briefcase className="w-4 h-4" />, label: "Type", value: opp.opportunity_type, color: "text-gray-700 dark:text-gray-300" },
+    opp.experience_level && { icon: <Award className="w-4 h-4" />, label: "Level", value: opp.experience_level, color: "text-amber-600 dark:text-amber-400" },
+    opp.duration && { icon: <Clock className="w-4 h-4" />, label: "Duration", value: opp.duration, color: "text-teal-600 dark:text-teal-400" },
+    opp.remote_type && { icon: <Globe className="w-4 h-4" />, label: "Work Mode", value: opp.remote_type, color: "text-blue-600 dark:text-blue-400" },
+    salary && opp.salary_visible !== false && { icon: <DollarSign className="w-4 h-4" />, label: "Salary", value: salary, color: "text-emerald-600 dark:text-emerald-400" },
+    startDate && { icon: <Calendar className="w-4 h-4" />, label: "Start Date", value: startDate, color: "text-purple-600 dark:text-purple-400" },
+  ].filter(Boolean) as { icon: React.ReactNode; label: string; value: string; color: string }[];
+
+  if (facts.length === 0 && !deadline) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-800/80 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <Zap className="w-5 h-5 text-emerald-500" />
+        <h3 className="font-semibold text-gray-900 dark:text-white text-sm">At a Glance</h3>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {facts.map((fact, i) => (
+          <div key={i} className="flex items-start gap-2.5">
+            <span className={`${fact.color} mt-0.5`}>{fact.icon}</span>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-medium">{fact.label}</p>
+              <p className={`text-sm font-semibold capitalize ${fact.color}`}>{fact.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      {deadline && deadlineDays !== null && (
+        <div className={`mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center gap-3 ${
+          deadlineDays <= 3 ? "text-red-600 dark:text-red-400" : deadlineDays <= 7 ? "text-amber-600 dark:text-amber-400" : "text-gray-600 dark:text-gray-400"
+        }`}>
+          <Calendar className="w-4 h-4" />
+          <div>
+            <p className="text-[10px] uppercase tracking-wider opacity-70 font-medium">Application Deadline</p>
+            <p className="text-sm font-semibold">
+              {deadline}
+              {deadlineDays >= 0 && (
+                <span className="ml-2 text-xs font-normal opacity-80">
+                  ({deadlineDays === 0 ? "Today!" : `${deadlineDays} day${deadlineDays > 1 ? "s" : ""} left`})
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function RequirementsSummaryCard({
+  opp,
+}: {
+  opp: JobDetail["opportunity"];
+}) {
+  const hasQualifications = opp.qualification_requirements?.minimum || opp.qualification_requirements?.ideal;
+  const hasExperience = opp.experience_requirements?.minimum || opp.experience_requirements?.ideal;
+  const hasSkills = (opp.skills_structured && opp.skills_structured.length > 0) || (opp.required_skills && opp.required_skills.length > 0);
+  const hasKnowledge = opp.knowledge_requirements?.minimum?.length || opp.knowledge_requirements?.ideal?.length;
+  const hasConditions = opp.conditions_of_employment && opp.conditions_of_employment.length > 0;
+  const hasDocs = opp.required_documents && opp.required_documents.length > 0;
+
+  const summaryItems = [
+    hasQualifications && {
+      icon: <GraduationCap className="w-4 h-4" />,
+      label: "Qualifications",
+      summary: opp.qualification_requirements?.minimum?.degree_level || "See details",
+      color: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    },
+    hasExperience && {
+      icon: <Briefcase className="w-4 h-4" />,
+      label: "Experience",
+      summary: opp.experience_requirements?.minimum?.years_min
+        ? `${opp.experience_requirements.minimum.years_min}+ years`
+        : opp.experience_level || "See details",
+      color: "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    },
+    hasSkills && {
+      icon: <Star className="w-4 h-4" />,
+      label: "Skills",
+      summary: `${(opp.skills_structured?.filter(s => s.level === "required").length || opp.required_skills?.length || 0)} required`,
+      color: "bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800",
+    },
+    hasKnowledge && {
+      icon: <BookOpen className="w-4 h-4" />,
+      label: "Knowledge",
+      summary: `${opp.knowledge_requirements?.minimum?.length || 0} areas`,
+      color: "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+    },
+    hasConditions && {
+      icon: <ShieldCheck className="w-4 h-4" />,
+      label: "Conditions",
+      summary: `${opp.conditions_of_employment?.length} items`,
+      color: "bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800",
+    },
+    hasDocs && {
+      icon: <FileText className="w-4 h-4" />,
+      label: "Documents",
+      summary: `${opp.required_documents?.length} required`,
+      color: "bg-gray-50 dark:bg-gray-700/30 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600",
+    },
+  ].filter(Boolean) as { icon: React.ReactNode; label: string; summary: string; color: string }[];
+
+  if (summaryItems.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+        <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Requirements Overview</h3>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {summaryItems.map((item, i) => (
+          <div key={i} className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border ${item.color}`}>
+            {item.icon}
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-wider opacity-60 font-medium">{item.label}</p>
+              <p className="text-xs font-semibold truncate">{item.summary}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-[11px] text-gray-400 dark:text-gray-500">Scroll down for detailed requirements in each section.</p>
+    </motion.div>
+  );
 }
 
 function SectionCard({ title, icon, children, className = "" }: {
@@ -311,6 +474,7 @@ function JobDetailsContent({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -386,6 +550,9 @@ function JobDetailsContent({ id }: { id: string }) {
       {/* Sticky header */}
       <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3">
+          <div className="mb-2">
+            <Breadcrumbs />
+          </div>
           <div className="flex items-center justify-between gap-4">
             <button
               onClick={() => router.back()}
@@ -396,6 +563,13 @@ function JobDetailsContent({ id }: { id: string }) {
               <span className="text-sm font-medium sm:hidden">Back</span>
             </button>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsShareOpen(true)}
+                className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-emerald-500 transition-colors"
+                title="Share opportunity"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
               <button
                 onClick={handleSaveJob}
                 disabled={saving}
@@ -506,6 +680,12 @@ function JobDetailsContent({ id }: { id: string }) {
               {deadlineDays === 0 ? "Closes today" : `Closes in ${deadlineDays} day${deadlineDays > 1 ? "s" : ""}`}
             </div>
           )}
+
+          <SocialProof 
+            views={opp.views || opp.views_count} 
+            saves={opp.saves} 
+            vouches={opp.vouches || (opp.vouch_positive ? opp.vouch_positive : undefined)} 
+          />
         </div>
       </div>
 
@@ -518,6 +698,29 @@ function JobDetailsContent({ id }: { id: string }) {
 
             {/* Match Banner */}
             <MatchBanner oppId={opp.id} />
+
+            {/* Quick Overview - At a Glance */}
+            <QuickOverviewCard
+              opp={opp}
+              deadline={deadline}
+              deadlineDays={deadlineDays}
+              salary={salary}
+              startDate={startDate}
+            />
+
+            {/* Requirements Summary */}
+            <RequirementsSummaryCard opp={opp} />
+
+            {/* Eligibility Badges */}
+            {(opp.extra_metadata?.spider_eligibility || opp.extra_metadata?.education_level || opp.extra_metadata?.experience_years) && (
+              <SectionCard title="Eligibility Criteria" icon={<Users className="w-5 h-5" />}>
+                <EligibilityBadges 
+                  eligibility={opp.extra_metadata?.spider_eligibility} 
+                  education_level={opp.extra_metadata?.education_level}
+                  experience_years={opp.extra_metadata?.experience_years}
+                />
+              </SectionCard>
+            )}
 
             {/* Scam Alert */}
             {scamRisk && (
@@ -545,33 +748,76 @@ function JobDetailsContent({ id }: { id: string }) {
               </motion.div>
             )}
 
-            {/* Tags */}
-            {opp.tags && opp.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {opp.tags.map((tag, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-full text-xs">
-                    <Tag className="w-3 h-3" /> {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Description */}
-            <SectionCard title="About this opportunity" icon={<FileText className="w-5 h-5" />}>
-              <div className={`prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-sm leading-relaxed overflow-hidden transition-all duration-300 ${!descExpanded && descLong ? "max-h-52" : ""}`}>
+            {/* Role Description */}
+            <SectionCard title="Role Description" icon={<FileText className="w-5 h-5" />}>
+              {/* Tags inline at top of description */}
+              {opp.tags && opp.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+                  {opp.tags.map((tag, i) => (
+                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-md text-xs">
+                      <Tag className="w-3 h-3" /> {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className={`prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-sm leading-relaxed overflow-hidden transition-all duration-300 ${!descExpanded && descLong ? "max-h-64" : ""}`}>
                 {opp.description}
               </div>
               {descLong && (
                 <button
                   onClick={() => setDescExpanded(!descExpanded)}
-                  className="mt-3 flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 text-sm font-medium"
+                  className="mt-4 flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 text-sm font-medium"
                 >
                   {descExpanded
                     ? <><ChevronUp className="w-4 h-4" /> Show less</>
-                    : <><ChevronDown className="w-4 h-4" /> Read more</>}
+                    : <><ChevronDown className="w-4 h-4" /> Read full description</>}
                 </button>
               )}
             </SectionCard>
+
+            {/* === REQUIREMENTS SECTION GROUP === */}
+            <div className="space-y-5">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 pt-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                Requirements & Qualifications
+              </h2>
+
+              {/* Qualifications */}
+              <QualificationsSection reqs={opp.qualification_requirements} />
+
+              {/* Experience Requirements */}
+              <ExperienceSection reqs={opp.experience_requirements} />
+
+              {/* Structured Skills & Knowledge */}
+              <StructuredSkillsSection skills={opp.skills_structured} knowledge={opp.knowledge_requirements} />
+
+              {/* Required Skills (flat, only if no structured skills) */}
+              {opp.required_skills && opp.required_skills.length > 0 && !(opp.skills_structured && opp.skills_structured.length > 0) && (
+                <SectionCard title="Required Skills" icon={<Award className="w-5 h-5" />}>
+                  <div className="flex flex-wrap gap-2">
+                    {opp.required_skills.map((skill, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-medium">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </SectionCard>
+              )}
+
+              {/* Conditions of Employment */}
+              {opp.conditions_of_employment && opp.conditions_of_employment.length > 0 && (
+                <SectionCard title="Conditions of Employment" icon={<ShieldCheck className="w-5 h-5" />}>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">You must meet these conditions to be considered:</p>
+                  <ul className="space-y-2">
+                    {opp.conditions_of_employment.map((c, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300">
+                        <CheckCircle2 className="w-4 h-4 text-teal-500 shrink-0 mt-0.5" /> {c}
+                      </li>
+                    ))}
+                  </ul>
+                </SectionCard>
+              )}
+            </div>
 
             {/* Benefits Grid */}
             {opp.benefits && opp.benefits.length > 0 && (
@@ -587,104 +833,64 @@ function JobDetailsContent({ id }: { id: string }) {
               </SectionCard>
             )}
 
-            {/* Required Skills (flat, only if no structured skills) */}
-            {opp.required_skills && opp.required_skills.length > 0 && !(opp.skills_structured && opp.skills_structured.length > 0) && (
-              <SectionCard title="Required Skills" icon={<Award className="w-5 h-5" />}>
-                <div className="flex flex-wrap gap-2">
-                  {opp.required_skills.map((skill, i) => (
-                    <span key={i} className="px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-medium">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+            {/* === APPLICATION SECTION GROUP === */}
+            <div className="space-y-5">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 pt-2">
+                <FileText className="w-5 h-5 text-emerald-500" />
+                How to Apply
+              </h2>
+
+              {/* Required Documents */}
+              {opp.required_documents && opp.required_documents.length > 0 && (
+                <SectionCard title="Required Documents" icon={<FileText className="w-5 h-5" />} className="border-l-4 border-l-amber-400">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Have these ready before you apply:</p>
+                  <RequiredDocuments documents={opp.required_documents} />
+                </SectionCard>
+              )}
+
+              {/* Application Method Card - Dynamic with instructions */}
+              <SectionCard title="Application Process" icon={<Zap className="w-5 h-5" />} className="border-l-4 border-l-emerald-500">
+                <ApplicationMethodCard opportunity={{
+                  title: opp.title,
+                  extra_metadata: opp.extra_metadata,
+                  application_method: opp.application_method,
+                  canonical_link: opp.canonical_link ?? undefined,
+                  application_url: opp.application_url ?? undefined,
+                  contact_email: opp.contact_email ?? undefined,
+                  contact_phone: opp.contact_phone ?? undefined,
+                  contact_website: opp.contact_website ?? undefined,
+                  contact_address: opp.contact_address ?? undefined,
+                  contact_whatsapp: opp.contact_whatsapp ?? undefined,
+                }} />
               </SectionCard>
-            )}
 
-            {/* Structured Skills & Knowledge */}
-            <StructuredSkillsSection skills={opp.skills_structured} knowledge={opp.knowledge_requirements} />
+              {/* Contact Section - All contact methods */}
+              {(opp.contact_email || opp.contact_phone || opp.contact_website || opp.extra_metadata?.spider_contacts) && (
+                <SectionCard title="Contact Information" icon={<Phone className="w-5 h-5" />}>
+                  <ContactSection 
+                    contact={{
+                      phone: opp.contact_phone ?? undefined,
+                      email: opp.contact_email ?? undefined,
+                      website: opp.contact_website ?? undefined,
+                      application_url: opp.application_url ?? undefined,
+                      whatsapp: opp.contact_whatsapp ?? undefined,
+                      fax: opp.contact_fax ?? undefined,
+                    }}
+                    extra_metadata={opp.extra_metadata}
+                  />
+                </SectionCard>
+              )}
+            </div>
 
-            {/* Qualifications */}
-            <QualificationsSection reqs={opp.qualification_requirements} />
+            {/* Safety Tips Section */}
+            <SafetyTips />
 
-            {/* Experience Requirements */}
-            <ExperienceSection reqs={opp.experience_requirements} />
-
-            {/* Conditions of Employment */}
-            {opp.conditions_of_employment && opp.conditions_of_employment.length > 0 && (
-              <SectionCard title="Conditions of Employment" icon={<ShieldCheck className="w-5 h-5" />}>
-                <ul className="space-y-2">
-                  {opp.conditions_of_employment.map((c, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> {c}
-                    </li>
-                  ))}
-                </ul>
-              </SectionCard>
-            )}
-
-            {/* Required Documents */}
-            {opp.required_documents && opp.required_documents.length > 0 && (
-              <SectionCard title="Required Documents" icon={<FileText className="w-5 h-5" />}>
-                <ul className="space-y-2">
-                  {opp.required_documents.map((doc, i) => (
-                    <li key={i} className="flex items-center gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                      <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded flex items-center justify-center shrink-0">
-                        <div className="w-2.5 h-2.5 rounded-sm bg-gray-200 dark:bg-gray-600" />
-                      </div>
-                      {doc}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">Prepare these documents before applying.</p>
-              </SectionCard>
-            )}
-
-            {/* How to Apply */}
-            {(applyUrl || opp.contact_email || opp.contact_phone) && (
-              <SectionCard title="How to Apply" icon={<Globe className="w-5 h-5" />}>
-                <div className="space-y-3">
-                  {applyUrl && (
-                    <a
-                      href={applyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors group"
-                    >
-                      <Globe className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Apply online</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{applyUrl}</p>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                    </a>
-                  )}
-                  {opp.contact_email && (
-                    <a
-                      href={`mailto:${opp.contact_email}?subject=Application: ${encodeURIComponent(opp.title)}`}
-                      className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <Mail className="w-5 h-5 text-gray-500 dark:text-gray-400 shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Email application</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{opp.contact_email}</p>
-                      </div>
-                    </a>
-                  )}
-                  {opp.contact_phone && (
-                    <a
-                      href={`tel:${opp.contact_phone}`}
-                      className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <Phone className="w-5 h-5 text-gray-500 dark:text-gray-400 shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Call to apply</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{opp.contact_phone}</p>
-                      </div>
-                    </a>
-                  )}
-                </div>
-              </SectionCard>
-            )}
+            {/* Vouch Section */}
+            <VouchSection 
+              opportunityId={opp.id} 
+              vouchPositive={opp.vouch_positive} 
+              vouchNegative={opp.vouch_negative} 
+            />
 
             {/* Similar Opportunities */}
             {related_opportunities.length > 0 && (
@@ -721,6 +927,23 @@ function JobDetailsContent({ id }: { id: string }) {
 
           {/* Sidebar */}
           <div className="space-y-5">
+            {/* Quick Actions */}
+            <QuickActions 
+              opportunity={{
+                canonical_link: opp.canonical_link ?? undefined,
+                application_url: opp.application_url ?? undefined,
+                contact_website: opp.contact_website ?? undefined,
+                source_url: opp.source_url ?? undefined,
+              }}
+              isSaved={is_saved}
+              onSave={handleSaveJob}
+              onShare={() => setIsShareOpen(true)}
+              onApply={() => {
+                const url = opp.canonical_link || opp.application_url || opp.contact_website || opp.source_url;
+                if (url) window.open(url, '_blank');
+              }}
+            />
+
             {/* Key Details */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-sm">Key Details</h3>
@@ -860,6 +1083,33 @@ function JobDetailsContent({ id }: { id: string }) {
           </div>
         </div>
       </div>
+
+      {/* Mobile CTA */}
+      <MobileCTA 
+        opportunity={{
+          canonical_link: opp.canonical_link ?? undefined,
+          application_url: opp.application_url ?? undefined,
+          contact_website: opp.contact_website ?? undefined,
+          source_url: opp.source_url ?? undefined,
+        }}
+        isSaved={is_saved}
+        onSave={handleSaveJob}
+        onApply={() => {
+          const url = opp.canonical_link || opp.application_url || opp.contact_website || opp.source_url;
+          if (url) window.open(url, '_blank');
+        }}
+      />
+
+      {/* Share Modal */}
+      <ShareModal 
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        opportunity={{
+          id: opp.id,
+          title: opp.title,
+          company_name: opp.company_name,
+        }}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Briefcase, GraduationCap, Users, FileText, Handshake, UserCheck, Building, Heart, Award } from "lucide-react";
 
 // Types matching the database enums
-export type OpportunityCategory = "jobs" | "training_skills_programs" | null;
+export type OpportunityCategory = "jobs" | "training_skills_programs" | "bursaries" | null;
 export type OpportunityType =
     // Jobs category
     | "employment" | "contract" | "freelance" | "consulting" | "board" | "volunteer"
@@ -20,9 +20,10 @@ interface OpportunityTypeFilterProps {
 }
 
 const CATEGORY_OPTIONS = [
-    { value: null, label: "All Opportunities", icon: Briefcase },
+    { value: null, label: "All", icon: Briefcase },
     { value: "jobs" as const, label: "Jobs", icon: Briefcase },
     { value: "training_skills_programs" as const, label: "Training & Skills", icon: GraduationCap },
+    { value: "bursaries" as const, label: "Bursaries", icon: GraduationCap },
 ];
 
 const JOB_TYPE_OPTIONS = [
@@ -51,7 +52,9 @@ export function OpportunityTypeFilter({
         ? JOB_TYPE_OPTIONS
         : selectedCategory === "training_skills_programs"
             ? TRAINING_TYPE_OPTIONS
-            : [];
+            : selectedCategory === "bursaries"
+                ? []
+                : [];
 
     const handleTypeToggle = (type: OpportunityType) => {
         if (selectedTypes.includes(type)) {

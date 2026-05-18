@@ -36,11 +36,13 @@ export interface OppActivityItem {
 export interface OpportunityFeedCard {
   type: 'opportunity';
   id: string;
+  slug?: string;
   companyName: string;
   companyLogoUrl?: string;
   roleTitle: string;
   location: string;
   remoteType: 'onsite' | 'hybrid' | 'remote' | 'flexible';
+  opportunityType?: string;
   salaryMin?: number;
   salaryMax?: number;
   salaryCurrency: string;
@@ -49,6 +51,9 @@ export interface OpportunityFeedCard {
   postedAt: string;
   closesAt?: string;
   source: 'aggregated' | 'direct';
+  sourcePlatform?: string;
+  applyUrl?: string;
+  description?: string;
   qualityScore: number;
   engagementRate: number;
   // Match context — varies by UserFeedState
@@ -142,6 +147,7 @@ export type SignalType =
   | 'dismiss'
   | 'save'
   | 'share'
+  | 'apply_click'
   | 'scroll_past';
 
 export interface SignalEvent {
@@ -186,5 +192,6 @@ export interface FeedPageParams {
     salaryMin?: number;
     salaryMax?: number;
     skills?: string[];
+    opportunityTypes?: string[];
   };
 }

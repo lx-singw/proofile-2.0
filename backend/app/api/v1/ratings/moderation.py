@@ -17,7 +17,7 @@ from enum import Enum
 from app.core.database import get_db
 from app.api.deps import get_current_active_user
 from app.models.user import User
-from app.models.rating import Rating
+from app.models.social import Rating
 
 router = APIRouter(prefix="/moderation", tags=["rating-moderation"])
 

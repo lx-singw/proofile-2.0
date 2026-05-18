@@ -6,7 +6,7 @@ All endpoints require authentication.
 """
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db, get_current_user
 from app.models.user import User
@@ -31,7 +31,7 @@ async def get_feed(
     size: int = Query(20, ge=1, le=50),
     following_only: bool = Query(False),
     types: Optional[str] = Query(None, description="Comma-separated post types"),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
@@ -52,14 +52,14 @@ async def get_feed(
         except ValueError:
             pass
     
-    posts, has_more = service.get_feed(
+    posts, has_more = await service.get_feed(
         user_id=current_user.id,
         filters=filters,
         page=page,
         size=size
     )
     
-    enriched_posts = [service.enrich_post(post, current_user.id) for post in posts]
+    enriched_posts = [await service.enrich_post(post, current_user.id) for post in posts]
     
     return FeedResponse(
         posts=enriched_posts,
@@ -73,24 +73,24 @@ async def get_feed(
 @router.post("/posts", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
 async def create_post(
     data: PostCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Create a new post"""
     service = FeedService(db)
     post = await service.create_post(current_user.id, data)
-    return service.enrich_post(post, current_user.id)
+    return await service.enrich_post(post, current_user.id)
 
 
 @router.get("/posts/{post_id}", response_model=PostResponse)
 async def get_post(
     post_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get a single post by ID"""
     service = FeedService(db)
-    post = service.get_post(post_id, current_user.id)
+    post = await service.get_post(post_id, current_user.id)
     
     if not post:
         raise HTTPException(
@@ -98,19 +98,19 @@ async def get_post(
             detail="Post not found"
         )
     
-    return service.enrich_post(post, current_user.id)
+    return await service.enrich_post(post, current_user.id)
 
 
 @router.put("/posts/{post_id}", response_model=PostResponse)
 async def update_post(
     post_id: int,
     data: PostUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Update a post (only by author)"""
     service = FeedService(db)
-    post = service.update_post(post_id, current_user.id, data)
+    post = await service.update_post(post_id, current_user.id, data)
     
     if not post:
         raise HTTPException(
@@ -118,18 +118,18 @@ async def update_post(
             detail="Post not found or you don't have permission"
         )
     
-    return service.enrich_post(post, current_user.id)
+    return await service.enrich_post(post, current_user.id)
 
 
 @router.delete("/posts/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(
     post_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Delete a post (soft delete, only by author)"""
     service = FeedService(db)
-    success = service.delete_post(post_id, current_user.id)
+    success = await service.delete_post(post_id, current_user.id)
     
     if not success:
         raise HTTPException(
@@ -144,7 +144,7 @@ async def delete_post(
 async def toggle_reaction(
     post_id: int,
     data: ReactionCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
@@ -168,12 +168,12 @@ async def toggle_reaction(
 @router.get("/posts/{post_id}/reactions", response_model=ReactionSummary)
 async def get_reactions(
     post_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get reaction summary for a post"""
     service = FeedService(db)
-    return service._get_reaction_summary(post_id)
+    return await service._get_reaction_summary(post_id)
 
 
 # ==================== Comment Endpoints ====================
@@ -182,14 +182,14 @@ async def get_reactions(
 async def add_comment(
     post_id: int,
     data: CommentCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Add a comment to a post"""
     service = FeedService(db)
     
     # Verify post exists
-    post = service.get_post(post_id, current_user.id)
+    post = await service.get_post(post_id, current_user.id)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -197,7 +197,7 @@ async def add_comment(
         )
     
     comment = await service.add_comment(post_id, current_user.id, data)
-    return service._enrich_comment(comment, current_user.id)
+    return await service._enrich_comment(comment, current_user.id)
 
 
 @router.get("/posts/{post_id}/comments")
@@ -205,12 +205,12 @@ async def get_comments(
     post_id: int,
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=50),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get paginated comments for a post"""
     service = FeedService(db)
-    comments, has_more = service.get_comments(post_id, page, size, current_user.id)
+    comments, has_more = await service.get_comments(post_id, page, size, current_user.id)
     
     return {
         "comments": comments,
@@ -227,21 +227,21 @@ async def get_user_posts(
     user_id: int,
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=50),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get posts from a specific user"""
     service = FeedService(db)
     
     filters = FeedFilters(user_ids=[user_id])
-    posts, has_more = service.get_feed(
+    posts, has_more = await service.get_feed(
         user_id=current_user.id,
         filters=filters,
         page=page,
         size=size
     )
     
-    enriched = [service.enrich_post(post, current_user.id) for post in posts]
+    enriched = [await service.enrich_post(post, current_user.id) for post in posts]
     
     return PostList(
         items=enriched,

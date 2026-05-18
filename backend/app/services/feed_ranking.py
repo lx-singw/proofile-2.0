@@ -53,6 +53,8 @@ async def get_ranked_feed(
     location: str | None = None,
     user: "User | None" = None,
     page_size: int = PAGE_SIZE,
+    opportunity_category: str | None = None,
+    opportunity_types: list[str] | None = None,
 ) -> tuple[list[Opportunity], int | None]:
     """
     Return a ranked page of opportunities for the feed.
@@ -63,6 +65,8 @@ async def get_ranked_feed(
         location: inferred or stated city/province for location boosting
         user: authenticated user (None for anonymous)
         page_size: how many opportunities to return
+        opportunity_category: optional category to filter by (e.g. 'jobs', 'training_skills_programs')
+        opportunity_types: optional list of types to filter by (e.g. ['job', 'internship'])
 
     Returns:
         (opportunities, next_cursor) where next_cursor is None when there are no more results.
@@ -81,14 +85,22 @@ async def get_ranked_feed(
     # Fetch a larger candidate pool (4× page_size) so we can re-rank before slicing
     candidate_pool_size = page_size * 4
 
-    # Build base query: active, non-dismissed, paginated by cursor
+    # Build base query: active, feed-eligible, non-dismissed, paginated by cursor
     stmt = select(Opportunity).where(
+        Opportunity.is_active.is_(True),
+        Opportunity.quality_score >= 0.40,
         or_(Opportunity.expires_at.is_(None), Opportunity.expires_at > now_utc_naive),
         or_(Opportunity.ai_status.is_(None), Opportunity.ai_status != "quarantine"),
     )
 
     if dismissed_ids:
         stmt = stmt.where(Opportunity.id.notin_(dismissed_ids))
+
+    if opportunity_category:
+        stmt = stmt.where(Opportunity.category == opportunity_category)
+
+    if opportunity_types:
+        stmt = stmt.where(Opportunity.opportunity_type.in_(opportunity_types))
 
     if cursor is not None:
         stmt = stmt.where(Opportunity.id < cursor)

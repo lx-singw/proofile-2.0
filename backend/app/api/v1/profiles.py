@@ -429,18 +429,8 @@ async def delete_profile(
 
 # === Public Profile Endpoints ===
 
-from app.models.resume import Resume
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
-
-
-class PublicProfileResume(BaseModel):
-    id: str
-    name: str
-    template_id: str
-    created_at: str
-    
-    model_config = ConfigDict(from_attributes=True)
 
 
 class PublicProfileResponse(BaseModel):
@@ -450,7 +440,6 @@ class PublicProfileResponse(BaseModel):
     profile_photo_url: Optional[str]
     persona: Optional[str]
     industry: Optional[str]
-    resumes: List[PublicProfileResume]
     experiences: List[dict]
     portfolio: List[dict]
     skills_data: List[str] = [] # Added for Pillar 2
@@ -465,7 +454,7 @@ class UsernameCheckResponse(BaseModel):
     suggestion: Optional[str] = None
 
 
-@router.get("/public/{username}", response_model=PublicProfileResponse)
+@router.get("/public/{username}", response_model=None)
 async def get_public_profile(
     username: str,
     db: AsyncSession = Depends(deps.get_db),
@@ -473,24 +462,28 @@ async def get_public_profile(
 ):
     """
     Get a user's public profile by username.
-    Returns 404 if user doesn't exist.
-    If profile is private, only the owner can view it (with is_private=True flag).
+    Returns the full public profile with verified reviews, Proofile Score, and skills.
+    Returns 404 if user doesn't exist or profile is private.
     """
+    from app.models.verified_review import VerifiedReview, ReviewStatus
+    from app.services.proofile_score import get_score_breakdown
+    from collections import Counter
+
     # Find user by username
     result = await db.execute(
         select(User).where(User.username == username)
     )
     user = result.scalar_one_or_none()
-    
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Profile not found"
         )
-    
+
     # Check if profile is private
     is_private = user.profile_visibility != "public"
-    
+
     # If private, only owner can view
     if is_private:
         current_user_id = getattr(current_user, 'id', None) if current_user else None
@@ -499,35 +492,80 @@ async def get_public_profile(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Profile not found"
             )
-    
-    # Get user's published resumes
-    resumes_result = await db.execute(
-        select(Resume).where(Resume.user_id == user.id)
+
+    # Get all published reviews for this user
+    reviews_result = await db.execute(
+        select(VerifiedReview).where(
+            VerifiedReview.reviewee_id == user.id,
+            VerifiedReview.status == ReviewStatus.PUBLISHED.value,
+            VerifiedReview.is_flagged == False,
+        ).order_by(VerifiedReview.completed_at.desc())
     )
-    resumes = resumes_result.scalars().all()
-    
-    return PublicProfileResponse(
-        username=user.username,
-        full_name=user.full_name,
-        bio=user.bio,
-        profile_photo_url=user.profile_photo_url,
-        persona=user.persona,
-        industry=user.industry,
-        user_id=user.id,
-        is_private=is_private,
-        resumes=[
-            PublicProfileResume(
-                id=str(r.id),
-                name=r.name,
-                template_id=r.template_id,
-                created_at=r.created_at.isoformat() if r.created_at else ""
-            )
-            for r in resumes
-        ],
-        experiences=[exp.to_dict() for exp in user.work_experiences],
-        portfolio=[item.to_dict() for item in user.portfolio_items],
-        skills_data=user.profile.skills_data if user.profile else []
-    )
+    all_reviews = reviews_result.scalars().all()
+
+    # Group reviews by work experience
+    reviews_by_exp = {}
+    for review in all_reviews:
+        exp_id = str(review.work_experience_id)
+        if exp_id not in reviews_by_exp:
+            reviews_by_exp[exp_id] = []
+        reviews_by_exp[exp_id].append(review.to_public_dict())
+
+    # Build experiences with nested reviews
+    experiences = []
+    for exp in user.work_experiences:
+        exp_dict = exp.to_dict()
+        exp_dict["reviews"] = reviews_by_exp.get(str(exp.id), [])
+        exp_dict["review_count"] = len(exp_dict["reviews"])
+        experiences.append(exp_dict)
+
+    # Build verified skills with endorsement counts
+    skill_endorsements = Counter()
+    for review in all_reviews:
+        for skill in (review.endorsed_skills or []):
+            skill_endorsements[skill] += 1
+
+    # Get score breakdown
+    score_breakdown = await get_score_breakdown(db, user.id)
+
+    # Compute summary stats
+    total_reviews = len(all_reviews)
+    avg_rating = 0.0
+    if total_reviews > 0:
+        avg_rating = round(
+            sum(r.star_rating for r in all_reviews if r.star_rating) / total_reviews,
+            2
+        )
+
+    # Get profile headline
+    headline = None
+    skills_data = []
+    if user.profile:
+        headline = user.profile.headline
+        skills_data = user.profile.skills_data or []
+
+    return {
+        "username": user.username,
+        "full_name": user.full_name,
+        "bio": user.bio,
+        "profile_photo_url": user.profile_photo_url,
+        "headline": headline,
+        "persona": user.persona,
+        "industry": user.industry,
+        "city": user.city,
+        "github_url": None,  # TODO: Pull from profile data sources
+        "linkedin_url": None,  # TODO: Pull from profile data sources
+        "user_id": user.id,
+        "is_private": is_private,
+        "experiences": experiences,
+        "skills_data": skills_data,
+        "verified_skills": dict(skill_endorsements),
+        "proofile_score": user.trust_score or 0,
+        "score_breakdown": score_breakdown,
+        "total_reviews": total_reviews,
+        "avg_rating": avg_rating,
+        "portfolio": [item.to_dict() for item in user.portfolio_items],
+    }
 
 
 @router.get("/check-username/{username}", response_model=UsernameCheckResponse)

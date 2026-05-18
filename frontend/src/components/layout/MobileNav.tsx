@@ -26,7 +26,7 @@ export default function MobileNav() {
         {
             icon: Briefcase,
             label: "Jobs",
-            path: "/portal"
+            path: "/opportunities"
         },
         {
             icon: Search,

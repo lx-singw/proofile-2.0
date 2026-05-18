@@ -9,10 +9,10 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, Query, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -57,6 +57,7 @@ class OpportunityCard(BaseModel):
     id: int
     title: str
     company_name: str
+    description: str = ''
     location: Optional[str]
     remote_type: Optional[str]
     opportunity_type: Optional[str]
@@ -68,6 +69,9 @@ class OpportunityCard(BaseModel):
     experience_level: Optional[str]
     industry: Optional[str]
     source: Optional[str]
+    source_platform: Optional[str] = None
+    source_url: Optional[str] = None
+    application_url: Optional[str] = None
     is_direct: bool
     quality_score: float
     posted_at: Optional[datetime]
@@ -94,7 +98,7 @@ class SignalIn(BaseModel):
     signal_type: str = Field(
         ...,
         max_length=50,
-        pattern=r"^(view|dwell_3s|dwell_10s|expand|interest|dismiss|save|share|scroll_past)$",
+        pattern=r"^(view|dwell_3s|dwell_10s|expand|interest|dismiss|save|share|apply_click|scroll_past)$",
     )
     feed_position: Optional[int] = None
     session_duration_ms: Optional[int] = None
@@ -102,10 +106,50 @@ class SignalIn(BaseModel):
 
 VALID_SIGNAL_TYPES = {
     "view", "dwell_3s", "dwell_10s", "expand",
-    "interest", "dismiss", "save", "share", "scroll_past",
+    "interest", "dismiss", "save", "share", "apply_click", "scroll_past",
 }
 
 VALID_CARD_TYPES = {"opportunity", "insight", "graph", "market", "community"}
+
+SIGNAL_ACTIVITY_TYPES = {
+    "share": "shared",
+    "apply_click": "applied",
+}
+
+
+async def _record_activity(
+    db: AsyncSession,
+    opportunity_id: int,
+    user_id: int | None,
+    activity_type: str,
+    toggle: bool = False,
+) -> OpportunityActivity:
+    if activity_type not in {"interested", "saved", "shared", "applied"}:
+        raise HTTPException(status_code=400, detail="Unsupported activity type")
+
+    existing_row = None
+    if user_id is not None:
+        existing = await db.execute(
+            select(OpportunityActivity).where(
+                OpportunityActivity.user_id == user_id,
+                OpportunityActivity.opportunity_id == opportunity_id,
+                OpportunityActivity.activity_type == activity_type,
+            )
+        )
+        existing_row = existing.scalar_one_or_none()
+
+    if existing_row:
+        existing_row.is_active = not existing_row.is_active if toggle else True
+        return existing_row
+
+    activity = OpportunityActivity(
+        user_id=user_id,
+        opportunity_id=opportunity_id,
+        activity_type=activity_type,
+        is_active=True,
+    )
+    db.add(activity)
+    return activity
 
 
 # ── Endpoints ───────────────────────────────────────────────────────────────
@@ -116,6 +160,8 @@ async def get_opportunity_feed(
     response: Response,
     cursor: Optional[int] = Query(None, description="Last seen opportunity id (exclusive)"),
     location: Optional[str] = Query(None, max_length=100, description="City or province for location boosting"),
+    category: Optional[str] = Query(None, max_length=100, description="Opportunity category filter: jobs, training_skills_programs, bursaries"),
+    opportunity_type: Optional[str] = Query(None, max_length=100, description="Comma-separated list of types: job,internship,bursary,learnership"),
     db: AsyncSession = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user_optional),
 ):
@@ -125,6 +171,8 @@ async def get_opportunity_feed(
     - Works for anonymous users (no auth required).
     - Pass `cursor` from a previous response's `next_cursor` to paginate.
     - Optionally pass `location` (e.g. "Johannesburg") for location-boosted ranking.
+    - Optionally pass `category` to filter by high-level opportunity category.
+    - Optionally pass `opportunity_type` (comma-separated) to filter by type.
     """
     # Ensure session cookie is set even for anonymous visitors
     _get_or_create_session_id(request, response)
@@ -136,11 +184,18 @@ async def get_opportunity_feed(
             getattr(current_user, "profile", None), "location", None
         )
 
+    # Parse comma-separated opportunity types if provided
+    parsed_types: Optional[List[str]] = None
+    if opportunity_type:
+        parsed_types = [t.strip().lower() for t in opportunity_type.split(',') if t.strip()]
+
     opportunities, next_cursor = await feed_ranking.get_ranked_feed(
         db,
         cursor=cursor,
         location=resolved_location,
         user=current_user,
+        opportunity_category=category.strip().lower() if category else None,
+        opportunity_types=parsed_types,
     )
 
     # Enrich with social proof counts
@@ -227,7 +282,9 @@ async def record_signal(
         signal_type=payload.signal_type,
         feed_position=payload.feed_position,
         session_duration_ms=payload.session_duration_ms,
-        timestamp=datetime.now(timezone.utc),
+        # FeedSignal.timestamp is TIMESTAMP WITHOUT TIME ZONE in Postgres.
+        # Store UTC as a naive datetime to avoid asyncpg offset-naive/aware errors.
+        timestamp=datetime.utcnow(),
     )
     db.add(signal)
 
@@ -235,6 +292,16 @@ async def record_signal(
     if current_user and payload.signal_type == "dismiss" and payload.opportunity_id:
         await feed_ranking.record_dismissed(db, current_user.id, payload.opportunity_id)
     else:
+        await db.commit()
+
+    if current_user and payload.opportunity_id and payload.signal_type in SIGNAL_ACTIVITY_TYPES:
+        await _record_activity(
+            db,
+            payload.opportunity_id,
+            current_user.id,
+            SIGNAL_ACTIVITY_TYPES[payload.signal_type],
+            toggle=False,
+        )
         await db.commit()
 
     # Update engagement_rate on the opportunity (lightweight increment)
@@ -257,6 +324,13 @@ class InterestToggleOut(BaseModel):
     interested_count: int
 
 
+class ActivityOut(BaseModel):
+    opportunity_id: int
+    activity_type: str
+    is_active: bool
+    count: int
+
+
 @router.post("/opportunities/{opportunity_id}/interest", response_model=InterestToggleOut)
 async def toggle_interest(
     opportunity_id: int,
@@ -268,7 +342,6 @@ async def toggle_interest(
     Returns the new state and the updated aggregate count.
     Requires authentication (returns 401 if not logged in).
     """
-    from fastapi import HTTPException
     from app.models.opportunity import Opportunity
 
     if not current_user:
@@ -279,26 +352,7 @@ async def toggle_interest(
     if not opp:
         raise HTTPException(status_code=404, detail="Opportunity not found")
 
-    # Upsert the activity row
-    existing = await db.execute(
-        select(OpportunityActivity).where(
-            OpportunityActivity.user_id == current_user.id,
-            OpportunityActivity.opportunity_id == opportunity_id,
-            OpportunityActivity.activity_type == "interested",
-        )
-    )
-    existing_row = existing.scalar_one_or_none()
-
-    if existing_row:
-        existing_row.is_active = not existing_row.is_active
-    else:
-        existing_row = OpportunityActivity(
-            user_id=current_user.id,
-            opportunity_id=opportunity_id,
-            activity_type="interested",
-            is_active=True,
-        )
-        db.add(existing_row)
+    existing_row = await _record_activity(db, opportunity_id, current_user.id, "interested", toggle=True)
 
     await db.commit()
     await db.refresh(existing_row)
@@ -318,6 +372,73 @@ async def toggle_interest(
         is_interested=existing_row.is_active,
         interested_count=total,
     )
+
+
+async def _count_activity(db: AsyncSession, opportunity_id: int, activity_type: str) -> int:
+    count_row = await db.execute(
+        select(func.count(OpportunityActivity.id)).where(
+            OpportunityActivity.opportunity_id == opportunity_id,
+            OpportunityActivity.activity_type == activity_type,
+            OpportunityActivity.is_active.is_(True),
+        )
+    )
+    return count_row.scalar() or 0
+
+
+async def _record_authenticated_activity_endpoint(
+    opportunity_id: int,
+    activity_type: str,
+    toggle: bool,
+    db: AsyncSession,
+    current_user: User | None,
+) -> ActivityOut:
+    from app.models.opportunity import Opportunity
+
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    opp = await db.get(Opportunity, opportunity_id)
+    if not opp:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+
+    row = await _record_activity(db, opportunity_id, current_user.id, activity_type, toggle=toggle)
+    await db.commit()
+    await db.refresh(row)
+    total = await _count_activity(db, opportunity_id, activity_type)
+
+    return ActivityOut(
+        opportunity_id=opportunity_id,
+        activity_type=activity_type,
+        is_active=row.is_active,
+        count=total,
+    )
+
+
+@router.post("/opportunities/{opportunity_id}/save", response_model=ActivityOut)
+async def toggle_save(
+    opportunity_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user_optional),
+):
+    return await _record_authenticated_activity_endpoint(opportunity_id, "saved", True, db, current_user)
+
+
+@router.post("/opportunities/{opportunity_id}/share", response_model=ActivityOut)
+async def record_share(
+    opportunity_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user_optional),
+):
+    return await _record_authenticated_activity_endpoint(opportunity_id, "shared", False, db, current_user)
+
+
+@router.post("/opportunities/{opportunity_id}/apply-click", response_model=ActivityOut)
+async def record_apply_click(
+    opportunity_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user_optional),
+):
+    return await _record_authenticated_activity_endpoint(opportunity_id, "applied", False, db, current_user)
 
 
 # ── Activity feed for a single opportunity ──────────────────────────────────

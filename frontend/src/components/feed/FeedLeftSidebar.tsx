@@ -174,13 +174,6 @@ export function FeedLeftSidebar({ user }: FeedLeftSidebarProps) {
                 </h4>
                 <div className="space-y-1">
                     <Link
-                        href="/resume"
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                    >
-                        <FileText className="w-4 h-4" />
-                        Update Resume
-                    </Link>
-                    <Link
                         href="/verification"
                         className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                     >

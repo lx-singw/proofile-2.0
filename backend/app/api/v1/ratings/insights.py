@@ -17,7 +17,7 @@ from pydantic import BaseModel
 from app.core.database import get_db
 from app.api.deps import get_current_active_user
 from app.models.user import User
-from app.models.rating import Rating
+from app.models.social import Rating
 from app.models.reputation_stats import UserReputationStats
 from app.models.rating_dimension import RatingDimension
 
