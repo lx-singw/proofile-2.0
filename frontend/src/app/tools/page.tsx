@@ -93,6 +93,7 @@ export default function ToolsPage() {
                                 <Shield className="w-4 h-4" />
                                 Verification
                             </Link>
+                        </div>
                     </div>
 
                     {/* Career Tools Section */}

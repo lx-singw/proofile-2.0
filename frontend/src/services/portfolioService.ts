@@ -18,6 +18,7 @@ export interface PortfolioItemCreate {
     experience_id?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PortfolioItemUpdate extends Partial<PortfolioItemCreate> { }
 
 const BASE_PATH = "/api/v1/portfolio";

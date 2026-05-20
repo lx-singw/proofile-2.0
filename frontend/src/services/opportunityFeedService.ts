@@ -24,59 +24,40 @@ import {
 
 const PAGE_SIZE = 24;
 
-// ── Static insight card pools ─────────────────────────────────────────────────
-// In Phase 0 these are curated. Phase 1+ will pull from real data.
+// ── Insight card pools (static fallback; replaced by backend data at runtime) ─
+// Backend calls GET /api/v1/feed/insight-cards to populate live pools.
 
-const TRUST_INSIGHT_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+const FALLBACK_TRUST: Omit<InsightFeedCard, 'id'>[] = [
   {
     type: 'trust_insight',
-    headline: 'Your profile puts you in a strong position',
+    headline: 'Verified profiles get hired 3× faster',
     body: 'Professionals with verified skills on Proofile are contacted by recruiters 3× more often than unverified applicants.',
     ctaLabel: 'Get verified →',
     ctaHref: '/profile#reviews',
     iconKey: 'star',
   },
-  {
-    type: 'trust_insight',
-    headline: 'Node.js ranks in the top 15% of SA developer skills',
-    body: 'Roles requiring Node.js in South Africa pay an average of R68,000/month. Your verified profile could unlock those opportunities.',
-    ctaLabel: 'See matching roles',
-    iconKey: 'chart',
-  },
 ];
 
-const MARKET_INTELLIGENCE_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+const FALLBACK_MARKET: Omit<InsightFeedCard, 'id'>[] = [
   {
     type: 'market_intelligence',
     headline: 'SA remote-friendly companies hiring this month',
-    body: '47 South African companies are actively hiring for remote or hybrid roles this month — up 12% from last month.',
+    body: '47 South African companies are actively hiring for remote or hybrid roles this month.',
     ctaLabel: 'Browse remote roles',
     iconKey: 'market',
   },
-  {
-    type: 'market_intelligence',
-    headline: 'Average time-to-offer for SA tech roles: 18 days',
-    body: 'Senior developer roles in Johannesburg move fast. Verified Proofile profiles get through initial screening 3× faster.',
-    iconKey: 'market',
-  },
 ];
 
-const COMMUNITY_PROOF_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+const FALLBACK_COMMUNITY: Omit<InsightFeedCard, 'id'>[] = [
   {
     type: 'community_proof',
-    headline: 'A developer in Johannesburg moved from R52k to R78k',
-    body: 'A backend developer with 6 verified Proofile reviews recently landed a senior role — no degree, just proof.',
-    iconKey: 'community',
-  },
-  {
-    type: 'community_proof',
-    headline: '34 SA professionals expressed interest this week',
-    body: 'This week, 34 professionals matched verified Proofile signals to real opportunities — and recruiters reached out first.',
+    headline: 'SA developers are moving up without degrees',
+    body: 'Proofile members with 4+ verified reviews are landing senior roles based on proof — not paper qualifications.',
     iconKey: 'community',
   },
 ];
 
-const GRAPH_DISCOVERY_CARDS: Omit<InsightFeedCard, 'id'>[] = [
+const FALLBACK_GRAPH: Omit<InsightFeedCard, 'id'>[] = [
   {
     type: 'graph_discovery',
     headline: 'Your network is already inside these companies',
@@ -87,13 +68,16 @@ const GRAPH_DISCOVERY_CARDS: Omit<InsightFeedCard, 'id'>[] = [
   },
 ];
 
-// Cycle through insight types: trust → market → community → graph
-const INSIGHT_POOL: Omit<InsightFeedCard, 'id'>[][] = [
-  TRUST_INSIGHT_CARDS,
-  MARKET_INTELLIGENCE_CARDS,
-  COMMUNITY_PROOF_CARDS,
-  GRAPH_DISCOVERY_CARDS,
-];
+// Live pools — populated from backend on mount, fallback used until then
+let liveTrustCards: Omit<InsightFeedCard, 'id'>[] = FALLBACK_TRUST;
+let liveMarketCards: Omit<InsightFeedCard, 'id'>[] = FALLBACK_MARKET;
+let liveCommunityCards: Omit<InsightFeedCard, 'id'>[] = FALLBACK_COMMUNITY;
+let liveGraphCards: Omit<InsightFeedCard, 'id'>[] = FALLBACK_GRAPH;
+
+// Cycle order: trust → market → community → graph
+function getLivePools(): Omit<InsightFeedCard, 'id'>[][] {
+  return [liveTrustCards, liveMarketCards, liveCommunityCards, liveGraphCards];
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -150,6 +134,42 @@ function buildMatchContext(
   return {
     state: 'anonymous',
     behavioural: reasons,
+  } satisfies AnonymousMatchContext;
+}
+
+function mapBackendMatchContext(
+  ctx: BackendMatchContext,
+  opp: Opportunity,
+): AnonymousMatchContext | ProfileMatchContext | VerifiedMatchContext {
+  if (ctx.state === 'verified') {
+    const verifiedSkills = ctx.reasons
+      .filter((r) => r.strength === 'verified')
+      .map((r) => r.label.split(' — ')[0]);
+    return {
+      state: 'verified',
+      verifiedSkills: verifiedSkills.length ? verifiedSkills : (opp.required_skills ?? []).slice(0, 2),
+      reviewerConnections: ctx.reviewer_connections,
+      matchStrengthPercent: ctx.match_strength_percent,
+      proofileScorePercentile: ctx.proofile_score_percentile,
+    } satisfies VerifiedMatchContext;
+  }
+  if (ctx.state === 'profile') {
+    const matchedSkills = ctx.reasons
+      .filter((r) => r.strength === 'stated')
+      .map((r) => r.label.split(' — ')[0]);
+    return {
+      state: 'profile',
+      matchedSkills,
+      unmatchedSkills: (opp.required_skills ?? []).filter(
+        (s) => !matchedSkills.map((m) => m.toLowerCase()).includes(s.toLowerCase()),
+      ).slice(0, 2),
+      matchStrengthPercent: ctx.match_strength_percent,
+    } satisfies ProfileMatchContext;
+  }
+  // anonymous
+  return {
+    state: 'anonymous',
+    behavioural: ctx.reasons.map((r) => r.label),
   } satisfies AnonymousMatchContext;
 }
 
@@ -219,7 +239,9 @@ function oppToFeedCard(opp: Opportunity, params: FeedPageParams, backendCard?: B
     description: (opp as Opportunity & { description?: string }).description || undefined,
     qualityScore: 0.8,
     engagementRate: 0,
-    matchContext: buildMatchContext(opp, params),
+    matchContext: backendCard?.match_context
+      ? mapBackendMatchContext(backendCard.match_context, opp)
+      : buildMatchContext(opp, params),
     avgSalaryForRole: salaryMin ? Math.round((salaryMin + (salaryMax ?? salaryMin)) / 2) : undefined,
     interestedCount: backendCard?.interested_count ?? 0,
     savedCount: backendCard?.saved_count ?? 0,
@@ -231,7 +253,8 @@ function oppToFeedCard(opp: Opportunity, params: FeedPageParams, backendCard?: B
 }
 
 function makeInsightCard(cycleIndex: number, slotIndex: number): InsightFeedCard {
-  const pool = INSIGHT_POOL[cycleIndex % INSIGHT_POOL.length];
+  const pools = getLivePools();
+  const pool = pools[cycleIndex % pools.length];
   const template = pool[slotIndex % pool.length];
   return {
     ...template,
@@ -240,26 +263,51 @@ function makeInsightCard(cycleIndex: number, slotIndex: number): InsightFeedCard
 }
 
 /**
- * Mix opportunity cards with non-job cards at the ratios from the feed plan:
- *   60% opportunities, 15% trust insights, 10% graph, 10% market, 5% community
- *
- * Implementation: insert 1 insight card after every 4th opportunity card,
- * cycling through types.
+ * Deterministic pseudo-random interval between 4 and 7.
+ * Using seed so position is stable across re-renders on the same page load.
  */
-function mixCards(oppCards: OpportunityFeedCard[]): FeedCard[] {
+function nextInsightInterval(seed: number): number {
+  // LCG-style: produces 0–3, mapped to 4–7
+  return 4 + ((seed * 1103515245 + 12345) >>> 0) % 4;
+}
+
+/**
+ * Mix opportunity cards with non-job cards using a variable reward schedule:
+ *   ~60% opportunities, ~15% trust insights, ~10% graph, ~10% market, ~5% community
+ *
+ * Insight cards appear every 4–7 opportunity cards (randomised per cycle so
+ * users can't predict and skip them — TikTok-style variable reward schedule).
+ */
+export function mixCards(oppCards: OpportunityFeedCard[]): FeedCard[] {
   const result: FeedCard[] = [];
   let insightCycle = 0;
+  let nextThreshold = nextInsightInterval(0);
+
   for (let i = 0; i < oppCards.length; i++) {
     result.push(oppCards[i]);
-    if ((i + 1) % 4 === 0) {
+    if (i + 1 >= nextThreshold) {
       result.push(makeInsightCard(insightCycle, 0));
       insightCycle++;
+      nextThreshold += nextInsightInterval(insightCycle);
     }
   }
   return result;
 }
 
 // ── Dedicated feed API response types ────────────────────────────────────────
+
+interface BackendMatchReason {
+  label: string;
+  strength: 'verified' | 'stated' | 'inferred';
+}
+
+interface BackendMatchContext {
+  state: 'anonymous' | 'profile' | 'verified';
+  reasons: BackendMatchReason[];
+  match_strength_percent: number;
+  proofile_score_percentile: number;
+  reviewer_connections: number;
+}
 
 interface BackendOpportunityCard {
   id: number;
@@ -289,12 +337,29 @@ interface BackendOpportunityCard {
   saved_count?: number;
   viewer_is_interested?: boolean;
   viewer_has_saved?: boolean;
+  // Match context from backend
+  match_context?: BackendMatchContext | null;
 }
 
 interface BackendFeedPage {
   items: BackendOpportunityCard[];
   next_cursor: number | null;
   has_more: boolean;
+}
+
+interface BackendInsightCard {
+  type: string;
+  id: string;
+  headline: string;
+  body: string;
+  cta_label?: string | null;
+  cta_href?: string | null;
+  icon_key: string;
+}
+
+interface BackendFeedStats {
+  total_applicants_this_week: number;
+  verified_applicants_this_week: number;
 }
 
 /**
@@ -369,6 +434,15 @@ export async function getOpportunityFeedPage(params: FeedPageParams): Promise<Fe
     if (params.sidebarFilters?.location) queryParams['location'] = params.sidebarFilters.location;
     if (params.sidebarFilters?.opportunityTypes?.length) {
       queryParams['opportunity_type'] = params.sidebarFilters.opportunityTypes.join(',');
+    }
+    // Pass inferred signals for anonymous session-based ranking
+    if (params.userFeedState === 'anonymous' && params.inferredProfile) {
+      if (params.inferredProfile.location) {
+        queryParams['inferred_location'] = params.inferredProfile.location;
+      }
+      if (params.inferredProfile.skills?.length) {
+        queryParams['inferred_skills'] = params.inferredProfile.skills.slice(0, 5).join(',');
+      }
     }
 
     const backendPage = await apiRequest<BackendFeedPage>({
@@ -460,6 +534,69 @@ export async function recordShare(opportunityId: number): Promise<ActivityAction
 
 export async function recordApplyClick(opportunityId: number): Promise<ActivityActionResult> {
   return recordActivityAction(opportunityId, 'apply-click');
+}
+
+// ── Insight cards (personalised, replaces static pools) ──────────────────────
+
+/**
+ * Fetch live personalised insight cards from the backend and update the module-level
+ * live pools used by mixCards(). Safe to call on every feed mount — idempotent.
+ */
+export async function loadInsightCards(): Promise<void> {
+  try {
+    const result = await apiRequest<{ cards: BackendInsightCard[] }>({
+      method: 'get',
+      url: '/api/v1/feed/insight-cards',
+    });
+
+    const byType: Record<string, Omit<InsightFeedCard, 'id'>[]> = {
+      trust_insight: [],
+      market_intelligence: [],
+      community_proof: [],
+      graph_discovery: [],
+    };
+
+    for (const card of result.cards) {
+      const mapped: Omit<InsightFeedCard, 'id'> = {
+        type: card.type as InsightFeedCard['type'],
+        headline: card.headline,
+        body: card.body,
+        ctaLabel: card.cta_label ?? undefined,
+        ctaHref: card.cta_href ?? undefined,
+        iconKey: card.icon_key as InsightFeedCard['iconKey'],
+      };
+      if (byType[card.type]) byType[card.type].push(mapped);
+    }
+
+    if (byType.trust_insight.length) liveTrustCards = byType.trust_insight;
+    if (byType.market_intelligence.length) liveMarketCards = byType.market_intelligence;
+    if (byType.community_proof.length) liveCommunityCards = byType.community_proof;
+    if (byType.graph_discovery.length) liveGraphCards = byType.graph_discovery;
+  } catch {
+    // Silently keep fallback pools — feed still works
+  }
+}
+
+// ── Feed stats for TrustNudge card ────────────────────────────────────────────
+
+export interface FeedStats {
+  totalApplicantsThisWeek: number;
+  verifiedApplicantsThisWeek: number;
+}
+
+export async function getFeedStats(): Promise<FeedStats> {
+  try {
+    const result = await apiRequest<BackendFeedStats>({
+      method: 'get',
+      url: '/api/v1/feed/stats',
+    });
+    return {
+      totalApplicantsThisWeek: result.total_applicants_this_week,
+      verifiedApplicantsThisWeek: result.verified_applicants_this_week,
+    };
+  } catch {
+    return { totalApplicantsThisWeek: 340, verifiedApplicantsThisWeek: 12 };
+  }
 }
 
 // ── Opportunity activity ──────────────────────────────────────────────────────

@@ -142,6 +142,24 @@ export function useOpportunityFeed({
     }
   }, [hasMore, cursor, buildParams, prefetchNext]);
 
+  // ── Re-fetch when inferred profile changes for anonymous users ────────────
+  useEffect(() => {
+    if (userFeedState !== 'anonymous' || !inferredProfile?.role) return;
+
+    // Debounce: wait 3s after inference stabilises before re-fetching
+    const timer = setTimeout(() => {
+      loadVersion.current += 1;
+      const v = loadVersion.current;
+      setCursor(undefined);
+      setCards([]);
+      setHasMore(true);
+      load(v);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inferredProfile?.role, inferredProfile?.location, inferredProfile?.skills?.join(',')]);
+
   // ── Initial load on mount + when key params change ────────────────────────
   useEffect(() => {
     loadVersion.current += 1;

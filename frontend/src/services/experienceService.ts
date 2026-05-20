@@ -23,6 +23,7 @@ export interface ExperienceCreate {
     is_current: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ExperienceUpdate extends Partial<ExperienceCreate> { }
 
 const BASE_PATH = "/api/v1/experience";

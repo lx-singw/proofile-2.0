@@ -52,6 +52,8 @@ async def get_ranked_feed(
     cursor: int | None = None,
     location: str | None = None,
     user: "User | None" = None,
+    inferred_location: str | None = None,
+    inferred_skills: list[str] | None = None,
     page_size: int = PAGE_SIZE,
     opportunity_category: str | None = None,
     opportunity_types: list[str] | None = None,
@@ -64,6 +66,8 @@ async def get_ranked_feed(
         cursor: last seen opportunity id (exclusive) for cursor-based pagination
         location: inferred or stated city/province for location boosting
         user: authenticated user (None for anonymous)
+        inferred_location: location inferred from anonymous session signals
+        inferred_skills: skills inferred from anonymous session signals
         page_size: how many opportunities to return
         opportunity_category: optional category to filter by (e.g. 'jobs', 'training_skills_programs')
         opportunity_types: optional list of types to filter by (e.g. ['job', 'internship'])
@@ -115,7 +119,12 @@ async def get_ranked_feed(
 
     # Score & rank
     scored = [
-        (opp, _score(opp, location=location))
+        (opp, _score(
+            opp,
+            location=location,
+            inferred_location=inferred_location,
+            inferred_skills=inferred_skills,
+        ))
         for opp in candidates
     ]
     scored.sort(key=lambda x: x[1], reverse=True)
@@ -130,7 +139,13 @@ async def get_ranked_feed(
 # Scoring helpers
 # ---------------------------------------------------------------------------
 
-def _score(opp: Opportunity, *, location: str | None) -> float:
+def _score(
+    opp: Opportunity,
+    *,
+    location: str | None,
+    inferred_location: str | None = None,
+    inferred_skills: list[str] | None = None,
+) -> float:
     """Return a 0–1 ranking score for a single opportunity."""
     quality = float(opp.quality_score or 0.5)
     trust = float(opp.trust_score if opp.trust_score is not None else 0.5)
@@ -139,7 +154,7 @@ def _score(opp: Opportunity, *, location: str | None) -> float:
     salary_present = 1.0 if (opp.salary_min or opp.salary_max or opp.salary_range) else 0.0
     location_match = _location_score(opp.location, location)
 
-    return (
+    base = (
         W_QUALITY * quality
         + W_TRUST * trust
         + W_ENGAGEMENT * engagement
@@ -147,6 +162,29 @@ def _score(opp: Opportunity, *, location: str | None) -> float:
         + W_SALARY_PRESENT * salary_present
         + W_LOCATION * location_match
     )
+
+    # Inferred signal boost (weighted at 60% strength of stated signals)
+    if inferred_location or inferred_skills:
+        inferred_boost = 0.0
+
+        if inferred_location and opp.location:
+            inferred_boost += _location_score(opp.location, inferred_location) * 0.15 * 0.6
+
+        if inferred_skills and opp.required_skills:
+            try:
+                required = json.loads(opp.required_skills)
+                if isinstance(required, list):
+                    required_lower = [str(r).lower() for r in required]
+                    matches = sum(
+                        1 for s in inferred_skills if s.lower() in required_lower
+                    )
+                    inferred_boost += min(matches * 0.06, 0.18) * 0.6
+            except (ValueError, TypeError):
+                pass
+
+        return min(base + inferred_boost, 1.0)
+
+    return base
 
 
 def _apply_source_diversity(

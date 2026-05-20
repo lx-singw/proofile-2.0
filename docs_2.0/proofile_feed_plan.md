@@ -897,7 +897,7 @@ Progress framing. Specific target. Immediate action. No guilt.
 
 ### Sprint 1–2 (Weeks 1–4): Feed Foundation
 
-- Opportunity ingestion pipeline (3 sources: PNet, Careers24, OfferZen)
+- Opportunity ingestion pipeline (4 sources)
 - Basic opportunity normalisation and deduplication
 - PostgreSQL schema for opportunities, signals, user feed state
 - Simple rules-based ranking engine (location + quality score)

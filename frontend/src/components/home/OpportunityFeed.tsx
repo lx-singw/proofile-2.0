@@ -17,7 +17,9 @@ import { useFeedSignals } from '@/hooks/useFeedSignals';
 import { useSessionFeed } from '@/hooks/useSessionFeed';
 import { storeCardMeta } from '@/hooks/useSessionFeed';
 import { useReviewerConnections } from '@/hooks/useReviewerConnections';
-import { expressInterest, recordApplyClick, recordShare, toggleSave } from '@/services/opportunityFeedService';
+import { expressInterest, recordApplyClick, recordShare, toggleSave, getFeedStats } from '@/services/opportunityFeedService';
+import { useInsightCards } from '@/hooks/useInsightCards';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { MatchCard } from './feed/MatchCard';
 import { InsightCard } from './feed/InsightCard';
 import { LearningTriggerCard } from './feed/LearningTriggerCard';
@@ -30,6 +32,7 @@ interface OpportunityFeedProps {
   userId?: string | null;
   inferredProfile?: InferredProfile;
   sessionSeed?: InferredProfile;
+  currentScore?: number; // for ScoreUpgradeCard injection (verified users < 70)
   sidebarFilters?: {
     location?: string;
     industry?: string;
@@ -78,16 +81,38 @@ function buildMixedCards(
   isLearning: boolean,
   inferredProfile: InferredProfile | null,
   learningShownRef: React.MutableRefObject<boolean>,
+  insightPool: InsightFeedCard[],
+  shownInsightIds: Set<string>,
   currentScore?: number,
-): FeedCard[] {
+): { cards: FeedCard[]; shownIds: Set<string> } {
   const result: FeedCard[] = [];
   let trustNudgeCount = 0;
   const MAX_TRUST_NUDGE_PER_20 = 1;
+  let insightIndex = 0;
+  const newShownIds = new Set(shownInsightIds);
+
+  // Filter pool: graph_discovery only for verified users
+  const availableInsights = insightPool.filter((c) => {
+    if (c.type === 'graph_discovery') return userFeedState === 'verified';
+    return true;
+  });
 
   for (let i = 0; i < baseCards.length; i++) {
     result.push(baseCards[i]);
 
     const position = result.length; // 1-based after push
+
+    // ── Insight cards from backend pool — inject every 5th card ──
+    if (
+      position % 5 === 0 &&
+      insightIndex < availableInsights.length
+    ) {
+      const insight = availableInsights[insightIndex++];
+      if (!newShownIds.has(insight.id)) {
+        result.push(insight);
+        newShownIds.add(insight.id);
+      }
+    }
 
     // ── LearningTriggerCard — anonymous only, once per session ──
     if (
@@ -131,7 +156,7 @@ function buildMixedCards(
     }
   }
 
-  return result;
+  return { cards: result, shownIds: newShownIds };
 }
 
 // ── Virtual window: only render cards within viewport index range ─────────────
@@ -218,6 +243,7 @@ export function OpportunityFeed({
   userId,
   inferredProfile,
   sessionSeed,
+  currentScore,
   sidebarFilters,
   onAnonymousSave,
   onUnverifiedInterest,
@@ -231,13 +257,27 @@ export function OpportunityFeed({
       sidebarFilters,
     });
 
+  // ── Load live insight cards + stats from backend ──────────────────────────
+  const { pool: insightPool } = useInsightCards(userFeedState);
+
+  const [feedStats, setFeedStats] = useState({ totalApplicantsThisWeek: 340, verifiedApplicantsThisWeek: 12 });
+  useEffect(() => {
+    getFeedStats().then(setFeedStats).catch(() => undefined);
+  }, []);
+
   // ── Signal tracking ───────────────────────────────────────────────────────
   const { onCardVisible, fireSignal } = useFeedSignals({
     userId: userId ?? null,
   });
 
   // ── Session inference ─────────────────────────────────────────────────────
-  const { inferredProfile: sessionInferred, isLearning, confirmInferred } = useSessionFeed();
+  const {
+    inferredProfile: sessionInferred,
+    isLearning,
+    confirmInferred,
+    engagedCount,
+    sessionDurationMs,
+  } = useSessionFeed();
 
   // Guard: only inject LearningTriggerCard once per session
   const learningShownRef = useRef(false);
@@ -272,21 +312,32 @@ export function OpportunityFeed({
     }
   }, [cards]);
 
+  // ── Deduplication: track which insight cards have been shown (useRef, not useState) ──
+  const shownInsightIdsRef = useRef(new Set<string>());
+
   // ── Card mix: inject non-job cards ────────────────────────────────────────
-  const mixedCards = useMemo(
-    () =>
-      buildMixedCards(
-        cards,
-        userFeedState,
-        isLearning,
-        sessionInferred,
-        learningShownRef,
-      ),
-    [cards, userFeedState, isLearning, sessionInferred, learningShownRef],
-  );
+  const mixedCards = useMemo(() => {
+    const { cards: mixed, shownIds } = buildMixedCards(
+      cards,
+      userFeedState,
+      isLearning,
+      sessionInferred,
+      learningShownRef,
+      insightPool,
+      shownInsightIdsRef.current,
+      currentScore,
+    );
+    shownInsightIdsRef.current = shownIds;
+    return mixed;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cards, userFeedState, isLearning, sessionInferred, learningShownRef, insightPool, currentScore]);
+
 
   // ── Virtual windowing ─────────────────────────────────────────────────────
   const { containerRef, visibleRange } = useVirtualWindow(mixedCards.length);
+
+  // ── Pull-to-refresh ───────────────────────────────────────────────────────
+  const { isPulling, pullProgress, isRefreshing } = usePullToRefresh(refresh, containerRef);
 
   // ── Card ref registration for signals ────────────────────────────────────
   const signalCleanupRef = useRef<Map<string, () => void>>(new Map());
@@ -363,7 +414,22 @@ export function OpportunityFeed({
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-4 max-h-[calc(100vh-16rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-500/60 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/60 dark:scrollbar-track-gray-800 pr-2" ref={containerRef}>
+    <div
+      className="space-y-4 max-h-[calc(100vh-16rem)] overflow-y-auto scroll-smooth [scroll-snap-type:y_proximity] md:[scroll-snap-type:none] scrollbar-thin scrollbar-thumb-emerald-500/60 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/60 dark:scrollbar-track-gray-800 pr-2"
+      ref={containerRef}
+    >
+      {/* Pull-to-refresh indicator (mobile only) */}
+      {(isPulling || isRefreshing) && (
+        <div className="flex items-center justify-center py-3 text-sm text-emerald-600 dark:text-emerald-400 select-none">
+          <RefreshCw className={`w-4 h-4 mr-2 transition-transform ${isRefreshing ? 'animate-spin' : ''}`}
+            style={!isRefreshing ? { transform: `rotate(${Math.round(pullProgress * 270)}deg)` } : undefined}
+          />
+          {isRefreshing
+            ? 'Recalibrating your feed...'
+            : `Pull to refresh (${Math.round(pullProgress * 100)}%)`}
+        </div>
+      )}
+
       {mixedCards.map((card, i) => {
         // Virtual windowing: hide cards far outside the viewport
         const isInWindow = i >= visibleRange.start && i <= visibleRange.end;
@@ -373,6 +439,7 @@ export function OpportunityFeed({
             <div
               key={card.id}
               ref={(el) => cardRefCallback(el, card, i)}
+              className="[scroll-snap-align:start] md:[scroll-snap-align:none]"
               style={!isInWindow ? { visibility: 'hidden', height: '400px' } : undefined}
             >
               <MatchCard
@@ -455,18 +522,60 @@ export function OpportunityFeed({
               <LearningTriggerCard
                 inferredProfile={sessionInferred}
                 onConfirm={confirmInferred}
+                engagedCount={engagedCount}
               />
             </div>
           );
         }
 
-        if (card.type === 'trust_nudge') {
-          const nudge = card as TrustNudgeCardType;
+        {/* Progressive disclosure: signup nudge for highly engaged anonymous users */}
+        if (
+          userFeedState === 'anonymous' &&
+          sessionDurationMs > 10 * 60 * 1000 &&
+          i > 15 && // show after they've seen some cards
+          i % 20 === 0 // periodic reminder, not every card
+        ) {
           return (
-            <div key={card.id} style={!isInWindow ? { visibility: 'hidden', height: '120px' } : undefined}>
+            <div
+              key={`signup-nudge-${i}`}
+              className="rounded-2xl border border-emerald-200/50 dark:border-emerald-700/30 bg-gradient-to-br from-emerald-50 via-teal-50/30 to-white dark:from-emerald-950/20 dark:via-teal-950/10 dark:to-gray-800/80 overflow-hidden shadow-sm"
+            >
+              <div className="h-1 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400" />
+              <div className="p-5 text-center">
+                <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide mb-1">
+                  You&apos;re highly engaged
+                </p>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-2">
+                  Create a free account to unlock your real match strength
+                </h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  See verified match scores, save opportunities, and get contacted directly by recruiters.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white text-xs font-bold rounded-xl hover:shadow-md transition-all min-h-[44px]"
+                  >
+                    Create account — free
+                  </Link>
+                  <button
+                    onClick={() => fireSignal('nudge-dismiss', i, 'opportunity', 'dismiss')}
+                    className="inline-flex items-center justify-center py-2.5 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 border border-gray-200/60 dark:border-gray-600/30 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors min-h-[44px]"
+                  >
+                    Keep browsing
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (card.type === 'trust_nudge') {
+          return (
+            <div key={card.id} className="[scroll-snap-align:start] md:[scroll-snap-align:none]" style={!isInWindow ? { visibility: 'hidden', height: '120px' } : undefined}>
               <TrustNudgeCard
-                totalApplicants={nudge.totalApplicants}
-                verifiedApplicants={nudge.verifiedApplicants}
+                totalApplicants={feedStats.totalApplicantsThisWeek}
+                verifiedApplicants={feedStats.verifiedApplicantsThisWeek}
               />
             </div>
           );

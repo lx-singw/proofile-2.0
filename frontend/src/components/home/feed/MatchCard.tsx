@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
 import {
   MapPin,
   DollarSign,
@@ -551,6 +552,29 @@ function OppActivityFeed({ items }: { items: OppActivityItem[] }) {
   );
 }
 
+// ── Animated salary number (counts up on card enter) ─────────────────────────
+
+function AnimatedSalaryValue({ value, isInView }: { value: number; isInView: boolean }) {
+  const motionVal = useMotionValue(0);
+  const formatted = useTransform(motionVal, (v) => {
+    const n = Math.round(v);
+    return n >= 1000 ? `R${Math.round(n / 1000)}k` : `R${n}`;
+  });
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (isInView && !hasAnimated.current) {
+      hasAnimated.current = true;
+      const controls = animate(motionVal, value, { duration: 0.7, ease: 'easeOut' });
+      return controls.stop;
+    }
+  }, [isInView, motionVal, value]);
+
+  // Static fallback shown before animation starts
+  const staticDisplay = value >= 1000 ? `R${Math.round(value / 1000)}k` : `R${value}`;
+  return <motion.span>{isInView ? formatted : staticDisplay}</motion.span>;
+}
+
 // ── Main MatchCard ────────────────────────────────────────────────────────────
 
 export function MatchCard({
@@ -571,6 +595,10 @@ export function MatchCard({
   const [expanded, setExpanded] = useState(false);
   const [saved, setSaved] = useState(card.viewerHasSaved);
   const [dismissed, setDismissed] = useState(false);
+
+  // ── Entry animation ───────────────────────────────────────────────────────
+  const cardRef = useRef(null);
+  const isInView = useInView(cardRef, { once: true, margin: '-40px' });
   const [interested, setInterested] = useState(card.viewerIsInterested);
   const [localInterestedCount, setLocalInterestedCount] = useState(card.interestedCount);
   const [localSavedCount, setLocalSavedCount] = useState(card.savedCount);
@@ -581,24 +609,44 @@ export function MatchCard({
     if (!expanded) onExpand?.(card.id);
   }, [expanded, card.id, onExpand]);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const next = !saved;
     setSaved(next);
     setLocalSavedCount((c) => c + (next ? 1 : -1));
     onSave?.(card);
+    const { toast } = await import('sonner');
+    toast(next ? 'Saved opportunity' : 'Removed from saved', {
+      icon: next ? '🔖' : '🗑️',
+    });
   }, [card, saved, onSave]);
 
   const handleShare = useCallback(async () => {
     onShare?.(card);
+    const { toast } = await import('sonner');
+    const shareText = `${card.roleTitle} at ${card.companyName}\n${formatSalary(card.salaryMin, card.salaryMax, card.salaryCurrency, card.salaryVisible)} · ${card.location}\n\nvia Proofile ${window.location.origin}${detailsHref}`;
+
+    // Try native share first (mobile)
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
           title: card.roleTitle,
-          text: `${card.roleTitle} at ${card.companyName}`,
+          text: shareText,
           url: card.applyUrl ?? `${window.location.origin}${detailsHref}`,
         });
+        toast.success('Shared!');
+        return;
       } catch {
-        // ignore cancelled share sheets
+        // User cancelled share sheet — fall through to clipboard
+      }
+    }
+
+    // Fallback: copy to clipboard
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        toast.success('Copied to clipboard');
+      } catch {
+        toast.error('Unable to copy');
       }
     }
   }, [card, detailsHref, onShare]);
@@ -608,9 +656,11 @@ export function MatchCard({
     onApplyClick?.(card);
   }, [card, onApplyClick]);
 
-  const handleDismiss = useCallback(() => {
+  const handleDismiss = useCallback(async () => {
     setDismissed(true);
     onDismiss?.(card.id);
+    const { toast } = await import('sonner');
+    toast('Removed from feed', { icon: '👋' });
   }, [card.id, onDismiss]);
 
   const handleInterest = useCallback(async () => {
@@ -645,15 +695,30 @@ export function MatchCard({
 
   const handleCardKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
-      if (event.key !== 'Enter' && event.key !== ' ') {
-        return;
-      }
       const target = event.target as HTMLElement;
-      if (target.closest('button, a, input, textarea, select, [role="button"]')) {
+
+      // Arrow keys: focus next/prev card in feed (skip to nearest card element)
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        const allCards = Array.from(document.querySelectorAll<HTMLElement>('[data-feed-position]'));
+        const currentIdx = allCards.findIndex((el) => el === event.currentTarget);
+        const nextIdx = event.key === 'ArrowDown' ? currentIdx + 1 : currentIdx - 1;
+        if (nextIdx >= 0 && nextIdx < allCards.length) {
+          allCards[nextIdx].focus();
+          allCards[nextIdx].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
         return;
       }
-      event.preventDefault();
-      handleCardNavigate();
+
+      // Enter / Space on card body → navigate to details (matches click behavior)
+      if (event.key === 'Enter' || event.key === ' ') {
+        if (target.closest('button, a, input, textarea, select, [role="button"]')) {
+          return;
+        }
+        event.preventDefault();
+        handleCardNavigate();
+        return;
+      }
     },
     [handleCardNavigate],
   );
@@ -666,8 +731,18 @@ export function MatchCard({
     card.matchContext.matchStrengthPercent >= 70;
 
   return (
-    <article
-      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-emerald-200/40 dark:border-emerald-800/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+    <motion.article
+      ref={cardRef}
+      initial={{ opacity: 0, y: 14 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+      transition={{
+        duration: 0.28,
+        ease: 'easeOut',
+        ...(typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? { duration: 0 }
+          : {}),
+      }}
+      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-emerald-200/40 dark:border-emerald-800/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900"
       data-card-id={card.id}
       data-feed-position={feedPosition}
       role="link"
@@ -715,32 +790,32 @@ export function MatchCard({
             </h3>
           </div>
 
-          {/* Save + dismiss */}
-          <div className="flex items-center gap-1 flex-shrink-0">
+          {/* Save + dismiss + share — min 44×44px touch targets */}
+          <div className="flex items-center gap-0.5 flex-shrink-0">
             <button
               onClick={handleSave}
               aria-label={saved ? 'Unsave' : 'Save opportunity'}
-              className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:shadow-sm hover:shadow-emerald-500/10 transition-all"
+              className="p-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:shadow-sm hover:shadow-emerald-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
               {saved ? (
-                <BookmarkCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <BookmarkCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <Bookmark className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-emerald-600" />
+                <Bookmark className="w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-emerald-600" />
               )}
             </button>
             <button
               onClick={handleDismiss}
               aria-label="Not for me"
-              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-sm transition-all"
+              className="p-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-sm transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
-              <X className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-red-500" />
+              <X className="w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-red-500" />
             </button>
             <button
               onClick={handleShare}
               aria-label="Share opportunity"
-              className="p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:shadow-sm hover:shadow-emerald-500/10 transition-all"
+              className="p-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:shadow-sm hover:shadow-emerald-500/10 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
-              <Share2 className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-emerald-600" />
+              <Share2 className="w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-emerald-600" />
             </button>
           </div>
         </div>
@@ -748,12 +823,16 @@ export function MatchCard({
         {/* Metadata row with deadline urgency */}
         <MetadataRow card={card} />
         
-        {/* Salary highlight */}
+        {/* Salary highlight with count-up animation */}
         {card.salaryVisible && card.salaryMin && (
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200/60 dark:border-emerald-700/30">
             <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-              {formatSalary(card.salaryMin, card.salaryMax, card.salaryCurrency, card.salaryVisible)}
+              <AnimatedSalaryValue value={card.salaryMin} isInView={isInView} />
+              {card.salaryMax && card.salaryMax !== card.salaryMin && (
+                <> – <AnimatedSalaryValue value={card.salaryMax} isInView={isInView} /></>
+              )}
+              /month
             </span>
           </div>
         )}
@@ -804,36 +883,76 @@ export function MatchCard({
           onNetworkPrompt={onNetworkPrompt}
         />
 
-        {/* Expanded content */}
-        {expanded && (
-          <div className="pt-2 border-t border-gray-100 dark:border-gray-700/50 space-y-3 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
-            {card.description ? (
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                {card.description}
-              </p>
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                No description available for this listing.
-              </p>
-            )}
-            <OppActivityFeed items={card.recentActivityItems ?? []} />
-            
-            {/* Apply Now button in expanded section */}
-            {card.applyUrl && (
-              <div className="pt-2 border-t border-gray-100 dark:border-gray-700/50">
-                <a
-                  href={card.applyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleApplyClick}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 text-sm font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 transition-all active:scale-[0.98]"
-                >
-                  Apply Now <ExternalLink className="w-4 h-4" />
-                </a>
+        {/* Expanded content — smooth animation */}
+        <AnimatePresence initial={false}>
+          {expanded && (
+            <motion.div
+              key="expanded"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={
+                typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                  ? { duration: 0 }
+                  : { type: 'spring', stiffness: 400, damping: 35 }
+              }
+              className="overflow-hidden"
+            >
+              <div className="pt-3 border-t border-gray-100 dark:border-gray-700/50 space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
+                {card.description ? (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      About this role
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                      {card.description}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                    No description available for this listing.
+                  </p>
+                )}
+
+                {/* Full skill grid in expanded view */}
+                {card.requiredSkills.length > 4 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      Required skills
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {card.requiredSkills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-xs rounded-full border border-emerald-200/60 dark:border-emerald-700/30 font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <OppActivityFeed items={card.recentActivityItems ?? []} />
+
+                {/* Apply Now button in expanded section */}
+                {card.applyUrl && (
+                  <div className="pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                    <a
+                      href={card.applyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={handleApplyClick}
+                      className="flex items-center justify-center gap-2 w-full py-3.5 px-4 text-sm font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 transition-all active:scale-[0.98] min-h-[48px]"
+                    >
+                      Apply Now <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Action buttons */}
         <div className="flex gap-2.5 pt-1">
@@ -855,6 +974,6 @@ export function MatchCard({
           </a>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }
