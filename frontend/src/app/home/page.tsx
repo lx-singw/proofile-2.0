@@ -11,11 +11,6 @@ import { Footer } from "@/components/layout/Footer";
 import { UserProfileCard } from "@/components/home/UserProfileCard";
 import HomeLeftSidebar from "@/components/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/home/HomeRightSidebar";
-import { OpportunityTypeFilter, OpportunityCategory, OpportunityType } from "@/components/opportunities/OpportunityTypeFilter";
-import { OpportunityFeed } from "@/components/home/OpportunityFeed";
-import { UpgradePrompt, UpgradePromptVariant } from "@/components/home/feed/UpgradePrompt";
-import { ProofileScoreBadge } from "@/components/home/feed/ProofileScoreBadge";
-import type { UserFeedState, OpportunityFeedCard } from "@/types/feedCard";
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
@@ -29,80 +24,6 @@ export default function HomePage() {
     ? 'verified'
     : 'profile';
 
-  // Opportunity filter state (for guest view)
-  const [selectedCategory, setSelectedCategory] = useState<OpportunityCategory>(null);
-  const [selectedTypes, setSelectedTypes] = useState<OpportunityType[]>([]);
-
-  // Upgrade prompt state (Phase C)
-  const [upgradePrompt, setUpgradePrompt] = useState<UpgradePromptVariant | null>(null);
-  const handleAnonymousSave = useCallback((_card: OpportunityFeedCard) => {
-    setUpgradePrompt('save_prompt');
-  }, []);
-  const handleUnverifiedInterest = useCallback((_card: OpportunityFeedCard) => {
-    setUpgradePrompt('interest_prompt');
-  }, []);
-  const handleNetworkPrompt = useCallback(() => {
-    setUpgradePrompt('network_prompt');
-  }, []);
-
-  // Session signal persistence — when user logs in, pass stored signals as
-  // sessionSeed to the feed so ranking can use them. Clear after merge.
-  const [sessionSeed, setSessionSeed] = useState<import('@/types/feedCard').InferredProfile | undefined>(undefined);
-  const prevLoggedInUserId = useRef<string | null>(null);
-  useEffect(() => {
-    if (!user) return;
-    const userId = String(user.id ?? '');
-    // Only run once per login event
-    if (prevLoggedInUserId.current === userId) return;
-    prevLoggedInUserId.current = userId;
-
-    // Read accumulated anonymous signals and derive a seed profile
-    try {
-      const rawSignals = localStorage.getItem('pf_session_signals');
-      const rawMeta = localStorage.getItem('pf_session_card_meta');
-      if (rawSignals && rawMeta) {
-        const signals: import('@/types/feedCard').SignalEvent[] = JSON.parse(rawSignals);
-        const meta: Record<string, { roleTitle: string; location: string; skills: string[] }> = JSON.parse(rawMeta);
-        const engaged = signals.filter((s) => s.signalType === 'dwell_3s' || s.signalType === 'dwell_10s');
-        if (engaged.length >= 3) {
-          const first = meta[engaged[0].cardId];
-          if (first) {
-            setSessionSeed({
-              role: first.roleTitle,
-              location: first.location,
-              industry: '',
-              salaryMin: 0,
-              salaryMax: 0,
-              salaryCurrency: 'ZAR',
-              skills: first.skills ?? [],
-              confirmedByUser: false,
-            });
-          }
-        }
-        // Clear anonymous data after merging
-        localStorage.removeItem('pf_session_signals');
-        localStorage.removeItem('pf_session_card_meta');
-        sessionStorage.removeItem('pf_session_id');
-      }
-    } catch {
-      // ignore localStorage errors
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  // Sidebar filter state
-  const [sidebarFilters, setSidebarFilters] = useState<{
-    category?: string;
-    location?: string;
-    experience_level?: string;
-    job_type?: string;
-    opportunity_category?: string;
-    opportunity_types?: string[];
-  }>({});
-
-  const combinedOpportunityTypes = selectedTypes.length > 0
-    ? selectedTypes
-    : (sidebarFilters.opportunity_types || []) as OpportunityType[];
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-cyan-50/40 dark:from-gray-900 dark:via-emerald-950/20 dark:to-cyan-950/30 flex items-center justify-center">
@@ -114,14 +35,6 @@ export default function HomePage() {
   return (
     <>
       {/* Upgrade prompts */}
-      {upgradePrompt && (
-        <UpgradePrompt
-          variant={upgradePrompt}
-          currentScore={reputation?.global_score ?? 50}
-          onDismiss={() => setUpgradePrompt(null)}
-        />
-      )}
-
       {/* Hero Section (Gradient Banner) */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-700 dark:from-emerald-700 dark:via-teal-800 dark:to-green-900 text-white py-2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 dark:from-emerald-600 dark:via-teal-600 dark:to-cyan-600 animate-gradient-x" />
@@ -137,56 +50,71 @@ export default function HomePage() {
       {/* LOGGED-IN VIEW: Professional Feed */}
       {/* ========================================= */}
       {isLoggedIn ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row gap-6 lg:h-[calc(100vh-12rem)]">
-            {/* Left Sidebar - User Profile + Tools */}
-            <div className="hidden lg:block flex-shrink-0 w-72 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Welcome back, <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{user?.first_name || 'Professional'}</span>
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Your verified profile opens doors. Browse opportunities, grow your network, and build your reputation.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+              <Link
+                href="/opportunities"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-all hover:scale-105"
+              >
+                Browse Opportunities
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/network"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/30 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all hover:scale-105"
+              >
+                My Network
+              </Link>
+              <Link
+                href={user?.username ? `/p/${user.username}` : '/profile'}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105"
+              >
+                View Profile
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Stats / Dashboard Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 text-center">
+              <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-3">
+                <Star className="w-6 h-6 text-emerald-500" />
+              </div>
+              <p className="text-2xl font-black text-gray-900 dark:text-white">{reputation?.global_score ?? '-'}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Proofile Score</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 text-center">
+              <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mx-auto mb-3">
+                <CheckCircle className="w-6 h-6 text-teal-500" />
+              </div>
+              <p className="text-2xl font-black text-gray-900 dark:text-white">{reputation?.total_reviews ?? 0}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Reviews</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 text-center">
+              <div className="w-12 h-12 rounded-full bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center mx-auto mb-3">
+                <ArrowRight className="w-6 h-6 text-cyan-500" />
+              </div>
+              <p className="text-2xl font-black text-gray-900 dark:text-white">-</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Applications</p>
+            </div>
+          </div>
+
+          {/* Sidebars below for logged-in users */}
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="space-y-4">
               <UserProfileCard />
               <HomeLeftSidebar />
             </div>
-
-            {/* Center Column — unified opportunity feed */}
-            <div className="flex-1 min-w-0 space-y-4">
-              {/* Proofile Score badge — shown for logged-in users with any reputation data */}
-              {reputation && (
-                <ProofileScoreBadge
-                  score={reputation.global_score}
-                  totalReviews={reputation.total_reviews}
-                />
-              )}
-              <OpportunityTypeFilter
-                selectedCategory={selectedCategory}
-                selectedTypes={selectedTypes}
-                onCategoryChange={setSelectedCategory}
-                onTypeChange={setSelectedTypes}
-              />
-              <OpportunityFeed
-                userFeedState={userFeedState}
-                userId={user?.id ? String(user.id) : null}
-                sessionSeed={sessionSeed}
-                onUnverifiedInterest={handleUnverifiedInterest}
-                onNetworkPrompt={handleNetworkPrompt}
-                sidebarFilters={{
-                  location: sidebarFilters.location,
-                  industry: sidebarFilters.category,
-                  opportunityTypes: combinedOpportunityTypes,
-                }}
-              />
-            </div>
-
-            {/* Right Sidebar - Network Suggestions & Insights */}
-            <div className="hidden xl:block flex-shrink-0 w-80 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400/50 scrollbar-track-gray-100 dark:scrollbar-thumb-emerald-600/50 dark:scrollbar-track-gray-800 pr-2">
+            <div className="lg:col-span-2 space-y-4">
               <HomeRightSidebar />
             </div>
-          </div>
-
-          {/* Mobile Sidebars */}
-          <div className="lg:hidden mt-6 space-y-4">
-            <UserProfileCard />
-            <HomeLeftSidebar />
-          </div>
-          <div className="xl:hidden mt-6">
-            <HomeRightSidebar />
           </div>
         </div>
       ) : (
@@ -256,49 +184,37 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Opportunities Content */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex flex-col lg:flex-row gap-6">
-              {/* Left Sidebar */}
-              <div className="hidden lg:block flex-shrink-0 w-72 space-y-6">
-                <HomeLeftSidebar />
+          {/* Navigation Tiles for Guests */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Link href="/opportunities" className="group p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all hover:scale-[1.02]">
+                <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
+                  <ArrowRight className="w-6 h-6 text-emerald-500 group-hover:translate-x-1 transition-transform" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Browse Opportunities</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Discover verified jobs and training programs.</p>
+              </Link>
+              <Link href="/start" className="group p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all hover:scale-[1.02]">
+                <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center mb-4">
+                  <CheckCircle className="w-6 h-6 text-teal-500" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Get Verified</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Build a trusted professional profile.</p>
+              </Link>
+              <Link href="/network" className="group p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all hover:scale-[1.02]">
+                <div className="w-12 h-12 rounded-full bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center mb-4">
+                  <Star className="w-6 h-6 text-cyan-500" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Explore Network</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Connect with top professionals.</p>
+              </Link>
+              <div className="group p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all hover:scale-[1.02]">
+                <div className="w-12 h-12 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center mb-4">
+                  <Star className="w-6 h-6 text-purple-500" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Free Forever</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">No cost to browse and apply.</p>
               </div>
-
-              {/* Center Column — unified opportunity feed */}
-              <div className="flex-1 min-w-0 space-y-4">
-                <OpportunityTypeFilter
-                  selectedCategory={selectedCategory}
-                  selectedTypes={selectedTypes}
-                  onCategoryChange={setSelectedCategory}
-                  onTypeChange={setSelectedTypes}
-                />
-                <OpportunityFeed
-                  userFeedState="anonymous"
-                  sidebarFilters={{
-                    location: sidebarFilters.location,
-                    industry: sidebarFilters.category,
-                    opportunityTypes: combinedOpportunityTypes,
-                  }}
-                  onAnonymousSave={handleAnonymousSave}
-                  onNetworkPrompt={handleNetworkPrompt}
-                />
-              </div>
-
-              {/* Right Sidebar */}
-              <div className="hidden xl:block flex-shrink-0 w-80 space-y-6">
-                <HomeRightSidebar />
-              </div>
-            </div>
-
-            {/* Mobile Sidebars */}
-            <div className="lg:hidden mt-6 space-y-6">
-              <HomeLeftSidebar />
-            </div>
-            <div className="xl:hidden lg:block hidden mt-6">
-              <HomeRightSidebar />
-            </div>
-            <div className="lg:hidden mt-6">
-              <HomeRightSidebar />
             </div>
           </div>
 

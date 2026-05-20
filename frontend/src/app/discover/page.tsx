@@ -157,7 +157,7 @@ export default function DiscoverPage() {
                                 Explore
                             </Link>
                             <Link
-                                href="/feed"
+                                href="/opportunities"
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <TrendingUp className="w-4 h-4" />

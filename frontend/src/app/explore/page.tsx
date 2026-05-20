@@ -281,7 +281,7 @@ export default function ExplorePage() {
                                 Quick Discover
                             </Link>
                             <Link
-                                href="/feed"
+                                href="/opportunities"
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 hover:scale-[1.02]"
                             >
                                 <TrendingUp className="w-4 h-4" />

@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/home");
+    router.replace("/opportunities");
   }, [router]);
 
   return (

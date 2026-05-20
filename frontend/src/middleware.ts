@@ -12,14 +12,14 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
 
-    // Redirect /dashboard to /home
+    // Redirect /dashboard to /opportunities
     if (pathname === '/dashboard') {
-        return NextResponse.redirect(new URL('/home', request.url));
+        return NextResponse.redirect(new URL('/opportunities', request.url));
     }
 
-    // Redirect /feed to /home
+    // Redirect /feed to /opportunities
     if (pathname === '/feed') {
-        return NextResponse.redirect(new URL('/home', request.url));
+        return NextResponse.redirect(new URL('/opportunities', request.url));
     }
 
     // Redirect legacy /jobs routes to /opportunities

@@ -20,11 +20,11 @@ import { useReviewerConnections } from '@/hooks/useReviewerConnections';
 import { expressInterest, recordApplyClick, recordShare, toggleSave, getFeedStats } from '@/services/opportunityFeedService';
 import { useInsightCards } from '@/hooks/useInsightCards';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
-import { MatchCard } from './feed/MatchCard';
-import { InsightCard } from './feed/InsightCard';
-import { LearningTriggerCard } from './feed/LearningTriggerCard';
-import { TrustNudgeCard } from './feed/TrustNudgeCard';
-import { FeedCardSkeleton, FeedCardSkeletonList } from './feed/FeedCardSkeleton';
+import { MatchCard } from './MatchCard';
+import { InsightCard } from './InsightCard';
+import { LearningTriggerCard } from './LearningTriggerCard';
+import { TrustNudgeCard } from './TrustNudgeCard';
+import { FeedCardSkeleton, FeedCardSkeletonList } from './FeedCardSkeleton';
 import type { InferredProfile } from '@/types/feedCard';
 
 interface OpportunityFeedProps {

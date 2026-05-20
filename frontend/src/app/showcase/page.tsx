@@ -7,7 +7,6 @@ import {
 } from "@/components/profile/ProfileHeader";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
 import { EditableField } from "@/components/profile/EditableField";
-import { FeedCard, FeedItem } from "@/components/feed/FeedCard";
 import { AdvancedSearch } from "@/components/discover/AdvancedSearch";
 import { ProfileCard, ProfileCardData } from "@/components/discover/ProfileCard";
 import {
@@ -59,16 +58,6 @@ const SAMPLE_PROFILE = {
     experience_data: [
         { company: "TechCorp", title: "Senior Engineer", start_date: "2021", end_date: "Present" }
     ],
-};
-
-const SAMPLE_FEED_ITEM: FeedItem = {
-    id: "1",
-    type: "skill_verified",
-    user: { id: 1, name: "Sarah Chen", headline: "PM at Google" },
-    content: "Just got my React expertise verified! 🎉",
-    likes: 42,
-    comments: 8,
-    created_at: new Date().toISOString(),
 };
 
 const SAMPLE_PROFILES: ProfileCardData[] = [
@@ -175,22 +164,6 @@ export default function ShowcasePage() {
                                     onSave={async (val) => handleMockAction(`Saved: ${val}`)}
                                     isOwner={true}
                                     className="text-lg font-medium"
-                                />
-                            </div>
-                        </ComponentSection>
-                    </div>
-
-                    {/* Feed Components */}
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">📰 Feed Components</h2>
-
-                        <ComponentSection title="FeedCard" description="Social feed item with interactions">
-                            <div className="max-w-xl">
-                                <FeedCard
-                                    item={SAMPLE_FEED_ITEM}
-                                    onLike={() => handleMockAction("Like")}
-                                    onComment={() => handleMockAction("Comment")}
-                                    onShare={() => handleMockAction("Share")}
                                 />
                             </div>
                         </ComponentSection>

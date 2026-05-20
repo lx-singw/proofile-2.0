@@ -228,7 +228,7 @@ export function HomeHeader() {
                                                 </button>
                                                 {openMobileSection === 'workspace' && (
                                                     <div className="ml-2 mb-1">
-                                                        <Link href="/home" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><LayoutDashboard className="w-4 h-4" />Feed</Link>
+                                                        <Link href="/opportunities" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><LayoutDashboard className="w-4 h-4" />Opportunities</Link>
                                                         <Link href="/tools" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Zap className="w-4 h-4" />Tools</Link>
                                                         <Link href="/analytics" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><BarChart3 className="w-4 h-4" />Analytics</Link>
                                                         <Link href="/ai-assistant" onClick={() => setProofileMenuOpen(false)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Bot className="w-4 h-4" />AI Assistant</Link>
@@ -353,7 +353,7 @@ export function HomeHeader() {
                                         {activeNav === 'workspace' && (
                                             <div className="absolute top-full left-0 mt-1 w-56 rounded-2xl border border-gray-200 bg-white py-2 shadow-2xl dark:border-gray-700 dark:bg-gray-800 z-[60] animate-in fade-in slide-in-from-top-2 duration-200" onMouseEnter={() => openNav('workspace')} onMouseLeave={closeNavWithDelay}>
                                                 <div className="p-1.5">
-                                                    <Link href="/home" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><LayoutDashboard className="w-4 h-4" />Feed</Link>
+                                                    <Link href="/opportunities" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><LayoutDashboard className="w-4 h-4" />Opportunities</Link>
                                                     <Link href="/tools" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Zap className="w-4 h-4" />Tools</Link>
                                                     <Link href="/analytics" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><BarChart3 className="w-4 h-4" />Analytics</Link>
                                                     <Link href="/ai-assistant" onClick={() => setActiveNav(null)} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 dark:text-gray-300 dark:hover:bg-emerald-900/20"><Bot className="w-4 h-4" />AI Assistant</Link>
@@ -486,8 +486,8 @@ export function HomeHeader() {
                         <nav className="space-y-1 px-2">
                             {isAccountUser ? (
                                 <>
-                                    <Link href="/home" className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
-                                        Feed
+                                    <Link href="/opportunities" className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
+                                        Opportunities
                                     </Link>
                                     <Link href="/opportunities" className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md">
                                         Matches

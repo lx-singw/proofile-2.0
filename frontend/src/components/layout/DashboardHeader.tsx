@@ -99,7 +99,7 @@ export default function DashboardHeader({
               align="left"
             />
 
-            <Link href="/feed" className="flex items-center gap-2">
+            <Link href="/opportunities" className="flex items-center gap-2">
               <ProofileLogo size={32} showWordmark={true} />
             </Link>
           </div>

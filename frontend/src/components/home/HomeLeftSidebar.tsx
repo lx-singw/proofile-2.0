@@ -3,50 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import {
-    TrendingUp,
     CheckCircle,
-    Star,
-    Award,
-    RefreshCw,
-    Wrench,
     Users
 } from "lucide-react";
-import { feedService, PostResponse } from "@/services/feedService";
-import { formatDistanceToNow } from "date-fns";
+
 
 export default function HomeLeftSidebar() {
-    const [activities, setActivities] = React.useState<PostResponse[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        async function fetchActivities() {
-            try {
-                setLoading(true);
-                const response = await feedService.getFeed({ size: 6, types: "milestone,skill_verified,achievement" });
-                setActivities(response.posts);
-            } catch (error) {
-                // Gracefully handle auth errors for guest users
-                if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
-                    // Guest user - no activities to show
-                    setActivities([]);
-                } else {
-                    console.error("Failed to fetch live activity:", error);
-                }
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchActivities();
-    }, []);
-
-    const getActivityIcon = (type: string) => {
-        switch (type) {
-            case "milestone": return <Award className="w-5 h-5 text-emerald-500" />;
-            case "skill_verified": return <CheckCircle className="w-5 h-5 text-green-500" />;
-            case "achievement": return <Star className="w-5 h-5 text-amber-500" />;
-            default: return <TrendingUp className="w-5 h-5 text-blue-500" />;
-        }
-    };
 
     return (
         <aside className="w-full lg:w-72 space-y-4">
@@ -63,30 +25,30 @@ export default function HomeLeftSidebar() {
                     </div>
                 </div>
                 <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {loading ? (
-                        <div className="p-8 flex justify-center">
-                            <RefreshCw className="w-5 h-5 animate-spin text-gray-400" />
+                    <div className="p-3 flex items-center gap-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
+                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        <div className="text-xs text-gray-700 dark:text-gray-300 flex-1 min-w-0">
+                            <span className="font-bold">New verified profile</span>
+                            <span className="truncate block opacity-80">Sarah Chen completed verification</span>
                         </div>
-                    ) : activities.length > 0 ? (
-                        activities.map((item) => (
-                            <div key={item.id} className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex items-center gap-3">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
-                                <span className="flex-shrink-0">{getActivityIcon(item.type)}</span>
-                                <div className="text-xs text-gray-700 dark:text-gray-300 flex-1 min-w-0">
-                                    <span className="font-bold uppercase text-[10px] block opacity-60 mb-0.5">{item.type.replace('_', ' ')}</span>
-                                    <span className="font-bold">{item.user.full_name || item.user.username}</span>
-                                    <span className="truncate block opacity-80">{item.content.substring(0, 40)}{item.content.length > 40 ? "..." : ""}</span>
-                                </div>
-                                <span className="text-[10px] text-gray-500 flex-shrink-0">
-                                    {formatDistanceToNow(new Date(item.created_at), { addSuffix: false }).replace('about ', '')}
-                                </span>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="p-4 text-center text-xs text-gray-500">
-                            No recent platform activity
+                    </div>
+                    <div className="p-3 flex items-center gap-3">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse flex-shrink-0"></div>
+                        <Star className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                        <div className="text-xs text-gray-700 dark:text-gray-300 flex-1 min-w-0">
+                            <span className="font-bold">New endorsement</span>
+                            <span className="truncate block opacity-80">Marcus got a 5-star review</span>
                         </div>
-                    )}
+                    </div>
+                    <div className="p-3 flex items-center gap-3">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse flex-shrink-0"></div>
+                        <Users className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                        <div className="text-xs text-gray-700 dark:text-gray-300 flex-1 min-w-0">
+                            <span className="font-bold">New connection</span>
+                            <span className="truncate block opacity-80">Alex joined Proofile Network</span>
+                        </div>
+                    </div>
                 </div>
                 <div className="p-3 text-center border-t border-gray-100 dark:border-gray-700">
                     <p className="text-sm text-gray-600 dark:text-gray-400">
